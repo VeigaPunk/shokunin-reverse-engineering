@@ -1,0 +1,94 @@
+{
+ "schema": "kaidoku-r67-gate-fetch-v1",
+ "seat": "ScribeLesson",
+ "accessed": "2026-11-03",
+ "local_clock": "2026-11-03T21:54:37-03:00",
+ "fetches": {
+  "kernel-squashfs-page": {
+   "url": "https://docs.kernel.org/filesystems/squashfs.html",
+   "http": "HTTP/2 200",
+   "headers": {
+    "server": "nginx",
+    "content-type": "text/html; charset=utf-8",
+    "content-length": 26045,
+    "date_gmt": "Wed, 04 Nov 2026 00:54:37 GMT",
+    "last_modified": "Sun, 01 Nov 2026 22:46:23 GMT"
+   },
+   "bytes": 26045,
+   "sha256": "10767bbf8b5c49e81d7aafadd84b6e06602c19641d7f7ae9b0a0258d81733685",
+   "title": "Squashfs 4.0 Filesystem — The Linux Kernel documentation",
+   "version_identity": "the unversioned docs.kernel.org render (no rel=canonical and no version banner present in the fetched bytes); pinned by fetch sha256 and Last-Modified, not by a release tag",
+   "heading": "3.2 Inodes — <section id=\"inodes\"> raw line 401, <h2>3.2 Inodes raw line 402",
+   "quote": "there are different inodes for each file type (regular file, directory, device, etc.), the inode contents and length varying with the type",
+   "quote_words": 22,
+   "quote_lines_fetched_document": "412-414",
+   "second_located_quote": {
+    "quote": "compressed inode is on average 8 bytes in length (the exact length varies on file type, i.e. regular file, directory, symbolic link, and block/char device inodes have different sizes)",
+    "quote_lines_fetched_document": "264-266",
+    "role": "rejected as a second row (duplicate locator and scope); recorded so the Gate's reject is checkable"
+   },
+   "observed_scope": "the on-disk inode class per file type and the fact that device inodes have their own contents and length; the page states no extraction privilege and no carrier fact",
+   "decision": "admit as S268"
+  },
+  "kernel-squashfs-rst": {
+   "url": "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/filesystems/squashfs.rst",
+   "http": "HTTP/2 200",
+   "bytes": 14201,
+   "sha256": "e709573a0f71653c066ca194f2cd3eadb353b116aa91ec79e360e7ffe53ba5f9",
+   "quote_lines_in_fetched_text": "184-186 (the same three sentences as the page's 412-414)",
+   "revision_identity": "none in the locator — /plain/ on the repository's default branch",
+   "decision": "reject: same subject and scope as S268 under a locator that names no revision",
+   "flip": "adopt at a tagged tree (e.g. v6.18) if the entry needs a release-pinned text identity"
+  },
+  "reopens": {
+   "S243": {
+    "url": "https://raw.githubusercontent.com/Freetz/freetz/master/tools/make/squashfs4-host-be/patches/101-TARGET_FORMAT__AVM_BE_AVM_LE_symbols_only.patch",
+    "http": 200,
+    "bytes": 1153,
+    "sha256": "e28b3341021c4c62560f48807de5c949b7bd55b127c687399a9afc289e84c707",
+    "registered_pin": "sha256 e28b3341…4c707 (1,153 B)",
+    "match": true,
+    "new_row_needed": false,
+    "why": "the row's scope (the AVM_LE symbol and the byte order it selects) is exactly what this round re-used; the on-disk device inode class is outside it"
+   },
+   "S244": {
+    "url": "https://download.avm.de/fritzbox/ and https://download.avm.de/fritzbox/fritzbox-6490-cable/deutschland/fritz.os/",
+    "http": "root listing HTTP/1.1 200; model directory listing 200",
+    "observed_rows": "FRITZ.Box_6490_Cable-07.57.image 04-Sep-2023 17:07 39741440; info_de.txt 111696; info_en.txt 67591",
+    "registered_pin": "6490-cable/deutschland 04-Sep-2023 39741440 B",
+    "match": true,
+    "new_row_needed": false,
+    "why": "the row's scope is the publisher's own listing (file, size, date); re-used unchanged, and it states no inode class"
+   },
+   "S245": {
+    "url": "https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py",
+    "http": 200,
+    "bytes": 19842,
+    "sha256": "2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287",
+    "registered_pin": "sha256 2d7b901b…599287 (19,842 B)",
+    "match": true,
+    "new_row_needed": false,
+    "why": "the row's scope is the little-endian v4 handler and its -le argv; it says nothing about which entry kinds an extractor can materialise"
+   },
+   "S249": {
+    "url": "https://download.avm.de/fritzbox/fritzbox-6490-cable/deutschland/fritz.os/info_en.txt",
+    "http": 200,
+    "bytes": 67591,
+    "sha256": "6c601b342da91f7598dde1e7842ba92a61a1ec7f4b3d00564573fea3d11070a7",
+    "registered_pin": "sha256 6c601b34…070a7 (67,591 B)",
+    "match": true,
+    "new_row_needed": false,
+    "why": "the row's scope is the one-backup-copy licence that grounds carrier custody; the class rule does not touch it"
+   }
+  }
+ },
+ "assimilation_measured": {
+  "merge/kaidoku/": "ls exit 2 (no such file or directory)",
+  "considerthese/": "ls exit 2 (no such file or directory)"
+ },
+ "notes": [
+  "Every fetch above was made by this seat at 2026-11-03 from the lane root; the bytes were held only in the seat scratch tree /fast/scratch/hyaku/kaidoku-r67/ScribeLesson, which was removed before yield, and are not committed (AVM carrier bytes are never committed under S249; the kernel and unblob bytes are not evidence and are pinned by sha256 here).",
+  "The fetched page states the inode class, not the privilege: the mknod refusal is S250's ground and is not restated here.",
+  "The round-50 control note names eight dev/pts/* entries; the claims file states 13 char devices on each FRITZ!Box carrier. The receipt therefore names a subset and is not evidence of the class's extent - the class extent is the carrier's own oracle table."
+ ]
+}

@@ -1,0 +1,454 @@
+{
+ "schema": "kaidoku-r67-c2-battery-mutants-v1",
+ "claim": "R67-C2",
+ "instrument": {
+  "path": "tools/round-67/mutation-battery.py",
+  "sha256": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab"
+ },
+ "pins": {
+  "closure": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+  "coverage": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa"
+ },
+ "baseline": {
+  "selftest": {
+   "cases": 9,
+   "failures": 0,
+   "exit_code": 0
+  },
+  "score": {
+   "killed_before": 0,
+   "survived_before": 2,
+   "killed_after": 2,
+   "verified": true,
+   "exit_code": 0
+  },
+  "control": {
+   "killed_before": 0,
+   "survived_before": 2,
+   "control_ok": true,
+   "exit_code": 0
+  },
+  "rc": {
+   "selftest": 0,
+   "score": 0,
+   "control": 0
+  }
+ },
+ "pinned_before_arms": {
+  "selftest_cases": [
+   "closure-pin",
+   "coverage-pin",
+   "arm-false-bound",
+   "arm-true-bound",
+   "equiv-honest-true",
+   "equiv-doctored-bound",
+   "equiv-doctored-diffs",
+   "closure-selftest-green",
+   "coverage-selftest-green"
+  ],
+  "selftest_cases_count": 9,
+  "control": {
+   "killed_before": 0,
+   "survived_before": 2,
+   "control_ok": true,
+   "exit_code": 0
+  },
+  "score": {
+   "killed_before": 0,
+   "survived_before": 2,
+   "killed_after": 2,
+   "verified": true,
+   "exit_code": 0
+  }
+ },
+ "mutants": [
+  {
+   "mutant": "N1",
+   "defect": "EXPECTED_CASE accepts any failing case name",
+   "sha256": "ddb8fccab1eac0b4901a1dddb2dfb33e165384750fb6c974d8a65bd0b45513a8",
+   "diff": "N1.diff",
+   "expected_detector": "--score verdict (killed_after case-name match)",
+   "cli": {
+    "selftest": {
+     "rc": 0,
+     "cases": 9,
+     "failures": 0,
+     "case_names": [
+      "closure-pin",
+      "coverage-pin",
+      "arm-false-bound",
+      "arm-true-bound",
+      "equiv-honest-true",
+      "equiv-doctored-bound",
+      "equiv-doctored-diffs",
+      "closure-selftest-green",
+      "coverage-selftest-green"
+     ],
+     "receipt": "N1-selftest.json"
+    },
+    "score": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "killed_after": 2,
+     "verified": true,
+     "after_failed_cases": {
+      "closure-arm-true": [
+       "arm-false-bound"
+      ],
+      "coverage-equiv-true": [
+       "equiv-doctored-bound",
+       "equiv-doctored-diffs"
+      ]
+     },
+     "receipt": "N1-score.json"
+    },
+    "control": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "control_ok": true,
+     "receipt": "N1-control.json"
+    }
+   },
+   "caught_by": [],
+   "probe_A_wrong_defect": {
+    "rc": 0,
+    "killed_after": 2,
+    "killed_before": 0,
+    "verified": true,
+    "base_same_probe": {
+     "rc": 1,
+     "killed_after": 0,
+     "verified": false
+    }
+   },
+   "probe_C_raising_counter": {
+    "crashed": true,
+    "crash": "RuntimeError: arm: condition not met",
+    "receipt": false
+   },
+   "probe_D_unimportable": {
+    "killed_after": 0,
+    "killed_before": 2,
+    "verified": false,
+    "rc": 1,
+    "base_same_probe": {
+     "killed_after": 0,
+     "killed_before": 2,
+     "verified": false
+    }
+   }
+  },
+  {
+   "mutant": "N2",
+   "defect": "killed_after drops the case-name condition (after_rc != 0 alone)",
+   "sha256": "84b6db28607831fdb835441f85b095b762eaae979a54173c1675aa67a59d8824",
+   "diff": "N2.diff",
+   "expected_detector": "--score verdict (killed_after case-name match)",
+   "cli": {
+    "selftest": {
+     "rc": 0,
+     "cases": 9,
+     "failures": 0,
+     "case_names": [
+      "closure-pin",
+      "coverage-pin",
+      "arm-false-bound",
+      "arm-true-bound",
+      "equiv-honest-true",
+      "equiv-doctored-bound",
+      "equiv-doctored-diffs",
+      "closure-selftest-green",
+      "coverage-selftest-green"
+     ],
+     "receipt": "N2-selftest.json"
+    },
+    "score": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "killed_after": 2,
+     "verified": true,
+     "after_failed_cases": {
+      "closure-arm-true": [
+       "arm-false-bound"
+      ],
+      "coverage-equiv-true": [
+       "equiv-doctored-bound",
+       "equiv-doctored-diffs"
+      ]
+     },
+     "receipt": "N2-score.json"
+    },
+    "control": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "control_ok": true,
+     "receipt": "N2-control.json"
+    }
+   },
+   "caught_by": [],
+   "probe_A_wrong_defect": {
+    "rc": 0,
+    "killed_after": 2,
+    "killed_before": 0,
+    "verified": true,
+    "base_same_probe": {
+     "rc": 1,
+     "killed_after": 0,
+     "verified": false
+    }
+   },
+   "probe_C_raising_counter": {
+    "crashed": true,
+    "crash": "RuntimeError: arm: condition not met",
+    "receipt": false
+   },
+   "probe_D_unimportable": {
+    "killed_after": 2,
+    "killed_before": 2,
+    "verified": false,
+    "rc": 1,
+    "base_same_probe": {
+     "killed_after": 0,
+     "killed_before": 2,
+     "verified": false
+    }
+   }
+  },
+  {
+   "mutant": "N3",
+   "defect": "control() reports survived_before as killed (before/after swap)",
+   "sha256": "049e7c8ddae4e0a2113fbd09f36ca395af41bbc9b80689b918945d44c7cd0420",
+   "diff": "N3.diff",
+   "expected_detector": "--control receipt (killed_before/survived_before)",
+   "cli": {
+    "selftest": {
+     "rc": 0,
+     "cases": 9,
+     "failures": 0,
+     "case_names": [
+      "closure-pin",
+      "coverage-pin",
+      "arm-false-bound",
+      "arm-true-bound",
+      "equiv-honest-true",
+      "equiv-doctored-bound",
+      "equiv-doctored-diffs",
+      "closure-selftest-green",
+      "coverage-selftest-green"
+     ],
+     "receipt": "N3-selftest.json"
+    },
+    "score": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "killed_after": 2,
+     "verified": true,
+     "after_failed_cases": {
+      "closure-arm-true": [
+       "arm-false-bound"
+      ],
+      "coverage-equiv-true": [
+       "equiv-doctored-bound",
+       "equiv-doctored-diffs"
+      ]
+     },
+     "receipt": "N3-score.json"
+    },
+    "control": {
+     "rc": 0,
+     "killed_before": 2,
+     "survived_before": 0,
+     "control_ok": true,
+     "receipt": "N3-control.json"
+    }
+   },
+   "caught_by": [],
+   "probe_A_wrong_defect": {
+    "rc": 1,
+    "killed_after": 0,
+    "killed_before": 0,
+    "verified": false,
+    "base_same_probe": {
+     "rc": 1,
+     "killed_after": 0,
+     "verified": false
+    }
+   },
+   "probe_C_raising_counter": {
+    "crashed": true,
+    "crash": "RuntimeError: arm: condition not met",
+    "receipt": false
+   },
+   "probe_D_unimportable": {
+    "killed_after": 0,
+    "killed_before": 2,
+    "verified": false,
+    "rc": 1,
+    "base_same_probe": {
+     "killed_after": 0,
+     "killed_before": 2,
+     "verified": false
+    }
+   }
+  },
+  {
+   "mutant": "N4",
+   "defect": "selftest() drops the equiv-doctored-diffs case",
+   "sha256": "c51b3bbf08b920a41754db0868cce99d9678b6281e7b829068b9b7aed50c2e28",
+   "diff": "N4.diff",
+   "expected_detector": "--selftest case inventory (equiv-doctored-diffs)",
+   "cli": {
+    "selftest": {
+     "rc": 0,
+     "cases": 8,
+     "failures": 0,
+     "case_names": [
+      "closure-pin",
+      "coverage-pin",
+      "arm-false-bound",
+      "arm-true-bound",
+      "equiv-honest-true",
+      "equiv-doctored-bound",
+      "closure-selftest-green",
+      "coverage-selftest-green"
+     ],
+     "receipt": "N4-selftest.json"
+    },
+    "score": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "killed_after": 2,
+     "verified": true,
+     "after_failed_cases": {
+      "closure-arm-true": [
+       "arm-false-bound"
+      ],
+      "coverage-equiv-true": [
+       "equiv-doctored-bound"
+      ]
+     },
+     "receipt": "N4-score.json"
+    },
+    "control": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "control_ok": true,
+     "receipt": "N4-control.json"
+    }
+   },
+   "caught_by": [],
+   "probe_A_wrong_defect": {
+    "rc": 1,
+    "killed_after": 0,
+    "killed_before": 0,
+    "verified": false,
+    "base_same_probe": {
+     "rc": 1,
+     "killed_after": 0,
+     "verified": false
+    }
+   },
+   "probe_C_raising_counter": {
+    "crashed": true,
+    "crash": "RuntimeError: arm: condition not met",
+    "receipt": false
+   },
+   "probe_D_unimportable": {
+    "killed_after": 0,
+    "killed_before": 2,
+    "verified": false,
+    "rc": 1,
+    "base_same_probe": {
+     "killed_after": 0,
+     "killed_before": 2,
+     "verified": false
+    }
+   }
+  },
+  {
+   "mutant": "N5",
+   "defect": "score() treats a missing after_out as a kill",
+   "sha256": "cdd3f989906e43454bf9f61ebd7c2e2a00cf1a7737d0aebd03b253aaf40bbdab",
+   "diff": "N5.diff",
+   "expected_detector": "--score verdict (missing after_out)",
+   "cli": {
+    "selftest": {
+     "rc": 0,
+     "cases": 9,
+     "failures": 0,
+     "case_names": [
+      "closure-pin",
+      "coverage-pin",
+      "arm-false-bound",
+      "arm-true-bound",
+      "equiv-honest-true",
+      "equiv-doctored-bound",
+      "equiv-doctored-diffs",
+      "closure-selftest-green",
+      "coverage-selftest-green"
+     ],
+     "receipt": "N5-selftest.json"
+    },
+    "score": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "killed_after": 2,
+     "verified": true,
+     "after_failed_cases": {
+      "closure-arm-true": [
+       "arm-false-bound"
+      ],
+      "coverage-equiv-true": [
+       "equiv-doctored-bound",
+       "equiv-doctored-diffs"
+      ]
+     },
+     "receipt": "N5-score.json"
+    },
+    "control": {
+     "rc": 0,
+     "killed_before": 0,
+     "survived_before": 2,
+     "control_ok": true,
+     "receipt": "N5-control.json"
+    }
+   },
+   "caught_by": [],
+   "probe_A_wrong_defect": {
+    "rc": 1,
+    "killed_after": 0,
+    "killed_before": 0,
+    "verified": false,
+    "base_same_probe": {
+     "rc": 1,
+     "killed_after": 0,
+     "verified": false
+    }
+   },
+   "probe_C_raising_counter": {
+    "crashed": true,
+    "crash": "RuntimeError: arm: condition not met",
+    "receipt": false
+   },
+   "probe_D_unimportable": {
+    "killed_after": 2,
+    "killed_before": 2,
+    "verified": false,
+    "rc": 1,
+    "base_same_probe": {
+     "killed_after": 0,
+     "killed_before": 2,
+     "verified": false
+    }
+   }
+  }
+ ]
+}

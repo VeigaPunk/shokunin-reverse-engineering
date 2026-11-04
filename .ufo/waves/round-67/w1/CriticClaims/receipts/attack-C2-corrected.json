@@ -1,0 +1,66 @@
+{
+ "C": {
+  "attack": "C false-kill: an unrelated failing case",
+  "battery_rc": 1,
+  "cases": {
+   "arm-false-bound": {
+    "got": false,
+    "ok": true,
+    "want": false
+   },
+   "arm-true-bound": {
+    "got": false,
+    "ok": false,
+    "want": true
+   },
+   "coverage-pin": {
+    "got": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+    "ok": true,
+    "want": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa"
+   },
+   "coverage-selftest-green": {
+    "got": 0,
+    "ok": true,
+    "want": 0
+   },
+   "equiv-doctored-bound": {
+    "got": false,
+    "ok": true,
+    "want": false
+   },
+   "equiv-doctored-diffs": {
+    "got": true,
+    "ok": true,
+    "want": true
+   },
+   "equiv-honest-true": {
+    "got": true,
+    "ok": true,
+    "want": true
+   }
+  },
+  "clause_attacked": "kills both survivors (killed_after definition)",
+  "expected_case": "arm-false-bound",
+  "failed_cases": [
+   "arm-true-bound"
+  ],
+  "killed_after_by_shipped_formula": false,
+  "limit": "the same guard means the battery's kill verdict is one-case wide per survivor; a mutant that breaks the other bound is invisible to the verdict",
+  "mutant": "arm() returns \"passed\": False for every input",
+  "summary": "SELFTEST FAILED cases=7 failures=1",
+  "verdict": "no false kill: rc=1 and the mutant is NOT reported killed, because the failing case is arm-true-bound, not the named EXPECTED_CASE. Two different mutants, two different cases."
+ },
+ "D_correction": {
+  "battery_rc": 1,
+  "failed_cases": [
+   "equiv-doctored-bound",
+   "equiv-doctored-diffs"
+  ],
+  "implication": "the shipped doctored fixture differs from the honest one only in the block TEXT ('\"mapped\": 0' vs 1, coverage_score 0.0 vs 10.0), so a text-reading mutant can reproduce both answers without executing",
+  "killed_by": true,
+  "mutant": "returns equivalent iff '\"mapped\"' appears in the block text",
+  "purpose": "a no-run mutant keyed on text shared by both fixtures returns one answer for both and is killed: the battery separates 'inspects the text' from 'runs the block' only when the two fixtures' block text is identical",
+  "summary": "SELFTEST FAILED cases=7 failures=2"
+ },
+ "battery_sha256": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab"
+}

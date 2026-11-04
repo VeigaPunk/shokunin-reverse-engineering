@@ -1,0 +1,855 @@
+{
+ "all_pins_match_at_freeze_commit": true,
+ "all_pins_match_at_head": true,
+ "base": "a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92",
+ "claims_changed_since_freeze": true,
+ "claims_file": ".ufo/waves/round-67/claims.json",
+ "claims_sha256_at_freeze": "cf46a7d96b7f938a0cc6463b4f5e2b9df81aae3295c26c73a53a5e6c99e8a83a",
+ "claims_sha256_at_head": "880dc1ca3047bd3478b22eb561ba2e4dddf85d6f9c2d430b4f1a5b02f0844271",
+ "findings": [
+  {
+   "consequence": "by the container's own definitions both claims are excluded from verification this round; the corrections are disclosed and reproducible, but the freeze was not redefined and A0 still says no claim amendment after the file",
+   "evidence": {
+    "A0": "declaration order: instruments and controls committed before this container; the carry-in LOG entry is an ancestor of the freeze commit (git merge-base --is-ancestor <carry-in> <freeze> exit 0, receipt l1/records/r67-order.txt); no prompt amendment and no claim amendment after this file",
+    "container_edits": [
+     "6dcc447e",
+     "66389549",
+     "eadc2188"
+    ],
+    "declaration_pointer": "plans/round-67-claims.md (no amendments). Both instruments were committed BEFORE this claims file - the QUALITY #33 order - with their do-nothing controls and pre-freeze receipts in .ufo/waves/round-67/l1/pre/; the carry-in LOG entry is an ancestor of this freeze (QUALITY #34, the M65-3 order check). The operative freeze is the commit that first adds this file: git log --diff-filter=A --format=%H -- .ufo/waves/round-67/claims.json. No amendment series.",
+    "freeze_pins": {
+     "avm-le-counter.py": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+     "gap-rule-v2.json": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
+     "mutation-battery.py": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab"
+    },
+    "head_pins": {
+     "tools/round-50/c1-counter.py": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+     "tools/round-66/closure-boundary.py": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+     "tools/round-66/coverage-selfcheck.py": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+     "tools/round-67/avm-le-counter.py": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+     "tools/round-67/c1-run.sh": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
+     "tools/round-67/gap-rule-v2.json": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+     "tools/round-67/mutation-battery.py": "ecf5598775edc33d359de152154f0dff00702b78d0bbd58d9fa5f4def8f5d766"
+    },
+    "instrument_edits": {
+     ".ufo/waves/round-67/claims.json": [
+      "eadc2188e10598c27a51ddd222022243f8a42965",
+      "663895493ad24de423b4f9f35ad74ec1f700101f",
+      "6dcc447eeca251e2435c14048bc0c5065e12df1f"
+     ],
+     "tools/round-67/avm-le-counter.py": [
+      "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+      "ecc4de0ea319647af5c2573523e1b4d6f3965299",
+      "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391"
+     ],
+     "tools/round-67/gap-rule-v2.json": [
+      "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6"
+     ],
+     "tools/round-67/mutation-battery.py": [
+      "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6"
+     ]
+    },
+    "instrument_supersessions": [
+     {
+      "commit": "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391",
+      "path": "tools/round-67/avm-le-counter.py",
+      "reason": "the patched gap-rule name was passed as an absolute path; the engine reads its rule through `git show <rev>:<path>`, so `measure()` raised 'gap-rule.json absent at freeze' (exit 2) before any after-arm existed. The patch now sets the lane-relative name; the before record (l1/pre/control-dryrun.json) was re-taken with the corrected bytes (sha256 55decb51) and the frozen_atoms A3/A4 values are unchanged in substance."
+     },
+     {
+      "commit": "ecc4de0ea319647af5c2573523e1b4d6f3965299",
+      "path": "tools/round-67/avm-le-counter.py",
+      "reason": "the round-42 rea-pkg pin's package_lock_sha256 d42d56f0 is no longer reproducible on this host: a fresh npx cache resolves the same rea-agents 6.5.0 artifact (package.json sha256 a5003023, unchanged) with lock 815c18f1, so the engine's evidence-id recompute refused as unevaluable. The wrapper now binds the package by version, package.json sha256 and the lock this host resolves (REA_PKG_R67), records the substitution in every receipt, and keeps evidence_id_ok as a required clause. The before record was re-taken with the corrected bytes."
+     },
+     {
+      "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+      "path": "tools/round-67/avm-le-counter.py",
+      "reason": "wave-1 findings: (a) the clause set is used UNCHANGED (the carrier_fresh_ok drop was a no-op: the engine's prior-pin sources do not list the four pins, so the clause is true 4/4 -- MutCounter M1); (b) the rule is pinned by RULE_V2_PIN and a non-pinned rule is refused, the --gap-rule knob is gone (SentinelScope F2); (c) score() binds the predicate's second conjunct by reading the committed control receipt at --rev and requiring control_ok true / gaps_ok_round50 2 (F3); (d) any unexpected error is exit 2 (F6.1). Before records re-taken."
+     },
+     {
+      "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+      "path": "tools/round-67/gap-rule-v2.json",
+      "reason": "SentinelScope F1: the round-50 `removed.silent` block was dropped while the docstring and atom A5 said `removed` was unchanged. It is restored verbatim (inert under required.char-device=false), so the statement is true; gaps_ok is unchanged (2/4 vs 4/4, control re-taken)."
+     },
+     {
+      "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+      "path": "tools/round-67/mutation-battery.py",
+      "reason": "MutBattery N1-N5: the kill test now requires the EXACT failed-case set per mutant (containment let a wrong-defect pair certify green), the selftest asserts the registered case inventory (a dropped case now fails), control() checks both pins and computes control_ok from the printed fields, a missing selftest receipt is unevaluable, and fixture git failures are exit 2. Receipts re-taken: selftest 10 cases, control 0/2, score 2/2."
+     }
+    ],
+    "kill_rules": {
+     "R67-C1": "any carrier clause false under the round-67 rule, a drifted engine/rule/carrier table, a carrier whose pinned bytes differ, a post-freeze instrument edit, or a run that needs the predicate changed -> not verified, reported, never narrowed",
+     "R67-C2": "a survivor the battery does not kill, a case that passes on a mutant, a pristine counter not green, a drifted or absent pinned r66 instrument, a post-freeze instrument edit, or a run that needs the predicate changed -> not verified, never narrowed"
+    },
+    "operative_freeze": "3663e6b21dccf4c4957f459301156664d8b151d6 (git log --diff-filter=A -- claims.json, still one commit)"
+   },
+   "id": "F1",
+   "severity": "BLOCKING",
+   "title": "post-freeze instrument supersession series: five supersessions and three container edits, while the container defines the freeze as the first-add commit and both kill rules name \"a post-freeze instrument edit\"",
+   "transient": "at 7cfe83e4 the three repaired artifacts were committed 30 s before the container re-pin; 3 of 7 pins failed in that window (observed 01:05:29Z)"
+  },
+  {
+   "consequence": "A4 lists CLAUSES and omits rea_package_problems, and still claims carrier_fresh_ok is dropped, which the instrument no longer does",
+   "evidence": {
+    "A12": "the clause set is unchanged (no dropped clause)",
+    "A4": "R67-C1 instrument: the round-50 engine is loaded by path under ENGINE_PIN and refused on any sha256 drift; the patched names are exactly GAPRULE, AFTERDIR, ENTRY, STEM, CORE_HEADING, FRONTIER_MARK, OPENED_DATES, PROV_BASE, PROV_SEGMENT, WORK_OVERRIDE and CLAUSES (dropping carrier_fresh_ok); the receipt records every patch",
+    "actual_mod_assignments": [
+     "GAPRULE",
+     "AFTERDIR",
+     "ENTRY",
+     "STEM",
+     "CORE_HEADING",
+     "FRONTIER_MARK",
+     "OPENED_DATES",
+     "PROV_BASE",
+     "PROV_SEGMENT",
+     "WORK_OVERRIDE",
+     "rea_package_problems"
+    ],
+    "docstring": "\"patching exactly five things\"; the rea-pkg patch is not in the numbered list"
+   },
+   "id": "F2",
+   "severity": "BLOCKING",
+   "title": "A4 still misstates the patch surface at HEAD"
+  },
+  {
+   "consequence": "A5 is true at HEAD and was false at the freeze; the repair is a post-freeze rule edit, i.e. another F1 instance",
+   "evidence": {
+    "freeze_rule_sha256": "e66ba022...",
+    "head_removed_silent": {
+     "char-device": [
+      "247:0"
+     ]
+    },
+    "head_rule_sha256": "b55d5e87...",
+    "leaf_differences_now": [
+     "/claim",
+     "/class_disposition",
+     "/required/char-device",
+     "/round",
+     "/supersedes"
+    ],
+    "round50_removed_silent": {
+     "char-device": [
+      "247:0"
+     ]
+    }
+   },
+   "id": "F3",
+   "severity": "RESOLVED-BY-SUPERSESSION",
+   "title": "removed.silent was absent at the freeze (A5 false) and restored at 7cfe83e4"
+  },
+  {
+   "consequence": "the order facts hold (verified independently) but the cited evidence is missing",
+   "evidence": {
+    "cat_file_rc": 128,
+    "cited_by": "declaration order: instruments and controls committed before this container; the carry-in LOG entry is an ancestor of the freeze commit (git merge-base --is-ancestor <carry-in> <freeze> exit 0, receipt l1/records/r67-order.txt); no prompt amendment and no claim amendment after this file",
+    "l1_tree_at_head": [
+     ".ufo/waves/round-67/l1/pre/control-dryrun-c2.json",
+     ".ufo/waves/round-67/l1/pre/control-dryrun.json",
+     ".ufo/waves/round-67/l1/pre/score-dryrun-at-base.json",
+     ".ufo/waves/round-67/l1/pre/selftest-c2.json",
+     ".ufo/waves/round-67/l1/pre/selftest-r50.txt"
+    ]
+   },
+   "id": "F4",
+   "severity": "BLOCKING",
+   "title": "A0 cites l1/records/r67-order.txt, absent at the freeze, at HEAD and on disk"
+  },
+  {
+   "consequence": "a drifted rule now exits 2 instead of scoring silently",
+   "evidence": {
+    "RULE_V2_PIN": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+    "note": "the pin value itself postdates the freeze"
+   },
+   "id": "F5",
+   "severity": "INFO (was a weakness, fixed at HEAD)",
+   "title": "the gap rule is now pinned and refused on drift (RULE_V2_PIN b55d5e87)"
+  },
+  {
+   "consequence": "it did not flag the 3/7 pin-mismatch window and cannot see a supersession",
+   "evidence": {
+    "gate_at_freeze": {
+     "claims_file": ".ufo/waves/round-67/claims.json",
+     "findings": [],
+     "freeze": "3663e6b21dccf4c4957f459301156664d8b151d6",
+     "instruments": [
+      "tools/round-67/avm-le-counter.py",
+      "tools/round-67/mutation-battery.py"
+     ],
+     "verdict": "CLEAN"
+    },
+    "gate_at_head": {
+     "claims_file": ".ufo/waves/round-67/claims.json",
+     "findings": [],
+     "freeze": "3663e6b21dccf4c4957f459301156664d8b151d6",
+     "instruments": [
+      "tools/round-67/avm-le-counter.py",
+      "tools/round-67/mutation-battery.py"
+     ],
+     "verdict": "CLEAN"
+    }
+   },
+   "id": "F6",
+   "severity": "INFO",
+   "title": "the R29 gate remains rev-local and reports the same CLEAN entry at the freeze and at HEAD"
+  },
+  {
+   "consequence": "evidence_id_ok stays required but the oracle identity depends on the local npx cache",
+   "evidence": {
+    "package_json_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c",
+    "package_lock_sha256": "815c18f14daefceeee603065a291e008330ae1af763639e31bab52a58373f803",
+    "supersedes": "tools/round-42/rea-pkg.json package_lock_sha256 d42d56f0"
+   },
+   "id": "F7",
+   "severity": "INFO (provenance substitution; for the critic)",
+   "title": "the REA re-pin replaces the round-42 package-lock digest with the lock this host resolves"
+  },
+  {
+   "consequence": "a seat sampling HEAD in that window would report a false pin failure",
+   "evidence": {
+    "observed": "3 of 7 pins failed at HEAD during the window",
+    "window": "7cfe83e4 (artifacts) -> eadc2188 (container), 30 s apart"
+   },
+   "id": "F8",
+   "severity": "INFO",
+   "title": "pin and artifact should land atomically"
+  }
+ ],
+ "freeze": "3663e6b21dccf4c4957f459301156664d8b151d6",
+ "freeze_is_head": false,
+ "gate": {
+  "at_freeze": {
+   "aggregate": {
+    "audited": 42,
+    "clean": 21,
+    "required_clean": [],
+    "required_failed": [],
+    "summary": {
+     "INSTRUMENT_ABSENT": 12,
+     "INSTRUMENT_NONE": 6,
+     "INSTRUMENT_PIN_MISMATCH": 2,
+     "INSTRUMENT_REVISED": 17,
+     "INSTRUMENT_UNPINNED": 10,
+     "INSTRUMENT_UNRESOLVED": 11
+    }
+   },
+   "exit_code": 0,
+   "rev": "3663e6b21dccf4c4957f459301156664d8b151d6",
+   "round67_entry": {
+    "claims_file": ".ufo/waves/round-67/claims.json",
+    "findings": [],
+    "freeze": "3663e6b21dccf4c4957f459301156664d8b151d6",
+    "instruments": [
+     "tools/round-67/avm-le-counter.py",
+     "tools/round-67/mutation-battery.py"
+    ],
+    "verdict": "CLEAN"
+   },
+   "round67_entry_verbatim": "{\"claims_file\": \".ufo/waves/round-67/claims.json\", \"findings\": [], \"freeze\": \"3663e6b21dccf4c4957f459301156664d8b151d6\", \"instruments\": [\"tools/round-67/avm-le-counter.py\", \"tools/round-67/mutation-battery.py\"], \"verdict\": \"CLEAN\"}",
+   "round67_flagged": false,
+   "stderr": ""
+  },
+  "at_head": {
+   "aggregate": {
+    "audited": 42,
+    "clean": 21,
+    "required_clean": [],
+    "required_failed": [],
+    "summary": {
+     "INSTRUMENT_ABSENT": 12,
+     "INSTRUMENT_NONE": 6,
+     "INSTRUMENT_PIN_MISMATCH": 2,
+     "INSTRUMENT_REVISED": 17,
+     "INSTRUMENT_UNPINNED": 10,
+     "INSTRUMENT_UNRESOLVED": 11
+    }
+   },
+   "exit_code": 0,
+   "rev": "eadc2188e10598c27a51ddd222022243f8a42965",
+   "round67_entry": {
+    "claims_file": ".ufo/waves/round-67/claims.json",
+    "findings": [],
+    "freeze": "3663e6b21dccf4c4957f459301156664d8b151d6",
+    "instruments": [
+     "tools/round-67/avm-le-counter.py",
+     "tools/round-67/mutation-battery.py"
+    ],
+    "verdict": "CLEAN"
+   },
+   "round67_entry_verbatim": "{\"claims_file\": \".ufo/waves/round-67/claims.json\", \"findings\": [], \"freeze\": \"3663e6b21dccf4c4957f459301156664d8b151d6\", \"instruments\": [\"tools/round-67/avm-le-counter.py\", \"tools/round-67/mutation-battery.py\"], \"verdict\": \"CLEAN\"}",
+   "round67_flagged": false,
+   "stderr": ""
+  },
+  "command": "python3 -I -B tools/round-29/freeze-gate.py --root <lane> --rev <rev>"
+ },
+ "head_at_snapshot": "eadc2188e10598c27a51ddd222022243f8a42965",
+ "instrument_table": [
+  {
+   "add_commits": [
+    "435d41fd4ad9211d1579fc447936fb33d2b74467"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "435d41fd4ad9211d1579fc447936fb33d2b74467": true
+   },
+   "blob_sha256_at_freeze": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+   "blob_sha256_at_head": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+   "changed_since_freeze": false,
+   "path": "tools/round-50/c1-counter.py",
+   "pin_at_freeze_commit": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+   "pin_at_head": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+   "pin_changed_since_freeze": false,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813"
+  },
+  {
+   "add_commits": [
+    "78fa96666ce48e510d83673d61e951e4dbbd64c0"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "78fa96666ce48e510d83673d61e951e4dbbd64c0": true
+   },
+   "blob_sha256_at_freeze": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+   "blob_sha256_at_head": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+   "changed_since_freeze": false,
+   "path": "tools/round-66/closure-boundary.py",
+   "pin_at_freeze_commit": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+   "pin_at_head": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+   "pin_changed_since_freeze": false,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b"
+  },
+  {
+   "add_commits": [
+    "78fa96666ce48e510d83673d61e951e4dbbd64c0"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "78fa96666ce48e510d83673d61e951e4dbbd64c0": true
+   },
+   "blob_sha256_at_freeze": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+   "blob_sha256_at_head": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+   "changed_since_freeze": false,
+   "path": "tools/round-66/coverage-selfcheck.py",
+   "pin_at_freeze_commit": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+   "pin_at_head": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+   "pin_changed_since_freeze": false,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa"
+  },
+  {
+   "add_commits": [
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16": true
+   },
+   "blob_sha256_at_freeze": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+   "blob_sha256_at_head": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+   "changed_since_freeze": true,
+   "path": "tools/round-67/avm-le-counter.py",
+   "pin_at_freeze_commit": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+   "pin_at_head": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+   "pin_changed_since_freeze": true,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b"
+  },
+  {
+   "add_commits": [
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16": true
+   },
+   "blob_sha256_at_freeze": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
+   "blob_sha256_at_head": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
+   "changed_since_freeze": false,
+   "path": "tools/round-67/c1-run.sh",
+   "pin_at_freeze_commit": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
+   "pin_at_head": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
+   "pin_changed_since_freeze": false,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca"
+  },
+  {
+   "add_commits": [
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16": true
+   },
+   "blob_sha256_at_freeze": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
+   "blob_sha256_at_head": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+   "changed_since_freeze": true,
+   "path": "tools/round-67/gap-rule-v2.json",
+   "pin_at_freeze_commit": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
+   "pin_at_head": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+   "pin_changed_since_freeze": true,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0"
+  },
+  {
+   "add_commits": [
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16"
+   ],
+   "add_commits_ancestor_of_freeze": {
+    "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16": true
+   },
+   "blob_sha256_at_freeze": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab",
+   "blob_sha256_at_head": "ecf5598775edc33d359de152154f0dff00702b78d0bbd58d9fa5f4def8f5d766",
+   "changed_since_freeze": true,
+   "path": "tools/round-67/mutation-battery.py",
+   "pin_at_freeze_commit": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab",
+   "pin_at_head": "ecf5598775edc33d359de152154f0dff00702b78d0bbd58d9fa5f4def8f5d766",
+   "pin_changed_since_freeze": true,
+   "pin_freeze_matches_freeze_blob": true,
+   "pin_head_matches_head_blob": true,
+   "worktree_matches_head_blob": true,
+   "worktree_sha256": "ecf5598775edc33d359de152154f0dff00702b78d0bbd58d9fa5f4def8f5d766"
+  }
+ ],
+ "instruments_changed_since_freeze": [
+  "tools/round-67/avm-le-counter.py",
+  "tools/round-67/gap-rule-v2.json",
+  "tools/round-67/mutation-battery.py"
+ ],
+ "observations": [
+  {
+   "head": "3663e6b21dccf4c4957f459301156664d8b151d6",
+   "note": "this is the state the seat brief describes",
+   "observed_utc": "2026-11-04T01:52:00Z (approx, first pass)",
+   "state": "HEAD == the freeze commit; 7/7 pins match the blobs at the freeze; gate CLEAN; tools/ clean"
+  },
+  {
+   "head": "6dcc447e",
+   "note": "instrument corrected at 1e7fe7b7 for the absolute/lane-relative gap-rule name",
+   "observed_utc": "2026-11-04T01:58:00Z (approx)",
+   "state": "7/7 pins match HEAD; the C1 counter pin changed f78ed365 -> 55decb51 (first supersession)"
+  },
+  {
+   "head": "66389549",
+   "note": "",
+   "observed_utc": "2026-11-04T01:03:50Z",
+   "state": "7/7 pins match HEAD; counter pin e44cacf5; receipt snapshot for this artifact"
+  },
+  {
+   "head": "66389549",
+   "note": "the wave-1 repairs in flight",
+   "observed_utc": "2026-11-04T01:05:18Z",
+   "state": "dirty tracked: tools/round-67/avm-le-counter.py, tools/round-67/gap-rule-v2.json, tools/round-67/mutation-battery.py, PROVINCE.md and three C2 pre receipts"
+  },
+  {
+   "head": "7cfe83e4",
+   "note": "the repair commit landed 30 s before the container re-pin",
+   "observed_utc": "2026-11-04T01:05:29Z",
+   "state": "3 of 7 pins FAILED at HEAD (counter 5d6cc82a != pin e44cacf5; rule b55d5e87 != pin e66ba022; battery ecf55987 != pin cabc0a0b); the gate still reported CLEAN"
+  },
+  {
+   "head": "eadc2188",
+   "note": "container amended a third time (freeze disclosure 3)",
+   "observed_utc": "2026-11-04T01:05:48Z",
+   "state": "7/7 pins match HEAD; 3 pins changed since the freeze; gate CLEAN at both revs"
+  }
+ ],
+ "order": {
+  "base_ancestor_of_freeze": true,
+  "base_ancestor_of_instruments_commit": true,
+  "carry_in": "cf705c53a615ba4b01e5ec819f370014eb18b13e",
+  "carry_in_ancestor_of_freeze": true,
+  "carry_in_subject": "round-67: carry-in \u2014 the r66 non-author closure recorded before any claim is measured (QUALITY #34)",
+  "claims_add_commits": [
+   "3663e6b21dccf4c4957f459301156664d8b151d6"
+  ],
+  "freeze_subject": "round-67: claims frozen \u2014 R67-C1 (LE AVM Frontier -> Core under the class rule) and R67-C2 (the two mutation survivors), instruments pinned, before-arms committed",
+  "instruments_commit": "39a91a99dd7adb2e7b4e1a1d6c9ce9b7f69bde16",
+  "instruments_commit_ancestor_of_freeze": true,
+  "post_freeze_commits": [
+   {
+    "commit": "eadc2188e10598c27a51ddd222022243f8a42965",
+    "date": "2026-11-03 22:05:19 -0300",
+    "stat": [
+     ".ufo/waves/round-67/claims.json | 24 ++++++++++++++++++++----",
+     "1 file changed, 20 insertions(+), 4 deletions(-)"
+    ],
+    "subject": "round-67: freeze disclosure 3 \u2014 the wave-1 instrument repairs recorded (QUALITY #33)"
+   },
+   {
+    "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+    "date": "2026-11-03 22:05:19 -0300",
+    "stat": [
+     ".ufo/waves/round-67/l1/pre/control-dryrun-c2.json  |  2 +-",
+     ".../round-67/l1/pre/score-dryrun-at-base.json      |  9 ++-",
+     ".ufo/waves/round-67/l1/pre/selftest-c2.json        | 28 ++++++-",
+     "tools/round-67/avm-le-counter.py                   | 90 ++++++++++++++--------",
+     "tools/round-67/gap-rule-v2.json                    |  7 +-",
+     "tools/round-67/mutation-battery.py                 | 70 ++++++++++++-----",
+     "6 files changed, 151 insertions(+), 55 deletions(-)"
+    ],
+    "subject": "round-67: instrument repairs from wave 1 \u2014 rule silent row restored, clause set unchanged, rule pinned and control receipt bound, battery kill test exact-set with its case inventory asserted; before records re-taken"
+   },
+   {
+    "commit": "663895493ad24de423b4f9f35ad74ec1f700101f",
+    "date": "2026-11-03 22:02:06 -0300",
+    "stat": [
+     ".ufo/waves/round-67/claims.json | 10 ++++++++--",
+     "1 file changed, 8 insertions(+), 2 deletions(-)"
+    ],
+    "subject": "round-67: freeze disclosure 2 \u2014 the REA re-pin supersession recorded (QUALITY #33)"
+   },
+   {
+    "commit": "ecc4de0ea319647af5c2573523e1b4d6f3965299",
+    "date": "2026-11-03 22:01:48 -0300",
+    "stat": [
+     ".ufo/waves/round-67/l1/pre/control-dryrun.json |  2 +-",
+     "tools/round-67/avm-le-counter.py               | 48 +++++++++++++++++++++++++-",
+     "2 files changed, 48 insertions(+), 2 deletions(-)"
+    ],
+    "subject": "round-67: instrument correction 2 \u2014 the REA package re-pin (the r42 lock digest is no longer reproducible; version + package.json sha unchanged), the before record re-taken"
+   },
+   {
+    "commit": "454071dd88fdd4dea59ac8e1784f411fb278a3e8",
+    "date": "2026-11-03 22:01:47 -0300",
+    "stat": [
+     "corpus/evidence/round-67/c1/c6430/after.json | 1 +",
+     "corpus/evidence/round-67/c1/c6490/after.json | 1 +",
+     "corpus/evidence/round-67/c1/g7581/after.json | 1 +",
+     "corpus/evidence/round-67/c1/g7582/after.json | 1 +",
+     "4 files changed, 4 insertions(+)"
+    ],
+    "subject": "round-67: data receipts \u2014 the four after.json envelopes named explicitly (a directory commit skipped them at >1 MiB)"
+   },
+   {
+    "commit": "6dcc447eeca251e2435c14048bc0c5065e12df1f",
+    "date": "2026-11-03 21:57:44 -0300",
+    "stat": [
+     ".ufo/waves/round-67/claims.json | 14 +++++++++++---",
+     "1 file changed, 11 insertions(+), 3 deletions(-)"
+    ],
+    "subject": "round-67: freeze disclosure \u2014 the instrument supersession recorded (QUALITY #33) with the re-taken before record"
+   },
+   {
+    "commit": "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391",
+    "date": "2026-11-03 21:57:37 -0300",
+    "stat": [
+     ".ufo/waves/round-67/l1/pre/control-dryrun.json |  2 +-",
+     "tools/round-67/avm-le-counter.py               | 12 +++++++++---",
+     "2 files changed, 10 insertions(+), 4 deletions(-)"
+    ],
+    "subject": "round-67: instrument correction \u2014 the patched gap-rule name must be lane-relative (the engine reads it through git show); the before record re-taken"
+   },
+   {
+    "commit": "a4c1d0fc3fef333b38395ed03bc58c23b4667e53",
+    "date": "2026-11-03 21:57:02 -0300",
+    "stat": [
+     "corpus/evidence/round-67/c1/c6430/run.json | 632 +++++++++++++++++++++++++++++",
+     "corpus/evidence/round-67/c1/c6490/run.json | 632 +++++++++++++++++++++++++++++",
+     "corpus/evidence/round-67/c1/g7581/run.json | 632 +++++++++++++++++++++++++++++",
+     "corpus/evidence/round-67/c1/g7582/run.json | 632 +++++++++++++++++++++++++++++",
+     "4 files changed, 2528 insertions(+)"
+    ],
+    "subject": "round-67: data run \u2014 four pinned-carrier REA extract-firmware receipts after the freeze (g7581, g7582, c6490, c6430)"
+   }
+  ]
+ },
+ "pins_that_changed_since_freeze": [
+  "tools/round-67/avm-le-counter.py",
+  "tools/round-67/gap-rule-v2.json",
+  "tools/round-67/mutation-battery.py"
+ ],
+ "post_freeze_edit_counts": {
+  ".ufo/waves/round-67/claims.json": [
+   "eadc2188e10598c27a51ddd222022243f8a42965",
+   "663895493ad24de423b4f9f35ad74ec1f700101f",
+   "6dcc447eeca251e2435c14048bc0c5065e12df1f"
+  ],
+  "tools/round-67/avm-le-counter.py": [
+   "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+   "ecc4de0ea319647af5c2573523e1b4d6f3965299",
+   "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391"
+  ],
+  "tools/round-67/gap-rule-v2.json": [
+   "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6"
+  ],
+  "tools/round-67/mutation-battery.py": [
+   "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6"
+  ]
+ },
+ "produced_utc": "2026-11-04T01:05:54Z",
+ "repo": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "round": "round-67",
+ "schema": "kaidoku-r67-execpins-v2",
+ "seat": "ExecPins",
+ "selftests": {
+  "closure-boundary --selftest": {
+   "command": "python3 -I -B tools/round-66/closure-boundary.py --selftest",
+   "exit_code": 0,
+   "failures": [],
+   "summary": "SELFTEST CLEAN cases=30 failures=0"
+  },
+  "coverage-selfcheck --selftest": {
+   "command": "python3 -I -B tools/round-66/coverage-selfcheck.py --selftest",
+   "exit_code": 0,
+   "failures": [],
+   "summary": "SELFTEST CLEAN cases=26 failures=0"
+  },
+  "mutation-battery --selftest": {
+   "cases": [
+    {
+     "case": "closure-pin",
+     "ok": true
+    },
+    {
+     "case": "coverage-pin",
+     "ok": true
+    },
+    {
+     "case": "arm-false-bound",
+     "ok": true
+    },
+    {
+     "case": "arm-true-bound",
+     "ok": true
+    },
+    {
+     "case": "equiv-honest-true",
+     "ok": true
+    },
+    {
+     "case": "equiv-doctored-bound",
+     "ok": true
+    },
+    {
+     "case": "equiv-doctored-diffs",
+     "ok": true
+    },
+    {
+     "case": "closure-selftest-green",
+     "ok": true
+    },
+    {
+     "case": "coverage-selftest-green",
+     "ok": true
+    },
+    {
+     "case": "case-inventory",
+     "ok": true
+    }
+   ],
+   "command": "python3 -I -B tools/round-67/mutation-battery.py --selftest --root <lane> --work <scratch>",
+   "equals_committed_l1_pre_selftest_c2": true,
+   "exit_code": 0,
+   "summary": "SELFTEST CLEAN cases=10 failures=0"
+  },
+  "round-50 c1-counter --selftest": {
+   "command": "python3 -I -B tools/round-50/c1-counter.py --selftest",
+   "equals_committed_pre_receipt_summary": true,
+   "exit_code": 0,
+   "probe_differences_are_embedded_tmpdir_paths": true,
+   "probe_results_count": 57,
+   "probe_results_differing_indices": [
+    31,
+    41
+   ],
+   "run_at": "the freeze blob (execute bit identical at HEAD: engine sha256 9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813 == True)",
+   "summary": {
+    "cases": 169,
+    "failures": [],
+    "green_ok": 17,
+    "path_probes": 6,
+    "path_probes_discriminating": 3,
+    "red_ok": 152,
+    "root_probes": 8,
+    "selftest": "c1-counter",
+    "spec_probes": 43
+   }
+  }
+ },
+ "selftests_all_green": true,
+ "supplementary_checks": {
+  "c1_control_at_current_head_bytes": {
+   "command": "python3 -I -B tools/round-67/avm-le-counter.py --control --root <lane> --rev a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92 --work <scratch>",
+   "control_ok": true,
+   "counter_sha256": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+   "engine_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+   "exit_code": 0,
+   "gaps_ok_round50": 2,
+   "gaps_ok_round67": 4,
+   "red_controls": {
+    "dropped_symlink_gap": "bin/adsl",
+    "junk_rule_note": "636 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+    "junk_rule_would_pass": true,
+    "publication_check_names_it": true,
+    "publication_hits": [
+     "firmware.bin_extract/dev/led"
+    ],
+    "published_char_device_path": "dev/led",
+    "round67_rule_note": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['bin/adsl']",
+    "round67_rule_still_fails": true
+   },
+   "rule_problems": {
+    "junk": [],
+    "round50": [],
+    "round67": []
+   },
+   "rule_v2_sha256": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0"
+  },
+  "c1_run_harness_delta": {
+   "line_counts": [
+    868,
+    868
+   ],
+   "normalized_identical_to_round50": true
+  },
+  "carrier_table": {
+   "cache_bytes_hash_to_name": {
+    "c6430": true,
+    "c6490": true,
+    "g7581": true,
+    "g7582": true
+   },
+   "count": 4,
+   "ids": [
+    "g7581",
+    "g7582",
+    "c6490",
+    "c6430"
+   ],
+   "target": 4
+  },
+  "gap_rule_v2_structural_delta": {
+   "allowed_identical": true,
+   "leaf_differences": {
+    "/claim": {
+     "round50": "R50-C1",
+     "round67": "<absent>"
+    },
+    "/class_disposition": {
+     "round50": "<absent>",
+     "round67": {
+      "block-device": "not-publishable-by-design, same reason; no block-device row exists on these four carriers.",
+      "char-device": "not-publishable-by-design: an extractor that writes regular files cannot create a device node, so no per-row gap record can exist for this class; the class is accounted for by the re-derived oracle table (every char-device row re-derived from the carrier bytes by unsquashfs) and by the nonregular_unpublished check (no published regular file may equal a char-device path). A gap that names a char device is still allowed and counted."
+     }
+    },
+    "/required/char-device": {
+     "round50": true,
+     "round67": false
+    },
+    "/round": {
+     "round50": "<absent>",
+     "round67": "round-67"
+    },
+    "/supersedes": {
+     "round50": "<absent>",
+     "round67": "tools/round-50/gap-rule.json (frozen; a per-row required disposition for char-device entries, generalised from the Cable-carrier class where one char device exists)"
+    }
+   },
+   "removed_identical": true,
+   "removed_silent_round50": {
+    "char-device": [
+     "247:0"
+    ]
+   },
+   "removed_silent_round67": {
+    "char-device": [
+     "247:0"
+    ]
+   },
+   "required_char_device": [
+    true,
+    false
+   ],
+   "structural_identical": true
+  },
+  "l1_pre_receipt_at_freeze": {
+   "counter_sha256": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+   "exit_code": 0,
+   "gaps_ok_round50": 2,
+   "gaps_ok_round67": 4,
+   "red_controls": {
+    "dropped_symlink_gap": "bin/adsl",
+    "junk_rule_note": "636 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+    "junk_rule_would_pass": true,
+    "publication_check_names_it": true,
+    "publication_hits": [
+     "firmware.bin_extract/dev/led"
+    ],
+    "published_char_device_path": "dev/led",
+    "round67_rule_note": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['bin/adsl']",
+    "round67_rule_still_fails": true
+   }
+  },
+  "l1_pre_receipt_at_head": {
+   "counter_sha256": "e44cacf5dd38f40ec6db87a0fae35cd53f16d719531ad610223a4699fa32dc5f",
+   "exit_code": 0,
+   "gaps_ok_round50": 2,
+   "gaps_ok_round67": 4,
+   "red_controls": {
+    "dropped_symlink_gap": "bin/adsl",
+    "junk_rule_note": "636 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+    "junk_rule_would_pass": true,
+    "publication_check_names_it": true,
+    "publication_hits": [
+     "firmware.bin_extract/dev/led"
+    ],
+    "published_char_device_path": "dev/led",
+    "round67_rule_note": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['bin/adsl']",
+    "round67_rule_still_fails": true
+   }
+  },
+  "mutation_battery_score_at_freeze_rev": {
+   "exit_code": 0,
+   "killed_after": 2,
+   "killed_before": 0,
+   "note": "supplementary; the L1 owns the R67-C2 after-arm",
+   "pristine": {
+    "battery_selftest_exit": 0,
+    "closure_selftest_exit": 0,
+    "closure_summary": "SELFTEST CLEAN cases=30 failures=0",
+    "coverage_selftest_exit": 0,
+    "coverage_summary": "SELFTEST CLEAN cases=26 failures=0"
+   },
+   "rev": "3663e6b21dccf4c4957f459301156664d8b151d6",
+   "survived_before": 2,
+   "survivors_total": 2,
+   "verdicts": {
+    "closure-arm-true": {
+     "after_failed_cases": [
+      "arm-false-bound"
+     ],
+     "after_selftest_exit": 1,
+     "before_selftest_exit": 0,
+     "before_survived": true,
+     "killed_after": true
+    },
+    "coverage-equiv-true": {
+     "after_failed_cases": [
+      "equiv-doctored-bound",
+      "equiv-doctored-diffs"
+     ],
+     "after_selftest_exit": 1,
+     "before_selftest_exit": 0,
+     "before_survived": true,
+     "killed_after": true
+    }
+   },
+   "verified": true
+  },
+  "round50_rule_unchanged_since_its_freeze": {
+   "last_commit": "435d41fd4ad9211d1579fc447936fb33d2b74467 round-50: FREEZE \u2014 plan, C1/C2 counters, oracle and gap tables, run harness, controls driver and fixtures, r49 selftest",
+   "sha256": "43f7c8d712f7e460a13f88b2efffced461bc9081f92bf1fe7eef0c3a900fa0ef"
+  }
+ },
+ "wave": "w1",
+ "worktree_matches_head": true,
+ "wrote_outside_seat_dir": []
+}

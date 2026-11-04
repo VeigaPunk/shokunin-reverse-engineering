@@ -1,0 +1,43 @@
+{
+ "round": "round-67",
+ "supersedes": "tools/round-50/gap-rule.json (frozen; a per-row required disposition for char-device entries, generalised from the Cable-carrier class where one char device exists)",
+ "class_disposition": {
+  "char-device": "not-publishable-by-design: an extractor that writes regular files cannot create a device node, so no per-row gap record can exist for this class; the class is accounted for by the re-derived oracle table (every char-device row re-derived from the carrier bytes by unsquashfs) and by the nonregular_unpublished check (no published regular file may equal a char-device path). A gap that names a char device is still allowed and counted.",
+  "block-device": "not-publishable-by-design, same reason; no block-device row exists on these four carriers."
+ },
+ "allowed": {
+  "symlink": [
+   "unpublished-entry"
+  ],
+  "char-device": [
+   "unpublished-entry"
+  ],
+  "block-device": [],
+  "fifo": [
+   "unpublished-entry"
+  ],
+  "socket": [
+   "unpublished-entry"
+  ],
+  "dir": []
+ },
+ "required": {
+  "symlink": true,
+  "char-device": true,
+  "block-device": false,
+  "fifo": false,
+  "socket": false,
+  "dir": false
+ },
+ "removed": {
+  "diagnostic": "MaliciousSymlinkRemoved",
+  "kinds": [
+   "symlink"
+  ],
+  "disposition": "exclusive"
+ },
+ "structural": {
+  "depth-limited": 1,
+  "unknown-chunk-handler": 0
+ }
+}

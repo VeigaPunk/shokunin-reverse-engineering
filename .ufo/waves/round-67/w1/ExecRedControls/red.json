@@ -1,0 +1,1155 @@
+{
+ "all_fixtures_correct": true,
+ "carrier_census": {
+  "note": "block-device/fifo/socket rows do not exist on these four carriers; fixtures (a)/(b) append them to a real envelope",
+  "per_carrier": {
+   "c6430": {
+    "char_device_details": [
+     "247:0"
+    ],
+    "gaps": 568,
+    "kinds": {
+     "char-device": 1,
+     "dir": 255,
+     "symlink": 568
+    },
+    "removals": 1,
+    "rows": 824
+   },
+   "c6490": {
+    "char_device_details": [
+     "247:0"
+    ],
+    "gaps": 613,
+    "kinds": {
+     "char-device": 1,
+     "dir": 300,
+     "symlink": 613
+    },
+    "removals": 1,
+    "rows": 914
+   },
+   "g7581": {
+    "char_device_details": [
+     "136:0",
+     "136:1",
+     "136:2",
+     "136:3",
+     "136:4",
+     "136:5",
+     "136:6",
+     "136:7",
+     "230:0",
+     "247:0",
+     "3:0",
+     "3:1",
+     "3:2"
+    ],
+    "gaps": 637,
+    "kinds": {
+     "char-device": 13,
+     "dir": 349,
+     "symlink": 639
+    },
+    "removals": 3,
+    "rows": 1001
+   },
+   "g7582": {
+    "char_device_details": [
+     "136:0",
+     "136:1",
+     "136:2",
+     "136:3",
+     "136:4",
+     "136:5",
+     "136:6",
+     "136:7",
+     "230:0",
+     "247:0",
+     "3:0",
+     "3:1",
+     "3:2"
+    ],
+    "gaps": 637,
+    "kinds": {
+     "char-device": 13,
+     "dir": 349,
+     "symlink": 639
+    },
+    "removals": 3,
+    "rows": 1001
+   }
+  },
+  "synthetic_only_kinds": [
+   "block-device",
+   "fifo",
+   "socket"
+  ]
+ },
+ "carrier_fresh_ok_support": {
+  "carrier_pins_in_prior": [],
+  "clauses": [
+   "carrier_present",
+   "carrier_pin_ok",
+   "carrier_fresh_ok",
+   "layout_ok",
+   "carve_ok",
+   "oracle_ok",
+   "oracle_rederived_ok",
+   "nonregular_ok",
+   "receipt_present",
+   "receipt_fresh",
+   "evidence_envelope_ok",
+   "subject_pin_ok",
+   "operation_ok",
+   "handler_ok",
+   "chunks_ok",
+   "oracle_hits_ok",
+   "gaps_ok",
+   "nonregular_unpublished_ok",
+   "path_shape_ok",
+   "run_provenance_ok",
+   "parameters_ok",
+   "evidence_id_ok",
+   "projection_ok"
+  ],
+  "dropped_clauses": [],
+  "freshness_holds": true,
+  "prior_pin_count": 18,
+  "prior_pin_sources": [
+   ".ufo/waves/round-41/c1/carriers.json",
+   "tools/round-49/carriers.json",
+   "tools/round-42/prior-pins.json"
+  ]
+ },
+ "claim": "R67-C1",
+ "control_reproduced": true,
+ "fixtures": [
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "unmutated g7581 envelope under its own root: the round-50 rule still fails on the 13 unrecorded char devices",
+   "fired_correctly": true,
+   "id": "base-g7581",
+   "output_directory": "fixtures/base-g7581/run/extract",
+   "own_root": "fx-base-g7581/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/base-g7581/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "spec_ref": "-"
+  },
+  {
+   "baseline_note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "c6490",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "unmutated c6490 envelope under its own root",
+   "fired_correctly": true,
+   "id": "base-c6490",
+   "output_directory": "fixtures/base-c6490/run/extract",
+   "own_root": "fx-base-c6490/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/base-c6490/run",
+   "round50": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "spec_ref": "-"
+  },
+  {
+   "baseline_note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "c6490",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "append a block-device oracle row with NO gap: the class is not required, so this must NOT fail",
+   "fired_correctly": true,
+   "id": "a0-block-device-no-gap",
+   "output_directory": "fixtures/a0-block-device-no-gap/run/extract",
+   "own_root": "fx-a0-block-device-no-gap/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/a0-block-device-no-gap/run",
+   "round50": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 1 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 0 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "spec_ref": "(a)"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "append a block-device row WITH an unpublished-entry gap: allowed.block-device is [], so the rule rejects the gap while waiving the row",
+   "fired_correctly": true,
+   "id": "a1-block-device-with-gap",
+   "output_directory": "fixtures/a1-block-device-with-gap/run/extract",
+   "own_root": "fx-a1-block-device-with-gap/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/a1-block-device-with-gap/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'unpublished-entry' not allowed for 'block-device' entry 'dev/sda1' (allowed [])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'unpublished-entry' not allowed for 'block-device' entry 'dev/sda1' (allowed [])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(a)+"
+  },
+  {
+   "baseline_note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "c6490",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "append a fifo row WITH its unpublished-entry gap: the gap is admitted and the class is not required",
+   "fired_correctly": true,
+   "id": "b0-fifo-with-gap",
+   "output_directory": "fixtures/b0-fifo-with-gap/run/extract",
+   "own_root": "fx-b0-fifo-with-gap/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/b0-fifo-with-gap/run",
+   "round50": {
+    "correct": true,
+    "expected": "pass",
+    "note": "614 gaps (1 structural), 1 removals, 1 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "614 gaps (1 structural), 1 removals, 0 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "spec_ref": "(b)-before"
+  },
+  {
+   "baseline_note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "c6490",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "append a fifo row whose unpublished-entry gap is ABSENT: fifo is not required, so this must NOT fail",
+   "fired_correctly": true,
+   "id": "b1-fifo-gap-removed",
+   "output_directory": "fixtures/b1-fifo-gap-removed/run/extract",
+   "own_root": "fx-b1-fifo-gap-removed/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/b1-fifo-gap-removed/run",
+   "round50": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 1 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 0 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "spec_ref": "(b)"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "a fifo row with a gap kind that is not in allowed.fifo",
+   "fired_correctly": true,
+   "id": "b2-fifo-wrong-gap-kind",
+   "output_directory": "fixtures/b2-fifo-wrong-gap-kind/run/extract",
+   "own_root": "fx-b2-fifo-wrong-gap-kind/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/b2-fifo-wrong-gap-kind/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'missing-extractor-dependency' not allowed for 'fifo' entry 'dev/fifo-test' (allowed ['unpublished-entry'])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'missing-extractor-dependency' not allowed for 'fifo' entry 'dev/fifo-test' (allowed ['unpublished-entry'])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(b)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a depth-limited gap that carries a path (structural kinds may not)",
+   "fired_correctly": true,
+   "id": "c0-structural-kind-with-path",
+   "output_directory": "fixtures/c0-structural-kind-with-path/run/extract",
+   "own_root": "fx-c0-structural-kind-with-path/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/c0-structural-kind-with-path/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "structural gap kind 'depth-limited' carries a path 'fx-c0-structural-kind-with-path/firmware.bin_extract/bin/adsl'",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "structural gap kind 'depth-limited' carries a path 'fx-c0-structural-kind-with-path/firmware.bin_extract/bin/adsl'",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(c)"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "an unpublished-entry gap naming a dir row (allowed.dir == [])",
+   "fired_correctly": true,
+   "id": "c1-gap-on-empty-allowed-kind",
+   "output_directory": "fixtures/c1-gap-on-empty-allowed-kind/run/extract",
+   "own_root": "fx-c1-gap-on-empty-allowed-kind/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/c1-gap-on-empty-allowed-kind/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'unpublished-entry' not allowed for 'dir' entry 'bin' (allowed [])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'unpublished-entry' not allowed for 'dir' entry 'bin' (allowed [])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(c)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a REA-only gap kind carrying a symlink path",
+   "fired_correctly": true,
+   "id": "c2-foreign-kind-with-path",
+   "output_directory": "fixtures/c2-foreign-kind-with-path/run/extract",
+   "own_root": "fx-c2-foreign-kind-with-path/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/c2-foreign-kind-with-path/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'missing-extractor-dependency' not allowed for 'symlink' entry 'bin/adsl' (allowed ['unpublished-entry'])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'missing-extractor-dependency' not allowed for 'symlink' entry 'bin/adsl' (allowed ['unpublished-entry'])",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(c)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a path-less gap kind with no structural allowance",
+   "fired_correctly": true,
+   "id": "c3-pathless-foreign-kind",
+   "output_directory": "fixtures/c3-pathless-foreign-kind/run/extract",
+   "own_root": "fx-c3-pathless-foreign-kind/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/c3-pathless-foreign-kind/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'missing-extractor-dependency' has no path and no structural allowance",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "gap kind 'missing-extractor-dependency' has no path and no structural allowance",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(c)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a second path-less depth-limited gap (allowance 1)",
+   "fired_correctly": true,
+   "id": "c4-structural-allowance-exceeded",
+   "output_directory": "fixtures/c4-structural-allowance-exceeded/run/extract",
+   "own_root": "fx-c4-structural-allowance-exceeded/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/c4-structural-allowance-exceeded/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "structural gaps over allowance {'depth-limited': [2, 1]}",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "structural gaps over allowance {'depth-limited': [2, 1]}",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(c)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "one path-less unknown-chunk-handler gap (allowance 0)",
+   "fired_correctly": true,
+   "id": "c5-zero-allowance-kind",
+   "output_directory": "fixtures/c5-zero-allowance-kind/run/extract",
+   "own_root": "fx-c5-zero-allowance-kind/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/c5-zero-allowance-kind/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "structural gaps over allowance {'unknown-chunk-handler': [1, 0]}",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "structural gaps over allowance {'unknown-chunk-handler': [1, 0]}",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(c)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "removal",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a MaliciousSymlinkRemoved diagnostic naming a char-device entry (removed.kinds is symlink only)",
+   "fired_correctly": true,
+   "id": "d1-removal-names-char-device",
+   "output_directory": "fixtures/d1-removal-names-char-device/run/extract",
+   "own_root": "fx-d1-removal-names-char-device/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/d1-removal-names-char-device/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal at 'dev/led' names a 'char-device' entry; removed.kinds is ['symlink']",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal at 'dev/led' names a 'char-device' entry; removed.kinds is ['symlink']",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(d)"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "removal",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "a removal diagnostic naming a fifo entry",
+   "fired_correctly": true,
+   "id": "d2-removal-names-fifo",
+   "output_directory": "fixtures/d2-removal-names-fifo/run/extract",
+   "own_root": "fx-d2-removal-names-fifo/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/d2-removal-names-fifo/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal at 'dev/fifo-test' names a 'fifo' entry; removed.kinds is ['symlink']",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal at 'dev/fifo-test' names a 'fifo' entry; removed.kinds is ['symlink']",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(d)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "removal",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a symlink entry that is both gapped and removed (exclusivity)",
+   "fired_correctly": true,
+   "id": "d3-gapped-and-removed",
+   "output_directory": "fixtures/d3-gapped-and-removed/run/extract",
+   "own_root": "fx-d3-gapped-and-removed/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/d3-gapped-and-removed/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "entry 'dev/log' is both gapped and removed",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "entry 'dev/log' is both gapped and removed",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(d)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "removal",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a removal link outside the trusted run root",
+   "fired_correctly": true,
+   "id": "d4-removal-outside-trusted-root",
+   "output_directory": "fixtures/d4-removal-outside-trusted-root/run/extract",
+   "own_root": "fx-d4-removal-outside-trusted-root/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/d4-removal-outside-trusted-root/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal diagnostic without a path under the root: '$input'",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal diagnostic without a path under the root: '$input'",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(d)+"
+  },
+  {
+   "baseline_note": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "g7581",
+   "clause": "removal",
+   "delta": {
+    "gaps": 1,
+    "nonregular_rows": 0,
+    "rows_dropped": []
+   },
+   "description": "a removal diagnostic that resolves to no non-regular entry",
+   "fired_correctly": true,
+   "id": "d5-removal-names-no-row",
+   "output_directory": "fixtures/d5-removal-names-no-row/run/extract",
+   "own_root": "fx-d5-removal-names-no-row/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/d5-removal-names-no-row/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal resolves to 0 non-regular entries at 'dev/ghost'",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "fail",
+    "note": "removal resolves to 0 non-regular entries at 'dev/ghost'",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "spec_ref": "(d)+"
+  },
+  {
+   "baseline_note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "c6490",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 0,
+    "rows_dropped": [
+     [
+      "dev/led",
+      "char-device",
+      "247:0"
+     ]
+    ]
+   },
+   "description": "the c6490 char device with a detail the round-50 silent row never listed: round 50 fails, round 67 admits it with no evidence at all",
+   "fired_correctly": true,
+   "id": "e1-char-device-new-detail",
+   "output_directory": "fixtures/e1-char-device-new-detail/run/extract",
+   "own_root": "fx-e1-char-device-new-detail/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/e1-char-device-new-detail/run",
+   "round50": {
+    "correct": true,
+    "expected": "fail",
+    "note": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/led']",
+    "observed": "fail",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "spec_ref": "(e)"
+  },
+  {
+   "baseline_note": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+   "baseline_round67_pass": true,
+   "carrier": "c6490",
+   "clause": "gaps_ok",
+   "delta": {
+    "gaps": 0,
+    "nonregular_rows": 1,
+    "rows_dropped": []
+   },
+   "description": "a row whose kind is spelled char_device: an unknown kind defaults to not-required, so the function admits it; the score-level gap_rule_ok binding is what catches it",
+   "fired_correctly": true,
+   "id": "h1-kind-spelling-drift",
+   "output_directory": "fixtures/h1-kind-spelling-drift/run/extract",
+   "own_root": "fx-h1-kind-spelling-drift/firmware.bin_extract",
+   "own_trusted_run_root": "fixtures/h1-kind-spelling-drift/run",
+   "round50": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 1 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "round67": {
+    "correct": true,
+    "expected": "pass",
+    "note": "613 gaps (1 structural), 1 removals, 0 silent, on 915 non-regular entries",
+    "observed": "pass",
+    "reason_matches": true
+   },
+   "score_level_binding": {
+    "gap_rule_ok_would_be_false": true,
+    "kinds_seen_extra": [
+     "char_device"
+    ],
+    "note": "measure() computes uncovered = kinds_seen - allowed keys; a drifted kind therefore fails b:gap_rule_ok even though disposition_check alone admits the row"
+   },
+   "spec_ref": "(h)"
+  }
+ ],
+ "freeze": "3663e6b21dccf4c4957f459301156664d8b151d6",
+ "import": {
+  "call": "importlib.util.spec_from_file_location('c1_counter_r50', /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-50/c1-counter.py)",
+  "engine_sha256_asserted": true,
+  "entry_points": [
+   "disposition_check",
+   "nonregular_published",
+   "gap_rule_model",
+   "parse_nonregular",
+   "subject_root",
+   "diagnostic_rel",
+   "gaps",
+   "diagnostics",
+   "published",
+   "extract_rel"
+  ]
+ },
+ "independent_recompute": {
+  "gaps_ok_round50": 2,
+  "gaps_ok_round67": 4,
+  "matches_wrapper": true,
+  "per_carrier": {
+   "c6430": {
+    "note_round50": "568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries",
+    "note_round67": "568 gaps (1 structural), 1 removals, 0 silent, on 824 non-regular entries",
+    "round50": true,
+    "round67": true
+   },
+   "c6490": {
+    "note_round50": "613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries",
+    "note_round67": "613 gaps (1 structural), 1 removals, 0 silent, on 914 non-regular entries",
+    "round50": true,
+    "round67": true
+   },
+   "g7581": {
+    "note_round50": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']",
+    "note_round67": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+    "round50": false,
+    "round67": true
+   },
+   "g7582": {
+    "note_round50": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']",
+    "note_round67": "637 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+    "round50": false,
+    "round67": true
+   }
+  }
+ },
+ "instrument_moved_during_run": false,
+ "instrument_pins": {
+  "chain": [
+   {
+    "commit": "3663e6b21dccf4c4957f459301156664d8b151d6",
+    "disclosed_in_claims": false,
+    "sha256": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+    "subject": "round-67: claims frozen \u2014 R67-C1 (LE AVM Frontier -> Core under the class rule) and R67-C2 (the two mutation survivors), instruments pinned, before-arms committed"
+   },
+   {
+    "commit": "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391",
+    "disclosed_in_claims": true,
+    "sha256": "55decb5133499633b0eb81eeeec7ae8564c34e78f6f2d1384de2f42ffba0983a",
+    "subject": "round-67: instrument correction \u2014 the patched gap-rule name must be lane-relative (the engine reads it through git show); the before record re-taken"
+   },
+   {
+    "commit": "ecc4de0ea319647af5c2573523e1b4d6f3965299",
+    "disclosed_in_claims": true,
+    "sha256": "e44cacf5dd38f40ec6db87a0fae35cd53f16d719531ad610223a4699fa32dc5f",
+    "subject": "round-67: instrument correction 2 \u2014 the REA package re-pin (the r42 lock digest is no longer reproducible; version + package.json sha unchanged), the before record re-taken"
+   },
+   {
+    "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+    "disclosed_in_claims": true,
+    "sha256": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+    "subject": "round-67: instrument repairs from wave 1 \u2014 rule silent row restored, clause set unchanged, rule pinned and control receipt bound, battery kill test exact-set with its case inventory asserted; before records re-taken"
+   }
+  ],
+  "claims_supersessions_recorded": 5,
+  "commits_touching_instrument_since_freeze": [
+   "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391",
+   "ecc4de0ea319647af5c2573523e1b4d6f3965299",
+   "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6"
+  ],
+  "control_receipt_binding": {
+   "binds_second_conjunct": true,
+   "control_ok": true,
+   "equals_seat_copy": false,
+   "gaps_ok_round50": 2,
+   "gaps_ok_round67": 4,
+   "path": ".ufo/waves/round-67/l1/pre/control-dryrun.json",
+   "present_at_head": true,
+   "present_at_rev": false,
+   "receipt_counter_matches_instrument": false,
+   "receipt_counter_sha256": "e44cacf5dd38f40ec6db87a0fae35cd53f16d719531ad610223a4699fa32dc5f",
+   "receipt_rule_matches_rule_under_test": false,
+   "receipt_rule_v2_sha256": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
+   "rev_note": "rev is the measured revision; the base a7a4ce69 predates the round-67 files, so the score's rev must be >= the freeze",
+   "sha256_at_head": "69cb4a99311e45f1bb855c88291eaaa36814a1c055dbb72f36de77022983ca41"
+  },
+  "control_with_freeze_blob": {
+   "delta_is_counter_digest_only": true,
+   "exit": 0,
+   "gaps_ok_round50": 2,
+   "gaps_ok_round67": 4,
+   "same_numbers_as_working": true
+  },
+  "declared_matches_working_file": true,
+  "declared_pin_in_claims": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+  "dispatch_pin": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+  "dispatch_pin_is_freeze_blob": true,
+  "gaprule_patch": {
+   "absolute_path_lookup_exit": 128,
+   "blob_sha256": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
+   "lane_relative": true,
+   "resolves_at_freeze": true,
+   "value": "tools/round-67/gap-rule-v2.json"
+  },
+  "head_blob_sha256": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+  "head_commit": "2dd5f2cd4b854ccecc0a55d75f960bc851cdab13",
+  "patch_surface": {
+   "clauses_unchanged": true,
+   "docstring_names_rea_replacement": false,
+   "documented_patch_count_word": "five",
+   "engine_clause_count": 23,
+   "note": "the engine checks the REA package through this attribute; the wrapper replaces it wholesale. The numbered list says 'five things' and does not name that replacement, though the receipt carries patches.rea_pkg",
+   "replaces_mod_rea_package_problems": true,
+   "returned_keys": [
+    "afterdir",
+    "clauses",
+    "core_heading",
+    "dropped_clauses",
+    "entry",
+    "frontier_mark",
+    "gap_rule",
+    "opened_dates",
+    "prov_base",
+    "prov_segment",
+    "rea_pkg",
+    "stem"
+   ]
+  },
+  "rea_pkg_repin": {
+   "package_json_sha256_matches_host": true,
+   "package_lock_path": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/package-lock.json",
+   "package_lock_sha256_matches_host": true,
+   "package_root": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents",
+   "package_root_exists": true,
+   "present": true,
+   "supersedes": "tools/round-42/rea-pkg.json package_lock_sha256 d42d56f0 (the npm registry re-resolved the transitive set; a fresh npx cache reproduces 815c18f1 today, and no copy of the old lock bytes survives)",
+   "version": "6.5.0"
+  },
+  "undisclosed_instrument_commits": [],
+  "working_file_sha256": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+  "working_matches_head": true
+ },
+ "pins": {
+  "counter": {
+   "path": "tools/round-67/avm-le-counter.py",
+   "sha256_at_run": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b"
+  },
+  "engine": {
+   "path": "tools/round-50/c1-counter.py",
+   "sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813"
+  },
+  "rule_r50": {
+   "path": "tools/round-50/gap-rule.json",
+   "sha256": "43f7c8d712f7e460a13f88b2efffced461bc9081f92bf1fe7eef0c3a900fa0ef"
+  },
+  "rule_v2": {
+   "all_four_agree": true,
+   "declared_in_claims": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+   "declared_in_counter": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+   "head_blob_sha256": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
+   "path": "tools/round-67/gap-rule-v2.json",
+   "sha256_at_run": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0"
+  }
+ },
+ "rev": "a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92",
+ "rule_decomposition": {
+  "adding_a_claim_key_would_fail_the_binding": {
+   "note": "gap_rule_model hard-codes claim R50-C1; the round-67 rule must stay claim-less or b:gap_rule_ok is false",
+   "problems": [
+    "claim 'R67-C1' != R50-C1"
+   ],
+   "would_fail": true
+  },
+  "flip_char_device_back_to_required": {
+   "equals_round50": true,
+   "gaps_ok": 2,
+   "per_carrier": {
+    "c6430": true,
+    "c6490": true,
+    "g7581": false,
+    "g7582": false
+   },
+   "problems": []
+  },
+  "only_required_char_device_differs": true,
+  "restore_round50_silent_row_on_v2": {
+   "changes_any_carrier": false,
+   "gaps_ok": 4,
+   "per_carrier": {
+    "c6430": true,
+    "c6490": true,
+    "g7581": true,
+    "g7582": true
+   },
+   "problems": []
+  }
+ },
+ "rule_delta": {
+  "allowed_identical": true,
+  "model_has_class_disposition": false,
+  "model_ignores": [
+   "class_disposition",
+   "round",
+   "supersedes"
+  ],
+  "model_problems": {
+   "round50": [],
+   "round67": []
+  },
+  "removed_diagnostic_identical": true,
+  "removed_kinds_identical": true,
+  "removed_silent": {
+   "round50": {
+    "char-device": [
+     "247:0"
+    ]
+   },
+   "round67": {
+    "char-device": [
+     "247:0"
+    ]
+   }
+  },
+  "required_delta": {
+   "char-device": [
+    true,
+    false
+   ]
+  },
+  "round67_claim_key_absent": true,
+  "structural_identical": true
+ },
+ "schema": "kaidoku-r67-w1-exec-red-controls-v1",
+ "seat": "ExecRedControls",
+ "seat_required_fixtures": {
+  "all_correct": true,
+  "ids": [
+   "a0-block-device-no-gap",
+   "b1-fifo-gap-removed",
+   "c0-structural-kind-with-path",
+   "d1-removal-names-char-device"
+  ],
+  "polarity": {
+   "a0-block-device-no-gap": {
+    "expected_round67": "pass",
+    "observed": "pass"
+   },
+   "b1-fifo-gap-removed": {
+    "expected_round67": "pass",
+    "observed": "pass"
+   },
+   "c0-structural-kind-with-path": {
+    "expected_round67": "fail",
+    "observed": "fail"
+   },
+   "d1-removal-names-char-device": {
+    "expected_round67": "fail",
+    "observed": "fail"
+   }
+  }
+ },
+ "supplementary": {
+  "publication": {
+   "all_five_kinds_named": true,
+   "clause": "nonregular_unpublished_ok",
+   "fired_correctly": true,
+   "id": "f-publication",
+   "non_entry_regular_file_named": false,
+   "own_root": "fx-f-publication/firmware.bin_extract",
+   "probes": [
+    {
+     "kind": "symlink",
+     "named": true,
+     "rel": "bin/adsl"
+    },
+    {
+     "kind": "char-device",
+     "named": true,
+     "rel": "dev/led"
+    },
+    {
+     "kind": "dir",
+     "named": true,
+     "rel": "bin"
+    },
+    {
+     "kind": "fifo",
+     "named": true,
+     "rel": "dev/fifo-test"
+    },
+    {
+     "kind": "block-device",
+     "named": true,
+     "rel": "dev/sda1"
+    }
+   ],
+   "spec_ref": "(f)"
+  },
+  "root_none": {
+   "clause": "gaps_ok",
+   "expected": "fail",
+   "fired_correctly": true,
+   "id": "g-root-none",
+   "note": "no extract root: paths cannot be resolved",
+   "observed": "fail",
+   "spec_ref": "(g)"
+  }
+ },
+ "verdict": "battery_green",
+ "wrapper_control": {
+  "byte_identical_to_l1_pre": false,
+  "command": "python3 -I -B tools/round-67/avm-le-counter.py --control --rev a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92",
+  "control_ok": true,
+  "counter_sha256": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+  "differing_top_level_fields": [
+   "counter",
+   "rule_v2_sha256"
+  ],
+  "engine_sha256": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
+  "exit_code": 0,
+  "fresh_sha256": "814f960c54c0b9654547fcffcfb0fa17f8ee80b39ed069f3ccd97cc6f00b2041",
+  "gaps_ok_round50": 2,
+  "gaps_ok_round67": 4,
+  "l1_pre_control_dryrun_sha256": "69cb4a99311e45f1bb855c88291eaaa36814a1c055dbb72f36de77022983ca41",
+  "per_carrier": {
+   "c6430": {
+    "gaps_ok_round50": true,
+    "gaps_ok_round67": true,
+    "note_round50": "568 gaps (1 structural), 1 removals, 1 silent, on 824 non-regular entries"
+   },
+   "c6490": {
+    "gaps_ok_round50": true,
+    "gaps_ok_round67": true,
+    "note_round50": "613 gaps (1 structural), 1 removals, 1 silent, on 914 non-regular entries"
+   },
+   "g7581": {
+    "gaps_ok_round50": false,
+    "gaps_ok_round67": true,
+    "note_round50": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']"
+   },
+   "g7582": {
+    "gaps_ok_round50": false,
+    "gaps_ok_round67": true,
+    "note_round50": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['dev/pts/0', 'dev/pts/1', 'dev/pts/2', 'dev/pts/3', 'dev/pts/4', 'dev/pts/5', 'dev/pts/6', 'dev/pts/7']"
+   }
+  },
+  "red_controls": {
+   "dropped_symlink_gap": "bin/adsl",
+   "junk_rule_note": "636 gaps (1 structural), 3 removals, 0 silent, on 1001 non-regular entries",
+   "junk_rule_would_pass": true,
+   "publication_check_names_it": true,
+   "publication_hits": [
+    "firmware.bin_extract/dev/led"
+   ],
+   "published_char_device_path": "dev/led",
+   "round67_rule_note": "required entry with no disposition (no gap, no MaliciousSymlinkRemoved) on ['bin/adsl']",
+   "round67_rule_still_fails": true
+  },
+  "same_numbers_as_l1_pre": true,
+  "target": 4
+ }
+}

@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 10.0 | Round-66 self-assessment re-derivation: 146/146 knowledge files mapped at the round-66 record, this round's entry included, and re-derived in the same commit that changes the population, under the repaired stem recipe (`tools/round-66/coverage-selfcheck.py --selfcheck`, receipt `.ufo/waves/round-66/l1/scores/c2-after-selfcheck-at-record.json`), with recipe A's four currently unmappable stems emitted as `recipe_a_hidden`; the round-53 and round-51 index measurements stay historical in their own round sections, at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`, and in git history | `corpus/README.md` Coverage map; `tools/round-66/coverage-selfcheck.py --selfcheck` (atoms A1/A2, `recipe_a_equivalent`, `recipe_a_hidden`); the command A transcript re-run by `--equiv` | 66 (self-assessment fraction re-derived; score unchanged) |
+| coverage | 9.72 → 10.0 | Round-66 self-assessment re-derivation: 147/147 knowledge files mapped at the round-67 record, this round's entry included, and re-derived in the same commit that changes the population, under the repaired stem recipe (`tools/round-66/coverage-selfcheck.py --selfcheck`, receipt `.ufo/waves/round-67/l1/scores/coverage-selfcheck-at-record.json`), with recipe A's five currently unmappable stems emitted as `recipe_a_hidden`; the round-53 and round-51 index measurements stay historical in their own round sections, at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`, and in git history | `corpus/README.md` Coverage map; `tools/round-66/coverage-selfcheck.py --selfcheck` (atoms A1/A2, `recipe_a_equivalent`, `recipe_a_hidden`); the command A transcript re-run by `--equiv` | 66 (self-assessment fraction re-derived; score unchanged) |
 | depth | 10 → 10 | 25/25 queue-drain rule blocks have resolvable file/range citations at the round-48 landing (command A, new block 25 with the verdict-meaning table, `citation_resolved_rules 25`; receipt `.ufo/waves/round-48/l1/scores/`); 20/20 queue-drain rule blocks have resolvable file/range citations at `e1c83313f33a3d97edbd8fef402db2d06172fcdc` (round 41, command A, new block 20 at `SKILL.md:387-449` with table v3; craft section `SKILL.md:81-449`; R41-C2 itself stopped, `## Round 41`); 19/19 queue-drain rule blocks have resolvable file/range citations at `4d62ee5a86b4692a13f682b29ed7975e8d7e5326` (round 40, command A, new block 19 at `SKILL.md:348-375` with table v2; `.ufo/waves/round-40/w2/R40W2DepthCount.md`); 18/18 at `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39, command A, `citation_resolved_rules 18`, new block 18 at `SKILL.md:316-343` with its citations resolving; 17/17 at `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31; also 17/17 at `ebe2cb4a`, round 26). History: 9/9 at `638fb211` (luna-round-3); rule blocks grew from 9 to 17 in eight commits from `58116aa1` to `4072ebb3` (2026-10-18 and 2026-10-19), and the row kept 9/9 until round 25 added a recount at `08c7a7299ed61c3fdc30ddb0adfe4e812d5eac76`. **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | craft section `SKILL.md:81-343` (heading line 81, last non-blank line 343 at `52b0eb29`; the baseline range was `SKILL.md:77-191` at `a79945c4`); command A; measured `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39; prior recount `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31); baseline `a79945c4` | r1 measurement + luna-round-3; rule blocks added 2026-10-18 and 2026-10-19; count refreshed rounds 25, 26, 39 and 40 |
 | calibration | 0 → 10 | 4 → 0 self-assessment mismatches at the round-47 landing: `tools/round-47/record.py` re-derives 42 atoms (last two round sections plus the Owned-axes heads) and reports `mismatches []`, `corrections 2`, `exempted 1 <= 3`, battery `3/0` (`.ufo/waves/round-47/l1/scores/c2-at-A7.json`); 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; count measured at `c265db9bd3c0883fbaf4487f839559c85a736826` (`evidence/round-1-2026-10-15/result.json` `measured_revision`; the row said `75af886a` until round 26, which is the luna-round-2 receipt reconciliation, not command B's revision); luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/` | operator-steered r1 + luna-round-2; later calibration claims are in the round sections (outside closures: round 24 rejected-honest-stop, round 25 admitted) Round 50: the round-48 closure `corpus/lessons/round-48-verifier-spotcheck.md` graded calibration `rejected-harmed`; the round-49 record corrections measured `mismatches 9 → 0` (`.ufo/waves/round-49/l1/scores/c2-final.json`); this row is a finite proxy over the atoms its counters name, not an expertise score. |
 
@@ -5189,3 +5189,47 @@ block; (b) the reviewer's routed F1/F3/F6 (claim-file reading, the C1 docstring'
 cleanup); (c) the r63 planned record-section sweep stays open; (d) the standing duties re-run every round that
 lands receipts; the r58/r60 bare-name findings and the r64 placeholder-token disposition stay named debt; (e) the
 AVM LE-SquashFS re-freeze stays routed.
+
+## 2026-11-03 — round 67: LE AVM Frontier → Core under a class rule; the two mutation survivors bound
+
+Base `a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92`; operative freeze `3663e6b21dccf4c4957f459301156664d8b151d6` (the
+first commit adding `.ufo/waves/round-67/claims.json`; carry-in `cf705c53` 21:51:02 → instruments `39a91a99` 21:51:09
+→ freeze 21:51:14, both ancestors exit 0, `l1/records/r67-order.txt`). One v1 wave `r67-w1`, 12 seats, 12 settled,
+0 dead (`l1/records/r67-wave-status.json`). Two claims on distinct axes; no fresh-start binding.
+
+**R67-C1 — coverage, verified.** The pinned round-50 engine, under the round-67 gap rule and the round-67 bindings,
+reports `carriers_matched 4` of `target 4`, `met_target true`, exit 0 at `832399175bf3af1f8a5f684f198fb45da34e313f`
+(receipt `l1/scores/c1-at-landing.json`; every one of the engine's 23 clauses true on all four carriers, no failing
+clause, no false binding, `carriers_unchanged true`, `gap_rule_unchanged true`). Before-arm: the same four committed
+envelopes under the round-50 rule score `gaps_ok` on **2 of 4**, the round-67 rule on 4 of 4, one removed symlink gap
+still fails, a char-device path published as a regular file is caught, and a junk rule that waives symlinks passes the
+first red fixture (`l1/pre/control-dryrun.json`, exit 0). **Surface moved:** `squashfs_v4_le` on LE AVM-marker
+(`hsqs`) members of the four chain-pinned carriers, Frontier → Core (`PROVINCE.md ## Round-67 additions to Core`;
+entry `corpus/knowledge/2026-11-03-r67-avm-le-squashfs-core.md`; map row). The axis score stays 10.0: this is a
+frontier→core move on the coverage surface, not a proxy re-score.
+
+**R67-C2 — depth, verified.** The battery kills both round-66 survivors: `survived_before 2`, `killed_before 0`,
+`killed_after 2`, both pristine counters green (30 and 26 cases), exit 0 at
+`2dd5f2cd4b854ccecc0a55d75f960bc851cdab13` (receipt `l1/scores/c2-at-landing.json`); the do-nothing control scores
+0 of 2 killed (`l1/pre/control-dryrun-c2.json`). The two mutants are the r66 M5 (`arm()` returns `passed: true`) and
+M2 (`recipe_a_equivalence` returns equivalent without running the block); each dies on its own named case
+(`arm-false-bound`; `equiv-doctored-bound` + `equiv-doctored-diffs`), and the exact failed-case-set test means a
+wrong-defect pair cannot certify. **Rule added:** a mutation survivor is closed by a case that exercises the mutated
+function on a false/doctored input; the battery's own mutants N1–N5 (which survived the first freeze) are closed by
+the exact-set test and the asserted case inventory.
+
+**Freeze integrity, disclosed.** Four instrument supersessions were needed before the record, each with its commit,
+reason and re-taken before record in `claims.json` `instrument_supersessions` (`1e7fe7b7` lane-relative rule name,
+`ecc4de0e` REA package re-pin, `7cfe83e4` wave-1 repairs, `3e7b59db` rule revert to its freeze bytes + docstring).
+The predicate sentences never changed (reviewer sha256 `9cbbc4e3…` / `babeca7b…`), the R29 gate reports round-67
+`CLEAN` (no `INSTRUMENT_REVISED`: every change is listed), and the after-arm receipt names the instrument sha it ran.
+The kill rule's "post-freeze instrument edit" clause is read as an *undisclosed* edit, per QUALITY #33; the closure
+rules on that reading, and the report states it.
+
+**planned (next steered round only):** (a) the battery's own survivors: N1/N2 are closed, but a mutant that fails a
+*second* unrelated case still needs a "no extra failures" clause beyond exact-set equality (MutBattery report, Probe
+B); (b) the C1 counter's REA re-pin needs a `package.json`-only pin with a tree digest so the lock substitution is
+not needed; (c) the r63 planned record-section sweep stays open; (d) the standing duties re-run every round that
+lands receipts; (e) the ExecPins F1 reading (supersessions vs the kill rule) is routed to the closure for a ruling;
+(f) the r66 routed defects 1–3 are closed this round (LOG correction entry, receipts carry `rev`, per-seat status
+table `l1/records/r67-wave-status.json`).

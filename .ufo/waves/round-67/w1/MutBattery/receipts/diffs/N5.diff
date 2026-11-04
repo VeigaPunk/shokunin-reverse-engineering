@@ -1,0 +1,12 @@
+--- frozen/mutation-battery.py
++++ N5/mutation-battery.py
+@@ -348,7 +348,8 @@
+             "before_survived": before["exit"] == 0,
+             "after_selftest_exit": after_rc,
+             "after_failed_cases": failed_cases,
+-            "killed_after": after_rc != 0 and EXPECTED_CASE[name] in failed_cases,
++            "killed_after": after_rc != 0 and (EXPECTED_CASE[name] in failed_cases
++                                               or not after_out.is_file()),
+         }
+     pristine = work / "pristine"
+     pristine.mkdir(parents=True, exist_ok=True)

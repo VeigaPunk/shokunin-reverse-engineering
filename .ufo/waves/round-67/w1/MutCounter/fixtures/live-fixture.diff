@@ -1,0 +1,19 @@
+--- fix/head-blob.py	2026-11-03 21:58:40.927790841 -0300
++++ fix/live-fixture.py	2026-11-03 21:59:08.567580989 -0300
+@@ -76,7 +76,7 @@
+ RULE_V2 = "tools/round-67/gap-rule-v2.json"
+ RULE_R50 = "tools/round-50/gap-rule.json"
+ CARRIERS = "tools/round-50/carriers.json"
+-AFTERDIR = "corpus/evidence/round-67/c1"
++AFTERDIR = "corpus/evidence/round-50/c1"
+ ENTRY = "corpus/knowledge/2026-11-03-r67-avm-le-squashfs-core.md"
+ STEM = "2026-11-03-r67-avm-le-squashfs-core"
+ CORE_HEADING = "## Round-67 additions to Core"
+@@ -157,6 +157,7 @@
+     mod.WORK_OVERRIDE = str(work)
+     os.makedirs(str(work), exist_ok=True)
+     kept = tuple(c for c in mod.CLAUSES if c not in DROPPED_CLAUSES)
++    mod.evidence_ids = lambda *a, **k: {}  # fixture stub: the local npx rea-agents 6.5.0 package-lock.json (815c18f1...) no longer matches the frozen pin (d42d56f0...), so evidence_ids() raises Unevaluable before any receipt is emitted
+     mod.CLAUSES = kept
+     return {"gap_rule": str(rule), "afterdir": AFTERDIR, "entry": ENTRY,
+             "stem": STEM, "core_heading": CORE_HEADING,

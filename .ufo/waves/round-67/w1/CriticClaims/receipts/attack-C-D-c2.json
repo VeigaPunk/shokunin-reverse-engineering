@@ -1,0 +1,44 @@
+{
+ "C": {
+  "attack": "C false-kill: an unrelated failing case",
+  "battery_rc": 0,
+  "clause_attacked": "kills both survivors (killed_after definition)",
+  "expected_case": "arm-false-bound",
+  "failed_cases": [],
+  "killed_after_by_shipped_formula": false,
+  "mutant": "closure-boundary.py count-constant 30 -> 31 (arm() untouched)",
+  "residual": "a mutant that breaks an unrelated case also skips the closure-selftest-green case (skipped when --closure is passed), so nothing scores its own selftest",
+  "verdict": "no false kill: an unrelated failure reaches rc!=0 but the EXPECTED_CASE guard refuses to call it a kill"
+ },
+ "D": {
+  "attack": "D false-survive: equivalent without running the block",
+  "battery_rc": 0,
+  "clause_attacked": "the coverage survivor (equiv-doctored-bound/-diffs)",
+  "expected_case": "equiv-doctored-bound",
+  "failed_cases": [],
+  "killed_after_by_shipped_formula": false,
+  "lying_block_fixture": {
+   "block_was_executed_by_mutant": false,
+   "mutant": {
+    "diffs": [],
+    "equivalent": true
+   },
+   "pristine": {
+    "diffs": [
+     "knowledge_files"
+    ],
+    "equivalent": false
+   }
+  },
+  "mutant": "recipe_a_equivalence never calls subprocess; it returns equivalent iff the block TEXT contains '\"mapped\": 1'",
+  "residual": "the doctored fixture differs from the honest one in the block TEXT, so a text-reading mutant can reproduce both answers without executing the block",
+  "verdict": "survives the battery with the named defect present on green-text revisions; the claim's literal survivor (the unconditional M2 patch) is still killed"
+ },
+ "battery_sha256": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab",
+ "closure_pin": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+ "coverage_pin": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+ "expected_case": {
+  "closure-arm-true": "arm-false-bound",
+  "coverage-equiv-true": "equiv-doctored-bound"
+ }
+}
