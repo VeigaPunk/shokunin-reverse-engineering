@@ -20,7 +20,7 @@ jj/git mutation; every write is under `.ufo/waves/round-68/w1/ExecLedger/`.**
 | item | verdict | evidence |
 |---|---|---|
 | Defect 3 (QUALITY #100 companion row for the round-64 findings cell) | **row derived, exact, append-only**; series id `round-64/correction-1` | §1; `evidence/proposed-correction-row.tsv` |
-| Defect 4a (prefile gate receipt) | **run; exit 1 at `6ffa9ce1`** — red for three independent reasons, all expected in-wave (§2.1) | `evidence/prefile-at-6ffa9ce1.txt` |
+| Defect 4a (prefile gate receipt) | **pre-landing run at `6ffa9ce1`: exit 1** (three expected causes); **post-landing run at `9be55c41`: step 2 green, step 3 green (`exact 43 of 43`, exit 0), step 1 red on this seat's 4 unlanded evidence files only** | §2.1, §2.7 |
 | Defect 4b (round-24 ledger retirement) | **21 rows: 20 exact, 1 stray, 16 missing keys**; retirement erratum text supplied | §2.3 + `evidence/proposed-retirement-erratum.md` |
 | Item 3 (round-68 gate verdict) | **FLAGGED `INSTRUMENT_UNPINNED`** ×2 paths; needs one appended v2 row, and the finding is **permanent** for that claims file | §3 |
 
@@ -168,15 +168,15 @@ Full text in `evidence/proposed-retirement-erratum.md`; the operative sentence:
 > round-24 gate stays in the tree as frozen history; future freeze disclosures go to
 > `corpus/claim-freezes-v2.tsv` only.
 
-Landing: (1) the round-68 `LOG.md` entry carries the text (this is the *named* retirement — at
-measurement no LOG entry existed); (2) `corpus/README.md` gains one `## Ledgers` row (the
-working-tree README diff at measurement touches only knowledge/frontier rows, so this is still
-owed); (3) `tools/round-29/prefile-check.sh` step 2, which the L1 has already changed in the working
-tree — **verified below**.
+Landing state at `9be55c41` (observation, not plan): (1) `LOG.md:4137` **does name** erratum r68-1
+with the pin and the stray-row cause, as a summary that repeats the script's "stops at round-52"
+error; (2) `corpus/README.md` carries **no** `claim-freezes` line yet (`grep -n claim-freezes
+corpus/README.md` is empty) — that index row is still owed; (3) `tools/round-29/prefile-check.sh`
+step 2 is committed as a byte-identity pin — **verified below**.
 
-### 2.5 The retired step-2 mechanism the L1 staged — verified, with three prose/logic nits
+### 2.5 The retired step-2 mechanism that landed — verified, with three prose/logic nits
 
-The staged (uncommitted) `tools/round-29/prefile-check.sh` replaces the round-24 run with a
+The committed `tools/round-29/prefile-check.sh` replaces the round-24 run with a
 **byte-identity pin** of the retired ledger (`legacy_sha=2a840d72…`) and renames the check
 `ledger1 retired (erratum r68-1)`. This is stronger than dropping the step: it keeps the retired
 file's bytes provably frozen. Verified:
@@ -184,15 +184,16 @@ file's bytes provably frozen. Verified:
 - **The pin is correct** — `sha256sum corpus/claim-freezes.tsv` and
   `git show HEAD:corpus/claim-freezes.tsv | sha256sum` both give
   `2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81` (observation).
-- **The step passes on the real tree** — running the staged script at HEAD prints
+- **The step passes on the real tree** — running the committed script at HEAD prints
   `prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin`
   (`evidence/prefile-landed-step2-at-6ffa9ce1.txt`).
 
-Three defects to fix before landing (all cosmetic; none changes a verdict):
+Three defects to fix (the mechanism is sound and is committed; these are prose/logic nits, none changes a verdict):
 
 1. **"It stops at round-52"** — false: the last row is `round-35`, and there are no rows for
    rounds 36-52 either (21 rows: 14-32, 34, 35). The true sentence is "it carries nothing after
-   `round-35`".
+   `round-35`". The same sentence landed in `LOG.md:4137`, so the erratum is named but mis-describes
+   the file it retires.
 2. **"the gate reported 20 exact of 36 on every round from 53 on"** — the `exact` count happened to
    be 20 throughout, but `of` grows with the lane: at `f78fc766` (round-53's ledger-verdict commit)
    the gate reads `audited 21, exact 20 of 21, missing ["round-53"], stray ["round-35"]`; at
@@ -206,9 +207,9 @@ Three defects to fix before landing (all cosmetic; none changes a verdict):
 
 (The header comment also keeps the `gate (the` / `freeze-gate.py` line break introduced by the edit.)
 
-### 2.6 What the prefile gate will read once the round lands
+### 2.6 What the prefile gate was projected to read after the landing (confirmed in §2.7)
 
-Projection, not a run (the landing commit is the L1's):
+Projection taken before the landing commit — kept because §2.7 measures the same three steps:
 
 | step | state after the landing commit | basis |
 |---|---|---|
@@ -216,12 +217,61 @@ Projection, not a run (the landing commit is the L1's):
 | 2 ledger1 | exit 0 | staged pin verified against HEAD's blob (§2.5) |
 | 3 ledger2 | exit 0 | the staged `round-68` row makes the disclosure agreement `exact 43 of 43, mismatched [], missing [], stray []` (`evidence/projection-v2-after-landing.json`), and the same shape was proved end-to-end in a two-commit fixture: `exact 1 of 1, exit 0` (`evidence/fixture-valid-row68-row-at-a334d6bf.txt`) |
 
+### 2.7 Post-landing measurement at `9be55c41` (observation)
+
+The round landed while this seat ran: `6ffa9ce1` (wave evidence) → `978436bd` (landing: the ledgers,
+the census, the entries) → `4844eb52` (record) → `4b0892cd` (close) → `9be55c41` (the seat's misplaced
+fixture receipt moved into the wave dir, M68-10). Both gates re-run at `9be55c41`:
+
+**Round-29 gate** (`--disclosures corpus/claim-freezes-v2.tsv`, **exit 0**):
+
+```json
+{"audited": 43, "clean": 21, "disclosures": {"exact": 43, "mismatched": [], "missing": [], "of": 43, "path": "corpus/claim-freezes-v2.tsv", "present": true, "stray": []}, "flagged": ["round-14", "round-14/claims-review.json", "round-15", "round-15/claims-review.json", "round-16", "round-17", "round-18", "round-19", "round-20", "round-21", "round-22", "round-23", "round-25", "round-26", "round-27", "round-28", "round-29", "round-32/claims-v3.json", "round-35/claims-frozen.json", "round-53", "round-64", "round-68"], "rev": "9be55c41173cd6cf52dcbf89b43f7d5d425e9a26", "summary": {"INSTRUMENT_ABSENT": 12, "INSTRUMENT_NONE": 6, "INSTRUMENT_PIN_MISMATCH": 2, "INSTRUMENT_REVISED": 17, "INSTRUMENT_UNPINNED": 12, "INSTRUMENT_UNRESOLVED": 11}}
+```
+`evidence/r29-gate-v2-at-4b0892cd.json` holds the same verdict at the close commit (also exit 0).
+
+**Round-24 gate** (`--disclosures corpus/claim-freezes.tsv`, **exit 1**) — unchanged and unfixable:
+`audited 36, exact 20 of 36, missing` 16 keys, `stray ["round-35"]`
+(`evidence/r24-gate-claim-freezes-at-4b0892cd.json`). This is the receipt that proves the retirement
+was necessary rather than a convenience: the old step could not pass at any revision.
+
+**Prefile wrapper**, two runs:
+
+```
+### at 4b0892cd (the close commit, before this seat's post-landing receipts existed)
+?? tools/round-68/registry-conformance.receipt.json
+prefile: tree NOT CLEAN (1 paths)
+prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin
+prefile: round-29 gate --disclosures corpus/claim-freezes-v2.tsv at 4b0892cde044ba2bf9e5c871caa83fbcce388824 exit=0
+prefile: FAIL
+### exit=1
+```
+
+```
+### at 9be55c41 with this seat's four post-landing receipts present but not yet landed
+?? .ufo/waves/round-68/w1/ExecLedger/evidence/prefile-at-4b0892cd.txt
+?? .ufo/waves/round-68/w1/ExecLedger/evidence/r24-gate-claim-freezes-at-4b0892cd.json
+?? .ufo/waves/round-68/w1/ExecLedger/evidence/r29-gate-v2-at-4b0892cd.exit.txt
+?? .ufo/waves/round-68/w1/ExecLedger/evidence/r29-gate-v2-at-4b0892cd.json
+prefile: tree NOT CLEAN (4 paths)
+prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin
+prefile: round-29 gate --disclosures corpus/claim-freezes-v2.tsv at 9be55c41173cd6cf52dcbf89b43f7d5d425e9a26 exit=0
+prefile: FAIL
+### exit=1
+```
+
+(`evidence/prefile-at-4b0892cd.txt`, `evidence/prefile-at-4b0892cd-final.txt`.) Both steps 2 and 3 are
+green after the landing; the only remaining red is step 1, and its only content is this seat's own
+evidence files, which land with the wave evidence. Nothing else is dirty.
+
 ---
 
 ## 3. Round-68 verdict, and exactly what the gate needs
 
 No `round-68` row exists in `corpus/claim-freezes-v2.tsv` at `6ffa9ce1` (the ledger's last row is
-`round-67`; the gate reports `missing ["round-68"]`). The gate's own audit of the round-68 freeze:
+`round-67`; the gate reports `missing ["round-68"]`) — it landed at `978436bd` with exactly the
+verdict and code set derived here, and the post-landing gate agrees (`exact 43 of 43`, exit 0, §2.7).
+The gate's own audit of the round-68 freeze:
 
 - freeze `1eaf596e5f241762349fbd102c9e09ec1df18e3f` (the first commit adding
   `.ufo/waves/round-68/claims.json`),
@@ -277,6 +327,10 @@ Under `/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-68/w1/Exe
 - `evidence/r24-gate-claim-freezes-at-6ffa9ce1.txt`, `evidence/r29-gate-v2-at-6ffa9ce1.txt` — byte-verbatim gate stdout
 - `evidence/r24-verdicts.tsv` (36 rows), `evidence/r29-verdicts.tsv` (43 rows) — every freeze, every finding field
 - `evidence/projection-v2-after-landing.json` — disclosure agreement with the staged round-68 row
+- `evidence/prefile-at-4b0892cd.txt`, `evidence/prefile-at-4b0892cd-final.txt` — the two post-landing
+  prefile runs (§2.7)
+- `evidence/r29-gate-v2-at-4b0892cd.json`, `evidence/r29-gate-v2-at-4b0892cd.exit.txt`,
+  `evidence/r24-gate-claim-freezes-at-4b0892cd.json` — the post-landing gate runs (exit 0 / exit 1)
 - `evidence/fixture-valid-row68-row-at-a334d6bf.txt`, `evidence/fixture-duplicate-code-row-at-81468c8f.txt`,
   `evidence/fixture-post-freeze-pin-at-db7798fc.txt` — the three fixture receipts (scratch repos, each
   asserting `git rev-parse --show-toplevel` == the fixture dir before any commit; deleted with the scratch)
@@ -286,16 +340,22 @@ No tracked lane file, no fleet file, no other lane, no index, no commit, no push
 
 ## 5. Observation / inference / unknown
 
-- **Observation** — every number in §2.2-§2.3 and §3 is the output of a gate run at `6ffa9ce1`;
-  the verdict tables are transcriptions of the same JSON, not re-derivations.
-- **Observation** — the working tree changed under this seat between 22:44 and 22:52 local
-  (5 → 16 dirty paths, including `corpus/claim-freezes-v2.tsv`, `corpus/claim-freezes-corrections.tsv`
-  and `tools/round-29/prefile-check.sh`), i.e. the L1 (or another writer) is landing the two
-  defects' repairs concurrently. My gate numbers are unaffected (the gates read Git objects at a
-  revision), but the *staged* files are uncommitted and were read as working-tree text — labelled as
-  such wherever cited (§1.3, §2.5, §2.6).
-- **Inference** — that the landing commit will make step 1 clean and step 3 exit 0: derived from the
-  gate's own agreement code plus the fixture, not from a run at a commit that does not exist yet.
+- **Observation** — every number in §2.2-§2.3 and §3 is the output of a gate run at `6ffa9ce1`, and
+  every number in §2.7 of a run at `4b0892cd`/`9be55c41`; the verdict tables are transcriptions of
+  the same JSON, not re-derivations.
+- **Observation** — the lane moved under this seat: HEAD went `6ffa9ce1` → `978436bd` (landing) →
+  `4844eb52` (record) → `4b0892cd` (close) → `9be55c41` (a misplaced fixture receipt moved into the
+  wave dir, M68-10) while §1-§3 were being written, and the working tree went 5 → 16 → 9 → 4 dirty
+  paths. The gates read Git objects at a revision, so the `6ffa9ce1` numbers stand; the files staged
+  at the time (the two ledgers, the prefile script) were read as working-tree text and are labelled
+  so (§1.3, §2.5, §2.6), and all three are committed at `9be55c41` — the audit conclusions did not
+  change when they landed.
+- **Inference → observation** — the pre-landing projection (§2.6) that steps 2 and 3 would go green
+  is confirmed by measurement at `4b0892cd` and `9be55c41` (§2.7): both steps exit 0; step 1 is red
+  only on this seat's own unlanded evidence files.
+- **Unknown** — whether the L1 lands this seat's post-landing receipts (§2.7's evidence files) and
+  the corpus/README.md `## Ledgers` row; the retirement is named in `LOG.md:4137` but not in the
+  corpus index.
 - **Unknown** — whether the L1 will land my row variant or its shorter staged one; both are
   compliant, only one may land (§1.3). Unknown whether the round-68 lesson/LOG will carry the
   erratum verbatim.

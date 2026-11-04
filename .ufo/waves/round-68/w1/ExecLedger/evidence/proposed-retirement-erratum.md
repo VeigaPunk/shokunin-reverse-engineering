@@ -49,15 +49,16 @@
    landing are listed in the seat report §2.5: "stops at round-52" (it stops at `round-35`),
    "20 exact of 36 on every round from 53 on" (it is 20 of 21 at `f78fc766`, 20 of 36 at
    `6ffa9ce1`; what is stable is `stray ["round-35"]`), and the unreachable `${got:-absent}` branch.
-2. `LOG.md` — the round-68 entry carries this erratum text; **at measurement no round-68 LOG entry
-   exists**, so the retirement is not yet *named* in the corpus. Until it is, the only naming is the
-   `erratum r68-1` label inside the script.
+2. `LOG.md` — the round-68 landing entry (`LOG.md:4137`, "Ledgers (closure defects 3 and 4)") **does
+   name** erratum r68-1, the stray `round-35` cause and the pin `2a840d72…`; it is a summary of this
+   text, and it repeats the script's "stops at round-52" error (see nit 1 above). The full erratum is
+   supplied here for the record.
 3. `corpus/README.md` — one line in a new `## Ledgers` section:
 
-   `| `corpus/claim-freezes.tsv` | RETIRED at round 68 (erratum r68-1) — the round-24 gate's ledger, byte-frozen at `a85ca674` (sha256 `2a840d72…`) and pinned by `tools/round-29/prefile-check.sh`; superseded by `corpus/claim-freezes-v2.tsv` (round-29 gate, 43 freezes at `6ffa9ce1`); cannot be brought into agreement (16 missing keys, one stray `round-35` whose `claims.json` was removed at `13d7a815`) |`
+   `| `corpus/claim-freezes.tsv` | RETIRED at round 68 (erratum r68-1) — the round-24 gate's ledger, byte-frozen at `a85ca674` (sha256 `2a840d72…`) and pinned by `tools/round-29/prefile-check.sh`; superseded by `corpus/claim-freezes-v2.tsv` (round-29 gate, `exact 43 of 43` at `9be55c41`); cannot be brought into agreement (16 missing keys, one stray `round-35` whose `claims.json` was removed at `13d7a815`) |`
 
-   (At measurement the working-tree README diff touches only knowledge/frontier rows, so this line is
-   still owed.)
+   **Still owed**: `grep -n claim-freezes corpus/README.md` returns nothing at `9be55c41` — the corpus
+   index does not yet name the retired ledger.
 
 **Rejected alternatives, with reasons.**
 
