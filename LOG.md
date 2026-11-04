@@ -4493,7 +4493,7 @@ fractions — and requires zero mismatches with at least two corrections that ea
   in round 74 (used-by path list, search-note fields and counts, rejected-row reason+flip, erratum
   values) now parse the cell and carry one committed red fixture each; the audit's own receipt
   carries a defect-free `validate` block. Base `pre/c2-at-base.json`: `mismatch_count 8`;
-  landing `l1/scores/c2-at-landing.json` and the tip re-run: 0.
+  the tip re-run `l1/scores/c2-at-tip.json`: 0 (the landing receipt itself records 1, `D16`, by construction; its `validate` block is defect-free).
 - **Gate.** Freeze `ec149dc4` CLEAN, findings [], four instrument paths, at the landing revision
   (`l1/scores/gate-at-freeze.txt`, re-run after the disclosure). The round-74 row is `CLEAN -`.
 - **Sources.** 189 → 191 rows: S284 (`os.path.commonpath`, mined, snapshot 90 223 B, sha256
