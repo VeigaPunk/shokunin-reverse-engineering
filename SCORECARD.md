@@ -6204,6 +6204,11 @@ independent re-derivations (ExecBaseArm, ExecCaseInventory, ExecRebind) reproduc
 forged receipts are all refused, and the three seats that found defects (ReviewerC2, CriticClaims,
 ScribeLesson) are answered by the in-round repairs above or routed below.
 
+**Filing.** The round-29 record gate at `4e23255a` exits 0 with both freezes CLEAN and `--disclosures` exact 54 of 54
+(`l1/scores/gate-at-record.json`); the prefile gate at `eb301514` reports `prefile: PASS` at exit 0 with a defect-free
+internal `validate` (`l1/scores/prefile-at-filing.json`, four-key child environment, stdout digest
+`75c13b8a…`). The lane is pushed and clean before the report is filed.
+
 **planned (next steered round only):** (a) a selftest case that binds the *call site* of each `validate_receipt`
 guard and a case-behaviour check for declared detectors (CriticClaims Q2); (b) one isolating selftest case per surviving `validate_receipt` guard
 and for the `battery()` unparsable-copy cell, with a mutation patch set that scores them (MutInstruments'

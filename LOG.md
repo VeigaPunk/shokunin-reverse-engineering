@@ -4725,6 +4725,10 @@ tied-lowest axis). No nudge waiver is claimed.
   (`l1/pre-append-url-check.txt`); both snapshots are byte-identical to the source seat's independent fetches.
   New knowledge entry `corpus/knowledge/2026-11-04-r79-mutation-and-pointers.md`; the coverage map gains the
   round-79 row.
+- **Round 79 — filing.** The round-29 record gate at `4e23255a` exits 0 (both freezes CLEAN, `--disclosures` exact
+  54 of 54, `l1/scores/gate-at-record.json`); the prefile gate at `eb301514` reports `prefile: PASS` at exit 0 with a
+  defect-free `validate` (`l1/scores/prefile-at-filing.json`). The report is filed after this record and cites the
+  pushed lane tip.
 - **Round 79 — wave.** `r79-w1`: 12 seats in one v1 wave, attack share 4/12 (two reviewers, one critic, one
   mutation-tester), one connector; the L1 held the planner seat (the validator rejects a planner role).
   Independent re-derivations: ExecBaseArm (second mutation implementation, survivor set identical),
