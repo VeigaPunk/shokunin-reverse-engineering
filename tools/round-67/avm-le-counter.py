@@ -14,29 +14,37 @@ silent row.
 
 This instrument is the round-67 re-freeze of that measurement.  It does NOT
 re-implement the scoring engine: it loads `tools/round-50/c1-counter.py` by path
-under its sha256 pin and calls its `measure()`, patching exactly six things:
+under its sha256 pin and calls its `measure()`, patching exactly five things:
 
-  1. GAPRULE   -> tools/round-67/gap-rule-v2.json, whose `required.char-device`
-                  is false and whose `class_disposition` block states the reason;
-                  `allowed`/`removed`/`structural` are unchanged, so a gap that
-                  names a char device is still allowed and counted, and every
-                  symlink stays per-row required.
+  1. GAPRULE   -> tools/round-67/gap-rule-v2.json (pinned by RULE_V2_PIN), whose
+                  `required.char-device` is false and whose `class_disposition`
+                  block states the reason; `allowed`/`removed`/`structural` are
+                  unchanged, so a gap that names a char device is still allowed
+                  and counted, the round-50 `removed.silent` row is kept (inert
+                  under the class rule), and every symlink stays per-row
+                  required.
   2. AFTERDIR  -> corpus/evidence/round-67/c1 (fresh receipts, first added after
                   this round's freeze)
   3. ENTRY/STEM/CORE_HEADING/FRONTIER_MARK/OPENED_DATES -> the round-67
                   documentation bindings
   4. PROV_BASE/PROV_SEGMENT -> /fast/scratch/hyaku/kaidoku-r67/
-  5. CLAUSES   -> the engine's clause set MINUS `carrier_fresh_ok` (this claim is
-                  a re-measurement of the same four pinned carriers; freshness
-                  cannot hold by construction and is not part of the predicate)
-  6. WORK_OVERRIDE -> the --work scratch directory
+  5. WORK_OVERRIDE -> the --work scratch directory
+
+The engine's clause set is used UNCHANGED (all 23 clauses, including
+`carrier_fresh_ok` and `evidence_id_ok`): the round-67 claim is a re-measurement
+of the same four carriers, and the engine's prior-pin sources do not list their
+pins, so freshness holds on its own and is not dropped.
 
 Every other clause (carrier pin, carve, layout, oracle re-derivation, publication
 equality, gaps, path shape, run provenance, parameters, evidence id, projection)
 is the engine's own code, unchanged.
 
-Predicate (byte-identical in plans/round-67-claims.md, .ufo/waves/round-67/
-claims.json, PREDICATE here and every receipt):
+The receipt also binds the predicate's second conjunct: `score()` reads the
+committed control receipt (l1/pre/control-dryrun.json at --rev), requires
+`control_ok true` and `gaps_ok_round50 2`, and records its sha256.
+
+Predicate (byte-identical in .ufo/waves/round-67/claims.json, PREDICATE here and
+every receipt; blockquoted in plans/round-67-claims.md):
 
   R67-C1 is verified iff the pinned round-50 scoring engine, run under the
   round-67 gap rule and the round-67 documentation bindings, reports
@@ -48,8 +56,8 @@ Modes:
   --score --root LANE --rev REV --freeze FREEZE --pkg65 PKG --carrier-cache DIR
           --work DIR --claims PATH --out RECEIPT
       exit 0 verified; 1 not verified (failing clauses and bindings named);
-      2 could-not-evaluate (drifted/absent engine or rule, missing receipt, git
-      failure, absent REA package).
+      2 could-not-evaluate (drifted/absent engine or rule, missing control
+      receipt, git failure, absent REA package, any unexpected error).
   --control --root LANE --rev REV --work DIR --out RECEIPT
       the do-nothing and red controls over the committed round-50 envelopes and
       tables: the round-50 rule leaves gaps_ok on 2 of 4 (the control skips the
@@ -85,7 +93,8 @@ OPENED_DATES = ("2026-11-03",)
 PROV_BASE = "/fast/scratch/hyaku/kaidoku-r67/"
 PROV_SEGMENT = "/kaidoku-r67/"
 TARGET = 4
-DROPPED_CLAUSES = ("carrier_fresh_ok",)
+RULE_V2_PIN = "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0"
+CONTROL_RECEIPT = ".ufo/waves/round-67/l1/pre/control-dryrun.json"
 # The round-42 rea-pkg pin's `package_lock_sha256` (d42d56f0) is no longer
 # reproducible on this host: a fresh npx cache resolves the same rea-agents
 # 6.5.0 artifact (package.json sha256 a5003023, unchanged) but a different
@@ -180,7 +189,7 @@ def rea_package_problems_r67(mod, root, freeze, pkg65):
 
 
 def patch_engine(mod, rule: Path, work: Path, repo: Path) -> dict:
-    """The six disclosed patches.  Everything else is the pinned engine."""
+    """The five disclosed patches.  Everything else is the pinned engine."""
     # the engine reads its rule through `git show <rev>:<path>`, so the patched
     # name must be lane-relative; an absolute path is a git-object lookup miss
     try:
@@ -198,15 +207,13 @@ def patch_engine(mod, rule: Path, work: Path, repo: Path) -> dict:
     mod.PROV_SEGMENT = PROV_SEGMENT
     mod.WORK_OVERRIDE = str(work)
     os.makedirs(str(work), exist_ok=True)
-    kept = tuple(c for c in mod.CLAUSES if c not in DROPPED_CLAUSES)
-    mod.CLAUSES = kept
     mod.rea_package_problems = lambda root, freeze, pkg65: rea_package_problems_r67(
         mod, root, freeze, pkg65)
-    return {"gap_rule": str(rule), "afterdir": AFTERDIR, "entry": ENTRY,
+    return {"gap_rule": rule_rel, "afterdir": AFTERDIR, "entry": ENTRY,
             "stem": STEM, "core_heading": CORE_HEADING,
             "frontier_mark": FRONTIER_MARK, "opened_dates": list(OPENED_DATES),
             "prov_base": PROV_BASE, "prov_segment": PROV_SEGMENT,
-            "clauses": list(kept), "dropped_clauses": list(DROPPED_CLAUSES),
+            "clauses": list(mod.CLAUSES), "dropped_clauses": [],
             "rea_pkg": "round-67 re-pin (version + package.json sha256 + the lock this host "
                        "resolves); the r42 lock d42d56f0 is no longer reproducible"}
 
@@ -228,10 +235,32 @@ def score(args) -> int:
                 "claims predicate differs from PREDICATE: %r != %r"
                 % (pred[:80], PREDICATE[:80]))
         mod, engine_digest = load_engine(repo)
-        rule = Path(args.gap_rule).resolve() if args.gap_rule else repo / RULE_V2
+        rule = repo / RULE_V2
         if not rule.is_file():
             raise Unevaluable(f"gap rule absent: {rule}")
         rule_digest = sha256_file(rule)
+        if rule_digest != RULE_V2_PIN:
+            raise Unevaluable(
+                "gap rule drifted: %s != RULE_V2_PIN %s" % (rule_digest, RULE_V2_PIN))
+        # the predicate's second conjunct: the committed round-50 control must
+        # be the one this receipt names, and it must score 2 of 4
+        ctl_raw = mod.show(repo, args.rev, CONTROL_RECEIPT)
+        if ctl_raw is None:
+            raise Unevaluable("control receipt absent at rev: " + CONTROL_RECEIPT)
+        try:
+            ctl = json.loads(ctl_raw)
+        except json.JSONDecodeError as exc:
+            raise Unevaluable("control receipt is not JSON: %s" % exc)
+        if ctl.get("control_ok") is not True or ctl.get("gaps_ok_round50") != 2:
+            raise Unevaluable(
+                "control receipt does not bind the predicate's second conjunct: "
+                "control_ok=%r gaps_ok_round50=%r"
+                % (ctl.get("control_ok"), ctl.get("gaps_ok_round50")))
+        control_binding = {"path": CONTROL_RECEIPT,
+                           "sha256": sha256_bytes(ctl_raw),
+                           "control_ok": True,
+                           "gaps_ok_round50": 2,
+                           "gaps_ok_round67": ctl.get("gaps_ok_round67")}
         work = Path(args.work or tempfile.mkdtemp(prefix="r67-c1-",
                                                   dir=os.environ.get("TMPDIR") or None))
         work.mkdir(parents=True, exist_ok=True)
@@ -245,14 +274,12 @@ def score(args) -> int:
               "freeze": args.freeze, "predicate": PREDICATE,
               "unevaluable": str(exc), "exit_code": 2}, args.out)
         return 2
-    except Exception as exc:  # the engine's own Unevaluable subclasses
-        if exc.__class__.__name__ in ("Unevaluable", "FrozenPathChanged",
-                                      "RerunEnvError", "OracleEnvError"):
-            emit({"schema": "kaidoku-r67-c1-v1", "claim": "R67-C1", "rev": args.rev,
-                  "freeze": args.freeze, "predicate": PREDICATE,
-                  "unevaluable": str(exc), "exit_code": 2}, args.out)
-            return 2
-        raise
+    except Exception as exc:  # every failure to evaluate is exit 2, never a verdict
+        emit({"schema": "kaidoku-r67-c1-v1", "claim": "R67-C1", "rev": args.rev,
+              "freeze": args.freeze, "predicate": PREDICATE,
+              "unevaluable": "%s: %s" % (exc.__class__.__name__, exc),
+              "exit_code": 2}, args.out)
+        return 2
     fails, binds = mod.failing_lists(res)
     res.update({
         "schema": "kaidoku-r67-c1-v1",
@@ -263,8 +290,8 @@ def score(args) -> int:
         "counter": {"path": TOOL, "sha256": sha256_file(Path(__file__).resolve())},
         "engine": {"path": ENGINE, "sha256": engine_digest,
                    "predicate": "P50-C1"},
-        "rule": {"path": str(rule.relative_to(repo)) if str(rule).startswith(str(repo))
-                 else str(rule), "sha256": rule_digest},
+        "rule": {"path": RULE_V2, "sha256": rule_digest, "pin": RULE_V2_PIN},
+        "control_receipt": control_binding,
         "patches": patches,
         "failing": fails,
         "bindings_false": binds,
@@ -385,7 +412,6 @@ def main(argv=None) -> int:
     ap.add_argument("--rev", default=None)
     ap.add_argument("--freeze", default=None)
     ap.add_argument("--pkg65", default=None)
-    ap.add_argument("--gap-rule", default=None)
     ap.add_argument("--claims", default=".ufo/waves/round-67/claims.json")
     ap.add_argument("--carrier-cache", default=None)
     ap.add_argument("--unblob", default=None)

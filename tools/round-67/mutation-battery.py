@@ -66,8 +66,18 @@ PREDICATE = (
     "green, and the round-66 selftests alone leave both survivors alive (0 of 2)."
 )
 SURVIVORS = ("closure-arm-true", "coverage-equiv-true")
-EXPECTED_CASE = {"closure-arm-true": "arm-false-bound",
-                 "coverage-equiv-true": "equiv-doctored-bound"}
+# the EXACT failed-case set each mutant must produce; containment is not enough
+# (a battery whose kill test accepts any failing case certifies a pair that
+# leaves both declared defects alive -- MutBattery N1/N2, round 67)
+EXPECTED_CASES = {"closure-arm-true": {"arm-false-bound"},
+                  "coverage-equiv-true": {"equiv-doctored-bound",
+                                          "equiv-doctored-diffs"}}
+# the registered case inventory: count and names, asserted on every selftest
+# (a dropped case must fail -- MutBattery N4)
+CASE_INVENTORY = (
+    "closure-pin", "coverage-pin", "arm-false-bound", "arm-true-bound",
+    "equiv-honest-true", "equiv-doctored-bound", "equiv-doctored-diffs",
+    "closure-selftest-green", "coverage-selftest-green")
 
 
 class Unevaluable(Exception):
@@ -153,17 +163,22 @@ def fixture_repo(base: Path, doctored: bool) -> Path:
         "                  \"coverage_score\": %s, \"depth_score\": 10.0}))\n"
         "PY\n```\n" % (mapped, score))
     (d / "SCORECARD.md").write_text(block, encoding="utf-8")
-    subprocess.run(["git", "-C", str(d), "init", "-q"], check=True)
-    top = subprocess.run(["git", "-C", str(d), "rev-parse", "--show-toplevel"],
-                         capture_output=True, text=True, check=True).stdout.strip()
-    if os.path.realpath(top) != os.path.realpath(str(d)):
-        raise Unevaluable("fixture toplevel %r != %r" % (top, str(d)))
-    subprocess.run(["git", "-C", str(d), "-c", "user.name=fixture",
-                    "-c", "user.email=fixture@fixture.local",
-                    "add", "-A"], check=True)
-    subprocess.run(["git", "-C", str(d), "-c", "user.name=fixture",
-                    "-c", "user.email=fixture@fixture.local",
-                    "commit", "-q", "-m", "fixture"], check=True)
+    try:
+        subprocess.run(["git", "-C", str(d), "init", "-q"], check=True,
+                       capture_output=True)
+        top = subprocess.run(["git", "-C", str(d), "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, check=True).stdout.strip()
+        if os.path.realpath(top) != os.path.realpath(str(d)):
+            raise Unevaluable("fixture toplevel %r != %r" % (top, str(d)))
+        subprocess.run(["git", "-C", str(d), "-c", "user.name=fixture",
+                        "-c", "user.email=fixture@fixture.local",
+                        "add", "-A"], check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(d), "-c", "user.name=fixture",
+                        "-c", "user.email=fixture@fixture.local",
+                        "commit", "-q", "-m", "fixture"], check=True,
+                       capture_output=True)
+    except subprocess.CalledProcessError as exc:
+        raise Unevaluable("fixture git failure: %s" % (exc.stderr or exc))
     return d
 
 
@@ -237,6 +252,14 @@ def selftest(args, work: Path) -> int:
         evidence["coverage_selftest"] = st
         check("coverage-selftest-green", st["exit"], 0)
 
+    names = tuple(n for n, _ok, _g, _w in cases)
+    skipped = set()
+    if args.closure:
+        skipped |= {"closure-pin", "closure-selftest-green"}
+    if args.coverage:
+        skipped |= {"coverage-pin", "coverage-selftest-green"}
+    check("case-inventory", names,
+          tuple(n for n in CASE_INVENTORY if n not in skipped))
     failures = [c for c in cases if not c[1]]
     for name, ok, got, want in cases:
         print("%s %s got=%r want=%r" % ("PASS" if ok else "FAIL", name, got, want))
@@ -262,6 +285,11 @@ def control(args, work: Path) -> int:
     closure = repo / R66_CLOSURE
     coverage = repo / R66_COVERAGE
     try:
+        for path, pin in ((closure, CLOSURE_PIN), (coverage, COVERAGE_PIN)):
+            if not path.is_file():
+                raise Unevaluable("pinned instrument absent: %s" % path)
+            if sha256_file(path) != pin:
+                raise Unevaluable("pinned instrument drifted: %s" % path)
         muts = {"closure-arm-true": closure_mutant(closure.read_text(encoding="utf-8")),
                 "coverage-equiv-true": coverage_mutant(coverage.read_text(encoding="utf-8"))}
     except Unevaluable as exc:
@@ -284,14 +312,15 @@ def control(args, work: Path) -> int:
                           "r66_selftest_summary": st["summary"],
                           "survived": st["exit"] == 0}
     survived = sum(1 for v in verdicts.values() if v["survived"])
+    killed = len(verdicts) - survived
     doc = {"schema": "kaidoku-r67-c2-control-v1", "claim": "R67-C2",
            "counter": {"path": TOOL, "sha256": sha256_file(Path(__file__).resolve())},
            "rev": args.rev, "detector": "round-66 selftests only",
            "survivors_total": len(SURVIVORS),
-           "killed_before": len(verdicts) - survived,
+           "killed_before": killed,
            "survived_before": survived,
            "verdicts": verdicts,
-           "control_ok": survived == len(SURVIVORS)}
+           "control_ok": (killed == 0 and survived == len(SURVIVORS))}
     doc["exit_code"] = 0 if doc["control_ok"] else 1
     emit(doc, args.out)
     return doc["exit_code"]
@@ -339,16 +368,19 @@ def score(args, work: Path) -> int:
         after_out = work / ("after-%s.json" % name)
         after_args.out = str(after_out)
         after_rc = selftest(after_args, work / ("work-after-" + name))
-        after = json.loads(after_out.read_text(encoding="utf-8")) \
-            if after_out.is_file() else {"cases": []}
-        failed_cases = [c["case"] for c in after.get("cases") or [] if not c["ok"]]
+        if not after_out.is_file():
+            raise Unevaluable("selftest receipt absent for mutant %s" % name)
+        after = json.loads(after_out.read_text(encoding="utf-8"))
+        failed_cases = sorted(c["case"] for c in after.get("cases") or [] if not c["ok"])
         verdicts[name] = {
             "mutant_sha256": sha256_file(path),
             "before_selftest_exit": before["exit"],
             "before_survived": before["exit"] == 0,
             "after_selftest_exit": after_rc,
             "after_failed_cases": failed_cases,
-            "killed_after": after_rc != 0 and EXPECTED_CASE[name] in failed_cases,
+            "expected_failed_cases": sorted(EXPECTED_CASES[name]),
+            "killed_after": (after_rc != 0
+                             and set(failed_cases) == EXPECTED_CASES[name]),
         }
     pristine = work / "pristine"
     pristine.mkdir(parents=True, exist_ok=True)
