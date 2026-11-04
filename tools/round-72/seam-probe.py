@@ -172,9 +172,10 @@ def binding_verdict(checker: dict | None) -> dict:
     clauses = (checker or {}).get("clauses")
     present = isinstance(clauses, dict)
     clauses = clauses if present else {}
-    return {"present": present,
-            "nonce_ok": clauses.get("run_nonce") is True,
-            "binding_ok": clauses.get("run_binding") is True}
+    nonce_ok = clauses.get("run_nonce") is True and present
+    binding_ok = clauses.get("run_binding") is True and present
+    return {"present": present, "nonce_ok": bool(nonce_ok),
+            "binding_ok": bool(binding_ok)}
 
 
 def parse_environ_file(path: str) -> dict | None:
