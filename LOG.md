@@ -4298,3 +4298,26 @@ fractions — and requires zero mismatches with at least two corrections that ea
   errata (declaration attribution, C2 target typo); census end (181 rows, exit 0, 22 W04).
 - Gate at the record: `.ufo/waves/round-71/l1/scores/gate-at-record.json`; registry conformance at
   the record: `.ufo/waves/round-71/l1/scores/registry-conformance-at-record.json`.
+
+## 2026-11-04 — round 71, KaidokuR71 — close
+
+- **Gate at the record.** `tools/round-29/freeze-gate.py --root . --rev 3e91fb4a --disclosures
+  corpus/claim-freezes-v2.tsv` → exit 0, audited 46, clean 23, disclosures 46 of 46 exact, missing
+  [] stray [] mismatched []; round-71 CLEAN (`l1/scores/gate-at-record.json`; the landing-time run
+  is `gate-at-landing.json`). The record-fix commit `3e91fb4a` carries the SKILL registry row whose
+  purpose cell no longer splits on a pipe token (the round-68 conformance gate read it as thin at
+  `64cc2cff`); at `3e91fb4a` the conformance gate exits 0, mismatches 0, scope 84, registry rows 93
+  (`l1/scores/registry-conformance-at-record.json`).
+- **Freeze integrity under supersession.** The freeze pins `b827a8b5` stay the container's recorded
+  freeze state; the five instruments' supersession at `5cecf4c0` is disclosed in the container's
+  `instrument_supersessions` (path + commit + reason per tool), the predicates are byte-unchanged,
+  and the gate's audit at the record reads CLEAN — the INSTRUMENT_REVISED finding is discharged by
+  the disclosure (the round-67/70 pattern). The container errata name the declaration attribution
+  and the plan's C2 target typo.
+- **Wave.** `r71-w1`: 16 seats, all settled, none dead; dispatch evidence `r71-w1-dispatch.json` +
+  `r71-w1.ready.dispatched`; results `r71-w1-results.json`; settlement `r71-w1-settlement.json`.
+  No residual dispatch.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r71` removed after the close; no pacman transaction ran
+  this round.
+- Files touched by this entry: `.ufo/waves/round-71/l1/scores/gate-*.json`,
+  `.ufo/waves/round-71/l1/scores/registry-conformance-at-record.json`, this LOG.
