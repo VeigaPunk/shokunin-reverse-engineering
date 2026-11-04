@@ -186,6 +186,18 @@ def binding_verdict(checker: dict | None) -> dict:
             "binding_ok": bool(binding_ok)}
 
 
+def checker_met(checker: dict | None) -> bool:
+    """The checker's own `met` and its clause block's `met` must agree (true).
+
+    A checker that returns rc 0 with `met false` while its clauses read true is
+    self-contradictory; A10 must not accept that (round-72 CriticClaims C2).
+    """
+    checker = checker if isinstance(checker, dict) else {}
+    clauses = checker.get("clauses")
+    return (checker.get("met") is True
+            and isinstance(clauses, dict) and clauses.get("met") is True)
+
+
 def parse_environ_file(path: str) -> dict | None:
     """A `/proc/self/environ` byte dump as a dict (NUL-separated, exact)."""
     try:
@@ -336,32 +348,54 @@ def checker_env_arm(instrument: str, root: str, rev: str, pkg: str,
     # with a zero-count census) must fail (round-72 ReviewerGates).
     log_records, log_errors = read_jsonl(checker_log)
     log_verdict = checker_log_verdict(log_records)
-    run_root = observed.get("run_root") if isinstance(observed, dict) else None
+    verdict = a11_verdict(res["rc"], observed, log_verdict, shims, work_abs)
+    return {"ok": verdict["ok"], "rc": res["rc"], "shims": verdict["shim_rows"],
+            "checker_child_env": observed, "log_derived": log_verdict,
+            "log_errors": log_errors, "observed_ok": verdict["observed_ok"],
+            "checker_stdout_tail": (res["stdout"] or "")[-600:],
+            "work": work_abs, "contain_root": verdict["contain_root"],
+            "log": checker_log}
+
+
+def a11_verdict(rc: int, observed: dict, log_verdict: dict, shims: dict,
+                work_abs: str) -> dict:
+    """A11's decision as a pure function over the witnesses (selftest-bound).
+
+    Every conjunct the wave's mutation probe could delete lives here, so a
+    mutant that drops one fails `a11-arm-cases` in --selftest (R72-C2's rule
+    applied to C1's arm).
+    """
+    observed = observed if isinstance(observed, dict) else {}
+    run_root = observed.get("run_root")
     contain_root = run_root if isinstance(run_root, str) and run_root else work_abs
-    observed_ok = (log_verdict["ok"]
-                   and observed.get("records") == log_verdict["records"]
+    shim_rows = {}
+    for name, rec in (shims or {}).items():
+        values = rec.get("values") or {}
+        shim_rows[name] = {
+            "recorded": bool(rec.get("recorded")),
+            "keys_exact": bool(rec.get("keys_exact")),
+            "canary_present": bool(rec.get("canary_present")),
+            "home_under_run_root": bool(values)
+            and under(contain_root, values.get("HOME", "")),
+            "tmpdir_under_run_root": bool(values)
+            and under(contain_root, values.get("TMPDIR", "")),
+        }
+    observed_ok = (log_verdict.get("ok") is True
+                   and observed.get("records") == log_verdict.get("records")
                    and observed.get("all_allowlisted") is True
                    and observed.get("canary_present") is False
                    and observed.get("home_under_run") is True
                    and observed.get("tmpdir_under_run") is True
-                   and observed.get("children") == log_verdict["children"]
+                   and observed.get("children") == log_verdict.get("children")
                    and isinstance(run_root, str) and bool(run_root)
                    and under(work_abs, run_root))
-    for name, rec in shims.items():
-        rec["home_under_run_root"] = bool(
-            rec.get("values") and under(contain_root, rec["values"].get("HOME", "")))
-        rec["tmpdir_under_run_root"] = bool(
-            rec.get("values") and under(contain_root, rec["values"].get("TMPDIR", "")))
-        rec.pop("values", None)
-    ok = (res["rc"] == 0 and observed_ok
+    ok = (rc == 0 and observed_ok
+          and bool(shim_rows)
           and all(s["recorded"] and s["keys_exact"] and not s["canary_present"]
                   and s["home_under_run_root"] and s["tmpdir_under_run_root"]
-                  for s in shims.values()))
-    return {"ok": ok, "rc": res["rc"], "shims": shims,
-            "checker_child_env": observed, "log_derived": log_verdict,
-            "log_errors": log_errors, "observed_ok": observed_ok,
-            "checker_stdout_tail": (res["stdout"] or "")[-600:],
-            "work": work_abs, "contain_root": contain_root, "log": checker_log}
+                  for s in shim_rows.values()))
+    return {"ok": ok, "observed_ok": observed_ok,
+            "contain_root": contain_root, "shim_rows": shim_rows}
 
 
 def arm(aid: str, ok: bool, observed: dict) -> dict:
@@ -686,7 +720,9 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
         genuine = invoke(instrument, root, rrev, pkg, work,
                          ["--check-receipt", receipt_path,
                           "--nonce-commitment", nonce_commitment])
-        genuine_verdict = binding_verdict(parse_json_out(genuine["stdout"]))
+        genuine_json = parse_json_out(genuine["stdout"])
+        genuine_verdict = binding_verdict(genuine_json)
+        genuine_met = checker_met(genuine_json)
         fail_modes = {}
         base_dir = tempfile.mkdtemp(prefix="a10-", dir=work)
         wrong = json.loads(json.dumps(receipt or {}))
@@ -716,6 +752,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
                                     **binding_verdict(
                                         parse_json_out(res["stdout"]))}
         a10_ok = (not defects
+                  and genuine_met is True
                   and genuine_verdict["present"] is True
                   and genuine_verdict["nonce_ok"] is True
                   and genuine_verdict["binding_ok"] is True
@@ -729,6 +766,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
                            and fail_modes.get("legacy", {}).get("nonce_ok") is False)))
         arms.append(arm("A10_run_binding", a10_ok,
                         {"defects": defects,
+                         "genuine_met": genuine_met,
                          "genuine_verdict": genuine_verdict,
                          "genuine_rc": genuine["rc"],
                          "fail_modes": fail_modes,
@@ -850,6 +888,43 @@ def selftest() -> int:
             [git, {**readelf, "env": {**clean, "KAIDOKU_ENV_CANARY": "x"}}])["ok"] is False
         and checker_log_verdict(
             [git, {**readelf, "env": {**clean, "EXTRA": "1"}}])["ok"] is False)
+    run_home = {"HOME": "/w/root/home", "LANG": "C", "PATH": "/usr/bin",
+                "TMPDIR": "/w/root/tmp"}
+    log_v = {"ok": True, "records": 2, "children": {"git": 1, "readelf": 1}}
+    obs_v = {"records": 2, "all_allowlisted": True, "canary_present": False,
+             "home_under_run": True, "tmpdir_under_run": True,
+             "children": {"git": 1, "readelf": 1}, "run_root": "/w/root"}
+
+    def shim(values, keys_exact=True, canary=False):
+        return {"recorded": True, "keys_exact": keys_exact,
+                "canary_present": canary, "values": values}
+
+    good_shims = {"git": shim(run_home), "readelf": shim(run_home)}
+    cases["a11-arm-cases"] = (
+        a11_verdict(0, obs_v, log_v, good_shims, "/w")["ok"] is True
+        and a11_verdict(1, obs_v, log_v, good_shims, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, {**log_v, "children": {"git": 0, "readelf": 1}},
+                        good_shims, "/w")["ok"] is False
+        and a11_verdict(0, {**obs_v, "children": {"git": 0, "readelf": 1}},
+                        log_v, good_shims, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim(run_home, keys_exact=False),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim(run_home, canary=True),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim({**run_home, "HOME": "/w/root-out/home"}),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim({**run_home, "TMPDIR": "/elsewhere"}),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, {}, log_v, good_shims, "/w")["ok"] is False)
+    cases["a10-met-consistency"] = (
+        checker_met({"met": True, "clauses": {"met": True}}) is True
+        and checker_met({"met": False, "clauses": {"met": True}}) is False
+        and checker_met({"met": True, "clauses": {"run_binding": True}}) is False
+        and checker_met({}) is False)
     print(json.dumps({"selftest": "tools/round-72/seam-probe.py",
                       "cases": len(cases),
                       "failures": [k for k, v in cases.items() if not v]},
