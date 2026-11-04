@@ -4494,6 +4494,10 @@ fractions — and requires zero mismatches with at least two corrections that ea
   values) now parse the cell and carry one committed red fixture each; the audit's own receipt
   carries a defect-free `validate` block. Base `pre/c2-at-base.json`: `mismatch_count 8`;
   the tip re-run `l1/scores/c2-at-tip.json`: 0 (the landing receipt itself records 1, `D16`, by construction; its `validate` block is defect-free).
+- **Wave.** `r75-w1`: 14 seats (5 executor, 2 scribe, 1 scout, 1 connector, 2 reviewer, 1 critic,
+  1 mutation-tester, 1 sentinel), attack roles 4/14 = 28.6%, one connector; ten seats landed a report
+  or receipt, four returned mid-work prose with no artifact (`ScribeLesson`, `ReviewerAudit`,
+  `CriticClaims`, `MutationTester`) and are recorded as incomplete.
 - **Gate.** Freeze `ec149dc4` CLEAN, findings [], four instrument paths, at the landing revision
   (`l1/scores/gate-at-freeze.txt`, re-run after the disclosure). The round-74 row is `CLEAN -`.
 - **Sources.** 189 → 191 rows: S284 (`os.path.commonpath`, mined, snapshot 90 223 B, sha256

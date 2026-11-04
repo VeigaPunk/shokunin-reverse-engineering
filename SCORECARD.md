@@ -5334,6 +5334,16 @@ at `13d7a815` — and clearing it would mean deleting a filed verdict row; the r
 stem recipe at the record. `PROVINCE.md` gains `## Round-68 additions to Core` and its frontier note; the entry
 `corpus/knowledge/2026-11-03-r68-packed-elf-route.md` is the new knowledge. `corpus/QUALITY.md` row 111 lands.
 
+**Wave.** One v1 wave `r75-w1`: 14 seats — 5 executor, 2 scribe, 1 scout, 1 connector,
+2 reviewer, 1 critic, 1 mutation-tester, 1 sentinel; attack roles 4/14 = 28.6%; one connector; the L1
+held the planner seat; no residual call. Ten seats landed a report or receipt; four (`ScribeLesson`,
+`ReviewerAudit`, `CriticClaims`, `MutationTester`) returned mid-work prose with no artifact and are
+recorded as incomplete, not as verification (`r75-w1-results.json`). Findings that bound the claims:
+ReviewerClaims' F1 (the base receipt's runner is the disclosed revised battery, byte-identical in
+scoring logic), ExecAuditBase's D1 (the frozen plan named four of five instruments — recorded as an
+erratum, D21 reads the completed plan at the measured revision), SentinelScope's five LOW/INFO
+residuals, and ConnectorCross's named divergences from the fleet census and sibling lanes.
+
 **Capabilities entered.** (1) registry-conformance census over the lane's own instrument inventory — `tools/round-68/registry-conformance.py`,
 first working round 68; (2) packed-ELF triage route (detect, unpack with byte identity, recover the inventory) —
 `tools/round-68/packed-elf.py`, first working round 68.
