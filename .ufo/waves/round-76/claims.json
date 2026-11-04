@@ -1,0 +1,63 @@
+{
+ "schema": "kaidoku-r76-claims-v1",
+ "round": 76,
+ "base": "5303a662d43aac52b0667f2776cce49dfc004fcf",
+ "claim_row": "plans/round-76-claims.md",
+ "declaration_pointer": "be99e4f9b72fb2dbae75329c0d5c55002854cbed",
+ "claims": [
+  {
+   "id": "R76-C1",
+   "axis": "calibration",
+   "type": "capability acquisition",
+   "surface": "the SCORECARD `## Capabilities` table versus the round sections that claim rows entered into it",
+   "predicate": "R76-C1 is verified iff `python3 -I -B tools/round-76/record-audit.py --root . --rev <measured> --json-out <receipt>` exits 0 with mismatch_count 0 over nine atoms D16-D24, every atom row ok true, validate {defects [], atoms 9}, and atom D24_capability_rows true with its evidence naming the round-75 claim line and the two rows; while the same command at base 5303a662 exits 1 with mismatch_count 1 naming exactly D24_capability_rows and defects naming those two rows, and the selftest carries one red fixture per D24 failure shape (absent row, empty evidence cell, absent evidence path, round mismatch, stub description, no claim line).",
+   "counter": "mismatch_count",
+   "counting_command": "python3 -I -B tools/round-76/record-audit.py --root . --rev <measured> --json-out <receipt>",
+   "kill_rule": "an atom true at base for a reason its routed defect names; an atom false at the landing; a validate defect; a D24 red fixture that passes; a claim line whose names are parsed from a rewritten grammar after this freeze; an evidence pointer that does not resolve at the measured revision",
+   "before": "base 5303a662: exit 1, mismatch_count 1, D24 false, defects name the absent rows 'A12 case-independence closure' and 'exact-grammar record audit'",
+   "after": "landing: exit 0, mismatch_count 0, nine atoms, D24 true"
+  },
+  {
+   "id": "R76-C2",
+   "axis": "operability",
+   "type": "capability acquisition",
+   "surface": "the printed counting commands in plans and reports, and the plan's own machine block",
+   "predicate": "R76-C2 is verified iff `python3 -I -B tools/round-76/plan-command.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with arms_ok 3, arms_total 3, ok true, each arm carrying its expected observation (plan-c1: executed, rc in {0,1}, integer mismatch_count; r75-printed: PLACEHOLDER_UNBOUND with executed false; r75-argv: executed, rc 2, output carrying 'missing required arguments: work'), while the same command at base 5303a662 exits 1 with arms_ok 0, and the gate's three do-nothing controls each fail in their named way.",
+   "counter": "arms_ok",
+   "counting_command": "python3 -I -B tools/round-76/plan-command.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>",
+   "kill_rule": "an arm met for a reason other than its expected observation; a block executed without its static grammar passing; a fixture arm that runs instead of refusing; a plan block whose placeholder set is not exactly $REV/$WORK/$OUT/$ROOT; a command executed with a shell, with a script outside tools/round-76/, or with $WORK/$OUT outside the work root",
+   "before": "base 5303a662: exit 1, arms_ok 0 of 3 (the plan block and both fixtures are absent at the base; the round-75 printed command itself exits 2 at its instrument's preflight, pre/r75-printed-exec.txt)",
+   "after": "landing: exit 0, arms_ok 3 of 3"
+  }
+ ],
+ "frozen_atoms": [
+  "D16_validate_embedded",
+  "D17_s275_used_by_relog",
+  "D18_canary_sole_detector",
+  "D19_critic_classes_bound",
+  "D20_grammar_reds",
+  "D21_binding_and_pins",
+  "D22_security_arms",
+  "D23_opened_convention",
+  "D24_capability_rows"
+ ],
+ "instruments": {
+  "tools/round-76/record-audit.py": "88e3c2ceca0699754c34372638c84af389adeb924755beaddbdb3d5cc99dc989",
+  "tools/round-76/plan-command.py": "f9c1cff3fd2241d00104621f3967ad3bd70ac662eadb6bf4b4fa62cd0797ccd0"
+ },
+ "loaded_by_counter": {
+  "tools/round-75/record-audit.py": "b81d037d00a3c5137acd73f03456448ae9ef42fc08708f6d892b890715f83d00",
+  "tools/round-75/probe-mutation.py": "d7757ae29e184137668c047189aac131b5722641f04a95c063df7aa70de85203"
+ },
+ "instrument_supersessions": [],
+ "controls": ".ufo/waves/round-76/pre/controls-at-declaration.json",
+ "frontier": {
+  "sources_rows": ["S286", "S287"],
+  "sources_rejected": ["S288"],
+  "census_start": ".ufo/waves/round-76/l1/census-start.txt",
+  "mistake": "a self-assessment sentence written before its artifact existed, and a printed command never executed by its author",
+  "assimilation": "none",
+  "considerthese": "absent"
+ },
+ "errata": []
+}
