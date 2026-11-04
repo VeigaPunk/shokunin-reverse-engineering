@@ -78,3 +78,24 @@ of the carrier rather than of the precondition.
 - Decompile envelope shape: `normalized_result` is the pseudocode **string** on success and the
   envelope carries `code: invalid_request` on the packed bytes; a counter that reads a dict there
   reads nothing.
+
+## Correction — round 69 (appended 2026-11-03; the filed text above is not rewritten)
+
+The round-68 non-author closure (`.ufo/waves/round-68` spot-check §5, defect R68-V1) found that this
+entry carried its source as bold prose on line 3 and no line-start provenance fields, so a freshness
+sweep reading `source:` / `verified-at:` / `recheck:` found nothing. The block below supplies the
+trio under the append-only discipline (CORPUS "corrections are new entries, never rewrites"; QUALITY
+row 101: a provenance field added to a filed entry lands as a list item in a correction block).
+
+- `source:` S269 — UPX 5.2.0 documentation, `doc/upx-doc.txt` at tag `v5.2.0`,
+  https://raw.githubusercontent.com/upx/upx/v5.2.0/doc/upx-doc.txt; opened 2026-11-03, HTTP 200,
+  37 208 B, sha256 `4dc547edc7201f205ce904f373518b6fcaef608d5aafd8a4a7564d42993b8c42`; quote at
+  fetched-bytes lines 441-442 under `NOTES FOR LINUX/ELF386`.
+- `verified-at:` 2026-11-03 (the landing `978436bdc5331ec50d8683eebf55457badfade0a`).
+- `recheck:` `python3 -I -B tools/round-68/packed-elf.py --selftest` (13 cases, exit 0) and the two
+  frozen counters at their named revisions; `curl -fsSL
+  https://raw.githubusercontent.com/upx/upx/v5.2.0/doc/upx-doc.txt | sha256sum` must print `4dc547ed…`.
+
+Label correction: the S269 anchor cell in `corpus/SOURCES.md` says the quote is 11 words; `wc -w` on
+the quote is 10 (`.ufo/waves/round-68` spot-check R68-V5). The reason the row is not superseded is
+recorded in `corpus/lessons/round-69.md` `## Gate`.

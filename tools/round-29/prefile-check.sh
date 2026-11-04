@@ -28,18 +28,24 @@ else
     echo "prefile: tree clean"
 fi
 rev=$(git -C "$root" rev-parse HEAD) || exit 2
-# ledger1 (round-68 erratum r68-1): corpus/claim-freezes.tsv is RETIRED as a gate input. It stops at
-# round-52 while rounds 53-68 live in the v2 ledger, and it carries a stray round-35 row whose
-# container is claims-frozen.json, which the round-24 gate's expected set (claims.json files only)
-# cannot match; the gate reported 20 exact of 36 on every round from 53 on, so this step failed by
-# construction and the prefile gate never passed. The file is kept as frozen evidence: this step
-# asserts its bytes are identical to its retirement pin, and the live check is ledger2 below.
+# ledger1 (round-68 erratum r68-1; corrected round 69 under R68-V4): corpus/claim-freezes.tsv is
+# RETIRED as a gate input. It carries 21 data rows whose last round is round-35 and no row for any
+# round 36-68 (`awk -F'\t' 'NR>1{print $1}' corpus/claim-freezes.tsv | sort -u`), and its round-35
+# row's container is claims-frozen.json, which the round-24 gate's expected set (claims.json files
+# only) cannot match; the gate's disclosure receipt recorded `exact 20 of 21` at f78fc766, not a clean
+# ledger. The file is kept as frozen evidence: this step asserts its bytes are identical to its
+# retirement pin, and the live check is ledger2 below.
 legacy_sha=2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81
-got=$(git -C "$root" show "$rev:corpus/claim-freezes.tsv" 2>/dev/null | sha256sum | cut -d' ' -f1)
-if [ "$got" = "$legacy_sha" ]; then
-    echo "prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin"
+if git -C "$root" cat-file -e "$rev:corpus/claim-freezes.tsv" 2>/dev/null; then
+    got=$(git -C "$root" show "$rev:corpus/claim-freezes.tsv" | sha256sum | cut -d' ' -f1)
+    if [ "$got" = "$legacy_sha" ]; then
+        echo "prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin"
+    else
+        echo "prefile: ledger1 legacy ledger changed (want $legacy_sha, got $got)"
+        fail=1
+    fi
 else
-    echo "prefile: ledger1 legacy ledger changed (want $legacy_sha, got ${got:-absent})"
+    echo "prefile: ledger1 legacy ledger absent at $rev"
     fail=1
 fi
 if git -C "$root" cat-file -e "$rev:corpus/claim-freezes-v2.tsv" 2>/dev/null; then

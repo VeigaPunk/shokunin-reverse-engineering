@@ -115,9 +115,10 @@ A row is written when its file exists, never before.
 | UPX-packed ELF triage (round 68) | `2026-11-03-r68-packed-elf-route` | **Core** — detect (`upx -l` plus zero section headers), unpack with sha256 identity against the carrier pin, recover the original's REA inventory; packed stub 3 procedures against 167/30/190 and 99/29/103, the pinned address refused on packed bytes and recovered after unpack |
 
 ## Knowledge
-| `2026-11-03-r68-packed-elf-route` | UPX-packed ELF through a detect → unpack → identity → recover route: the packed stub's parsed inventory (3 procedures), byte restoration against the carrier pin, the REA inventory recovered from the unpacked copy, and the address-level refusal that separates the two states; limits UPX 5.2.0 / `linux/elf386` / default packing | `tools/round-68/packed-elf.py` + `.ufo/waves/round-68/l1/scores/` | 2026-11-03 |
 | entry | topic | source | verified-at |
-|---|---|---|---|
+|---|---|---|
+| `2026-11-03-r69-packed-route-contract` | the packed route's arm seam (one arm-false selftest case per arm) and its typed contract (exit-2 classes, the ENFORCED UPX version/sha256 pin, per-carrier format and packing-mode records), plus a packed shared-object carrier — three pinned carriers, every arm true, ratios 0.0599/0.1010/0.6522; limits UPX 5.2.0 / linux/amd64 / default packing / one libz build | S270; `tools/round-69/packed-elf.py`, `tools/round-69/mutation-check.py`, `tools/round-69/contract-probe.py`; receipts `.ufo/waves/round-69/l1/` | 2026-11-03 |
+| `2026-11-03-r68-packed-elf-route` | UPX-packed ELF through a detect → unpack → identity → recover route: the packed stub's parsed inventory (3 procedures), byte restoration against the carrier pin, the REA inventory recovered from the unpacked copy, and the address-level refusal that separates the two states; limits UPX 5.2.0 / `linux/elf386` / default packing | `tools/round-68/packed-elf.py` + `.ufo/waves/round-68/l1/scores/` | 2026-11-03 |
 | `2026-11-03-r67-avm-le-squashfs-core` | LE AVM-marker SquashFS v4 through REA under a class-level gap rule — Frontier → Core on four pinned carriers | S268, S250, S245, S244, S249; counter `tools/round-67/avm-le-counter.py`; receipts `corpus/evidence/round-67/c1/` | 2026-11-03 |
 | `2026-10-13-rea-cli-surface` | 127-command CLI inventory, global options, argument shapes | `npx rea-agents@6.4.0 --help` ×16 | 2026-10-13 |
 | `2026-10-13-rea-self-documentation` | `--llms`/`--llms-full`/`--schema` doc tiers, README matrix | live CLI output | 2026-10-13 |

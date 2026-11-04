@@ -463,6 +463,14 @@ Round-67 frontier note, 2026-11-03: LE AVM members (`hsqs`) move from Frontier t
 
 Round-68 frontier note, 2026-11-03: packed-ELF triage is **Core** for the two pinned x86-64 carriers under UPX 5.2.0 (`2026-11-03-r68-packed-elf-route`; S269). Still Frontier: any packer other than UPX, an anti-UPX stub whose magic or entry is altered (no such carrier measured), packed PE/Mach-O, packed libraries and packed static binaries, and semantic equality of a recovered inventory (the route measures count equality only).
 
+## Round-69 additions to Core
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| The packed-ELF route's gate and contract, and packed shared objects as a carrier class — the `evaluate_carrier()` arm seam with one arm-false selftest case per arm; the typed exit-2 preflight (missing node/git/readelf/upx, an unusable work root, a packer version or sha256 mismatch); the UPX pin ENFORCED (version `upx 5.2.0`, sha256 `cf2f6e7c…`) rather than recorded; per-carrier records naming name, kind, format, packing_mode and pin; and a pinned shared-object carrier (`/usr/lib/libz.so.1.3.2`) beside the two executables | `--upx <path>` seam so a packer refusal is exercisable; `tools/round-69/mutation-check.py` (patch sets r68/r69), `tools/round-69/contract-probe.py` (six arms), `tools/round-69/controls.py` (seven controls); `packed-elf.py --check-receipt` for the carrier-class fold | `tools/round-69/packed-elf.py --score` on three pinned carriers, then the three frozen counters at the measured revision | carriers_matched 3 of 3 with every arm true (stub ratios 0.0599/0.1010/0.6522, all ≤ 0.75); 0 of 5 mutants survive the r69 selftest while 5 of 5 survive the r68 one; 6 of 6 contract arms; seven controls show what they must (`2026-11-03-r69-packed-route-contract`, `.ufo/waves/round-69/l1/pre/`, `.ufo/waves/round-69/l1/scores/`) |
+
+Round-69 frontier note, 2026-11-03: the route's gate/contract work and packed shared objects are **Core** for the pinned carriers under UPX 5.2.0 (`2026-11-03-r69-packed-route-contract`; S270). Still Frontier: packed static binaries (no carrier measured), any packer other than UPX, anti-UPX stubs whose magic or entry is altered, packed PE/Mach-O, semantic equality of a recovered inventory, and any shared-object carrier other than this one libz build.
+
 ## Host migration — 2026-10-31 (Windows host, recorded under the round-53 absent-surface rule)
 
 The Linux host every Core row above names (the `/home/vgpnk/...` trees) is gone from
