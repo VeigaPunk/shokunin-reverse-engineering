@@ -1,0 +1,211 @@
+{
+ "schema": "kaidoku-r85-mutants-v1",
+ "declared": "2026-11-04",
+ "base_probe": "round-84 MutationTester probe at fa92d34 (24 rows; 3 verdict-neutral excluded)",
+ "note": "one declared single-behavior change per mutant; killed only when its declared case fails under the mutant and passes on pristine",
+ "excluded": [
+  {
+   "id": "pc-pin-traversal-basename",
+   "reason": "verdict-neutral (r84 MutationTester section 4)"
+  },
+  {
+   "id": "pc-token-unbound-maxlen",
+   "reason": "verdict-neutral (r84 MutationTester section 4)"
+  },
+  {
+   "id": "pc-battery-verdict-drop-sourced",
+   "reason": "caught by validate_battery; not a detector survivor (r84 MutationTester section 4)"
+  }
+ ],
+ "mutants": [
+  {
+   "id": "pc-row-last",
+   "target": "tools/round-82/printed-command.py",
+   "find": "    for line in text.splitlines():\n        if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\") == sid:\n            return line\n    return None\n",
+   "replace": "    rows = [line for line in text.splitlines()\n            if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\") == sid]\n    return rows[-1] if rows else None\n",
+   "declared_case": "duplicate-row-first-binds",
+   "anchor_occurrences": 1,
+   "class": "A row-parse"
+  },
+  {
+   "id": "pc-row-prefix",
+   "target": "tools/round-82/printed-command.py",
+   "find": "        if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\") == sid:",
+   "replace": "        if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\").startswith(sid):",
+   "declared_case": "id-prefix-not-bound",
+   "anchor_occurrences": 1,
+   "class": "A row-parse"
+  },
+  {
+   "id": "pc-cells-len-ge",
+   "target": "tools/round-82/printed-command.py",
+   "find": "row_ok = bool(len(cells) == 13 and cells[8] == \"mined\"",
+   "replace": "row_ok = bool(len(cells) >= 13 and cells[8] == \"mined\"",
+   "declared_case": "row-width-thirteen-exact",
+   "anchor_occurrences": 1,
+   "class": "B cells"
+  },
+  {
+   "id": "pc-cells-index-shift",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[8] == \"mined\"",
+   "replace": "cells[7] == \"mined\"",
+   "declared_case": "fully-mined-row-green",
+   "anchor_occurrences": 1,
+   "class": "B cells"
+  },
+  {
+   "id": "pc-entry-any-line",
+   "target": "tools/round-82/printed-command.py",
+   "find": "    for line in text.splitlines():\n        if line.startswith(\"source:\"):\n            return sid in re.findall(r\"\\bS[0-9]+\\b\", line)\n    return False\n",
+   "replace": "    return any(line.startswith(\"source:\")\n               and sid in re.findall(r\"\\bS[0-9]+\\b\", line)\n               for line in text.splitlines())\n",
+   "declared_case": "entry-second-source-line-ignored",
+   "anchor_occurrences": 1,
+   "class": "C entry_cites"
+  },
+  {
+   "id": "pc-pin-normprefix",
+   "target": "tools/round-82/printed-command.py",
+   "find": "if script not in pins:",
+   "replace": "if script.removeprefix(\"./\") not in pins:",
+   "declared_case": "dot-slash-script-refused",
+   "anchor_occurrences": 1,
+   "class": "D pin-membership"
+  },
+  {
+   "id": "pc-run-rc1-strict",
+   "target": "tools/round-82/printed-command.py",
+   "find": "    if proc.returncode != 0 and not (expect_counter is None\n                                     and proc.returncode == 1):\n",
+   "replace": "    if proc.returncode != 0:\n",
+   "declared_case": "rc1-without-expectation-executable",
+   "anchor_occurrences": 1,
+   "class": "E run-defects"
+  },
+  {
+   "id": "pc-run-counter-type",
+   "target": "tools/round-82/printed-command.py",
+   "find": "if not isinstance(value, int):",
+   "replace": "if value is None:",
+   "declared_case": "string-counter-refused",
+   "anchor_occurrences": 1,
+   "class": "E run-defects"
+  },
+  {
+   "id": "pc-run-counter-mismatch-raw",
+   "target": "tools/round-82/printed-command.py",
+   "find": "elif str(value) != expect_counter:",
+   "replace": "elif value != expect_counter:",
+   "declared_case": "int-counter-equals-string-expectation",
+   "anchor_occurrences": 1,
+   "class": "E run-defects"
+  },
+  {
+   "id": "pc-token-metachar-drop-pipe",
+   "target": "tools/round-82/printed-command.py",
+   "find": "METACHARS = (\";\", \"|\", \"&\", \"$(\", \"`\", \">\", \"<\")",
+   "replace": "METACHARS = (\";\", \"&\", \"$(\", \"`\", \">\", \"<\")",
+   "declared_case": "pipe-metachar-refused",
+   "anchor_occurrences": 1,
+   "class": "F tokenizer"
+  },
+  {
+   "id": "pc-token-ellipsis-drop-ascii",
+   "target": "tools/round-82/printed-command.py",
+   "find": "ELLIPSIS = (\"\\u2026\", \"...\")",
+   "replace": "ELLIPSIS = (\"\\u2026\",)",
+   "declared_case": "ascii-ellipsis-refused",
+   "anchor_occurrences": 1,
+   "class": "F tokenizer"
+  },
+  {
+   "id": "pc-token-allowlist-widened",
+   "target": "tools/round-82/printed-command.py",
+   "find": "ALLOWED_VARS = {\"REV\", \"WORK\", \"OUT\", \"ROOT\"}",
+   "replace": "ALLOWED_VARS = {\"REV\", \"WORK\", \"OUT\", \"ROOT\", \"PLAN\"}",
+   "declared_case": "unbound-plan-variable-refused",
+   "anchor_occurrences": 1,
+   "class": "F tokenizer"
+  },
+  {
+   "id": "pc-cells-status-ne-queued",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[8] == \"mined\"",
+   "replace": "cells[8] != \"queued\"",
+   "declared_case": "sourced-row-rejected-status",
+   "anchor_occurrences": 1,
+   "class": "B cells"
+  },
+  {
+   "id": "pc-cells-date-ge",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[9] == \"2026-11-04\"",
+   "replace": "cells[9] >= \"2026-11-04\"",
+   "declared_case": "sourced-row-later-date",
+   "anchor_occurrences": 1,
+   "class": "B cells"
+  },
+  {
+   "id": "pc-run-defects-static-dropped",
+   "target": "tools/round-82/printed-command.py",
+   "find": "result[\"defects\"] = list(result[\"static_defects\"])",
+   "replace": "result[\"defects\"] = []",
+   "declared_case": "static-defect-ledger-copied",
+   "anchor_occurrences": 1,
+   "class": "E run-defects"
+  },
+  {
+   "id": "sb-emdash-optional",
+   "target": "tools/round-83/source-bind.py",
+   "find": "r\"source: (S[0-9]{3,}(?:, *S[0-9]{3,})*) — .*\"",
+   "replace": "r\"source: (S[0-9]{3,}(?:, *S[0-9]{3,})*) .*\"",
+   "declared_case": "entry-cites-no-em-dash-refused",
+   "anchor_occurrences": 1,
+   "class": "C entry_cites"
+  },
+  {
+   "id": "sb-id-substring",
+   "target": "tools/round-83/source-bind.py",
+   "find": "return sid in [part.strip() for part in match.group(1).split(\",\")]",
+   "replace": "return sid in match.group(1)",
+   "declared_case": "id-prefix-not-attributed",
+   "anchor_occurrences": 1,
+   "class": "C entry_cites"
+  },
+  {
+   "id": "sb-window-13th",
+   "target": "tools/round-83/source-bind.py",
+   "find": "if len(fields) != 1 or fields[0][0] >= 12:",
+   "replace": "if len(fields) != 1 or fields[0][0] > 12:",
+   "declared_case": "late-single-header",
+   "anchor_occurrences": 1,
+   "class": "C entry_cites"
+  },
+  {
+   "id": "sb-two-fields-first",
+   "target": "tools/round-83/source-bind.py",
+   "find": "if len(fields) != 1 or fields[0][0] >= 12:",
+   "replace": "if len(fields) < 1 or fields[0][0] >= 12:",
+   "declared_case": "duplicate",
+   "anchor_occurrences": 1,
+   "class": "C entry_cites"
+  },
+  {
+   "id": "cg-frozen-detector-ge",
+   "target": "tools/round-82/conjunction-gate.py",
+   "find": "        and len(detector) == 1\n        and detector[0].get(\"pass\") is False",
+   "replace": "        and len(detector) >= 1\n        and detector[0].get(\"pass\") is False",
+   "declared_case": "frozen-duplicate-detector-refused",
+   "anchor_occurrences": 1,
+   "class": "G aux conjunction"
+  },
+  {
+   "id": "cg-floor-le",
+   "target": "tools/round-82/conjunction-gate.py",
+   "find": "len(cases) < PRISTINE_FLOOR",
+   "replace": "len(cases) <= PRISTINE_FLOOR",
+   "declared_case": "genuine-synthetic-passes",
+   "anchor_occurrences": 1,
+   "class": "G aux conjunction"
+  }
+ ]
+}
