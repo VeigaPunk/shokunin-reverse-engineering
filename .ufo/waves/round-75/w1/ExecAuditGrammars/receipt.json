@@ -1,0 +1,160 @@
+{
+ "assignment": "attack the four strengthened grammars with cosmetic fixtures a token-presence predicate would accept; show the exact grammar rejects each; probe two accept fixtures",
+ "committed_selftest": {
+  "all_covering_cases_green": true,
+  "case_names": [
+   "d10-counts-required-red",
+   "d10-token-only-red",
+   "d11-complete-accepts",
+   "d11-empty-flip-red",
+   "d12-bound-values-accepts",
+   "d12-reversed-values-red",
+   "d9-exact-path-accepts",
+   "d9-negated-path-red",
+   "d9-token-grammar-red",
+   "receipt-defects-red"
+  ],
+  "cases": 10,
+  "cmd": [
+   "python3",
+   "-I",
+   "-B",
+   "tools/round-75/record-audit.py",
+   "--selftest"
+  ],
+  "exit_code": 0,
+  "failures": []
+ },
+ "fixtures": [
+  {
+   "committed_selftest_case": "d9-negated-path-red",
+   "defects": [
+    "negated path token: not corpus/knowledge/y.md"
+   ],
+   "grammar": "parse_used_by",
+   "id": "fixture-1-cosmetic-used-by-negated-second-path",
+   "input": "corpus/knowledge/x.md, not corpus/knowledge/y.md",
+   "kept_paths": [
+    "corpus/knowledge/x.md"
+   ],
+   "kind": "cosmetic",
+   "pass": true,
+   "shape_named": true,
+   "token_presence_would_accept": "both comma tokens are corpus/knowledge paths"
+  },
+  {
+   "committed_selftest_case": "d9-token-grammar-red",
+   "defects": [
+    "token is not an exact corpus path: x.md",
+    "no affirmative path token"
+   ],
+   "grammar": "parse_used_by",
+   "id": "fixture-2-cosmetic-used-by-bare-filename",
+   "input": "x.md",
+   "kept_paths": [],
+   "kind": "cosmetic",
+   "pass": true,
+   "shape_named": true,
+   "token_presence_would_accept": "a .md token is present"
+  },
+  {
+   "committed_selftest_case": "d10-token-only-red",
+   "defects": [
+    "missing integer count: Identified",
+    "missing integer count: screened",
+    "missing integer count: included",
+    "missing integer count: excluded"
+   ],
+   "grammar": "parse_search_note",
+   "id": "fixture-3-cosmetic-search-note-tokens-no-integers",
+   "input": "round 75 Question: Where searched: Identified screened included excluded Stop: no candidates kept",
+   "kind": "cosmetic",
+   "note_returned": true,
+   "pass": true,
+   "shape_named": true,
+   "token_presence_would_accept": "names round 75, Question:, Where searched:, all four field words and Stop:"
+  },
+  {
+   "committed_selftest_case": "d11-empty-flip-red",
+   "defects": [
+    "teaches does not carry REJECTED: <reason>; flip: <condition>"
+   ],
+   "grammar": "parse_rejected_row",
+   "id": "fixture-4a-cosmetic-rejected-row-no-flip-clause",
+   "input": "REJECTED: short",
+   "kind": "cosmetic",
+   "pass": true,
+   "shape_named": true,
+   "token_presence_would_accept": "carries REJECTED: and a reason token; status cell is rejected"
+  },
+  {
+   "committed_selftest_case": "d11-empty-flip-red",
+   "defects": [
+    "rejection reason is fewer than three words",
+    "flip condition is fewer than three words"
+   ],
+   "grammar": "parse_rejected_row",
+   "id": "fixture-4b-cosmetic-rejected-row-one-word-flip",
+   "input": "REJECTED: short; flip: never",
+   "kind": "cosmetic",
+   "pass": true,
+   "shape_named": true,
+   "token_presence_would_accept": "carries REJECTED:, a reason and a flip: clause"
+  },
+  {
+   "committed_selftest_case": "d12-reversed-values-red",
+   "defects": [
+    "erratum does not name the measured 25 rows"
+   ],
+   "grammar": "parse_census_erratum",
+   "id": "fixture-5-cosmetic-census-erratum-reversed-values",
+   "input": "census erratum: W04 lines 23 and 24 rows",
+   "kind": "cosmetic",
+   "pass": true,
+   "shape_named": true,
+   "token_presence_would_accept": "names W04, a lines clause and row counts; measured row count is 25"
+  },
+  {
+   "committed_selftest_case": "d9-exact-path-accepts",
+   "defects": [],
+   "grammar": "parse_used_by",
+   "id": "accept-1-well-formed-used-by-cell",
+   "input": "corpus/knowledge/x.md, corpus/lessons/round-1.md",
+   "kept_paths": [
+    "corpus/knowledge/x.md",
+    "corpus/lessons/round-1.md"
+   ],
+   "kind": "accept",
+   "pass": true,
+   "shape_named": null,
+   "token_presence_would_accept": null
+  },
+  {
+   "committed_selftest_case": "d11-complete-accepts",
+   "defects": [],
+   "grammar": "parse_rejected_row",
+   "id": "accept-2-complete-rejected-row",
+   "input": "REJECTED: a real reason here; flip: when the page carries it",
+   "kind": "accept",
+   "pass": true,
+   "shape_named": null,
+   "token_presence_would_accept": null
+  }
+ ],
+ "in_process": "importlib import of the committed module; parsers called directly",
+ "instrument": "tools/round-75/record-audit.py",
+ "instrument_sha256": "bba8b8cd0e724b19083a90a567c80c239a78410dad9bb78bfe4025b5e4e5bb6e",
+ "lane_head_at_run": "98825979922eafea5aa49322761a43dd0e6ddd16",
+ "mode": "read-only; instrument unmodified",
+ "ok": true,
+ "schema": "kaidoku-r75-w1-ExecAuditGrammars-v1",
+ "seat": "ExecAuditGrammars",
+ "summary": {
+  "accept": 2,
+  "accept_clean": 2,
+  "blocking_defects": [],
+  "cosmetic": 6,
+  "cosmetic_rejected_with_shape_named": 6,
+  "fixtures_total": 8
+ }
+}

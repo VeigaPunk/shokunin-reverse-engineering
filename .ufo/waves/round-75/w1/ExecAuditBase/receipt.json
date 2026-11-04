@@ -1,0 +1,186 @@
+{
+  "seat": "ExecAuditBase",
+  "role": "executor",
+  "wave": "r75-w1",
+  "date": "2026-11-04",
+  "instrument": {
+    "path": "tools/round-75/record-audit.py",
+    "provenance": "extracted frozen blob (git show 8dff07b9:tools/round-75/record-audit.py), executed from scratch; never the working tree",
+    "git_blob_at_declaration_and_freeze": "44a567d5f6e6c4fe225d37afe4e1f81b8004bb19",
+    "sha256": "bba8b8cd0e724b19083a90a567c80c239a78410dad9bb78bfe4025b5e4e5bb6e",
+    "equals_claims_instruments_pin": true
+  },
+  "runs": [
+    {
+      "name": "base",
+      "command": "python3 -I -B record-audit-frozen.py --root <lane> --rev 3c15a156239af06114e1ece8d1044a0d8205379b",
+      "exit": 1,
+      "ok": false,
+      "mismatch_count": 8,
+      "atom_ids": [
+        "D16_validate_embedded",
+        "D17_s275_used_by_relog",
+        "D18_canary_sole_detector",
+        "D19_critic_classes_bound",
+        "D20_grammar_reds",
+        "D21_binding_and_pins",
+        "D22_security_arms",
+        "D23_opened_convention"
+      ],
+      "mismatches": [
+        "D16_validate_embedded",
+        "D17_s275_used_by_relog",
+        "D18_canary_sole_detector",
+        "D19_critic_classes_bound",
+        "D20_grammar_reds",
+        "D21_binding_and_pins",
+        "D22_security_arms",
+        "D23_opened_convention"
+      ],
+      "every_atom_ok_false": true,
+      "validate_block": { "atoms": 8, "defects": [] },
+      "full_output": "base.json"
+    },
+    {
+      "name": "declaration",
+      "command": "python3 -I -B record-audit-frozen.py --root <lane> --rev 8dff07b9ac7dfc3f099c97d98ee97cc5f69efb3a",
+      "exit": 1,
+      "mismatch_count": 8,
+      "mismatches_identical_to_base": true,
+      "note": "the record is not written yet at the declaration",
+      "full_output": "decl.json"
+    },
+    {
+      "name": "selftest",
+      "command": "python3 -I -B record-audit-frozen.py --selftest",
+      "exit": 0,
+      "cases": 10,
+      "case_names": [
+        "d10-counts-required-red",
+        "d10-token-only-red",
+        "d11-complete-accepts",
+        "d11-empty-flip-red",
+        "d12-bound-values-accepts",
+        "d12-reversed-values-red",
+        "d9-exact-path-accepts",
+        "d9-negated-path-red",
+        "d9-token-grammar-red",
+        "receipt-defects-red"
+      ],
+      "failures": [],
+      "full_output": "selftest.json"
+    },
+    {
+      "name": "validate-base-receipt",
+      "command": "python3 -I -B record-audit-frozen.py --root <lane> --validate .ufo/waves/round-75/pre/c2-at-base.json",
+      "exit": 0,
+      "defects": [],
+      "full_output": "validate.json"
+    }
+  ],
+  "atom_reasons": [
+    {
+      "atom": "D16_validate_embedded",
+      "routed_defect": "1 (C2 --validate conjunct had no committed landing evidence)",
+      "base_false_reason": "artifact absent: .ufo/waves/round-75/l1/scores/c2-at-landing.json and c2-validate-at-landing.json do not exist at base (evidence: receipt_present=false, validate_receipt_present=false)",
+      "mechanical": false
+    },
+    {
+      "atom": "D17_s275_used_by_relog",
+      "routed_defect": "2 (S275 old->new used-by logged outside the lesson)",
+      "base_false_reason": "artifact absent: corpus/lessons/round-75.md not yet written (evidence: lesson_present=false, s275_lines=0); the atom's old/new strings and the named round-74 file .ufo/waves/round-74/w1/ScribeRows.md match spot-check defect 2 verbatim",
+      "mechanical": false
+    },
+    {
+      "atom": "D18_canary_sole_detector",
+      "routed_defect": "3 (b-drop-canary-field cross-binding: not killed only by its case)",
+      "base_false_reason": "artifact absent: landing battery receipt c1-at-landing.json does not exist at base (evidence: receipt_present=false, survivor_count=null)",
+      "mechanical": false
+    },
+    {
+      "atom": "D19_critic_classes_bound",
+      "routed_defect": "4a (three further A12 survivors: home_under truthiness, _name_samples last-wins, lie_clean key equality)",
+      "base_false_reason": "artifact absent: same receipt; all three rows present=false; the bound (mutant, case) pairs match defect 4a's survivors exactly",
+      "mechanical": false
+    },
+    {
+      "atom": "D20_grammar_reds",
+      "routed_defect": "4b (four cosmetic atom passes: negated path, token-only search line, empty reason/flip, reversed erratum)",
+      "base_false_reason": "artifact absent: audit-selftest.json receipt not committed yet; all nine in-process grammar cases already pass at base (cases all true), so the only failing conjunct is the absent receipt",
+      "mechanical": false
+    },
+    {
+      "atom": "D21_binding_and_pins",
+      "routed_defect": "5 (D14/D15 coverage limits: runner binding of the routed receipt; exact, pinned instrument set)",
+      "base_false_reason": "artifacts absent at base: plans/round-75-claims.md and .ufo/waves/round-75/claims.json not committed yet (plan_tools=[], pinned=[], freeze_rev=null) and pre/c1-base-arm.json absent (runner_ok=false)",
+      "mechanical": false,
+      "note": "additional structural defect at claims-bearing revisions, see findings[0]"
+    },
+    {
+      "atom": "D22_security_arms",
+      "routed_defect": "6 (SentinelScope SS74-1/4/5/6 + carried A12 shim-values serialization, round-72 QUALITY 128 class)",
+      "base_false_reason": "artifacts absent: probe/battery/freeze selftest receipts and the landing target_pin do not exist at base; the required case names map onto SS74 items (containment-*-refused, pin-mismatch-refused/pin-unpinned-ok, a11-shim-sidecar, a12-shim-values-redacted)",
+      "mechanical": false
+    },
+    {
+      "atom": "D23_opened_convention",
+      "routed_defect": "7 (retrospective registry rows vs the row-is-a-claim rule; row-opened convention)",
+      "base_false_reason": "property fails because the record is not written: SOURCES at base has the real '## Search log' section (line 226) but no Convention/first-opened statement (stated=false), and the round-75 lesson Gate table is absent (followed=false)",
+      "mechanical": false
+    }
+  ],
+  "checks": {
+    "d20_red_fixtures_reject_cosmetic_constructions": {
+      "verdict": "confirmed",
+      "method": "direct call of the frozen module's parse functions on the exact fixture inputs",
+      "negated_used_by": ["negated path token: not corpus/knowledge/x.md", "no affirmative path token"],
+      "token_only_search_line": ["missing integer count: Identified", "missing integer count: screened", "missing integer count: included", "missing integer count: excluded"],
+      "rejected_row_empty_flip": ["teaches does not carry REJECTED: <reason>; flip: <condition>"],
+      "erratum_unbound_values": ["erratum does not name the measured 25 rows"],
+      "accept_fixtures": "d9-exact-path-accepts, d10-counts-required-red(accepts), d11-complete-accepts, d12-bound-values-accepts all pass in selftest (10/10 green)"
+    },
+    "d21_pin_set_vs_plan_tool_set": {
+      "verdict": "DEFECT: mismatch",
+      "claims_instruments_at_freeze": {
+        "tools/round-75/seam-probe.py": "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d",
+        "tools/round-75/probe-mutation.py": "ec089411b0a3a0feb2cede59af5156a2a53675fe121eeeb1191d0e4410f84204",
+        "tools/round-75/record-audit.py": "bba8b8cd0e724b19083a90a567c80c239a78410dad9bb78bfe4025b5e4e5bb6e",
+        "tools/round-75/controls.py": "f9db96a2c9b5e0df01cefa1231648a282434779f3f09135eeb2dded89be38e99",
+        "tools/round-75/freeze-pins.py": "f80ad4079d0746a0f885f5236e23ca7bc48fb3af5f836ad3ec019b6f2720fc5a"
+      },
+      "pins_equal_blobs_at_freeze": true,
+      "plan_blob": "14a135b33e00d982435701e6aa48490bfde63505 (identical at declaration and freeze)",
+      "plan_named_tools": ["tools/round-75/controls.py", "tools/round-75/probe-mutation.py", "tools/round-75/record-audit.py", "tools/round-75/seam-probe.py"],
+      "missing_from_plan": "tools/round-75/freeze-pins.py (the string appears nowhere in the plan text)",
+      "consequence": "frozen D21 requires sorted(pins)==named: 5 pins vs 4 plan-named paths, structurally false at every claims-bearing revision, so R75-C2's '0 at the landing revision' cannot hold through D21; supersessions 4e93c1a5 and 7edb005e keep the same clause (working-tree line ~422)"
+    }
+  },
+  "findings": [
+    {
+      "kind": "defect",
+      "id": "EAB-D1",
+      "statement": "D21's plan-extraction set (4 paths) can never equal the claims pin set (5 paths): plans/round-75-claims.md never names tools/round-75/freeze-pins.py with the tools/round-75/ prefix, and the atom (frozen and superseded) requires exact equality.",
+      "evidence": "claims.json instruments keys vs TOOL_PATH.findall(plan blob 14a135b3); working-tree atom clause 'ok = (runner_ok and bool(named) and sorted(pins) == named ...)'",
+      "disposition": "report to L1; resolves only by a plan supersession/erratum naming the fifth instrument or an atom supersession widening `named`"
+    },
+    {
+      "kind": "observation",
+      "id": "EAB-O1",
+      "statement": "pre/c1-base-arm.json binds runner.sha256 d7757ae2..., which is the probe-mutation.py blob committed at supersessions ad53c1e/0465f251 (executed bytes), not the freeze-time blob ec089411... that claims.json pins; the frozen D21 runner clause (rev-blob comparison) scores that binding false at the freeze. Supersession ad53c1e explicitly reworked the binding to executed-runner bytes.",
+      "evidence": "sha256 of git show ad53c1e/0465f251:tools/round-75/probe-mutation.py == d7757ae2... == receipt value; ec089411... at 8dff07b9/ec149dc",
+      "disposition": "no action for this seat; consistent with the wave's supersession story"
+    },
+    {
+      "kind": "observation",
+      "id": "EAB-O2",
+      "statement": "Instrument drift during the run: tools/round-75/record-audit.py was superseded twice mid-wave (4e93c1a5 D21 freeze-ledger clause; 7edb005e D20 live-record parsing). All four seat runs above were executed from the extracted frozen pin blob (sha256 bba8b8cd...), and the base/declaration outputs are byte-identical to the runs made before the drift was observed.",
+      "evidence": "git rev-parse blobs; diff -q base2.json base.json and decl2.json decl.json both identical",
+      "disposition": "none; landing seats own the superseded instrument"
+    }
+  ],
+  "hygiene": {
+    "no_environment_values_written": true,
+    "no_git_writes": true,
+    "scratch_dir_removed_before_yield": true
+  }
+}

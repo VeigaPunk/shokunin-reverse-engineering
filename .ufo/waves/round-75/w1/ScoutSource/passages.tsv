@@ -1,0 +1,18 @@
+page	lines	raw_byte_0based	tags_in_span	words	bearing	quote	note
+proc_pid_cmdline.5.html	73-76	2490	0	21	b	In the latter case, there is nothing in this file: that is, a read on this file will return 0 characters.	zombie: a read returns 0 characters (legitimate empty state)
+proc_pid_cmdline.5.html	73-74	2490	0	17	b	This read-only file holds the complete command line for the process, unless the process is a zombie.	read-only file; the complete argv unless zombie
+proc_pid_cmdline.5.html	78-80	2755	0	23	c	For processes which are still running, the command-line arguments appear in this file in the same layout as they do in process memory	argv layout mirrors process memory
+proc_pid_cmdline.5.html	80-82	2899	0	25	c	If the process is well-behaved, it is a set of strings separated by null bytes ('\0'), with a further null byte after the last string.	NUL-separated + trailing NUL, CONDITIONED on well-behaved
+proc_pid_cmdline.5.html	84-86	3096	4	21	a	processes have the freedom to override the memory region and break assumptions about the contents or format of the /proc/pid/cmdline file.	the region is process-controlled; assumptions can break
+proc_pid_cmdline.5.html	88-90	3321	6	16	a	If, after an execve(2), the process modifies its argv strings, those changes will show up here.	post-exec argv-string edits are reflected
+proc_pid_cmdline.5.html	92-94	3567	4	17	a	a process may change the memory location that this file refers via prctl(2) operations such as PR_SET_MM_ARG_START.	location itself is relocatable
+proc_pid_cmdline.5.html	96-97	3781	0	15	a	Think of this file as the command line that the process wants you to see.	the page's own self-declared-argv framing
+environ.7.html	77-78	2877	2	20	d	This array of strings is made available to the process by the execve(2) call when a new program is started.	exec-boundary origin of the C-level array
+environ.7.html	78-80	2944	6	16	d	When a child process is created via fork(2), it inherits a copy of its parent's environment.	fork inherits a COPY; origin is the parent
+environ.7.html	85-86	3449	0	21	c	The name and the value may not contain an embedded null byte ('\0'), since this is assumed to terminate the string.	NUL terminates a name/value string (C strings, not the /proc file)
+environ.7.html	109-110	4664	2	14	d	Arguments may also be placed in the environment at the point of an exec(3).	environment is settable at exec
+environ.7.html	113-115	5056	0	17	d-limit	This list is incomplete and includes only common variables seen by average users in their day-to-day routine.	the page's own variable list is declared incomplete
+environ.7.html	220-221	11383	6	17	d-mutability	The prctl(2) PR_SET_MM_ENV_START and PR_SET_MM_ENV_END operations can be used to control the location of the process's environment.	env region is relocatable by prctl
+environ.7.html	226-228	11895	8	22	d-limit	Switching to the root user using su(1) may result in a mixed environment where LOGNAME and USER are retained from old user	a mixed environment is documented; HOME/LOGNAME need not agree
+environ.7.html	231-233	12293	4	20	d-limit	Many a system command has been tricked into mischief by a user who specified unusual values for IFS or LD_LIBRARY_PATH.	risk is in VALUES, not key-set membership
+environ.7.html	128-129	5767	2	12	d-limit	A user's login directory. Set at login time; see section NOTES below.	HOME is a conventional assignment, not a containment proof

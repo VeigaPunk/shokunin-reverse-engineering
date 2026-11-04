@@ -1,0 +1,68 @@
+{
+  "seat": "ExecProbeCases",
+  "date": "2026-11-04",
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "base_commit": "3c15a156239af06114e1ece8d1044a0d8205379b",
+  "source": "git show 3c15a156239af06114e1ece8d1044a0d8205379b:tools/round-74/seam-probe.py",
+  "pristine_sha256": "81d6a43223c5504eb4ad7312563d7a9b1bd3f6288e39c196ee1d542a4c617039",
+  "method": "hand-applied mutations on scratch copies; tools/round-75/probe-mutation.py NOT executed",
+  "run_command": "TMPDIR=<scratch> python3 -I -B <copy> --selftest  (cwd = lane)",
+  "pristine": {
+    "rc": 0,
+    "cases": 20,
+    "failures": [],
+    "stdout": "{\n \"cases\": 20,\n \"failures\": [],\n \"selftest\": \"tools/round-74/seam-probe.py\"\n}",
+    "verdict": "MATCH: 20 cases, failures [] as expected"
+  },
+  "rows": [
+    {
+      "name": "d-home-under-truthy",
+      "mutation": "a12_verdict genuine_ok conjunction (pristine line 558): `and s.get(\"home_under\") is True` -> `and bool(s.get(\"home_under\"))`",
+      "rc": 0,
+      "failures": [],
+      "stdout": "{\n \"cases\": 20,\n \"failures\": [],\n \"selftest\": \"tools/round-74/seam-probe.py\"\n}",
+      "verdict": "GREEN survivor (selftest stays green; mutant undetected)"
+    },
+    {
+      "name": "d-tmpdir-under-truthy",
+      "mutation": "a12_verdict genuine_ok conjunction (pristine line 559): `and s.get(\"tmpdir_under\") is True` -> `and bool(s.get(\"tmpdir_under\"))`",
+      "rc": 0,
+      "failures": [],
+      "stdout": "{\n \"cases\": 20,\n \"failures\": [],\n \"selftest\": \"tools/round-74/seam-probe.py\"\n}",
+      "verdict": "GREEN survivor (selftest stays green; mutant undetected)"
+    },
+    {
+      "name": "d-name-samples-last-wins",
+      "mutation": "_name_samples (pristine line 651): `out.setdefault(name or \"?\", sample)` -> `out[name or \"?\"] = sample`",
+      "rc": 0,
+      "failures": [],
+      "stdout": "{\n \"cases\": 20,\n \"failures\": [],\n \"selftest\": \"tools/round-74/seam-probe.py\"\n}",
+      "verdict": "GREEN survivor (selftest stays green; mutant undetected)"
+    },
+    {
+      "name": "d-lie-clean-superset",
+      "mutation": "a12_verdict lie_clean (pristine lines 562-563): `sorted(s.get(\"keys\") or []) == allow and not s.get(\"canary_present\")\\n        for s in forged_shims.values())` -> `set(s.get(\"keys\") or []) >= set(allow)\\n        for s in forged_shims.values())`",
+      "rc": 0,
+      "failures": [],
+      "stdout": "{\n \"cases\": 20,\n \"failures\": [],\n \"selftest\": \"tools/round-74/seam-probe.py\"\n}",
+      "verdict": "GREEN survivor (selftest stays green; mutant undetected)"
+    },
+    {
+      "name": "b-drop-canary-field",
+      "mutation": "kernel_witness sample dict (pristine line 527): deleted the line `\"canary_present\": \"KAIDOKU_ENV_CANARY\" in env,`",
+      "rc": 1,
+      "failures": [
+        "a12-kernel-multiple-samples",
+        "a12-kernel-canary-field"
+      ],
+      "stdout": "{\n \"cases\": 20,\n \"failures\": [\n  \"a12-kernel-multiple-samples\",\n  \"a12-kernel-canary-field\"\n ],\n \"selftest\": \"tools/round-74/seam-probe.py\"\n}",
+      "verdict": "RED killed; cross-binding confirmed: failures == exactly [a12-kernel-multiple-samples, a12-kernel-canary-field]"
+    }
+  ],
+  "acceptance": {
+    "rows_1_4_green_rc0_empty_failures": true,
+    "row_5_rc1_exactly_two_case_names": true,
+    "pristine_20_cases_failures_empty": true,
+    "all_criteria_met": true
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "kaidoku-r75-execbattery-w1-v1",
+  "seat": "ExecBattery-2",
+  "date": "2026-11-04",
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "lane_head_at_run": "6864a78039fadf3743304c8eb9ca38be5b2238b1",
+  "frozen_state": {
+    "base": "3c15a156239af06114e1ece8d1044a0d8205379b",
+    "declaration": "8dff07b9ac7dfc3f099c97d98ee97cc5f69efb3a",
+    "freeze": "ec149dc497b4de53ccb3e7a125baa226a66daaa7"
+  },
+  "runner_provenance": {
+    "how_executed": "git show 8dff07b9ac7dfc3f099c97d98ee97cc5f69efb3a:tools/round-75/probe-mutation.py extracted to scratch, executed with python3 -I -B from the lane root",
+    "extracted_sha256": "ec089411b0a3a0feb2cede59af5156a2a53675fe121eeeb1191d0e4410f84204",
+    "git_show_decl_sha256": "ec089411b0a3a0feb2cede59af5156a2a53675fe121eeeb1191d0e4410f84204",
+    "note": "working-tree runner at tip differs (d7757ae2..., changed by ad53c1e1); assignment requires the frozen declaration runner",
+    "python": "Python 3.14.8"
+  },
+  "runs": {
+    "A_r75probe": {
+      "command_flags": "--root . --rev 8dff07b9ac7dfc3f099c97d98ee97cc5f69efb3a --tool tools/round-75/seam-probe.py --patch-set r75probe --expect-survivors 0 --expect-target-sha256 1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d --expect-sole b-drop-canary-field",
+      "exit": 0,
+      "receipt": ".ufo/waves/round-75/w1/ExecBattery/receipt-A-r75probe.json",
+      "re_derived": {
+        "ok": true,
+        "schema": "kaidoku-r75-probe-mutation-v1",
+        "patch_set": "r75probe",
+        "target_sha256": "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d",
+        "target_pin": {"expect": "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d", "matched": true, "pinned": true, "pinned_before_exec": true},
+        "pristine": {"rc": 0, "cases": 25, "failed": []},
+        "pristine_ok": true,
+        "min_pristine_cases": 25,
+        "mutant_count": 15,
+        "survivor_count": 0,
+        "survivors": [],
+        "killed_wrong_case": [],
+        "killed": ["a-drop-forged-detected", "a-drop-lie-clean", "a-drop-genuine-canary", "a-drop-genuine-rc", "a-any-forged-sample", "b-unreadable-empty", "b-first-sample-only", "b-drop-canary-field", "c-swap-verdict-inputs", "c-skip-forged-subrun", "d-home-under-truthy", "d-tmpdir-under-truthy", "d-name-samples-last-wins", "d-name-samples-first-wins", "d-lie-clean-superset"],
+        "b_drop_canary_field": {"verdict": "killed", "failed": ["a12-kernel-canary-field"], "sole": true},
+        "sole_detector": {"b-drop-canary-field": true, "a-any-forged-sample": true, "a-drop-forged-detected": true, "a-drop-genuine-canary": true, "a-drop-genuine-rc": true, "a-drop-lie-clean": false, "b-first-sample-only": true, "b-unreadable-empty": true, "c-skip-forged-subrun": true, "c-swap-verdict-inputs": true, "d-home-under-truthy": true, "d-tmpdir-under-truthy": true, "d-name-samples-last-wins": true, "d-name-samples-first-wins": true, "d-lie-clean-superset": true},
+        "multi_detected": ["a-drop-lie-clean"],
+        "runner": {"path": "tools/round-75/probe-mutation.py", "sha256": "ec089411b0a3a0feb2cede59af5156a2a53675fe121eeeb1191d0e4410f84204"},
+        "runner_sha_equals_git_show_declaration": true
+      },
+      "validate": {"exit": 0, "defects": []}
+    },
+    "B_r75base": {
+      "command_flags": "--root . --rev 3c15a156239af06114e1ece8d1044a0d8205379b --tool tools/round-74/seam-probe.py --patch-set r75base --expect-survivors 4",
+      "exit": 0,
+      "receipt": ".ufo/waves/round-75/w1/ExecBattery/receipt-B-r75base.json",
+      "re_derived": {
+        "ok": true,
+        "schema": "kaidoku-r75-probe-mutation-v1",
+        "patch_set": "r75base",
+        "target_sha256": "81d6a43223c5504eb4ad7312563d7a9b1bd3f6288e39c196ee1d542a4c617039",
+        "target_pin": {"expect": null, "matched": null, "pinned": false, "pinned_before_exec": true},
+        "pristine": {"rc": 0, "cases": 20, "failed": []},
+        "pristine_ok": true,
+        "min_pristine_cases": 20,
+        "mutant_count": 14,
+        "survivor_count": 4,
+        "survivors": ["d-home-under-truthy", "d-tmpdir-under-truthy", "d-name-samples-last-wins", "d-lie-clean-superset"],
+        "survivors_match_claim_exactly": true,
+        "killed_wrong_case": [],
+        "b_drop_canary_field": {"verdict": "killed", "failed": ["a12-kernel-multiple-samples", "a12-kernel-canary-field"], "sole": false},
+        "sole_detector_b_drop_canary_field": false,
+        "runner": {"path": "tools/round-75/probe-mutation.py", "sha256": null}
+      },
+      "validate": {"exit": 0, "defects": []}
+    },
+    "selftest": {"exit": 0, "cases": 9, "failures": []},
+    "wrong_pin_probe": {
+      "command_flags": "same as A but --expect-target-sha256 0000000000000000000000000000000000000000000000000000000000000000",
+      "exit": 2,
+      "stdout": {"unevaluable": "target pin mismatch before execution: expected 0000000000000000000000000000000000000000000000000000000000000000, blob at 8dff07b9ac7dfc3f099c97d98ee97cc5f69efb3a:tools/round-75/seam-probe.py is 1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d"},
+      "fresh_work_dir_entries_after_run": 0,
+      "mut_text_dirs_after_run": 0,
+      "pin_before_execution_confirmed": true
+    }
+  },
+  "cross_check_against_frozen_pre_receipts": {
+    "A_vs_pre_c1_post_at_declaration": "identical on every compared field except runner.sha256 (mine ec089411... from the frozen declaration runner; pre receipt d7757ae2... from the tip runner)",
+    "B_vs_pre_c1_base_arm": "identical on every compared field except runner.sha256 (mine null, the frozen runner's routed-defect-5 binding at the round-74 base; pre receipt d7757ae2... from the tip runner)",
+    "compared_fields": ["patch_set", "rev", "tool", "target_sha256", "pristine (minus stderr_tail)", "pristine_ok", "survivor_count", "survivors", "killed", "killed_wrong_case", "sole_detector", "multi_detected", "target_pin", "runner", "ok", "min_pristine_cases", "mutant rows (name, verdict, failed, rc, cases, sole, expect_case)"]
+  },
+  "acceptance_verdict": "all acceptance criteria met"
+}
