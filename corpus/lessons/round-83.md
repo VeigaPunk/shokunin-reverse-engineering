@@ -29,3 +29,11 @@ Reviewers show an id-specific shortcut also passes the frozen eight cases; thus 
 MutationSubject's receipt applies to its preserved superseded candidate snapshot only: four of six mutation classes killed by the frozen eight-case score, position/duplicate variants survive it; supplemental witnesses distinguish those two. Do not label that a six-class frozen kill or final-byte mutation certification.
 
 Assimilation: none. Scout hidden-inclusive search found no considerthese directory; no shokuknow theme adopted. No carrier/core promotion and no capability row entered. Carry debt: seven round82 mutation survivors; old round81 outer-selftest; receipt-auth/gate-exits; r63 record sweep; pre-exec hash race resistance. They remain explicitly unclosed.
+
+## Final committed measurements
+
+Measured `730ddc650df2825937192fd4306192194c87820c` after WAVE-DONE: C1 exit0, cases8, real2, mismatch0; before actual legacy at BASE exit1, mismatch3, including real-withdrawn. Subject digest800a759e20096859a145cfbe3f95e199502f7aa38b8ca796575d00af5963db3c. Canonical identity receipt confirms counter pin, declaration fixture digest, unchanged plan/fixture/legacy subject/PROVINCE and identical predicate. No target or counter amended.
+
+Final subject CLI selftest six cases twice each, counter outer two expected results and isolated committed-source CLI four cases all pass. The late-duplicate detector has a real negative invocation, unlike the frozen cases' known duplicate/position omissions. Evidence `l1/scores/*` and `l1/verification.json`. Registry0, disclosure agreement0 (actual r83 INSTRUMENT_NONE retained), source census0; provenance51/flagged1declared/unexpected0; knowledge166/missing0. Source counts remain205,A187/B10/C8,mined184/rejected21.
+
+Real REA task: inspect jq via pinned6.5.0 CLI, exit0 with independently matched SHA256 and inspect_artifact operation; `l1/domain-trial/inspect-artifact.json`. No execution of the inspected artifact. Expansion unchanged, quality improved within finite attribution, discernment unchanged pending actual non-author Gate sampling. No SHONEN promotion.
