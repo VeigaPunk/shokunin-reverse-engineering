@@ -1,0 +1,334 @@
+{
+ "checks": [
+  {
+   "desc": "both REA runs exit 0 with a readable normalized envelope",
+   "id": "E1-runs-clean",
+   "ok": true
+  },
+  {
+   "desc": "depth-3 published path set equals the unsquashfs oracle",
+   "id": "E2-depth3-paths",
+   "ok": true
+  },
+  {
+   "desc": "depth-3 published bytes equal the oracle sha256 map",
+   "id": "E3-depth3-bytes",
+   "ok": true
+  },
+  {
+   "desc": "depth-3 coverage is partial",
+   "id": "E4-depth3-partial",
+   "ok": true
+  },
+  {
+   "desc": "depth-3 depth_limited_paths is exactly one entry ending in inner-b.sqfs_extract/inner-c.sqfs_extract",
+   "id": "E5-depth3-one-depth-limited",
+   "ok": true
+  },
+  {
+   "desc": "depth-3 extraction_gaps is exactly one depth-limited gap at the deepest root",
+   "id": "E6-depth3-single-gap",
+   "ok": true
+  },
+  {
+   "desc": "depth-3 analysis_depth: levels 1,2 at their level, level 3 null",
+   "id": "E7-depth3-analysis-map",
+   "ok": true
+  },
+  {
+   "desc": "depth-4 published path set equals the oracle",
+   "id": "E8-depth4-paths",
+   "ok": true
+  },
+  {
+   "desc": "depth-4 published bytes equal the oracle sha256 map",
+   "id": "E9-depth4-bytes",
+   "ok": true
+  },
+  {
+   "desc": "depth-4 coverage complete, no gaps, no depth-limited paths",
+   "id": "E10-depth4-complete",
+   "ok": true
+  },
+  {
+   "desc": "depth-4 analysis_depth: levels 1,2,3 all at their level",
+   "id": "E11-depth4-analysis-map",
+   "ok": true
+  },
+  {
+   "desc": "engine block equal across runs: unblob 26.6.4, same executable_sha256, REA reports 6.5.0",
+   "id": "E12-engine-identity",
+   "ok": true
+  },
+  {
+   "desc": "carriers match built image digests: inner-b.sqfs in outer oracle == pin b, inner-c.sqfs in mid oracle == pin c",
+   "id": "E13-nested-identity",
+   "ok": true
+  },
+  {
+   "desc": "two independent builds give identical image digests and oracle listings",
+   "id": "E14-fixture-reproducible",
+   "ok": true
+  }
+ ],
+ "control": {
+  "detail": "the depth-3 run publishes all eight oracle members yet REA still reports partial; a count-only completeness oracle would misgrade this run as complete",
+  "fires": true,
+  "rule": "published-file-count-equals-oracle-count-therefore-complete"
+ },
+ "depth3_published_vs_analyzed": {
+  "analyzed": [
+   "inner-b.sqfs",
+   "inner-b.sqfs_extract/inner-c.sqfs",
+   "inner-b.sqfs_extract/one.txt",
+   "inner-b.sqfs_extract/two.txt",
+   "x.txt"
+  ],
+  "published": [
+   "inner-b.sqfs",
+   "inner-b.sqfs_extract/inner-c.sqfs",
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt",
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt",
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin",
+   "inner-b.sqfs_extract/one.txt",
+   "inner-b.sqfs_extract/two.txt",
+   "x.txt"
+  ],
+  "published_not_analyzed": [
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt",
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt",
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin"
+  ],
+  "same_set": false
+ },
+ "depth3_vs_depth4": {
+  "analysis_depth_delta": {
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": [
+    null,
+    3
+   ],
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": [
+    null,
+    3
+   ],
+   "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": [
+    null,
+    3
+   ]
+  },
+  "analysis_depth_differ": true,
+  "coverage_differ": true,
+  "files_differ": false
+ },
+ "engine_blocks": {
+  "depth3": {
+   "executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+   "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+   "name": "unblob",
+   "source_revision": null,
+   "version": "26.6.4",
+   "worker_count": 1
+  },
+  "depth4": {
+   "executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+   "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+   "name": "unblob",
+   "source_revision": null,
+   "version": "26.6.4",
+   "worker_count": 1
+  }
+ },
+ "expected": {
+  "inner-b.sqfs": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+  "inner-b.sqfs_extract/inner-c.sqfs": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8",
+  "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": "d063a9ad96d0a5593edc7f71840eb7728cf218d611cc368ca96105f154d9695b",
+  "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": "d3db6ca0a178712cecf33bf8c22433b52ada83a12049e8ecb491f01b4623d96b",
+  "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": "2e5fe29222d1cd97d6673153dcf480cea9931274a0e6bc9a386c40e5850e1aac",
+  "inner-b.sqfs_extract/one.txt": "d0233a9a5866b5ac60c6c3fd194caace998d8bec7c8968b64838658ffc2aa9b0",
+  "inner-b.sqfs_extract/two.txt": "110cbe584f54b21db2ce7a602ffe26b6a434bf05358d3f66f454a82455318da2",
+  "x.txt": "8238740e443649fb3548aface71ec79fcbe97fdf4a168c434dec10a5df555673"
+ },
+ "expected_levels": {
+  "inner-b.sqfs": 1,
+  "inner-b.sqfs_extract/inner-c.sqfs": 2,
+  "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": 3,
+  "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": 3,
+  "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": 3,
+  "inner-b.sqfs_extract/one.txt": 2,
+  "inner-b.sqfs_extract/two.txt": 2,
+  "x.txt": 1
+ },
+ "fixture_pins": {
+  "build-r1": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  },
+  "build-r2": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  },
+  "reproducible": true
+ },
+ "met": true,
+ "oracle_counts": {
+  "a": 2,
+  "b": 3,
+  "c": 3
+ },
+ "rev": "043b89a25241710a68b45526c3287fb3c8d907c3",
+ "runs": {
+  "3": {
+   "exit": 0,
+   "observed": {
+    "analysis_depth": {
+     "inner-b.sqfs": 1,
+     "inner-b.sqfs_extract/inner-c.sqfs": 2,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": null,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": null,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": null,
+     "inner-b.sqfs_extract/one.txt": 2,
+     "inner-b.sqfs_extract/two.txt": 2,
+     "x.txt": 1
+    },
+    "analysis_expected": {
+     "inner-b.sqfs": 1,
+     "inner-b.sqfs_extract/inner-c.sqfs": 2,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": null,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": null,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": null,
+     "inner-b.sqfs_extract/one.txt": 2,
+     "inner-b.sqfs_extract/two.txt": 2,
+     "x.txt": 1
+    },
+    "analysis_matches_claim": true,
+    "bytes_match_oracle": true,
+    "coverage": "partial",
+    "depth": 3,
+    "depth_limited_paths": [
+     "$output/firmware.bin_extract/inner-b.sqfs_extract/inner-c.sqfs_extract"
+    ],
+    "engine": {
+     "executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+     "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+     "name": "unblob",
+     "source_revision": null,
+     "version": "26.6.4",
+     "worker_count": 1
+    },
+    "extract_root": "firmware.bin_extract",
+    "extraction_gaps": [
+     {
+      "continuation_id": "3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab",
+      "dependencies": [],
+      "handler": null,
+      "input_path": "$output/firmware.bin_extract/inner-b.sqfs_extract/inner-c.sqfs_extract",
+      "kind": "depth-limited",
+      "provider_id": null,
+      "range": null,
+      "relative_path": null,
+      "root_file_range": null
+     }
+    ],
+    "file_count": 8,
+    "paths_match_oracle": true,
+    "published_bytes": 9837,
+    "published_paths": [
+     "inner-b.sqfs",
+     "inner-b.sqfs_extract/inner-c.sqfs",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin",
+     "inner-b.sqfs_extract/one.txt",
+     "inner-b.sqfs_extract/two.txt",
+     "x.txt"
+    ],
+    "sha_by_path": {
+     "inner-b.sqfs": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+     "inner-b.sqfs_extract/inner-c.sqfs": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": "d063a9ad96d0a5593edc7f71840eb7728cf218d611cc368ca96105f154d9695b",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": "d3db6ca0a178712cecf33bf8c22433b52ada83a12049e8ecb491f01b4623d96b",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": "2e5fe29222d1cd97d6673153dcf480cea9931274a0e6bc9a386c40e5850e1aac",
+     "inner-b.sqfs_extract/one.txt": "d0233a9a5866b5ac60c6c3fd194caace998d8bec7c8968b64838658ffc2aa9b0",
+     "inner-b.sqfs_extract/two.txt": "110cbe584f54b21db2ce7a602ffe26b6a434bf05358d3f66f454a82455318da2",
+     "x.txt": "8238740e443649fb3548aface71ec79fcbe97fdf4a168c434dec10a5df555673"
+    }
+   },
+   "stderr_tail": ""
+  },
+  "4": {
+   "exit": 0,
+   "observed": {
+    "analysis_depth": {
+     "inner-b.sqfs": 1,
+     "inner-b.sqfs_extract/inner-c.sqfs": 2,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": 3,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": 3,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": 3,
+     "inner-b.sqfs_extract/one.txt": 2,
+     "inner-b.sqfs_extract/two.txt": 2,
+     "x.txt": 1
+    },
+    "analysis_expected": {
+     "inner-b.sqfs": 1,
+     "inner-b.sqfs_extract/inner-c.sqfs": 2,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": 3,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": 3,
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": 3,
+     "inner-b.sqfs_extract/one.txt": 2,
+     "inner-b.sqfs_extract/two.txt": 2,
+     "x.txt": 1
+    },
+    "analysis_matches_claim": true,
+    "bytes_match_oracle": true,
+    "coverage": "complete",
+    "depth": 4,
+    "depth_limited_paths": [],
+    "engine": {
+     "executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+     "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+     "name": "unblob",
+     "source_revision": null,
+     "version": "26.6.4",
+     "worker_count": 1
+    },
+    "extract_root": "firmware.bin_extract",
+    "extraction_gaps": [],
+    "file_count": 8,
+    "paths_match_oracle": true,
+    "published_bytes": 9837,
+    "published_paths": [
+     "inner-b.sqfs",
+     "inner-b.sqfs_extract/inner-c.sqfs",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin",
+     "inner-b.sqfs_extract/one.txt",
+     "inner-b.sqfs_extract/two.txt",
+     "x.txt"
+    ],
+    "sha_by_path": {
+     "inner-b.sqfs": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+     "inner-b.sqfs_extract/inner-c.sqfs": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": "d063a9ad96d0a5593edc7f71840eb7728cf218d611cc368ca96105f154d9695b",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": "d3db6ca0a178712cecf33bf8c22433b52ada83a12049e8ecb491f01b4623d96b",
+     "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": "2e5fe29222d1cd97d6673153dcf480cea9931274a0e6bc9a386c40e5850e1aac",
+     "inner-b.sqfs_extract/one.txt": "d0233a9a5866b5ac60c6c3fd194caace998d8bec7c8968b64838658ffc2aa9b0",
+     "inner-b.sqfs_extract/two.txt": "110cbe584f54b21db2ce7a602ffe26b6a434bf05358d3f66f454a82455318da2",
+     "x.txt": "8238740e443649fb3548aface71ec79fcbe97fdf4a168c434dec10a5df555673"
+    }
+   },
+   "stderr_tail": ""
+  }
+ },
+ "schema": "execnested-r84-c3-repro-v1",
+ "seat": "ExecNested",
+ "toolchain": {
+  "mksquashfs": "mksquashfs version 4.7.5 (2026/03/01)",
+  "node": "v24.21.0",
+  "python": "3.14.8",
+  "rea_version": "6.5.0",
+  "unsquashfs": "unsquashfs version 4.7.5 (2026/03/01)"
+ }
+}

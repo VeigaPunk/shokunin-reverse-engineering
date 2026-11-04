@@ -90,6 +90,13 @@ FIXTURES = (
     ("duplicate-after-window",
      "source: S299 — first field\n" + "\n" * 11
      + "source: S286 — second field\n", "S299", 1),
+    # round-83 outside review boundaries: the sole header may sit on line 12
+    # (0-based), and the target id may appear only in the second field.
+    ("late-single-header",
+     "\n" * 12 + "source: S299 — paired primary sources\n", "S299", 1),
+    ("duplicate-target-second",
+     "source: S286 — earlier context only\n"
+     "source: S299 — paired primary sources\n", "S299", 1),
     ("unavailable", None, "S299", 2),
 )
 

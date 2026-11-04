@@ -139,7 +139,8 @@ def selftest(json_out: str | None) -> int:
     def check(name: str, cond: bool) -> None:
         cases[name] = bool(cond)
 
-    clean = score(fixture_container(f"Counter {path} scores it.", {path: digest}))
+    clean_text = fixture_container(f"Counter {path} scores it.", {path: digest})
+    clean = score(clean_text)
     check("clean-accepted", clean["verdict"] == "CLEAN")
 
     no_path = fixture_container("attribution mismatches 0 across eight cases",
@@ -174,6 +175,8 @@ def selftest(json_out: str | None) -> int:
 
     control = cheap_rule(no_path)
     check("cheap-rule-accepts-defective", control["accepted"] is True)
+    check("control-per-container", cheap_rule(clean_text)["accepted"] is True
+          and cheap_rule(json.dumps({"claims": []}))["accepted"] is False)
     check("cheap-rule-rejects-empty", cheap_rule(json.dumps({"instruments": {}}))["accepted"] is False)
 
     failures = sorted(name for name, ok in cases.items() if not ok)
@@ -216,7 +219,7 @@ def main() -> int:
         expectations[path] = verdict
 
     receipt: dict = {"schema": SCHEMA, "rev": args.rev, "containers": [],
-                     "control": None, "mismatches": [], "met": False}
+                     "controls": [], "control": None, "mismatches": [], "met": False}
     code = 0
     for path in args.container:
         body = git_blob(args.root, args.rev, path)
@@ -238,16 +241,26 @@ def main() -> int:
             receipt["mismatches"].append(f"{path}:{result['verdict']}")
         receipt["containers"].append(entry)
         if args.control:
-            receipt["control"] = cheap_rule(text)
+            # the control is scored on every container; the claim's control is the
+            # defective container's own acceptance, never a neighbour's
+            control = cheap_rule(text)
+            control["container"] = path
+            control["expected"] = expectations.get(path)
+            receipt["controls"].append(control)
+            receipt["control"] = control
     refused = sum(1 for c in receipt["containers"]
                   if c["verdict"] == "FLAGGED" and c.get("expect") == "FLAGGED")
     accepted = sum(1 for c in receipt["containers"]
                    if c["verdict"] == "CLEAN" and c.get("expect", "CLEAN") == "CLEAN")
     receipt["refused_expected"] = refused
     receipt["accepted_expected"] = accepted
+    receipt["control_fired"] = all(c["accepted"] for c in receipt["controls"]
+                                   if c.get("expected") == "FLAGGED") \
+        if receipt["controls"] else None
     receipt["met"] = (not receipt["mismatches"] and code == 0 and refused >= 1
                       and accepted >= 1
-                      and (receipt["control"] is None or receipt["control"]["accepted"]))
+                      and (receipt["control"] is None
+                           or receipt["control_fired"] is True))
     if not receipt["met"] and code == 0:
         code = 1
     text = json.dumps(receipt, indent=1, sort_keys=True)

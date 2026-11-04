@@ -1,0 +1,89 @@
+{
+ "claim": "R84-C3",
+ "pilot": {
+  "path": ".ufo/waves/round-84/pre/c3-pilot.json",
+  "rev": "043b89a25241710a68b45526c3287fb3c8d907c3",
+  "met": true,
+  "arms": {
+   "A1-depth3-paths": true,
+   "A2-depth3-bytes": true,
+   "A3-depth3-partial": true,
+   "A4-depth3-deepest-unanalyzed": true,
+   "A5-depth4-paths": true,
+   "A6-depth4-bytes": true,
+   "A7-depth4-complete": true,
+   "A8-depth4-deepest-analyzed": true,
+   "A9-engine-identity-equal": true
+  },
+  "control": {
+   "detail": "the depth-3 run publishes all eight members yet REA reports partial; a file-count-only reading calls it complete",
+   "fires": true,
+   "rule": "published-file-count-equals-oracle-count-therefore-complete"
+  },
+  "instrument": {
+   "path": "tools/round-84/nested-sqfs.py",
+   "sha256": "08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0"
+  },
+  "mtime": "2026-11-04 16:36:25.678954974 -0300",
+  "declaration_commit_time": "2026-11-04 16:37:35 -0300",
+  "seconds_before_declaration": 70
+ },
+ "base_tool_absent": {
+  "command": "git show 043b89a2:tools/round-84/nested-sqfs.py",
+  "exit": 128
+ },
+ "rev_use_in_tool": [
+  "line 322: ap.add_argument('--rev')",
+  "line 348: receipt['rev'] = args.rev",
+  "no other read; the counter builds its own chain and never reads the repo"
+ ],
+ "expected_levels": [
+  1,
+  2,
+  3
+ ],
+ "A8_vacuity": "deepest-analyzed is all() over expected[p][1] == depth == 4; expected levels are 1,2,3, so the set is empty and the term is true; the level-3 assertion is carried by analyzed-through-budget",
+ "control_entailment": "fires = len(files)==len(expected) and coverage != 'complete'; A1 path-set-equal gives the count and A3 requires coverage partial, so the control cannot fail while A1+A3 hold",
+ "fixture_pins_reproduce": {
+  "pilot": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  },
+  "rebuilt": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  },
+  "equal": true
+ },
+ "ownership_sensitivity": {
+  "command": "mksquashfs outer a-forced.sqfs -noappend -comp gzip -b 4096 -quiet -repro-time 1760000000 -force-uid 0 -force-gid 0",
+  "orig_a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+  "forced_uid0_a": "4f84f140a797aacf214c96df806bed3f5695e3a93af626fce2e43521cc4ffaac",
+  "unsquashfs_ll_owner": "vgpnk/vgpnk",
+  "conclusion": "-repro-time fixes timestamps only; uid/gid are source-owned, so pins are host/user-bound and the tool never passes -all-root/-force-uid/-force-gid"
+ },
+ "working_tree_drift": {
+  "pinned": "08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0",
+  "worktree": "e0364dde5a0bf3a0a8216533df3f26873e0af3de3c541a78de146b897835ac1f",
+  "diff": "removal of unused 'import tempfile' (no semantic change, but the pinned digest no longer describes the executed file)"
+ },
+ "landing_receipt_absent": true,
+ "class_boundary": {
+  "frontier_bullet": "nested sub-images below depth 1 (PROVINCE.md:407,418,432,450,458)",
+  "measured": "lane-built, three-level, standard little-endian SquashFS v4, gzip, block 4096, mksquashfs 4.7.5, REA 6.5.0 / unblob 26.6.4, whole-file nested carriers, regular files only",
+  "not_measured": [
+   "vendor/external images",
+   "compressors other than gzip",
+   "block sizes other than 4096",
+   "AVM/BE layouts",
+   "chains other than three levels",
+   "more than one container per level",
+   "symlinks/devices/hardlinks/xattrs/fragments/sparse files",
+   "offsets/appended data",
+   "providers other than unblob 26.6.4",
+   "budget-exceeding member/byte/path sets"
+  ]
+ }
+}

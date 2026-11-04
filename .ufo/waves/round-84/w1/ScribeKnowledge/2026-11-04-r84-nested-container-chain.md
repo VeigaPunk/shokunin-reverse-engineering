@@ -1,0 +1,154 @@
+# Nested SquashFS container chains through REA `extract-firmware`: publication is not analysis (round 84, R84-C3)
+
+status: R84-C3 — the nested-container edge class moves Frontier → Core for the bounded class named
+below, iff `tools/round-84/nested-sqfs.py --rev <REV> --work <SCRATCH> --json-out <OUT>` reports
+A1–A9 true, the file-count control firing, `met true` and exit 0 at the measured revision. The
+before state is the unmeasured Frontier bullet: at BASE `043b89a25241710a68b45526c3287fb3c8d907c3`
+the counter does not exist (`git show BASE:tools/round-84/nested-sqfs.py` fails) and `PROVINCE.md`
+and `corpus/README.md` each list "nested sub-images below depth 1" as open.
+
+source: S301, S302 — mksquashfs(1) manual page (squashfs-tools 4.7.5), "Filesystem time options" → `-repro-time TIME`, https://man.archlinux.org/man/mksquashfs.1.en — opened 2026-11-04; derived-text lines 168-174: "build a reproducible filesystem image. This is equivalent to specifying -mkfs-time TIME and -inode-time TIME, which achieves reproducibility by setting all timestamps to TIME." (24 words); retained snapshot `.ufo/waves/round-84/l1/sources/mksquashfs.1.en.html`, 57 790 B, sha256 `3ea8c1a1b429a5da35c7ffa0719ee2dade48ab8566c099c02b2c25bbe2052765` — grounds the fixture's reproducible identity; it says nothing about extraction behaviour. rea-agents 6.5.0 `dist/firmware/FirmwarePublication.js:17` (installed package file, sha256 `bb4f3246bee70a5b32b048e5ef956e649626b6449b1d457454440739a8d51029`) — "Rerun extract_firmware with a higher max_depth (up to 10) and a fresh output_directory to descend into this path." (18 words) — the provider's own remedy text for a `depth-limited` gap.
+verified-at: 2026-11-04 — receipt `.ufo/waves/round-84/pre/c3-pilot.json` (exists at the first
+container `a5663ddedd157bb9113928f5fe80509d6f3fc7a1`, sha256
+`f45f018cdee6ce47daca6acbfb96674a9c0150fff834cc631fe6b25f5fb9cffa`; `met true`, `arms` A1–A9 all
+true, `control.fires true`, instrument sha256
+`08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0`). Independently re-derived by
+this seat at the same container revision into the wave-local receipt
+`.ufo/waves/round-84/w1/ScribeKnowledge/c3-scribe-receipt.json` (same instrument digest, same
+fixture pins, same nine arms, same control); that path is a wave-local receipt and is **not
+present at the first container**. The landing receipt
+`.ufo/waves/round-84/l1/scores/c3-at-landing.json` named by the plan is **planned, not yet
+present** in the lane at the first container.
+recheck: `python3 -I -B tools/round-84/nested-sqfs.py --rev <REV> --work <SCRATCH> --json-out
+<OUT>` → exit 0, `met true`, `arms` A1–A9 all true, `control.fires true`; the fixture pins `a`,
+`b`, `c` must be unchanged (`chain.pins`). `python3 -I -B tools/round-84/nested-sqfs.py --selftest
+--json-out <OUT>` exercises the scorer on synthetic envelopes only (7 cases, 0 failures). Source
+side: re-fetch https://man.archlinux.org/man/mksquashfs.1.en and grep `-repro-time` in the
+retained snapshot (expect sha256 `3ea8c1a1…`).
+
+## The bounded class
+
+[observation] The class is a **lane-built** chain of standard **little-endian SquashFS v4** images,
+**gzip**, **three levels**, built by `mksquashfs 4.7.5` with `-noappend -comp gzip -b 4096
+-repro-time 1760000000`, read through REA 6.5.0 `extract-firmware` on the **unblob 26.6.4**
+provider. `c.sqfs` holds three leaf files; `b.sqfs` holds `inner-c.sqfs` plus two files; `a.sqfs`
+holds `inner-b.sqfs` plus one file. Nothing in this entry is a claim about a vendor carrier.
+
+[observation] The `-repro-time` option is what makes the fixture identity stable: it fixes the
+filesystem build time and the inode times to one value, so a rebuild of the same tree yields the
+same image digests. The manual page says so of the option and nothing else (S301, 24-word quote
+above). Fixture pins — `a` `e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2`, `b`
+`7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a`, `c`
+`f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8`. This seat's independent rebuild
+reproduced the pilot receipt's three pins byte for byte. Each nested carrier's bytes equal the
+independent `unsquashfs 4.7.5` oracle member of the image that contains it
+(`chain.nested_identity.b_is_oracle_member true`, `c_is_oracle_member true`); oracle member counts
+`a 2`, `b 3`, `c 3`.
+
+## What was measured, at both depths
+
+[observation] The oracle member set is eight paths — three container images and five regular
+files — and **all eight are published at both depths, with matching bytes**:
+
+| published path (under the `firmware.bin_extract/` root) | sha256 |
+|---|---|
+| `x.txt` | `8238740e443649fb3548aface71ec79fcbe97fdf4a168c434dec10a5df555673` |
+| `inner-b.sqfs` | `7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a` |
+| `inner-b.sqfs_extract/one.txt` | `d0233a9a5866b5ac60c6c3fd194caace998d8bec7c8968b64838658ffc2aa9b0` |
+| `inner-b.sqfs_extract/two.txt` | `110cbe584f54b21db2ce7a602ffe26b6a434bf05358d3f66f454a82455318da2` |
+| `inner-b.sqfs_extract/inner-c.sqfs` | `f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8` |
+| `inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt` | `d063a9ad96d0a5593edc7f71840eb7728cf218d611cc368ca96105f154d9695b` |
+| `inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt` | `d3db6ca0a178712cecf33bf8c22433b52ada83a12049e8ecb491f01b4623d96b` |
+| `inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin` | `2e5fe29222d1cd97d6673153dcf480cea9931274a0e6bc9a386c40e5850e1aac` |
+
+[observation] At `--max-depth 3` the envelope reports `coverage: partial`, exactly one
+`extraction_gaps` entry of kind `depth-limited` whose `input_path` is the deepest extract root
+`$output/firmware.bin_extract/inner-b.sqfs_extract/inner-c.sqfs_extract`, and exactly one
+`depth_limited_paths` entry naming the same root. The level-3 files carry `analysis_depth: null`;
+the level-2 members carry `2`; the level-1 members carry `1`.
+
+[observation] The level-3 `analysis_depth` is a **present key whose value is null**, not a dropped
+key: a direct envelope probe of the same depth-3 run finds `"analysis_depth"` on all eight
+published file records, with value `null` on the three level-3 files and `1`/`2` on the others
+(receipt `analysis-depth-key-probe.json`). The frozen counter scores this arm as "value is null",
+which on its own would also accept a dropped key; the probe closes that difference.
+
+[observation] At `--max-depth 4` the same eight paths are published with the same bytes, `coverage:
+complete`, `extraction_gaps []`, `depth_limited_paths []`, and the level-3 files carry
+`analysis_depth: 3` (levels 1 and 2 unchanged). Both runs exit 0.
+
+[observation] Engine identity is equal across the two runs and pinned: `unblob` 26.6.4, executable
+`/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob`, executable sha256
+`0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09`, `worker_count 1`,
+`source_revision null`; REA `rea-agents@6.5.0` reports `6.5.0`; `mksquashfs` and `unsquashfs` are
+4.7.5; Python 3.14.8.
+
+## Publication is not analysis
+
+[inference] At `--max-depth N` the provider descends the chain far enough to **publish** the
+deepest level's members, but analyzes only the levels above it and records one `depth-limited` gap
+at the deepest extract root. So the published file set and the analyzed set are different sets,
+and the difference is visible only in `coverage`, `depth_limited_paths` and the per-file
+`analysis_depth` — never in the file list.
+
+[inference] The cheap completeness rule therefore fails here, and the counter carries it as a
+control: "published file count equals the oracle count, therefore complete" labels the depth-3 run
+complete although the provider itself says `partial`. The control fires on exactly this case
+(`control.fires true`, `control.rule` as quoted). The completeness signal for this class is
+`coverage` plus the gap list, not the count.
+
+[observation] The provider's own remedy text for a `depth-limited` gap is in the pinned
+rea-agents 6.5.0 package file `dist/firmware/FirmwarePublication.js:17` (sha256
+`bb4f3246bee70a5b32b048e5ef956e649626b6449b1d457454440739a8d51029`): rerun `extract_firmware` with
+a higher `max_depth` and a fresh `output_directory`. The package's input schema caps `max_depth`
+at 10 (default 3) and caps the staging budgets at `--max-output-files` 100 000 (default 10 000
+entries) and `--max-output-bytes` 512 MiB (default 256 MiB) — read from
+`dist/domain/firmware/firmwareAnalysis.js` (sha256
+`2cbc1cc4ceaa760a8e47b8883a6b7b85040d640032546864fa9cba4898243aa5`); the counter passes no budget
+flag, so the defaults apply.
+
+## Not covered
+
+[unknown] The following are **outside** this class and are not measured here:
+
+- **Vendor or externally supplied images.** Every carrier here is lane-built; no vendor image was
+  fetched or extracted.
+- **Other compressors.** Only gzip (`-comp gzip`); xz, zstd, lz4 and lzo bodies are not covered.
+- **Other block sizes.** Only `-b 4096`.
+- **AVM/BE layouts.** The lane's `hsqs` LE-AVM and big-endian AVM bodies stay where the earlier
+  rounds put them; this chain is plain standard little-endian v4.
+- **Depth beyond three.** The class is a **three-level** chain: a fourth nesting level inside the
+  innermost image (chain depth > 3) is not built, and extraction depths other than the two
+  measured here (`--max-depth 3` and `--max-depth 4`) were not exercised — the provider's own
+  ceiling is `max_depth` 10.
+- **Other providers.** Only unblob 26.6.4 behind REA 6.5.0 `extract-firmware`; another provider
+  may publish, analyze or budget differently.
+- **Files beyond the file budget.** The provider's staging entry budget (default 10 000 entries,
+  max 100 000) and staging byte budget (default 256 MiB, max 512 MiB) were not approached by this
+  eight-member fixture; images larger than the budget are not covered.
+- **Chains with several containers per level, and non-regular members.** The fixture holds one
+  container per level and regular files only.
+
+## Receipts, provenance and limits
+
+[observation] `.ufo/waves/round-84/pre/c3-pilot.json` exists at the first container
+`a5663ddedd157bb9113928f5fe80509d6f3fc7a1` (sha256
+`f45f018cdee6ce47daca6acbfb96674a9c0150fff834cc631fe6b25f5fb9cffa`) and is the receipt this entry
+rests on. The landing receipt `.ufo/waves/round-84/l1/scores/c3-at-landing.json` is **planned and
+not yet present** in the lane at that container; the source snapshot
+`.ufo/waves/round-84/l1/sources/mksquashfs.1.en.html` is present in the lane working tree but
+uncommitted at that container.
+
+[observation] The counter's `--rev` argument is a **caller-supplied label** recorded in the
+receipt's `rev` field; it does not check out a revision. What binds the measurement is the
+instrument digest in `instrument.sha256`
+(`08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0`, equal to the digest frozen in
+`.ufo/waves/round-84/claims.json`), the fixture pins in `chain.pins`, and the oracle digests in
+`expected`.
+
+[unknown] `analysis_depth: null` is the envelope's own field of that name; it is not an independent
+statement about what the provider did with those bytes. No claim is made that a `depth-limited`
+run would miss members under every provider version — the remedy text above is from 6.5.0 only.
+The level-3 key-presence probe cited above is a wave-local observation
+(`.ufo/waves/round-84/w1/ScribeKnowledge/analysis-depth-key-probe.json`), not a first-container
+path.

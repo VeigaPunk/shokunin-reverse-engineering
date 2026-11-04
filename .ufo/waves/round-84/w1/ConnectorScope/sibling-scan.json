@@ -1,0 +1,182 @@
+{
+ "schema": "kaidoku-r84-connector-sibling-scan-v1",
+ "timestamp": "2026-11-04T20:15:00Z",
+ "lanes_audited": 21,
+ "categories": {
+  "prefreeze_claim_metadata_gate": {
+   "kaidoku_instrument": "tools/round-84/freeze-precheck.py",
+   "sha256": "602239f5f52009f2211c2343c43c8cc97e5941b0e8815e225bddc32e72780326",
+   "findings": [
+    {
+     "lane": "chousa-shokunin",
+     "path": "tools/freeze-check.py",
+     "what_it_does": "Pre-ready check of wave spec, dispatch, and ready payloads against claims.md. Checks CLAIMS_NONEMPTY, CONTEXT_DIGEST, DIGEST_STRAY, CONTEXT_SPEC_EQ, NAMES, BODY_RENDER, READY_DISPATCH, READY_IDENT.",
+     "disposition": "stay separate",
+     "reason": "Chousa checks dispatch orchestration and prompt rendering consistency; Kaidoku checks internal claim-object string references to script paths and container pin bindings."
+    },
+    {
+     "lane": "souji-shokunin",
+     "path": "tools/souji-freeze-check.py",
+     "what_it_does": "Pre-dispatch freeze checklist parsing Markdown preregistration files (## C<digits> syntax). Checks git blob existence for counters/populations, base ancestry (merge-base --is-ancestor), and wave dispatch timing.",
+     "disposition": "stay separate",
+     "reason": "Different input grammar (Markdown preregistration vs JSON claim container) and different validation focus (git commit ancestry and dispatch timing vs claim string path extraction and pin verification)."
+    },
+    {
+     "lane": "kasegi-shokunin",
+     "path": "corpus/instruments/freeze-check.py",
+     "what_it_does": "Replays counter_cmd from kasegi-round-claims-v2 at the base tree. Checks expect_before equals output, expect_after does not occur, and base tree is unmutated.",
+     "disposition": "stay separate",
+     "reason": "Dynamic execution replay of counter commands against the base tree, whereas Kaidoku's instrument is a static claim metadata and container pin consistency verifier."
+    },
+    {
+     "lane": "kagi-shokunin",
+     "path": "corpus/prefreeze-control.sh",
+     "what_it_does": "Extracts base revision into scratch, executes declared counting commands from plans/round-N.controls.tsv, and compares measured stdout integers against declared expect values.",
+     "disposition": "stay separate",
+     "reason": "Replays numerical counters on extracted base archives; does not inspect claim containers, JSON metadata, or script path pins."
+    },
+    {
+     "lane": "mori-shokunin",
+     "path": "tools/mori-freeze-order.py",
+     "what_it_does": "Evaluates mori-freeze-register-v1 to verify that declared frozen inputs predate implementation commits across git rev-list base..tip.",
+     "disposition": "stay separate",
+     "reason": "Validates git commit history precedence between frozen files and implementation files; does not inspect claim strings or container pins."
+    },
+    {
+     "lane": "kotodama-shokunin",
+     "path": "tools/ledger-token-guard.py",
+     "what_it_does": "Re-runs claim ledger observation pairs via git cat-file against immutable 40-hex commits to detect recorded-observation drift and vacuity.",
+     "disposition": "stay separate",
+     "reason": "Post-hoc observation verification for claim ledgers, not a prefreeze container validation gate."
+    },
+    {
+     "lane": "tameshi-shokunin",
+     "path": "tools/coldread-precheck-portable.py",
+     "what_it_does": "Batched, cache-backed git-cat-file runner for coldread ledger checks to avoid process spawn overhead.",
+     "disposition": "stay separate",
+     "reason": "Execution optimization for historical ledger audits, not a prefreeze claim metadata gate."
+    }
+   ]
+  },
+  "mutation_closure_counter": {
+   "kaidoku_instrument": "tools/round-84/mutation-closure.py",
+   "sha256": "fd8aee39bdfaa1aa51d1de9a175a77be9770dd6f3e68571ca798b8f6bdbad084",
+   "findings": [
+    {
+     "lane": "kake-shokunin",
+     "path": "corpus/QUALITY.md (Round-80 criterion)",
+     "what_it_does": "Requires survivor mutants to be killed by isolated fixtures that flip a single conjunct.",
+     "disposition": "stay separate",
+     "reason": "Tests external tools via isolated test fixtures, rather than scoring single-edit mutant tables against the target tool's own --selftest case failure inventory."
+    },
+    {
+     "lane": "kengaku-shokunin",
+     "path": "plans/mutant_direction_check.py (QUALITY 29/31/33/37)",
+     "what_it_does": "Checks kill direction (rc-silence vs rc-mirror) and enforces mutant population floors.",
+     "disposition": "stay separate",
+     "reason": "Validates kill direction categories on gate mutants, but does not bind kills to declared selftest case names."
+    },
+    {
+     "lane": "mori-shokunin",
+     "path": "tools/mutate-c2.py (QUALITY 165/177)",
+     "what_it_does": "Validates that selftest arms added for named surviving mutants fail on those mutants.",
+     "disposition": "stay separate",
+     "reason": "Evaluates arm counts and tallies without the structured mutants.json anchor/replace table or declared-case failure matching."
+    },
+    {
+     "lane": "tameshi-shokunin",
+     "path": ".ufo/waves/round-56/w1/T56W1MutGate-receipts/10-driver-mutate.py (QUALITY 89)",
+     "what_it_does": "Mutates gate scripts and scores kills based on non-zero exit codes and lines starting with FAIL.",
+     "disposition": "stay separate",
+     "reason": "Scores whole-suite exit status and generic FAIL lines; does not attribute kills to specific declared case names inside selftest."
+    },
+    {
+     "lane": "tsukuroi-shokunin",
+     "path": "tools/mutants-owed-statements-r29-v4shapes.py",
+     "what_it_does": "Custom regex/AST statement mutation scripts that modify statements and check whether census/audit scripts report discrepancies.",
+     "disposition": "stay separate",
+     "reason": "Bespoke statement mutation harness; does not use declared-case attribution or restore-verification mechanics."
+    },
+    {
+     "lane": "kama-shokunin",
+     "path": "tools/round69-newest-closure-counter.py",
+     "what_it_does": "Audits SCORECARD.md newest outside closure pointer against dated verifier-spotcheck files.",
+     "disposition": "stay separate",
+     "reason": "Homonym hit on 'closure': this is verifier-spotcheck file dating, completely unrelated to mutation testing."
+    }
+   ]
+  },
+  "nested_squashfs_depth_measurement": {
+   "kaidoku_instrument": "tools/round-84/nested-sqfs.py",
+   "sha256": "08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0",
+   "findings": [
+    {
+     "lane": "revenger-shokunin",
+     "path": "corpus/live/runs/round-63/LEDGER.md",
+     "what_it_does": "Records observations of REA 6.5.0 on a 2048-byte synthetic firmware image. Explicitly logs in U1, U2, U3 that squashfs was not tested, extractions was empty ({}), and scan depth inside member bytes was unknown.",
+     "disposition": "stay separate",
+     "reason": "Revenger documents the absence of SquashFS and nested extraction testing; Kaidoku provides the active reproducible multi-level SquashFS chain measurement."
+    },
+    {
+     "lane": "game-dev-3d-shokunin",
+     "path": "corpus/knowledge/rea.md",
+     "what_it_does": "Mentions unblob as an underlying engine dependency for REA in documentation.",
+     "disposition": "stay separate",
+     "reason": "Pure documentation reference; no firmware extraction, SquashFS testing, or measurement tools."
+    }
+   ]
+  },
+  "stricter_fleet_freeze_and_ledger_conventions": {
+   "kaidoku_baseline": {
+    "instrument": "tools/round-29/freeze-gate.py",
+    "ledger": "corpus/claim-freezes-v2.tsv",
+    "schema": "round<TAB>verdict<TAB>findings<TAB>pointer"
+   },
+   "fleet_conventions": [
+    {
+     "lane": "souji-shokunin",
+     "instrument": "tools/souji-freeze-check.py",
+     "stricter_mechanisms": [
+      "Git ancestry: verifies git merge-base --is-ancestor <base> <freeze> to prevent detached-base claims",
+      "Wave timing: flags DISPATCH-BEFORE-FREEZE if wave artifacts are committed at or before freeze commit",
+      "Filesystem hygiene: refuses symlinks (COUNTER-SYMLINK, POPULATION-SYMLINK, CONTROL-SYMLINK)",
+      "Claim block grammar: refuses duplicate keys (KEY-DUPLICATE) and non-numeric round numbers (ROUND-MALFORMED)"
+     ]
+    },
+    {
+     "lane": "mori-shokunin",
+     "instrument": "tools/mori-freeze-order.py",
+     "stricter_mechanisms": [
+      "Commit sequence ordering: validates via git diff-tree across base..tip that frozen claim inputs predate implementation commits",
+      "JSON parser strictness: rejects duplicate object keys and non-standard number representations"
+     ]
+    },
+    {
+     "lane": "kotodama-shokunin",
+     "instrument": "tools/ledger-token-guard.py",
+     "stricter_mechanisms": [
+      "Plumbing isolation: re-executes observations using pure git cat-file without invoking bash or shell commands",
+      "Revision pinning: requires immutable 40-hex commit hashes, rejecting branch/HEAD/tag references",
+      "Two-sided validation: checks both observation drift and vacuity (stated_token == observed_token)"
+     ]
+    },
+    {
+     "lane": "kagi-shokunin",
+     "instrument": "corpus/claim-ledger.sh + corpus/claim-ledger.tsv",
+     "stricter_mechanisms": [
+      "Mechanical claim execution: executes every claim command under timeout, requiring exact exit code and regex match on last non-empty line",
+      "Stamp file protection: corpus/stamps.tsv requires explicit --prune flag to prevent accidental loss of tracked artifacts"
+     ]
+    },
+    {
+     "lane": "chousa-shokunin",
+     "instrument": "tools/freeze-check.py",
+     "stricter_mechanisms": [
+      "Cross-artifact digest embedding: verifies claims.md SHA-256 is present in dispatch context",
+      "Prompt digest hygiene: flags any stray 64-hex SHA-256 tokens (DIGEST_STRAY) to prevent cross-wave context leakage"
+     ]
+    }
+   ]
+  }
+ }
+}

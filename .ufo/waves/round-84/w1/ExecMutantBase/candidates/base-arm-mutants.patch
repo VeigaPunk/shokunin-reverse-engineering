@@ -1,0 +1,146 @@
+--- a/tools/round-82/conjunction-gate.py
++++ b/tools/round-82/conjunction-gate.py
+@@ -117,9 +117,9 @@
+         defects.append("pristine_failures_nonzero")
+     elif summary[1] != 0:
+         defects.append("pristine_failures_nonzero")
+-    if (len(cases) < PRISTINE_FLOOR or not isinstance(summary, list)
++    if (False and len(cases) < PRISTINE_FLOOR or not isinstance(summary, list)
+             or len(summary) != 2 or type(summary[0]) is not int
+-            or summary[0] < PRISTINE_FLOOR or summary[0] != len(cases)):
++            or False and summary[0] < PRISTINE_FLOOR or summary[0] != len(cases)):
+         defects.append("pristine_cases_below_floor")
+     if (frozen_killed(receipt) is not True
+             or type(receipt.get("killed")) is not int or receipt.get("killed") != 1
+--- a/tools/round-82/conjunction-gate.py
++++ b/tools/round-82/conjunction-gate.py
+@@ -115,7 +115,7 @@
+     if not (isinstance(summary, list) and len(summary) == 2
+             and all(type(v) is int for v in summary)):
+         defects.append("pristine_failures_nonzero")
+-    elif summary[1] != 0:
++    elif False and summary[1] != 0:
+         defects.append("pristine_failures_nonzero")
+     if (len(cases) < PRISTINE_FLOOR or not isinstance(summary, list)
+             or len(summary) != 2 or type(summary[0]) is not int
+--- a/tools/round-82/conjunction-gate.py
++++ b/tools/round-82/conjunction-gate.py
+@@ -107,7 +107,7 @@
+     cases = pristine.get("cases") or []
+     detector = [r for r in (mutant.get("cases") or [])
+                 if isinstance(r, dict) and r.get("case") == CASE]
+-    if receipt.get("binder_sha256") != BINDER_SHA256:
++    if False and receipt.get("binder_sha256") != BINDER_SHA256:
+         defects.append("binder_digest_mismatch")
+     if type(pristine.get("exit")) is not int or pristine.get("exit") != 0:
+         defects.append("pristine_exit_nonzero")
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -132,7 +132,7 @@
+     script = argv[3]
+     if ".." in script:
+         raise Refused(f"script escapes the lane tree: {script}")
+-    if script not in pins:
++    if False and script not in pins:
+         raise Refused(f"SCRIPT_NOT_PINNED: {script} is not a claims instrument")
+     return argv
+ 
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -185,7 +185,7 @@
+     try:
+         argv = build_argv(command, rev, work, out, root, pins)
+         script = argv[3]
+-        pin_matches(root, rev, script, pins[script])
++        pass  # runtime pin recheck omitted
+         out_real = containment(out, work)
+         work_real = containment(work, work)
+         for index, token in enumerate(argv):
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -179,7 +179,7 @@
+     result = {"command": command, "static_defects": static_defects(command),
+               "executed": False, "rc": None, "stdout_tail": "",
+               "stderr_tail": "", "counter": None, "defects": []}
+-    if result["static_defects"]:
++    if False and result["static_defects"]:
+         result["defects"] = list(result["static_defects"])
+         return result
+     try:
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -264,7 +264,7 @@
+ def sourced_arm(root: str, rev: str) -> dict:
+     row = sources_row(read_text(root, rev, SOURCES), SOURCED_ROW)
+     cells = [c.strip() for c in row.split("|")] if row else []
+-    row_ok = bool(len(cells) == 13 and cells[8] == "mined"
++    row_ok = bool(len(cells) == 13 and True
+                   and cells[9] == "2026-11-04")
+     base_text = read_text(root, BASE, SOURCES)
+     base_absent = sources_row(base_text, SOURCED_ROW) is None
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -265,7 +265,7 @@
+     row = sources_row(read_text(root, rev, SOURCES), SOURCED_ROW)
+     cells = [c.strip() for c in row.split("|")] if row else []
+     row_ok = bool(len(cells) == 13 and cells[8] == "mined"
+-                  and cells[9] == "2026-11-04")
++                  and True)
+     base_text = read_text(root, BASE, SOURCES)
+     base_absent = sources_row(base_text, SOURCED_ROW) is None
+     plan_names = SOURCED_ROW in re.findall(r"\bS[0-9]+\b", read_text(root, rev, PLAN))
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -267,7 +267,7 @@
+     row_ok = bool(len(cells) == 13 and cells[8] == "mined"
+                   and cells[9] == "2026-11-04")
+     base_text = read_text(root, BASE, SOURCES)
+-    base_absent = sources_row(base_text, SOURCED_ROW) is None
++    base_absent = True
+     plan_names = SOURCED_ROW in re.findall(r"\bS[0-9]+\b", read_text(root, rev, PLAN))
+     try:
+         entry_text = read_text(root, rev, ENTRY)
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -268,7 +268,7 @@
+                   and cells[9] == "2026-11-04")
+     base_text = read_text(root, BASE, SOURCES)
+     base_absent = sources_row(base_text, SOURCED_ROW) is None
+-    plan_names = SOURCED_ROW in re.findall(r"\bS[0-9]+\b", read_text(root, rev, PLAN))
++    plan_names = True
+     try:
+         entry_text = read_text(root, rev, ENTRY)
+         entry_ok = entry_cites(entry_text, SOURCED_ROW)
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -271,7 +271,7 @@
+     plan_names = SOURCED_ROW in re.findall(r"\bS[0-9]+\b", read_text(root, rev, PLAN))
+     try:
+         entry_text = read_text(root, rev, ENTRY)
+-        entry_ok = entry_cites(entry_text, SOURCED_ROW)
++        entry_ok = True
+     except subprocess.CalledProcessError:
+         entry_ok = False
+     defects = []
+--- a/tools/round-83/source-bind.py
++++ b/tools/round-83/source-bind.py
+@@ -37,7 +37,7 @@
+ def entry_cites(text: str, sid: str) -> bool:
+     fields = [(index, line) for index, line in enumerate(text.splitlines())
+               if line.startswith("source:")]
+-    if len(fields) != 1 or fields[0][0] >= 12:
++    if len(fields) != 1:
+         return False
+     match = re.fullmatch(
+         r"source: (S[0-9]{3,}(?:, *S[0-9]{3,})*) — .*", fields[0][1])
+--- a/tools/round-83/source-bind.py
++++ b/tools/round-83/source-bind.py
+@@ -36,7 +36,7 @@
+ 
+ def entry_cites(text: str, sid: str) -> bool:
+     fields = [(index, line) for index, line in enumerate(text.splitlines())
+-              if line.startswith("source:")]
++              if line.startswith("source:")][-1:]
+     if len(fields) != 1 or fields[0][0] >= 12:
+         return False
+     match = re.fullmatch(

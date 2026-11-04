@@ -1,0 +1,195 @@
+{
+  "schema": "kaidoku-r84-scribesources-receipt-v1",
+  "seat": "ScribeSources",
+  "round": 84,
+  "opened": "2026-11-04",
+  "lane_root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "sources_opened": [
+    {
+      "id": "S301",
+      "url": "https://man.archlinux.org/man/mksquashfs.1.en",
+      "http": 200,
+      "bytes": 57790,
+      "sha256": "3ea8c1a1b429a5da35c7ffa0719ee2dade48ab8566c099c02b2c25bbe2052765",
+      "snapshot": ".ufo/waves/round-84/w1/ScribeSources/receipts/mksquashfs.1.en.html",
+      "anchor": "Filesystem time options > -repro-time TIME; derived-text lines 168-174",
+      "quote": "build a reproducible filesystem image. This is equivalent to specifying -mkfs-time TIME and -inode-time TIME, which achieves reproducibility by setting all timestamps to TIME.",
+      "quote_words": 24,
+      "l1_snapshot_identical": true,
+      "l1_snapshot_path": ".ufo/waves/round-84/l1/sources/mksquashfs.1.en.html",
+      "live_refetch_sha256_identical": true,
+      "page_version_evidence": [
+        "<td class=\"foot-os\">mksquashfs version 4.7.5</td>",
+        "<dd>4.7.5-1</dd>"
+      ],
+      "disambiguated_against": "-repro entry at derived-text lines 163-167 opens with the same first sentence"
+    },
+    {
+      "id": "S302 (assignment-literal)",
+      "url": "https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz",
+      "http": 200,
+      "bytes": 5634033,
+      "sha256": "531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699",
+      "note": "digest equals the digest the registry already records for this package (S080/S119)",
+      "member_probe": "package/dist/firmware/FirmwarePublication.js sha256 bb4f3246bee70a5b32b048e5ef956e649626b6449b1d457454440739a8d51029 == installed /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/firmware/FirmwarePublication.js sha256 bb4f3246bee70a5b32b048e5ef956e649626b6449b1d457454440739a8d51029 (17416 B each)",
+      "status": "rejected",
+      "reason": "URL already held in five registry scopes; packed bytes expose no stable anchor",
+      "flip": "a published REA documentation URL that anchors the gap-kind taxonomy"
+    }
+  ],
+  "census_baseline_HEAD": {
+    "rows": 205,
+    "tier.A": 187,
+    "tier.B": 10,
+    "tier.C": 8,
+    "status.mined": 184,
+    "status.rejected": 21,
+    "matches_plan": "plans/round-84-claims.md 'Census before 205 rows, A187/B10/C8, mined 184/rejected 21'"
+  },
+  "census_after_landed": {
+    "rows": 208,
+    "tier.A": 190,
+    "tier.B": 10,
+    "tier.C": 8,
+    "status.mined": 186,
+    "status.rejected": 22
+  },
+  "validate_runs": [
+    {
+      "variant": "D assignment-literal delta on HEAD baseline",
+      "command": "scripts/sources-census.sh validate --file <mirror>",
+      "exit": 0,
+      "E_codes": [],
+      "W04": [
+        "S302 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes"
+      ]
+    },
+    {
+      "variant": "A same file, census mode",
+      "exit": 0,
+      "rows": 207,
+      "tier.A": 189,
+      "status.mined": 185,
+      "status.rejected": 22
+    },
+    {
+      "variant": "E assignment-literal delta on the LANDED tree",
+      "exit": 1,
+      "E_codes": [
+        "E03 S301 duplicate id",
+        "E03 S302 duplicate id"
+      ]
+    },
+    {
+      "variant": "F renumber landed S302<->S303",
+      "exit": 0,
+      "E_codes": [],
+      "census": {
+        "rows": 208,
+        "status.mined": 186,
+        "status.rejected": 22
+      }
+    },
+    {
+      "variant": "landed tree as-is (lesson+knowledge entry now on disk)",
+      "exit": 0,
+      "E_codes": [],
+      "census": {
+        "rows": 208
+      }
+    }
+  ],
+  "parser_indentation": {
+    "widths_accepted": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "width_4": "ignored (indented code)",
+    "method": "inserted the delta rows at each indent into a HEAD-baseline mirror and re-ran census/validate",
+    "observed": [
+      {
+        "indent": 0,
+        "rows": 207,
+        "validate_exit": 0
+      },
+      {
+        "indent": 1,
+        "rows": 207,
+        "validate_exit": 0
+      },
+      {
+        "indent": 2,
+        "rows": 207,
+        "validate_exit": 0
+      },
+      {
+        "indent": 3,
+        "rows": 207,
+        "validate_exit": 0
+      },
+      {
+        "indent": 4,
+        "rows": 205,
+        "validate_exit": 0
+      }
+    ],
+    "maintained_selftest": {
+      "command": "scripts/sources-census.sh selftest",
+      "exit": 0,
+      "killed": 96,
+      "survived": 0,
+      "last_line": "selftest ok",
+      "indent_width_cases": 36,
+      "tmpdir": "scratch-local, not /tmp"
+    }
+  },
+  "id_binding_conflict": {
+    "plan_text": "plans/round-84-claims.md: 'two rows opened this round - S301 (mksquashfs(1) -repro-time; mined, tier A ...) and S302 (rejected: the REA npm tarball ...)'",
+    "assignment_text": "Row S301 admit/mined mksquashfs(1); Row S302 reject/rejected npm tarball",
+    "landed_state": {
+      "S301": "mksquashfs(1) manual page (docs, A, mined) - MATCHES the assignment",
+      "S302": "rea-agents 6.5.0 installed package file FirmwarePublication.js:17 (code, A, mined) - NOT in the assignment",
+      "S303": "npm tarball rejection (code, A, rejected) - the assignment's S302 content, id shifted by one"
+    },
+    "landed_by": ".ufo/waves/round-84/l1/sources/round-84-sources.json (L1 seat) plus corpus/knowledge/2026-11-04-r84-nested-container-chain.md and corpus/lessons/round-84.md",
+    "cross_references_that_bind_the_landed_numbering": [
+      "corpus/knowledge/2026-11-04-r84-nested-container-chain.md line 11-12 source: S301 / source: S302",
+      "corpus/lessons/round-84.md Gate table rows S301/S302/S303 and the M84-2 mistake row citing E11 S301/S302",
+      "corpus/README.md round-84 frontier note (S301, S302)",
+      "SKILL.md instrument-registry row for tools/round-84/nested-sqfs.py ('S301 grounds determinism')"
+    ]
+  },
+  "used_by_forward_audit": {
+    "rule": "each mined row's used-by path must exist AND literally contain the row id",
+    "delta_rows": {
+      "S301": [
+        "corpus/knowledge/2026-11-04-r84-nested-container-chain.md",
+        "corpus/lessons/round-84.md"
+      ],
+      "S302": [
+        "corpus/lessons/round-84.md"
+      ]
+    },
+    "S301_cited_in": [
+      1,
+      3
+    ],
+    "S302_cited_in": [
+      4
+    ],
+    "pre_existing_violations": [
+      "S081 NO-CITE tools/round-27/xpin-attribute.mjs",
+      "S246 NO-CITE corpus/lessons/round-49.md",
+      "S248 NO-CITE x2",
+      "S254 NO-CITE corpus/claim-freezes-corrections.tsv",
+      "S257/S259/S260/S261/S262/S263 NO-CITE tools/*"
+    ],
+    "note": "pre-existing, untouched by this delta"
+  },
+  "notable_discrepancy": "the frozen plan's S302 = the rejected npm tarball; the landed tree gives the tarball id S303 and S302 to an installed-package-file row the assignment did not name",
+  "tooling_installs": "none - no package installed or upgraded; the maintained scripts/sources-census.sh and gawk already present and sufficient",
+  "git_mutations": "none - read-only git (git show HEAD:corpus/SOURCES.md, git diff, git status, git log) only",
+  "production_edits": "none - corpus/SOURCES.md was NOT written; only this seat's wave directory was written"
+}

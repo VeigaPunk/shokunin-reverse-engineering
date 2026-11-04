@@ -1,0 +1,218 @@
+[
+ {
+  "id": "pc-row-last",
+  "area": "A row-parse",
+  "target": "printed-command.py",
+  "find": "    for line in text.splitlines():\n        if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\") == sid:\n            return line\n    return None\n",
+  "replace": "    rows = [line for line in text.splitlines()\n            if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\") == sid]\n    return rows[-1] if rows else None\n",
+  "note": "the last matching row wins (append-only ledger correction) instead of the first",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-row-prefix",
+  "area": "A row-parse",
+  "target": "printed-command.py",
+  "find": "        if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\") == sid:",
+  "replace": "        if ROW_RE.match(line) and ROW_RE.match(line).group(\"id\").startswith(sid):",
+  "note": "row id binds by prefix, so S299 matches an S2999 row",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-cells-len-ge",
+  "area": "B cells",
+  "target": "printed-command.py",
+  "find": "row_ok = bool(len(cells) == 13 and cells[8] == \"mined\"",
+  "replace": "row_ok = bool(len(cells) >= 13 and cells[8] == \"mined\"",
+  "note": "cell-count floor instead of exact width; extra columns accepted",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-cells-status-ne-queued",
+  "area": "B cells",
+  "target": "printed-command.py",
+  "find": "cells[8] == \"mined\"",
+  "replace": "cells[8] != \"queued\"",
+  "note": "status accepted by exclusion instead of by the pinned token",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-cells-date-ge",
+  "area": "B cells",
+  "target": "printed-command.py",
+  "find": "cells[9] == \"2026-11-04\"",
+  "replace": "cells[9] >= \"2026-11-04\"",
+  "note": "date bound by lexicographic >= instead of the pinned date",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-cells-index-shift",
+  "area": "B cells",
+  "target": "printed-command.py",
+  "find": "cells[8] == \"mined\"",
+  "replace": "cells[7] == \"mined\"",
+  "note": "status read from the column before the status column",
+  "expectation": "?"
+ },
+ {
+  "id": "sb-window-13th",
+  "area": "C entry_cites",
+  "target": "source-bind.py",
+  "find": "if len(fields) != 1 or fields[0][0] >= 12:",
+  "replace": "if len(fields) != 1 or fields[0][0] > 12:",
+  "note": "window off-by-one: a single source field on line 13 is accepted",
+  "expectation": "?"
+ },
+ {
+  "id": "sb-two-fields-first",
+  "area": "C entry_cites",
+  "target": "source-bind.py",
+  "find": "if len(fields) != 1 or fields[0][0] >= 12:",
+  "replace": "if len(fields) < 1 or fields[0][0] >= 12:",
+  "note": "two source fields accepted; the first is authoritative",
+  "expectation": "?"
+ },
+ {
+  "id": "sb-emdash-optional",
+  "area": "C entry_cites",
+  "target": "source-bind.py",
+  "find": "r\"source: (S[0-9]{3,}(?:, *S[0-9]{3,})*) \u2014 .*\"",
+  "replace": "r\"source: (S[0-9]{3,}(?:, *S[0-9]{3,})*) .*\"",
+  "note": "the space-em-dash-space separator is not required",
+  "expectation": "?"
+ },
+ {
+  "id": "sb-id-substring",
+  "area": "C entry_cites",
+  "target": "source-bind.py",
+  "find": "return sid in [part.strip() for part in match.group(1).split(\",\")]",
+  "replace": "return sid in match.group(1)",
+  "note": "id membership by substring instead of exact comma item",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-entry-any-line",
+  "area": "C entry_cites",
+  "target": "printed-command.py",
+  "find": "    for line in text.splitlines():\n        if line.startswith(\"source:\"):\n            return sid in re.findall(r\"\\bS[0-9]+\\b\", line)\n    return False\n",
+  "replace": "    return any(line.startswith(\"source:\")\n               and sid in re.findall(r\"\\bS[0-9]+\\b\", line)\n               for line in text.splitlines())\n",
+  "note": "any source line may cite, not only the first source line",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-pin-normprefix",
+  "area": "D pin-membership",
+  "target": "printed-command.py",
+  "find": "if script not in pins:",
+  "replace": "if script.removeprefix(\"./\") not in pins:",
+  "note": "membership checked on the ./ -stripped token, so ./<pinned> is admitted",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-pin-traversal-basename",
+  "area": "D pin-membership",
+  "target": "printed-command.py",
+  "find": "if \"..\" in script:",
+  "replace": "if \"..\" in os.path.basename(script):",
+  "note": "traversal guard narrowed to the basename (directory .. survives it)",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-run-rc1-strict",
+  "area": "E run-defects",
+  "target": "printed-command.py",
+  "find": "    if proc.returncode != 0 and not (expect_counter is None\n                                     and proc.returncode == 1):\n",
+  "replace": "    if proc.returncode != 0:\n",
+  "note": "rc 1 is always an EXECUTION_FAILED defect; the no-expectation rc-1 acceptance is gone",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-run-counter-type",
+  "area": "E run-defects",
+  "target": "printed-command.py",
+  "find": "if not isinstance(value, int):",
+  "replace": "if value is None:",
+  "note": "COUNTER_NOT_INTEGER narrowed to a presence check; strings/objects pass",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-run-counter-mismatch-raw",
+  "area": "E run-defects",
+  "target": "printed-command.py",
+  "find": "elif str(value) != expect_counter:",
+  "replace": "elif value != expect_counter:",
+  "note": "expectation compared raw instead of stringified (13 vs '13' now mismatches)",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-run-defects-static-dropped",
+  "area": "E run-defects",
+  "target": "printed-command.py",
+  "find": "result[\"defects\"] = list(result[\"static_defects\"])",
+  "replace": "result[\"defects\"] = []",
+  "note": "static defects are not carried into the aggregated defect ledger",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-battery-verdict-drop-sourced",
+  "area": "E run-defects",
+  "target": "printed-command.py",
+  "find": "ok = all(a[\"met\"] for a in arms)",
+  "replace": "ok = all(a[\"met\"] for a in arms[:-1])",
+  "note": "battery verdict ignores the sourced arm",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-token-metachar-drop-pipe",
+  "area": "F tokenizer",
+  "target": "printed-command.py",
+  "find": "METACHARS = (\";\", \"|\", \"&\", \"$(\", \"`\", \">\", \"<\")",
+  "replace": "METACHARS = (\";\", \"&\", \"$(\", \"`\", \">\", \"<\")",
+  "note": "the pipe metacharacter is no longer a static defect",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-token-ellipsis-drop-ascii",
+  "area": "F tokenizer",
+  "target": "printed-command.py",
+  "find": "ELLIPSIS = (\"\\u2026\", \"...\")",
+  "replace": "ELLIPSIS = (\"\\u2026\",)",
+  "note": "the ASCII '...' abbreviation is no longer refused",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-token-allowlist-widened",
+  "area": "F tokenizer",
+  "target": "printed-command.py",
+  "find": "ALLOWED_VARS = {\"REV\", \"WORK\", \"OUT\", \"ROOT\"}",
+  "replace": "ALLOWED_VARS = {\"REV\", \"WORK\", \"OUT\", \"ROOT\", \"PLAN\"}",
+  "note": "the four-key variable allowlist widened by one name",
+  "expectation": "?"
+ },
+ {
+  "id": "pc-token-unbound-maxlen",
+  "area": "F tokenizer",
+  "target": "printed-command.py",
+  "find": "UNBOUND_RE = re.compile(r\"<[^>\\n]{1,120}>\")",
+  "replace": "UNBOUND_RE = re.compile(r\"<[^>\\n]{1,20}>\")",
+  "note": "angle-bracket placeholder length bound narrowed to 20",
+  "expectation": "?"
+ },
+ {
+  "id": "cg-frozen-detector-ge",
+  "area": "G aux conjunction",
+  "target": "conjunction-gate.py",
+  "find": "        and len(detector) == 1\n        and detector[0].get(\"pass\") is False",
+  "replace": "        and len(detector) >= 1\n        and detector[0].get(\"pass\") is False",
+  "note": "the re-derived frozen rule accepts duplicate detector rows",
+  "expectation": "?"
+ },
+ {
+  "id": "cg-floor-le",
+  "area": "G aux conjunction",
+  "target": "conjunction-gate.py",
+  "find": "len(cases) < PRISTINE_FLOOR",
+  "replace": "len(cases) <= PRISTINE_FLOOR",
+  "note": "floor boundary inclusive: a floor-sized pristine population is refused",
+  "expectation": "?"
+ }
+]

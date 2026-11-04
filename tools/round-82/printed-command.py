@@ -261,7 +261,13 @@ def entry_cites(text: str, sid: str) -> bool:
     return False
 
 
-def sourced_arm(root: str, rev: str) -> dict:
+def sourced_arm(root: str, rev: str, sid: str = SOURCED_ROW,
+                base_rev: str = BASE) -> dict:
+    # The row id and base revision are parameters with the production values
+    # as keyword defaults; they are bound to local names of the frozen
+    # spelling so the body below stays byte-identical for the round-84
+    # mutant anchors, while a fixture repo can pass its own values.
+    SOURCED_ROW, BASE = sid, base_rev
     row = sources_row(read_text(root, rev, SOURCES), SOURCED_ROW)
     cells = [c.strip() for c in row.split("|")] if row else []
     row_ok = bool(len(cells) == 13 and cells[8] == "mined"
@@ -567,6 +573,141 @@ def selftest(root: str, rev: str, json_out: str | None = None) -> int:
                           "verified-at: y", "S299"))
     check("entry-cites-no-source-line",
           not entry_cites("verified-at: y\nbody", "S299"))
+
+    # R84-C2 declared cases: the production run path (run_block, which is
+    # where pin_matches is called) and the production sourced_arm are driven
+    # against fixture git repos; each case asserts the exact typed
+    # refusal/defect tokens the frozen round-84 mutant table names.
+    fixture_roots: list[str] = []
+
+    def fixture_repo(states: list[dict[str, str]]) -> tuple[str, list[str]]:
+        """Scratch git repo from per-commit file states; (root, revs)."""
+        root = tempfile.mkdtemp(prefix="printed-command-fixture-")
+        fixture_roots.append(root)
+        env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+               "HOME": root, "LANG": "C.UTF-8", "TMPDIR": root}
+
+        def run(argv: list[str]) -> str:
+            done = subprocess.run(argv, env=env, capture_output=True,
+                                  text=True)
+            if done.returncode != 0:
+                raise RuntimeError(f"{argv}: {done.stderr.strip()}")
+            return done.stdout
+
+        run(["git", "-C", root, "init", "-q"])
+        toplevel = run(["git", "-C", root,
+                        "rev-parse", "--show-toplevel"]).strip()
+        if toplevel != os.path.realpath(root):
+            raise RuntimeError("fixture root mismatch")
+        revs = []
+        for index, files in enumerate(states):
+            for rel, text in files.items():
+                target = os.path.join(root, rel)
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                Path(target).write_text(text)
+                run(["git", "-C", root, "add", "--", rel])
+            run(["git", "-C", root, "-c", "user.name=f", "-c",
+                 "user.email=f@f", "commit", "-qm", f"state {index}"])
+            revs.append(run(["git", "-C", root, "rev-parse", "HEAD"]).strip())
+        return root, revs
+
+    def guarded(name: str, thunk) -> None:
+        try:
+            check(name, bool(thunk()))
+        except Exception:
+            check(name, False)
+
+    member = ("import pathlib\n"
+              "pathlib.Path('canary.txt').write_text('ran')\n")
+
+    def run_case(command: str, pin: str) -> tuple[str, dict]:
+        fix, _ = fixture_repo([{
+            "member.py": member,
+            ".ufo/waves/round-82/claims.json": json.dumps(
+                {"instruments": {"member.py": pin}}),
+        }])
+        work = os.path.join(fix, "work")
+        return fix, run_block(fix, "HEAD", command, work,
+                              os.path.join(work, "out.json"), "refused",
+                              claim_pins(fix, "HEAD"), expect_counter=None)
+
+    # the production run path refuses a script whose committed bytes differ
+    # from its claims pin (SCRIPT_PIN_MISMATCH, nothing executed)
+    guarded("runtime-pin-mismatch-refused", lambda: (
+        (lambda pinned: not pinned[1]["executed"]
+         and any(d.startswith("REFUSED: SCRIPT_PIN_MISMATCH")
+                 for d in pinned[1]["defects"]))
+        (run_case("python3 -I -B member.py --rev $REV",
+                  sha256_bytes(b"decoy bytes for the pin\n")))))
+
+    # a static defect refuses before any execution; the canary file the
+    # command would create on execution stays absent
+    def static_case() -> bool:
+        fix, row = run_case("python3 -I -B member.py --rev $REV --note $HOLD",
+                            sha256_bytes(member.encode()))
+        return (not row["executed"]
+                and any(d.startswith("VARIABLE_UNBOUND")
+                        for d in row["static_defects"])
+                and not os.path.exists(os.path.join(fix, "canary.txt")))
+
+    guarded("static-defect-no-execution", static_case)
+
+    # the production sourced_arm runs against fixture repos through the
+    # parameterized row id and base revision; each fixture isolates one
+    # defect token and asserts the exact defect list
+    row_mined = ("| S777 | Python shlex module documentation "
+                 "— https://docs.python.org/3/library/shlex.html | docs | A "
+                 "| grounds | anchor | teaches | mined | 2026-11-04 "
+                 "| on-release | — |")
+    row_queued = row_mined.replace("| mined |", "| queued |")
+    row_old = row_mined.replace("2026-11-04", "2025-12-31")
+    entry_citing = ("source: S777 — "
+                    "https://docs.python.org/3/library/shlex.html\n"
+                    "verified-at: 2026-11-04\n")
+    entry_other = ("source: S260 — https://example.org/other §x\n"
+                   "verified-at: 2026-11-04\n")
+    plan_naming = "# Round 82 plan\n\nThe sourced arm grounds S777.\n"
+    plan_silent = "# Round 82 plan\n\nNo source tokens appear here.\n"
+    base_state = {"corpus/SOURCES.md": "| S260 | earlier row | docs | A | t "
+                                       "| a | te | mined | 2026-10-01 | 90d"
+                                       " | — |\n"}
+
+    def sourced_case(states: list[dict[str, str]],
+                     expected: list[str]) -> bool:
+        fix, revs = fixture_repo(states)
+        arm = sourced_arm(fix, "HEAD", sid="S777", base_rev=revs[0])
+        return arm["defects"] == expected
+
+    full_state = {"corpus/SOURCES.md": row_mined + "\n",
+                  "plans/round-82-claims.md": plan_naming,
+                  "corpus/knowledge/2026-11-04-r82-conjunction-and-printed-"
+                  "commands.md": entry_citing}
+
+    def with_sources(row: str) -> dict:
+        state = dict(full_state)
+        state["corpus/SOURCES.md"] = row + "\n"
+        return state
+
+    guarded("sourced-row-rejected-status", lambda: sourced_case(
+        [base_state, with_sources(row_queued)], ["SOURCED_ROW_UNMET"]))
+    guarded("sourced-row-wrong-date", lambda: sourced_case(
+        [base_state, with_sources(row_old)], ["SOURCED_ROW_UNMET"]))
+    guarded("sourced-row-at-base", lambda: sourced_case(
+        [dict(base_state, **{"corpus/SOURCES.md": row_mined + "\n"}),
+         full_state], ["SOURCED_ROW_AT_BASE"]))
+    guarded("sourced-plan-missing", lambda: sourced_case(
+        [base_state,
+         with_sources(row_mined) | {"plans/round-82-claims.md": plan_silent}],
+        ["SOURCED_ROW_NOT_IN_PLAN"]))
+    guarded("sourced-entry-uncited", lambda: sourced_case(
+        [base_state,
+         with_sources(row_mined) | {
+             "corpus/knowledge/2026-11-04-r82-conjunction-and-printed-"
+             "commands.md": entry_other}],
+        ["SOURCED_ENTRY_UNCITED"]))
+
+    for root in fixture_roots:
+        subprocess.run(["rm", "-rf", "--", root])
 
     failures = sorted(k for k, v in cases.items() if not v)
     summary = {"selftest": "tools/round-82/printed-command.py",

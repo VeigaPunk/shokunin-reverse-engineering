@@ -1,0 +1,340 @@
+{
+ "claim": "R84-C3",
+ "claims_pin": {
+  "blob_present_at_revs": {
+   "043b89a2": false,
+   "a5663dde": true,
+   "e0de2088": true,
+   "fa92d34a": true
+  },
+  "file_sha256": "e0364dde5a0bf3a0a8216533df3f26873e0af3de3c541a78de146b897835ac1f",
+  "path": "tools/round-84/nested-sqfs.py",
+  "pinned": "08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0"
+ },
+ "class_bound": {
+  "measured": "lane-built three-level LE SquashFS v4 gzip chain, mksquashfs 4.7.5 -repro-time, REA 6.5.0/unblob 26.6.4, block 4096",
+  "not_measured": [
+   "vendor/external images",
+   "compressors other than gzip",
+   "block sizes other than 4096",
+   "AVM/BE layouts",
+   "chain depth other than the measured three-level fixture",
+   "several containers per level",
+   "providers other than unblob 26.6.4",
+   "images exceeding provider budgets",
+   "symlink/device/hardlink/xattr/fragment/sparse entry classes"
+  ],
+  "wording_risk": "\"chains deeper than four\" (PROVINCE) / \"depth beyond four\" (knowledge) leaves a four-level chain outside both the Core class and the named Frontier list"
+ },
+ "counter_probes": {
+  "baseline": {
+   "control": true,
+   "false_arms": [],
+   "met": true
+  },
+  "d3_coverage_complete": {
+   "control": false,
+   "false_arms": [
+    "A3-depth3-partial"
+   ],
+   "met": false
+  },
+  "d3_level3_key_drop": {
+   "control": true,
+   "false_arms": [],
+   "met": true
+  },
+  "d3_no_gaps": {
+   "control": true,
+   "false_arms": [
+    "A3-depth3-partial"
+   ],
+   "met": false
+  },
+  "d3_no_limited_list": {
+   "control": true,
+   "false_arms": [
+    "A3-depth3-partial"
+   ],
+   "met": false
+  },
+  "d3_one_bad_sha": {
+   "control": true,
+   "false_arms": [
+    "A2-depth3-bytes"
+   ],
+   "met": false
+  },
+  "d3_wrong_limited_root": {
+   "control": true,
+   "false_arms": [
+    "A3-depth3-partial"
+   ],
+   "met": false
+  },
+  "d4_engine_version_change": {
+   "control": true,
+   "false_arms": [
+    "A9-engine-identity-equal"
+   ],
+   "met": false
+  },
+  "d4_level3_not_analyzed": {
+   "control": true,
+   "false_arms": [
+    "A8-depth4-deepest-analyzed"
+   ],
+   "met": false
+  },
+  "tampered_fixture_pins": {
+   "control": true,
+   "false_arms": [],
+   "met": true
+  },
+  "wrong_paths_8_files_partial": {
+   "control": true,
+   "false_arms": [
+    "A1-depth3-paths",
+    "A2-depth3-bytes"
+   ],
+   "met": false
+  }
+ },
+ "divergences": [],
+ "fixture": {
+  "nested_identity": {
+   "b_is_oracle_member": true,
+   "c_is_oracle_member": true
+  },
+  "oracle_counts": {
+   "a": 2,
+   "b": 3,
+   "c": 3
+  },
+  "oracle_members": {
+   "a": {
+    "inner-b.sqfs": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+    "x.txt": "8238740e443649fb3548aface71ec79fcbe97fdf4a168c434dec10a5df555673"
+   },
+   "b": {
+    "inner-c.sqfs": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8",
+    "one.txt": "d0233a9a5866b5ac60c6c3fd194caace998d8bec7c8968b64838658ffc2aa9b0",
+    "two.txt": "110cbe584f54b21db2ce7a602ffe26b6a434bf05358d3f66f454a82455318da2"
+   },
+   "c": {
+    "alpha.txt": "d063a9ad96d0a5593edc7f71840eb7728cf218d611cc368ca96105f154d9695b",
+    "beta.txt": "d3db6ca0a178712cecf33bf8c22433b52ada83a12049e8ecb491f01b4623d96b",
+    "gamma.bin": "2e5fe29222d1cd97d6673153dcf480cea9931274a0e6bc9a386c40e5850e1aac"
+   }
+  },
+  "pilot_pins": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  },
+  "pins": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  },
+  "pins_match_pilot": true,
+  "recipe": "mksquashfs <dir> <img> -noappend -comp gzip -b 4096 -quiet -repro-time 1760000000",
+  "variant_invocation": "-noappend -comp gzip -b 4096 -repro-time 1760000000 -processors 1 (no -quiet), all three levels",
+  "variant_matches_recipe": true,
+  "variant_pins": {
+   "a": "e82c59956789a47b7524dda30d9ac4f6139a4cf279b0e5403039df88549d06c2",
+   "b": "7d2dd0e73d1bbeffe02aef346ea45b5c3604255a598b9cb7b1daaa6ef6fc3d1a",
+   "c": "f68b42fa16a9b1ed0fd57165f0a949e89271c09a59db680b3e39a155fbea4aa8"
+  }
+ },
+ "host": {
+  "mksquashfs": "mksquashfs version 4.7.5 (2026/03/01)",
+  "rea_6_5_0_cache": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents",
+  "rea_6_7_0_other_caches": [
+   "/home/vgpnk/.npm/_npx/a1722018f28f9df2/node_modules/rea-agents",
+   "/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/lib/node_modules/rea-agents"
+  ],
+  "rea_pinned": "6.5.0",
+  "sasquatch_version_text": "unsquashfs version 4.5.1 (2022/03/17)",
+  "unblob": "26.6.4",
+  "unblob_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+  "unsquashfs": "unsquashfs version 4.7.5 (2026/03/01)"
+ },
+ "independent_runs": {
+  "3": {
+   "analysis_depth": {
+    "inner-b.sqfs": 1,
+    "inner-b.sqfs_extract/inner-c.sqfs": 2,
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": null,
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": null,
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": null,
+    "inner-b.sqfs_extract/one.txt": 2,
+    "inner-b.sqfs_extract/two.txt": 2,
+    "x.txt": 1
+   },
+   "analysis_depth_key_present": 8,
+   "command": "npx -y rea-agents@6.5.0 extract-firmware /fast/scratch/hyaku/kaidoku-r84/ReviewerC3/build/a.sqfs /fast/scratch/hyaku/kaidoku-r84/ReviewerC3/out3 --max-depth 3 --format json",
+   "coverage": "partial",
+   "depth_limited_paths": [
+    "$output/firmware.bin_extract/inner-b.sqfs_extract/inner-c.sqfs_extract"
+   ],
+   "diagnostics": [],
+   "engine": {
+    "executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+    "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+    "name": "unblob",
+    "source_revision": null,
+    "version": "26.6.4",
+    "worker_count": 1
+   },
+   "exit": 0,
+   "extraction_gaps": [
+    {
+     "continuation_id": "3b54e297653ef5bd5afa64e607b809946398c269f862657ab0544192b7b442ab",
+     "dependencies": [],
+     "handler": null,
+     "input_path": "$output/firmware.bin_extract/inner-b.sqfs_extract/inner-c.sqfs_extract",
+     "kind": "depth-limited",
+     "provider_id": null,
+     "range": null,
+     "relative_path": null,
+     "root_file_range": null
+    }
+   ],
+   "files": 8,
+   "outdir_absent_before": true,
+   "published_bytes": 9837,
+   "reported_sha256_null_paths": [
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt",
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt",
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin"
+   ],
+   "sha256": "77f55593ca4ef789d3184e8409268905122e0758be8c5626ed2a6004574e09fd",
+   "stderr": "",
+   "unblob_summary_extracted_files": 6,
+   "unpublished_entries": []
+  },
+  "4": {
+   "analysis_depth": {
+    "inner-b.sqfs": 1,
+    "inner-b.sqfs_extract/inner-c.sqfs": 2,
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/alpha.txt": 3,
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/beta.txt": 3,
+    "inner-b.sqfs_extract/inner-c.sqfs_extract/gamma.bin": 3,
+    "inner-b.sqfs_extract/one.txt": 2,
+    "inner-b.sqfs_extract/two.txt": 2,
+    "x.txt": 1
+   },
+   "analysis_depth_key_present": 8,
+   "command": "npx -y rea-agents@6.5.0 extract-firmware /fast/scratch/hyaku/kaidoku-r84/ReviewerC3/build/a.sqfs /fast/scratch/hyaku/kaidoku-r84/ReviewerC3/out4 --max-depth 4 --format json",
+   "coverage": "complete",
+   "depth_limited_paths": [],
+   "diagnostics": [],
+   "engine": {
+    "executable_path": "/home/vgpnk/.local/share/uv/tools/unblob/bin/unblob",
+    "executable_sha256": "0ce7b624f540c2191ff144892584997fe3fb6ab28ab6ef6b88639f8a7cba1d09",
+    "name": "unblob",
+    "source_revision": null,
+    "version": "26.6.4",
+    "worker_count": 1
+   },
+   "exit": 0,
+   "extraction_gaps": [],
+   "files": 8,
+   "outdir_absent_before": true,
+   "published_bytes": 9837,
+   "reported_sha256_null_paths": [],
+   "sha256": "6d4d589da73758e21db6c4b2b026b9980714017c7040343f466801deb1f9b973",
+   "stderr": "",
+   "unblob_summary_extracted_files": 9,
+   "unpublished_entries": []
+  }
+ },
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "limits": [
+  "one host",
+  "one mksquashfs/REA/unblob version pair",
+  "no vendor image",
+  "no four-level chain",
+  "landing receipt not present at review time"
+ ],
+ "pilot": {
+  "path": ".ufo/waves/round-84/pre/c3-pilot.json",
+  "sha256": "f45f018cdee6ce47daca6acbfb96674a9c0150fff834cc631fe6b25f5fb9cffa"
+ },
+ "re_score_matches_pilot": {
+  "arms": true,
+  "control": true,
+  "depth3_arms": true,
+  "depth3_observed": true,
+  "depth4_arms": true,
+  "depth4_observed": true,
+  "expected": true,
+  "expected_levels": true,
+  "fixture_pins": true
+ },
+ "reproduced_receipt": {
+  "arms": {
+   "A1-depth3-paths": true,
+   "A2-depth3-bytes": true,
+   "A3-depth3-partial": true,
+   "A4-depth3-deepest-unanalyzed": true,
+   "A5-depth4-paths": true,
+   "A6-depth4-bytes": true,
+   "A7-depth4-complete": true,
+   "A8-depth4-deepest-analyzed": true,
+   "A9-engine-identity-equal": true
+  },
+  "control_fires": true,
+  "exit": 0,
+  "identical_to_pilot_after_json_normalization": true,
+  "met": true,
+  "path": "w1/ReviewerC3/toolrepro.json",
+  "runs": {
+   "3": {
+    "exit": 0,
+    "stderr": ""
+   },
+   "4": {
+    "exit": 0,
+    "stderr": ""
+   }
+  },
+  "sha256": "f45f018cdee6ce47daca6acbfb96674a9c0150fff834cc631fe6b25f5fb9cffa"
+ },
+ "rev_binding": {
+  ".ufo/waves/round-84/claims.json": {
+   "043b89a2": false,
+   "a5663dde": true,
+   "e0de2088": false,
+   "fa92d34a": true
+  },
+  ".ufo/waves/round-84/pre/c3-pilot.json": {
+   "043b89a2": false,
+   "a5663dde": true,
+   "e0de2088": true,
+   "fa92d34a": true
+  },
+  "tools/round-84/nested-sqfs.py": {
+   "043b89a2": false,
+   "a5663dde": true,
+   "e0de2088": true,
+   "fa92d34a": true
+  }
+ },
+ "revs": {
+  "base": "043b89a25241710a68b45526c3287fb3c8d907c3",
+  "container": "a5663ddedd157bb9113928f5fe80509d6f3fc7a1",
+  "declaration": "e0de2088a7bddc16305357f90ac7e889fa0a0d11",
+  "head": "fa92d34aec31ae59cb19a8a6ea9e6c0ac7a2392f"
+ },
+ "round": 84,
+ "schema": "kaidoku-r84-c3-review-v1",
+ "seat": "ReviewerC3",
+ "sources": {
+  "S301_snapshot_sha256": "3ea8c1a1b429a5da35c7ffa0719ee2dade48ab8566c099c02b2c25bbe2052765",
+  "S302_6_5_0_file_sha256": "bb4f3246bee70a5b32b048e5ef956e649626b6449b1d457454440739a8d51029",
+  "S302_quote_line": 17,
+  "S302_quote_present": true
+ }
+}

@@ -1,0 +1,36 @@
+frozen_module_sha256 602239f5f52009f2211c2343c43c8cc97e5941b0e8815e225bddc32e72780326
+attribution-audit digest at rev 386e7891b4ffedae6f3df12c8c741e81aaa2338dfea3447dc26537f274646521
+
+== baseline
+round-83 container                             FLAGGED  ['CLAIM_NO_COUNTER_PATH:R83-C1']
+round-84 container                             CLEAN    []
+
+== soundness: path outside the predicate satisfies the gate
+round-83 + path appended to kill_rule          CLEAN    []
+round-83 with path only in claim id            CLEAN    []
+round-83 with path only in claim axis          CLEAN    []
+negated mention of another pinned script       CLEAN    []
+
+== benign false refusals of otherwise valid containers
+valid baseline fixture                         CLEAN    []
+pin carried inside the claim object            FLAGGED  ['COUNTER_PATH_NOT_PINNED:tools/round-84/freeze-precheck.py']
+counter named by absolute path                 FLAGGED  ['CLAIM_NO_COUNTER_PATH:X']
+counter named as ./tools/...                   FLAGGED  ['CLAIM_NO_COUNTER_PATH:X']
+counter is a JSON receipt, not a script        FLAGGED  ['COUNTER_BLOB_ABSENT:tools/round-84/claims.js']
+counter outside tools|corpus|.ufo              FLAGGED  ['CLAIM_NO_COUNTER_PATH:X']
+counter + unpinned producer path               FLAGGED  ['COUNTER_PATH_NOT_PINNED:tools/round-84/mutation-closure.py']
+empty claims                                   FLAGGED  ['CONTAINER_NO_CLAIMS']
+unparsable                                     FLAGGED  ['CONTAINER_UNPARSABLE:Expecting property name enclosed in double quotes: line 1 column 2 (char 1)']
+near-miss extension y.python                   CLEAN    []
+near-miss extension y.pyc                      CLEAN    []
+
+== cheap control
+round-83                           {'accepted': True, 'rule': 'instruments-only'}
+round-84                           {'accepted': True, 'rule': 'instruments-only'}
+instruments only, zero claims      {'accepted': True, 'rule': 'instruments-only'}
+claims only                        {'accepted': False, 'rule': 'instruments-only'}
+empty instruments                  {'accepted': False, 'rule': 'instruments-only'}
+
+== revision fragility (same container, later rev)
+HEAD fa92d34aec31ae59cb19a8a6ea9e6c0ac7a2392f
+round-84 at HEAD {'verdict': 'CLEAN', 'findings': [], 'claims': 3, 'rev': 'fa92d34aec31ae59cb19a8a6ea9e6c0ac7a2392f'}

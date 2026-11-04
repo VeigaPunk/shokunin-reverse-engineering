@@ -1,0 +1,54 @@
+diff --git c/tools/round-84/mutation-closure.py w/tools/round-84/mutation-closure.py
+index 06e53829..4b5507d5 100755
+--- c/tools/round-84/mutation-closure.py
++++ w/tools/round-84/mutation-closure.py
+@@ -139,6 +139,11 @@ def score(root: str, rev: str, table: dict, work: str) -> dict:
+                  "declared_case": mutant["declared_case"],
+                  "anchor_occurrences": counts if len(counts) > 1 else counts[0],
+                  "edits": len(edits)}
++        if unsafe_component(mutant["id"]):
++            entry["status"] = "inconclusive"
++            entry["reason"] = "unsafe-mutant-id"
++            inconclusive.append(entry)
++            continue
+         if any(count != 1 for count in counts):
+             entry["status"] = "inconclusive"
+             entry["reason"] = "anchor-not-exactly-once"
+@@ -200,6 +205,20 @@ def _sha(body: bytes) -> str:
+     return hashlib.sha256(body).hexdigest()
+ 
+ 
++def unsafe_component(name: str) -> bool:
++    """A table-supplied id becomes a path component; refuse anything but a leaf name.
++
++    QUALITY 119/127: containment is a path question, so a separator, a parent
++    reference or an absolute spelling is refused before any write, never joined
++    and hoped for.
++    """
++    if not isinstance(name, str) or not name or name in (".", ".."):
++        return True
++    if os.path.isabs(name) or os.sep in name or (os.altsep and os.altsep in name):
++        return True
++    return os.path.basename(name) != name
++
++
+ # --------------------------------------------------------------------------
+ # selftest: a fixture tool and a fixture mutant table; no lane target is read
+ # --------------------------------------------------------------------------
+@@ -261,6 +280,16 @@ def selftest(json_out: str | None) -> int:
+               == "declared-case-absent-from-selftest")
+         check("absent-anchor-inconclusive",
+               by_id["anchor-absent"]["status"] == "inconclusive")
++        table_unsafe = {"mutants": [{"id": "../../escape", "target": "fixture.py",
++                                     "find": "OK = True", "replace": "OK = False",
++                                     "declared_case": "beta"}]}
++        escaped = os.path.join(work, "escape")
++        receipt_unsafe = score(repo, "HEAD", table_unsafe, os.path.join(work, "run-unsafe"))
++        check("unsafe-id-refused",
++              receipt_unsafe["results"][0]["status"] == "inconclusive"
++              and receipt_unsafe["results"][0]["reason"] == "unsafe-mutant-id"
++              and not os.path.exists(escaped)
++              and not os.path.exists(os.path.join(work, "mutants", "escape")))
+         check("not-met-on-fixture-table", receipt["ok"] is False)
+         check("restoration", not any(r.get("restored_equal") is False for r in receipt["results"]))
+     finally:

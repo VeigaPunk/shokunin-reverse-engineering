@@ -1,0 +1,64 @@
+{
+ "schema": "kaidoku-r84-mutants-v1",
+ "declared": "2026-11-04",
+ "note": "derived seat-local subset of the frozen .ufo/waves/round-84/mutants.json: the seven recorded round-82 survivor rows (the eight printed-command row 'membership' and the three conjunction rows and two source-bind rows are out of this seat's scope), copied verbatim; the frozen table is untouched",
+ "base_table_sha256": "dbb6d4c93df656d4c8341dee8a42e9256ba77e1d2e56ecda5b07d1db77b8982b",
+ "mutants": [
+  {
+   "id": "pin-call",
+   "target": "tools/round-82/printed-command.py",
+   "find": "        pin_matches(root, rev, script, pins[script])",
+   "replace": "        pass  # runtime pin recheck omitted",
+   "declared_case": "runtime-pin-mismatch-refused",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "static-refusal",
+   "target": "tools/round-82/printed-command.py",
+   "find": "    if result[\"static_defects\"]:",
+   "replace": "    if False and result[\"static_defects\"]:",
+   "declared_case": "static-defect-no-execution",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-mined",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[8] == \"mined\"",
+   "replace": "True",
+   "declared_case": "sourced-row-rejected-status",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-date",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[9] == \"2026-11-04\"",
+   "replace": "True",
+   "declared_case": "sourced-row-wrong-date",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-base",
+   "target": "tools/round-82/printed-command.py",
+   "find": "base_absent = sources_row(base_text, SOURCED_ROW) is None",
+   "replace": "base_absent = True",
+   "declared_case": "sourced-row-at-base",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-plan",
+   "target": "tools/round-82/printed-command.py",
+   "find": "plan_names = SOURCED_ROW in re.findall(r\"\\bS[0-9]+\\b\", read_text(root, rev, PLAN))",
+   "replace": "plan_names = True",
+   "declared_case": "sourced-plan-missing",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-entry",
+   "target": "tools/round-82/printed-command.py",
+   "find": "entry_ok = entry_cites(entry_text, SOURCED_ROW)",
+   "replace": "entry_ok = True",
+   "declared_case": "sourced-entry-uncited",
+   "anchor_occurrences": 1
+  }
+ ]
+}

@@ -99,7 +99,38 @@ def run_selftest(script: str, work: str, env: dict) -> dict:
             "stderr": done.stderr[-4000:], **parse_selftest(done.stdout)}
 
 
-def score(root: str, rev: str, table: dict, work: str) -> dict:
+def table_identity(mutants_path: str, claims_path: str | None) -> dict:
+    """Compare the frozen table's bytes to the digest its container records.
+
+    A row dropped or replaced after the freeze still yields a green counter; the
+    container's `fixtures` block is the pin both sides can re-derive
+    (round-84 CriticClaims refutation 2).
+    """
+    digest = _sha(Path(mutants_path).read_bytes())
+    observed = {"path": mutants_path, "sha256": digest, "expected": None,
+                "matches": None}
+    if claims_path is None:
+        candidate = Path(mutants_path).with_name("claims.json")
+        claims_path = str(candidate) if candidate.exists() else None
+        observed["claims"] = claims_path
+    if not claims_path or not Path(claims_path).exists():
+        return observed
+    try:
+        container = json.loads(Path(claims_path).read_text())
+    except json.JSONDecodeError:
+        observed["matches"] = False
+        observed["reason"] = "claims-unparsable"
+        return observed
+    fixtures = container.get("fixtures") if isinstance(container, dict) else None
+    if not isinstance(fixtures, dict) or not fixtures.get("sha256"):
+        return observed
+    observed["expected"] = fixtures["sha256"]
+    observed["matches"] = fixtures["sha256"] == digest
+    return observed
+
+
+def score(root: str, rev: str, table: dict, work: str,
+          table_info: dict | None = None) -> dict:
     os.makedirs(work, exist_ok=True)
     env = dict(os.environ)
     env["TMPDIR"] = os.path.join(work, "tmp")
@@ -139,6 +170,11 @@ def score(root: str, rev: str, table: dict, work: str) -> dict:
                  "declared_case": mutant["declared_case"],
                  "anchor_occurrences": counts if len(counts) > 1 else counts[0],
                  "edits": len(edits)}
+        if unsafe_component(mutant["id"]):
+            entry["status"] = "inconclusive"
+            entry["reason"] = "unsafe-mutant-id"
+            inconclusive.append(entry)
+            continue
         if any(count != 1 for count in counts):
             entry["status"] = "inconclusive"
             entry["reason"] = "anchor-not-exactly-once"
@@ -182,8 +218,9 @@ def score(root: str, rev: str, table: dict, work: str) -> dict:
             entry["restored_equal"] = True
 
     total = len(table["mutants"])
+    table_ok = table_info is None or table_info.get("matches") is not False
     ok = (not survivors and not inconclusive and not pristine_failed
-          and len(killed) == total and total > 0)
+          and len(killed) == total and total > 0 and table_ok)
     receipt = {"schema": SCHEMA, "rev": rev,
                "instrument": {"path": "tools/round-84/mutation-closure.py",
                               "sha256": _sha(Path(__file__).read_bytes())},
@@ -191,6 +228,7 @@ def score(root: str, rev: str, table: dict, work: str) -> dict:
                "survivors": [m["id"] for m in survivors],
                "inconclusive": [f"{m['id']}:{m.get('reason')}" for m in inconclusive],
                "pristine_failed": pristine_failed,
+               "table_identity": table_info,
                "results": killed + survivors + inconclusive, "ok": ok}
     return receipt
 
@@ -198,6 +236,20 @@ def score(root: str, rev: str, table: dict, work: str) -> dict:
 def _sha(body: bytes) -> str:
     import hashlib
     return hashlib.sha256(body).hexdigest()
+
+
+def unsafe_component(name: str) -> bool:
+    """A table-supplied id becomes a path component; refuse anything but a leaf name.
+
+    QUALITY 119/127: containment is a path question, so a separator, a parent
+    reference or an absolute spelling is refused before any write, never joined
+    and hoped for.
+    """
+    if not isinstance(name, str) or not name or name in (".", ".."):
+        return True
+    if os.path.isabs(name) or os.sep in name or (os.altsep and os.altsep in name):
+        return True
+    return os.path.basename(name) != name
 
 
 # --------------------------------------------------------------------------
@@ -261,8 +313,32 @@ def selftest(json_out: str | None) -> int:
               == "declared-case-absent-from-selftest")
         check("absent-anchor-inconclusive",
               by_id["anchor-absent"]["status"] == "inconclusive")
+        table_unsafe = {"mutants": [{"id": "../../escape", "target": "fixture.py",
+                                     "find": "OK = True", "replace": "OK = False",
+                                     "declared_case": "beta"}]}
+        escaped = os.path.join(work, "escape")
+        receipt_unsafe = score(repo, "HEAD", table_unsafe, os.path.join(work, "run-unsafe"))
+        check("unsafe-id-refused",
+              receipt_unsafe["results"][0]["status"] == "inconclusive"
+              and receipt_unsafe["results"][0]["reason"] == "unsafe-mutant-id"
+              and not os.path.exists(escaped)
+              and not os.path.exists(os.path.join(work, "mutants", "escape")))
         check("not-met-on-fixture-table", receipt["ok"] is False)
         check("restoration", not any(r.get("restored_equal") is False for r in receipt["results"]))
+        table_path = os.path.join(work, "fixture.json")
+        Path(table_path).write_text(json.dumps(table))
+        good_digest = table_identity(table_path, None)["sha256"]
+        pinned = os.path.join(work, "pinned.json")
+        Path(pinned).write_text(json.dumps({"fixtures": {"path": "fixture.json",
+                                                        "sha256": good_digest}}))
+        matched = table_identity(table_path, pinned)
+        Path(pinned).write_text(json.dumps({"fixtures": {"path": "fixture.json",
+                                                        "sha256": "0" * 64}}))
+        mismatch = table_identity(table_path, pinned)
+        check("table-digest-match", matched["matches"] is True)
+        check("table-digest-mismatch-fails", mismatch["matches"] is False
+              and mismatch["expected"] == "0" * 64
+              and mismatch["sha256"] == good_digest)
     finally:
         shutil.rmtree(work, ignore_errors=True)
     failures = sorted(name for name, ok in cases.items() if not ok)
@@ -282,6 +358,7 @@ def main() -> int:
     ap.add_argument("--root", default=".")
     ap.add_argument("--rev")
     ap.add_argument("--mutants")
+    ap.add_argument("--claims")
     ap.add_argument("--work")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--json-out")
@@ -291,14 +368,15 @@ def main() -> int:
     if not (args.rev and args.mutants and args.work):
         ap.error("--rev, --mutants and --work are required")
     table = json.loads(Path(args.mutants).read_text())
-    receipt = score(args.root, args.rev, table, args.work)
+    receipt = score(args.root, args.rev, table, args.work,
+                    table_identity(args.mutants, getattr(args, "claims", None)))
     text = json.dumps(receipt, indent=1, sort_keys=True)
     if args.json_out:
         Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json_out).write_text(text + "\n")
     print(json.dumps({k: receipt[k] for k in
                       ("rev", "mutants", "killed", "survivors", "inconclusive",
-                       "pristine_failed", "ok")}, sort_keys=True))
+                       "pristine_failed", "table_identity", "ok")}, sort_keys=True))
     return 0 if receipt["ok"] else 1
 
 

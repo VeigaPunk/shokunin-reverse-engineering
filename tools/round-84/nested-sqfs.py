@@ -32,7 +32,6 @@ import os
 import shutil
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 SCHEMA = "kaidoku-r84-nested-sqfs-v1"
@@ -193,10 +192,18 @@ def score_envelope(env: dict | None, expected: dict, depth: int) -> dict:
     analyzed = {p: by_path[p].get("analysis_depth") for p in expected_paths if p in by_path}
     arms["analyzed-through-budget"] = all(
         analyzed[p] == expected[p][1] for p in analyzed if expected[p][1] <= depth - 1)
-    arms["deepest-unanalyzed"] = all(
-        analyzed[p] is None for p in analyzed if expected[p][1] == depth)
-    arms["deepest-analyzed"] = all(
-        analyzed[p] == expected[p][1] for p in analyzed if expected[p][1] == depth)
+    max_level = max((level for _digest, level in expected.values()), default=0)
+    deepest = [p for p in analyzed if expected[p][1] == max_level]
+    # "carries analysis_depth null" is a present field whose value is null; a dropped
+    # key is not the same observation (round-84 ReviewerC3 probe d3_level3_key_drop).
+    # "deepest" is the chain's deepest level, never `depth`: at depth 4 there is no
+    # level-4 file, so a `level == depth` selection would be vacuously true
+    # (round-84 CriticClaims refutation 5).
+    arms["deepest-unanalyzed"] = (depth == max_level and bool(deepest) and all(
+        "analysis_depth" in by_path[p] and by_path[p]["analysis_depth"] is None
+        for p in deepest))
+    arms["deepest-analyzed"] = (depth > max_level and bool(deepest) and all(
+        by_path[p].get("analysis_depth") == max_level for p in deepest))
     observed["analysis_depth"] = analyzed
     return {"depth": depth, "arms": arms, "observed": observed}
 
@@ -289,6 +296,11 @@ def selftest(json_out: str | None) -> int:
         synthetic_envelope(expected, 4, "complete", [], 3, override_sha="9" * 64),
         expected, 4)
     error = score_envelope({"code": "invalid_request", "message": "no"}, expected, 3)
+    dropped = synthetic_envelope(expected, 3, "partial", [DEEPEST_ROOT], None)
+    for entry in dropped["normalized_result"]["files"]:
+        if entry["relative_path"].endswith("alpha.txt"):
+            entry.pop("analysis_depth", None)
+    key_drop = score_envelope(dropped, expected, 3)
 
     check("partial-clean", partial["arms"]["path-set-equal"]
           and partial["arms"]["bytes-equal"] and partial["arms"]["coverage-partial"]
@@ -302,6 +314,15 @@ def selftest(json_out: str | None) -> int:
     control = {"fires": partial["observed"]["files"] == len(expected)
                and partial["observed"]["coverage"] != "complete"}
     check("junk-control-fires", control["fires"] is True)
+    check("dropped-analysis-depth-fails",
+          key_drop["arms"]["deepest-unanalyzed"] is False)
+    short = synthetic_envelope(expected, 4, "complete", [], 3)
+    for entry in short["normalized_result"]["files"]:
+        if entry.get("analysis_depth") == 3:
+            entry["analysis_depth"] = 2
+    shallow = score_envelope(short, expected, 4)
+    check("deepest-level-depth-mismatch-fails",
+          shallow["arms"]["deepest-analyzed"] is False)
     check("strip-root", strip_root(["firmware.bin_extract/x", "firmware.bin_extract/y"])
           == (["x", "y"], "firmware.bin_extract"))
 
