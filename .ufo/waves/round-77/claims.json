@@ -28,7 +28,13 @@
   }
  ],
  "declaration_pointer": "819cf30e2fc35d91a69df1b2a42a025741c7d0ef",
- "instrument_supersessions": [],
+ "instrument_supersessions": [
+  {
+   "commit": "63dc9c6f15365699018b6594b7787cde84e64fc4",
+   "path": "tools/round-77/gen-controls.py",
+   "reason": "wave-1 ExecControls found both derived controls were dead-patch no-ops: the override text was appended after the `if __name__ == \"__main__\":` guard, so the module ran main() before the override bound and each control was the unmutated instrument; the fix inserts the override before the guard and records `diverges` per control (no-binding: bound_clauses 0 and mismatch_count 0; all-false: mismatch_count 24), with the controls and their before receipt re-taken; the two claim predicates, counters, kill rules and targets are unchanged"
+  }
+ ],
  "instruments": {
   "tools/round-77/prefile-receipt.py": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
   "tools/round-77/verdict-bind.py": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
