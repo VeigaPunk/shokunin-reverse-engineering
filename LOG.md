@@ -4553,7 +4553,7 @@ tied-lowest axis). No nudge waiver is claimed.
 - **Sources.** 191 → 194 rows: S286 (`shlex.split`, mined, 66 497 B, sha256 `4c1f8bf6…`, composite-labelled
   7-word quote), S287 (`argparse`, mined, 334 994 B, sha256 `14d33eea…`, 9-word quote), S288 (`bash(1)`,
   rejected, 497 852 B, sha256 `e35fa296…`, 9-word quote; the plan's `sh(1)` URL 404s and the substitution is
-  recorded). Census start `l1/census-start.txt` (exit 0, 191 rows, 24 W04) and end `l1/census-end.txt`.
+  recorded). Census start `l1/census-start.txt` (exit 0, 191 rows, 23 W04) and end `l1/census-end.txt`.
 - **Record.** The round-76 section and four capability rows in `SCORECARD.md` (the two round-75 rows the
   round-75 spot-check found missing, and the two this round enters); the entries
   `corpus/knowledge/2026-11-04-r76-plan-command-executability.md` and

@@ -49,7 +49,7 @@ The `corpus/knowledge/2026-11-04-r76-plan-command-executability.md` section "Why
 was rewritten to "What the observed rc 2 is, and is not" for the same reason.
 
 **Census.** `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` at round start: exit 0,
-191 rows, 24 W04 warnings (`.ufo/waves/round-76/l1/census-start.txt`). At round end: exit 0, 194 rows
+191 rows, 23 W04 warnings (`.ufo/waves/round-76/l1/census-start.txt`). At round end: exit 0, 194 rows
 (`l1/census-end.txt`). Three rows enter (S286 mined, S287 mined, S288 rejected); no existing row's
 `status`/`recheck`/`used-by` changes.
 

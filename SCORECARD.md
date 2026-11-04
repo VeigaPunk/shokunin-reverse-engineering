@@ -5921,7 +5921,7 @@ it, not the counters that earned those rows. R76-C2's surface is the printed com
 and the executor that runs it, not any counter's value.
 
 **census erratum.** The round-76 census closed at 194 rows (`l1/census-end.txt`, exit 0), up from 191 at round
-start (`l1/census-start.txt`, exit 0, 24 W04 duplicate-URL warnings at both ends). Three rows enter (S286 mined,
+start (`l1/census-start.txt`, exit 0, 23 W04 duplicate-URL warnings at both ends). Three rows enter (S286 mined,
 S287 mined, S288 rejected); no existing row's status, recheck or used-by changes.
 
 **Routed defects carried (unclaimed).** The round-75 spot-check's defects 3, 5, 6, 7 and 8 are record
