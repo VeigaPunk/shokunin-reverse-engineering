@@ -71,6 +71,31 @@ existing row's `used-by` changes (S277).
   true, pristine 25; `r75base` exactly the four survivors, canary not sole, pristine 20; both
   `--validate` clean and `--selftest` green (`.ufo/waves/round-75/w1/ExecBattery/receipt-A-r75probe.json`,
   `receipt-B-r75base.json`).
+- **ScribeRows** re-fetched both pages (repeat GET, HTTP 200) and found the bytes identical to the
+  landed pins (S277 `1fc68168…`, S285 `f209ca23…`); its drafts still carry the pre-correction
+  numbering (S283 cmdline, S284 environ) and its own drift check reports the landed S277/S285, so
+  the conflict it flags is the withdrawal this round recorded, not page drift
+  (`.ufo/waves/round-75/w1/ScribeRows/rows.md`).
+- **ConnectorCross** compared the round's grammars with the fleet census and two sibling lanes:
+  the census checks used-by existence only (no shape), kumitate and tabi have substring `flip:`
+  checks, and the lane's `parse_rejected_row` anchors on `REJECTED:` with an exact flip clause —
+  duplication with named divergences, latent until a row carries a near-miss shape. It confirms
+  `considerthese/` absent and `merge/kaidoku/` not serving the claims (`Assimilation: none`), and
+  that QUALITY rows 133/134 are the mined-mistake criteria, no new row needed
+  (`.ufo/waves/round-75/w1/ConnectorCross.md`).
+- **SentinelScope** re-read the five instruments: SS74-1 (containment before every open), SS74-2/5
+  (pin before execution, process-group kill), SS74-3 (no raw environment values) and SS74-4
+  (fixed-source sidecar shims) are all FIXED; five residual items are LOW/INFO and claim-
+  independent (controls' unpinned `--after-rev` execution, unredacted stdout/stderr tails, the
+  constant `pinned_before_exec` label, `grammar_cases()` reading live code, `_name_samples`' `?`
+  bucket) (`.ufo/waves/round-75/w1/SentinelScope.md`).
+- **Incomplete seats (no artifact; recorded, not counted as verification).** `ScribeLesson`,
+  `ReviewerAudit`, `CriticClaims` and `MutationTester` returned mid-work prose only: ScribeLesson
+  was reconciling the renumbered rows when it stopped; ReviewerAudit was diffing the frozen and
+  working-tree audit blobs; CriticClaims never applied a mutation; MutationTester's evidence dir is
+  empty. Their assignments remain unverified by the wave; the claims rest on the seats that did
+  land (ReviewerClaims, ExecBattery, ExecProbeCases, ExecControls, ExecAuditBase,
+  ExecAuditGrammars).
 - **L1 determinism check.** Two independent battery runs at the tip (separate `--work` roots)
   produced identical mutant rows (`name, verdict, failed`) with pristine 25 and sole true; the
   receipt pair is `l1/scores/c1-at-tip.json` and `l1/scores/c1-at-tip-rerun.json`.
