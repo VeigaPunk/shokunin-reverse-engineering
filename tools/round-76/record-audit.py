@@ -58,6 +58,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import pathlib
 import json
 import os
 import re
@@ -85,6 +86,7 @@ REGISTRY_HEADING = "## Registry"
 SCORECARD_ROUND74 = "## 2026-11-04 — round 74:"
 CAPABILITIES_HEADING = "## Capabilities"
 R75_ATOMS = 8
+R75_RECORD_REV = "5303a662d43aac52b0667f2776cce49dfc004fcf"
 
 PATH_RE = re.compile(r"^(?:corpus/knowledge|corpus/lessons)/[A-Za-z0-9._-]+\.md$")
 R75_ROW = re.compile(r"(?m)^\|\s*S[0-9]{3,}\s*\|")
@@ -345,9 +347,10 @@ def capability_table(scorecard: str) -> dict[str, list[str]]:
     for row in table_rows(section(scorecard, CAPABILITIES_HEADING)):
         if len(row) < 4:
             continue
-        if row[0].strip().lower() == "capability":
+        name = row[0].strip().strip("`").strip()
+        if name.lower() == "capability":
             continue
-        rows[row[0].strip()] = row
+        rows[name] = row
     return rows
 
 
@@ -532,8 +535,12 @@ def atom_grammar_reds(root: str, rev: str) -> dict:
     s285 = row_by_id(registry, "S285") or []
     rej_defects = parse_rejected_row(s285) if s285 else ["S285 absent"]
     scorecard = show(root, rev, SCORECARD) or ""
+    # The round-75 erratum is a statement about the ROUND-75 record: binding it
+    # to the live registry would make every later row addition a false defect
+    # on a historical sentence (round-76 finding, instrument revision).
+    r75_sources = show(root, R75_RECORD_REV, SOURCES) or ""
     errata_defects = parse_census_erratum(section(scorecard, ROUND75_HEADING),
-                                          census_rows(sources))
+                                          census_rows(r75_sources))
     live = {"s277_tokens": used_tokens, "s277_defects": used_defects,
             "s277_resolved": used_resolve, "note_defects": note_defects,
             "s285_defects": rej_defects, "erratum_defects": errata_defects}
@@ -701,6 +708,9 @@ def audit(root: str, rev: str) -> dict:
     mismatches = [row["id"] for row in rows if not row["ok"]]
     receipt = {"schema": "kaidoku-r76-record-audit-v1", "rev": rev,
                "root": os.path.abspath(root), "atoms": rows,
+               "instrument": {"path": "tools/round-76/record-audit.py",
+                              "sha256": sha256_bytes(
+                                  pathlib.Path(__file__).read_bytes())},
                "mismatch_count": len(mismatches), "mismatches": mismatches,
                "ok": not mismatches}
     receipt["validate"] = {"defects": [], "atoms": len(rows)}

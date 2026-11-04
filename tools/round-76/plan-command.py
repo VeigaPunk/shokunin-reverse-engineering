@@ -27,7 +27,9 @@ Exit: 0 every arm/check met; 1 a defect (named); 2 could-not-evaluate
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import pathlib
 import os
 import re
 import shlex
@@ -263,6 +265,9 @@ def battery(root: str, rev: str, work: str) -> dict:
     arms = [plan, printed, argv_arm]
     ok = all(arm["met"] for arm in arms)
     return {"schema": "kaidoku-r76-plan-command-v1", "rev": rev,
+            "instrument": {"path": "tools/round-76/plan-command.py",
+                           "sha256": hashlib.sha256(
+                               pathlib.Path(__file__).read_bytes()).hexdigest()},
             "plan": PLAN76, "arms": arms, "arms_ok": sum(1 for a in arms
                                                          if a["met"]),
             "arms_total": len(arms), "ok": ok, "exit": 0 if ok else 1}
@@ -359,6 +364,9 @@ def main(argv: list[str] | None = None) -> int:
                             args.counter_field, args.expect_counter)
             receipt = {"schema": "kaidoku-r76-plan-command-v1",
                        "rev": args.rev, "plan": args.plan,
+                       "instrument": {"path": "tools/round-76/plan-command.py",
+                                      "sha256": hashlib.sha256(
+                                          pathlib.Path(__file__).read_bytes()).hexdigest()},
                        "block": args.block, "row": row,
                        "ok": not row["defects"],
                        "exit": 0 if not row["defects"] else 1}
