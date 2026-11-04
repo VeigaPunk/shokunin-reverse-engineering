@@ -693,3 +693,25 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   carrier outside the four, packed-byte equality of the repaired file (jq/xxd keep a 4-byte
   difference in the loader), repair provenance (the counter scores bytes; the no-pin rule is
   checked by review), and semantic equality of a recovered inventory.
+
+## Round-88 additions to Core (verified 2026-11-04)
+
+- **Core — packed-ELF `b_info` field corruption (first-block `sz_cpr` zeroed):** `tools/round-88/upx-chain-repair.py`
+  (composes the round-87 anchor repair by path, recording its sha256 in every record) derives the zeroed
+  length from chain geometry: the next `b_info` starts `12 + sz_cpr` bytes after this one, the derived
+  value is bounded by block0's `sz_unc`, and the winner is the candidate that accounts for the most of the
+  PackHeader's `u_len` (S309) — a candidate claiming more than `u_len` is impossible. On docker-init three
+  candidates survive the structural bound (136, 226, 440) and the accounting bound picks 226 (851,288 of
+  851,288); the shared object's chain accounts for 98,592 of 108,560 and is accepted on its single
+  structural candidate. The frozen counter `tools/round-88/upx-chain-battery.py` scores 4 of 4 on the four
+  round-70 carriers with `N1`/`N2`/`N3` true and the round-87 counter's 8 of 8 regression arm met
+  (`.ufo/waves/round-88/pre/c1-candidate-at-declaration.json`); the unchanged round-87 repair scores 0 of 4
+  on the same class. Entry: `corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md`.
+- **Held, not Core — the refusal-signature matrix:** 4 carriers × 17 single-field tampers, 68 cells, 63
+  effective, 0 unclassified (`tools/round-88/field-tamper-matrix-v2.py`;
+  `.ufo/waves/round-88/l1/scores/c2-matrix-at-declaration.json`), landed as craft rule block 28. It routes
+  a tamper to its move; it is not a repair capability for the fields it only measures
+  (`p_blocksize`, `p_filesize`, adler, PackHeader fields) — those stay Frontier.
+- **Frontier (unchanged by this round):** `p_filesize`/`p_blocksize`/adler repairs, entry-altered stubs,
+  other packers, big-endian and PE UPX carriers, 32-bit ELF carriers, and an overlay-carrying carrier whose
+  chain does not account for `u_len`.

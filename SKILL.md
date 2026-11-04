@@ -44,6 +44,7 @@ a catalog-listed tool is available, not held.
 | Target | First move | Status |
 |---|---|---|
 | ELF exe/lib | `rea analyze` → `search` → `decompile`/`function` | held (jq, libjq) |
+| Packed ELF, `b_info` field corrupted | `upx -t` answers `b_info corrupted`/`corrupt b_info` → `tools/round-88/upx-chain-repair.py --in --out` (chain geometry, `u_len`-bounded) | held r88 (jq, xxd, libz, docker-init; `.ufo/waves/round-88/pre/c1-candidate-at-declaration.json`) |
 | `.so`/`.node` vaddr | `nm` addr **+0x100000** = REA addr; confirm via `address-to-file-offset` | held |
 | PE x86-64 / ARM64 | `rea analyze` (Ghidra PeLoader, wine-free) | held (cli-64, cli-arm64) |
 | `.asar`/JS bundle | `analyze_javascript_application`; >~4MB single files OOM → extract + `--artifact-format directory` | held (obsidian ×2, typora, signal census) |
@@ -714,6 +715,22 @@ bullet is bounded by the lines it cites.
 | R47-CL10 four rows name the wrong arm for every routed defect and still pass | the arm test is membership and the routed-id test is at-least-once, so a permutation is green | `floor` | 1 |
 
   Refs: `corpus/lessons/round-47.md:36-44` (both routed defects as written), `corpus/lessons/round-46.md:89-95` (R46-CL7: binding digits rather than meanings), `corpus/knowledge/2026-10-25-r34b-pre-freeze-shortcut-replay-gate-stop.md:40-66` (a registered class set can hold while the surface stays shortcut-reachable — the reason a row needs its meaning, not its digit), `plans/round-48-claims.md:47-96` (the R48-C1 predicate and every clause this block states), `plans/round-48-claims.md:98-120` (the R48-C2 predicate whose completeness floor this block's second arm mirrors), `corpus/lessons/round-48.md:8-20` (S145: the criterion used to reject a vacuous check), `tools/round-48/meanings.py`.
+
+- **28. A packed-ELF field tamper is triaged by the refusal UPX prints, not by the field name.** <!-- packed-elf-refusal-table v1 --> Measured on four sha256-pinned carriers x seventeen single-field tampers (`tools/round-88/field-tamper-matrix-v2.py`, 68 cells, 63 effective, 0 unclassified; receipt `.ufo/waves/round-88/l1/scores/c2-matrix-at-declaration.json`), on top of the round-87 anchor repair (`corpus/knowledge/2026-11-04-r87-upx-magic-tamper-repair.md`) and the round-88 chain geometry (`corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md`):
+
+| `upx -t` answer | fields that produce it | cells | move |
+|---|---|---|---|
+| `header corrupted` | any PackHeader byte, the checksum byte included (the checksum covers bytes 4-30, never the magic) | 35 | the field is redundant in the packer's own structures: recover it, then recompute the checksum byte |
+| `b_info corrupted` | a `b_info` field (`sz_unc`, `sz_cpr`) | 8 | chain geometry: the next block starts `12 + sz_cpr` after this one, bounded by `sz_unc` and the PackHeader `u_len` |
+| `corrupt b_info` | `l_info.p_blocksize` | 4 | the loader's block size, not chain data: restore the packer's own value, never a guess |
+| `p_info corrupted` | `l_info.p_filesize` | 4 | equals the PackHeader `u_file_size` on every measured carrier |
+| `compressed data violation` | `b_info.method`, the end-of-chain `sz_cpr` | 4 | the method is the PackHeader's; the sentinel's `sz_cpr` is `UPX!` |
+| `bad method 0 at 0x…` | a `b_info.method` zeroed | 4 | same law; the offset names the block |
+| `bad seek` | `l_info.l_checksum` on a shared object | 1 | layout-dependent: tolerated on the three executables, fatal on the `.so` |
+| `upx -t` rc 0 on changed bytes | `l_info.l_checksum` on an executable | 3 | `upx -d` still restores the pin: not a repair target |
+| `upx -t` rc 0 because nothing changed | `l_info.l_size`, `ph.filter` where absent | 5 | the bytes were already zero: never report a no-op tamper as a tolerated field |
+
+  Refs: `corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md` (the matrix and its counting command), `corpus/knowledge/2026-11-04-r87-upx-magic-tamper-repair.md` (the anchor class this table sits on), `corpus/QUALITY.md` rows 154-155 (the no-op and off-vocabulary-message criteria the instrument produced).
 
 ## Config custody for live-probe rounds (SOP)
 
