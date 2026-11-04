@@ -249,9 +249,16 @@ def checker_env_arm(instrument: str, root: str, rev: str, pkg: str,
             return {"ok": False, "missing": f"host tool {name}"}
         record = os.path.join(log_dir, name + ".environ")
         shim = os.path.join(shim_dir, name)
+        # A perl shim, not a shell: /bin/sh adds PWD/SHLVL/_ to the
+        # environment it exports, so a shell shim would measure the shell, not
+        # the exec boundary (verified: perl exec'd with four keys sees four).
         with open(shim, "w", encoding="utf-8") as fh:
-            fh.write("#!/bin/sh\ncat /proc/self/environ > %s\nexec %s \"$@\"\n"
-                     % (shlex.quote(record), shlex.quote(real)))
+            fh.write("#!/usr/bin/perl\n"
+                     "open(my $in, '<', '/proc/self/environ') or exit 127;\n"
+                     "binmode $in; local $/; my $data = <$in>; close $in;\n"
+                     "open(my $out, '>', '%s') or exit 127;\n"
+                     "binmode $out; print $out $data; close $out;\n"
+                     "exec '%s', @ARGV;\n" % (record, real))
         os.chmod(shim, 0o755)
         records[name] = record
     checker_log = os.path.join(log_dir, "checker.jsonl")

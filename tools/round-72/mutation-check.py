@@ -158,6 +158,14 @@ def check(work: str, root: str, rev: str, tool: str, patch_set: str,
     pristine = os.path.join(scratch, "pristine-" + os.path.basename(tool))
     with open(pristine, "wb") as fh:
         fh.write(data)
+    # The tool may import a sibling lane module (round-72's packed-elf imports
+    # capsule_audit.py); every scratch copy needs it or the selftest dies at
+    # import and the battery reports an unevaluable world.
+    srcdir = os.path.join(os.path.abspath(root), os.path.dirname(tool))
+    for mod in ("capsule_audit.py",):
+        src = os.path.join(srcdir, mod)
+        if os.path.isfile(src):
+            shutil.copy(src, os.path.join(scratch, mod))
     base = run_selftest(pristine)
     if base["rc"] != 0 or base["ok"] is not True:
         raise Unevaluable(f"pristine selftest not green: rc={base['rc']} failed={base['failed']}")
