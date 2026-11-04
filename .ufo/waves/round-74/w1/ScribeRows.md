@@ -88,4 +88,6 @@ Routed label clarification: ScoutSource-8 reported that the frozen D11 audit mat
 
 Concurrent-edit conflict, verbatim: an intervening S282 source cell stated “the same table served at https://man7.org/linux/man-pages/dir_section_5.html” and “the index anchor re-opened 2026-11-04, 4 530 B”. ScoutSource-8 reported “index.html#_section_5 is NOT a resolvable URL” and “has no anchors at all”. This seat does not certify that intervening fetch; it corrected S282 to distinguish the historical label from the opened page and notified Main before editing. The required census is refreshed after this clarification.
 
+Post-clarification required census: exit **0**, identical 23 W04 warnings and final `kaidoku ok` line to the pasted output. `census-final.txt` contains this last invocation's full output. Its shell EXIT trap removed scratch before handoff.
+
 Report: .ufo/waves/round-74/w1/ScribeRows.md

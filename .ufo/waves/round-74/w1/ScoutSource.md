@@ -151,10 +151,24 @@ number and parser output above, each from `fetch-receipt.json` or the retained b
 receipt names `dir_section_5.html`), and that the FSCREDS-sentence quote was chosen to avoid
 the pipe in the READ_FSCREDS definition (supported by the row's own text and the grammar).
 
+## Post-report re-check (S282 correction)
+
+Observed after ScribeRows corrected S282: its source cell now names
+`https://man7.org/linux/man-pages/dir_section_5.html` and adds the literal
+`index.html#_section_5` explicitly as the round-73 label, "not an opened URL"; the row keeps
+12 pipes / 11 cells / status `rejected`. Re-deriving the frozen D11 match over the 15
+rejected rows gives `proc.5.html` 1, `proc_cmdline.5.html` 1, `proc_pid.5.html` 1,
+`index.html#_section_5` **1** (S282) — the routed blocker above is closed, and the row now
+keeps both the actually opened URL and the audit's label without claiming the label resolves.
+`sources-census.sh validate --file …/corpus/SOURCES.md --today 2026-11-04` exits **0**, with
+no E01/E11 on S278–S282 (`corpus/knowledge/2026-11-04-r74-probe-mutation-closure.md` now
+exists, 10 616 B).
+
 ## Remaining unknowns
 
 - No second body fetch was made, so byte stability across fetches on 2026-11-04 is not
   measured here; the three named pages match the round-73 copies byte-for-byte, which is the
   only cross-day stability signal available.
-- Whether ScribeRows will amend S282's source cell before the wave lands is outside this
-  seat; the audit constant was not changed by this seat.
+- The label's provenance is [INFERENCE] in the narrow sense that no round-73 document spells
+  it out: it follows from the audit constant plus round-73's receipt naming the opened URL.
+  S282's wording records it as a label, which is the correct claim.
