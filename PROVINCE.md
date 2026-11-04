@@ -14,10 +14,10 @@ host binutils as non-REA fallback readers.
 
 Drift-prone values: reverified 2026-10-20 (round 19) — configured REA MCP pins are Devin
 `rea-agents@6.7.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP
-`rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:8`), and Kimi
-`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite moved the disable into the file's `disabledServers` list, so the live OMP file records the disable in
+`rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:12`), and Kimi
+`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4722`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite moved the disable into the file's `disabledServers` list, so the live OMP file records the disable in
 `disabledServers: ["rea"]` (re-read 2026-11-04, round 78, `.ufo/waves/round-78/l1/scores/c2-at-record.json`; the round-19
-w1 `LiveConfigPins.md` note that the rewrite dropped the record is superseded for the location, not for the disable). Cache/catalog The `17:55:49Z receipt` and its old line-number pointers are historical, not current registration evidence.
+w1 `LiveConfigPins.md` note that the rewrite dropped the record is superseded for the location, not for the disable; pointers re-bound at their lines 2026-11-04, round 79, `.ufo/waves/round-79/l1/scores/c2-at-landing.json`). Cache/catalog The `17:55:49Z receipt` and its old line-number pointers are historical, not current registration evidence.
 identities (re-derived 2026-10-20, round 19): 6.7.0 at `/home/vgpnk/.npm/_npx/a1722018f28f9df2` — 153 CLI
 commands, 207 MCP tools, `tools_sha256=af39310c9591bb981893ec0d2188b1bcf6e9cc8ba3ac513d5bbefc8ddcb85639`; 6.5.0 at
 `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6` — 153 CLI commands, 207 MCP tools, `tools_sha256=805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`; historical 6.4.0 in npx cache directory
