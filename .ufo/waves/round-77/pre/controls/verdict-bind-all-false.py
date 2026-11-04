@@ -626,11 +626,12 @@ def main(argv: list[str] | None = None) -> int:
     return 0 if receipt["ok"] and not receipt["validate"]["defects"] else 1
 
 
-if __name__ == "__main__":
-    sys.exit(main())
 
 
 # --- control mutation: all-false (bind always reports a mismatch) ---
 def bind(clause, receipt):  # noqa: F811 - deliberate control override
     return False, "bound", {"field": "control", "claimed": None,
                             "actual": None}
+
+if __name__ == "__main__":
+    sys.exit(main())

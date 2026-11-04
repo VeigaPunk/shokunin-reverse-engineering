@@ -626,10 +626,11 @@ def main(argv: list[str] | None = None) -> int:
     return 0 if receipt["ok"] and not receipt["validate"]["defects"] else 1
 
 
-if __name__ == "__main__":
-    sys.exit(main())
 
 
 # --- control mutation: no-binding (parse_clause returns None) ---
 def parse_clause(clause):  # noqa: F811 - deliberate control override
     return None
+
+if __name__ == "__main__":
+    sys.exit(main())
