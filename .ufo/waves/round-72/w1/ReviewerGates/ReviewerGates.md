@@ -1,0 +1,105 @@
+# ReviewerGates — round-72 clause review
+
+Axes: predicate fidelity; false-green resistance; fail-closed evidence; freeze provenance. Recommendation only; no admission, integration, source edit, or alternate agent runtime.
+
+Scope: six instruments pinned at operative freeze `34fe7aa70b627d92e2d27dbce308d9f5bebda63d`, plus observed post-freeze diff. LSP unavailable: `read xd://lsp` returned “No such tool”; no semantic references/definition/diagnostics claims are made. Text inspection and targeted executable fixtures are the fallback. No installations.
+
+## Findings (severity order)
+
+### RG72-1 — HIGH: missing implicitly named capsule passes receipt checker
+`tools/round-72/packed-elf.py:824-830,831-842,858`: implicit `child_env_observed.log` is adopted only if `os.path.exists(cand)`. A named missing path silently drops the audit, leaves `clauses.receipt_capsule = null`, and contributes no failure. Actual genuine route receipt modified only to name a nonexistent scratch capsule: rc **0**, met true, failing [], capsule null. Explicit `--capsule` missing: rc **1**, `receipt_capsule: unreadable`; directory passed explicitly (deterministically unreadable as a file): rc **1**, same clause. Therefore the explicit path fails closed but the implicit named path does not. Implicit existing-but-unreadable files reach audit and fail closed; a broken symlink fails `exists` and follows the silent-skip path [INFERENCE].
+Evidence: `ReviewerGates/attacks.json` keys `missing_implicit`, `missing_explicit`, `unreadable_directory`. Correct behavior must not promote unevaluated raw evidence into overall met.
+
+### RG72-2 — HIGH: omitted digest is an overall green audit
+`tools/round-72/capsule_audit.py:129-147,150`; propagated at `packed-elf.py:833-835`. Exact code: `"log_sha256": None if claimed_sha is None else claimed_sha == digest`; only `ok is False` creates failure. Missing digest produces `ok true` with digest clause null. Actual checker on genuine named declaration capsule with receipt digest removed: rc **0**, `clauses.receipt_capsule true`. Pure two-record fixture likewise green. Contradicts claims container `frozen_atoms.A4` “never green by omission” and C3's “every clause true”.
+Evidence: `attacks.json` keys `audit_no_digest`, `checker_no_digest`.
+
+### RG72-3 — HIGH: C3 negative-control result is computed, then ignored
+`tools/round-72/controls.py:179,185-189,217`: c3 stores base checker's successful `met` and separately computes `met_control`; final `all(a["met"] is True ...)` reads the former, not the latter. Thus c3 contributes green whenever the old checker accepts, regardless of whether new audit rejects the polluted capsule or names canary. Fixture executes the real `controls.main` and substitutes command-boundary responses only: polluted audit rc0/ok true/failures [], other controls correct; whole control rc **0** and ok true while c3.met_control false.
+Evidence: `controls-lying-audit.json`, `attacks.json.controls_lying_audit_rc`. This is an aggregation defect, not a claim that the genuine auditor accepted the polluted capsule.
+
+### RG72-4 — HIGH: A11 accepts environment outside the checker root and a fabricated census without a log
+Frozen `tools/round-72/seam-probe.py:275-276,281-293` (observed later Perl-shim version:282-300). It checks shim HOME/TMPDIR under the outer `--work`, not under `checker_child_env.run_root`; census tests dictionary membership, not positive counts; own log summary is trusted without opening checker.jsonl. Combined fixture: both exact four-key shim witnesses have HOME/TMPDIR in work/not-checker/*, reported checker root is work/checker-root, children={git:0,readelf:0}, and checker log is never created. Real A11 returns **ok true**. Tested both operative frozen function and observed current function with a fake checker invocation boundary. Violates the frozen sentence's checker-root containment and “recording ... child census” requirement. This is a counter false-green fixture, not proof that the real checker emits that fabricated summary.
+Evidence: `a11-frozen.json`, `a11-corrected.json`. Initial `attacks.json` A11 result is an explicitly superseded harness failure (selected wrong logs directory); the two isolated corrected receipts are authoritative for A11.
+
+### RG72-5 — MEDIUM: audit battery's green is weaker than frozen C3
+`tools/round-72/capsule-audit.py:80,97-106`: genuine acceptance, seven shape names, rejections and named clauses are enforced; **46 records**, every genuine clause true, and round-72/round-71 lying-receipt checks are not. A two-record synthetic capsule/summary gets rc **0**, target7/rejected7/ok true. The exact frozen CLI names the committed genuine file, so this is not evidence that that fixed file has two records; it demonstrates counter green alone does not establish the entire predicate. Lying-check receipts must be independently joined, not inferred from battery exit0.
+Evidence: `two-record-battery.json`, `attacks.json.two_record_battery_rc`.
+
+### RG72-6 — MEDIUM: target pin “matched” defaults true with no expected pin
+Frozen `tools/round-72/mutation-check.py:164-171,205-213,284-285`: without optional `--expect-target-sha256`, `target_pin.matched` is true and `expect` null. The frozen C2 counting command omits that option. A source/selftest boundary fixture with a noncanonical one-line target, pristine case1 green, expected named mutant failure, and no declared pin returns ok true / matched true. This proves omitted pin is not a match check, not that actual frozen target differs. C2 counter also does not execute the r71 comparison or landing A10; those require separate receipt checks.
+Evidence: `attacks.json.mutation_no_target_pin`.
+
+### RG72-7 — HIGH: frozen container has no supersession entries despite post-freeze changes
+`.ufo/waves/round-72/claims.json:35,47-60,69`: A1 requires appended `instrument_supersessions` with replacement sha/reason/re-taken before record. The observed container has **no `instrument_supersessions` key**. At first diff, post-freeze commit `6375afe687bc03603eab8387f2defc4fa1248054` adds sibling-module copying in `seam-probe.py:123-130`; while review ran another shim edit appeared and mutation-check.py also changed. Recorded hashes: probe actual `58ff85e851af773405a442cb996965ea2bd58c86c3b5d1a7eaf51936d843593a` versus frozen `7f46e3efb3c4768d16f9c5a7c01a3448b4f6dc15ae731f46f3150dc2f6e10622`; mutation actual `0bfb611ef5cc351bf0df4920187d4a9c8cb7f2fceaeebca27f418828a81ec928` versus frozen `17ec8a1a0eb6c32898eaee020d8fc6a53797d519a4e180368fc2b4e7b33ddfbb`. Remaining four pins matched at capture. These are review-time observations, not an assertion of final landing state. Plan kill rules explicitly disallow post-freeze edits; container A1 describes a supersession procedure. Neither is satisfied merely by a changed executable.
+Evidence: `attacks.json.pins`, `.instrument_supersessions`; read-only git commands below.
+
+### RG72-8 — MEDIUM: measured route sibling comes from working tree, not measured revision
+Observed added `tools/round-72/seam-probe.py:123-130`: `blob_to` extracts target via `git show rev:tool` but `shutil.copy(src, ...)` loads capsule_audit.py from current root. Reported instrument SHA hashes only target blob. A changed uncommitted sibling can change measured checker behavior without changing that reported hash. The sibling must be fetched at the same revision and checked against its applicable pin. Evidence is actual post-freeze diff; no source mutation was performed to demonstrate this provenance defect.
+
+## Predicate identity and actual counter quotation
+Plan ranges C1:38-48, C2:75-84, C3:111-121 equal container claims[0..2] after Markdown line-wrap normalization (all three true). The instrument does **not** contain an identical full predicate sentence. Actual operative counter quotations:
+
+* C1, seam-probe.py:667-673: `failed = [a["id"] for a in arms if not a["ok"]]`; `"arms_passed": len(arms) - len(failed)`, `"target": len(arms)`, `"ok": not failed`. A11 condition quotation: `under(work_abs, env.get("HOME", ""))`, `under(work_abs, env.get("TMPDIR", ""))`, `all(name in children for name in ("git", "readelf"))`. It measures one target world per call, not both the 11/11 and 9/11 worlds in one predicate evaluation.
+* C2, mutation-check.py:205-206: `ok = (len(survivors) == expected and not wrong and target_pin_matched and pristine_floor_met)`. Named-case membership is checked at192-193; pristine rc0/ok true at161-163; single mutant is fixed in PATCH_SETS.r72:93-97. No joining of baseline or A10 observation here.
+* C3, capsule-audit.py:97-98: `ok = (genuine["ok"] is True and not missing and not accepted and not unnamed and len(rows) == len(EXPECTED_SHAPES))`. No literal sentence identity with either source, and RG72-5 identifies missing conjuncts.
+
+Thus plan/container sentence equality is established; instrument-counter equivalence is **not** established and has concrete counterexamples, rather than a third matching sentence to quote.
+
+## Clause-by-clause audit
+
+A11: rc0 required; both shims must exist, exact allowlist keys, absent canary, HOME/TMPDIR under work; own summary records int>=2, allowlisted true, canary false, containment booleans true, git/readelf keys, string root under work. Weak points are RG72-4. Only each shim's last invocation is retained (same output file), so this is not an independent witness of every invocation [INFERENCE from253-254].
+
+`binding_verdict`, seam-probe.py:180-186: clauses must be dict; nonce and binding require identity `is True`. Missing dict => all false; empty dict => present true but nonce/binding false; false binding => binding false; genuine true booleans => true. Fixtures retain all four results. No false-green within this narrow declared helper contract found. It deliberately trusts checker JSON, as C2 requires. A10's surrounding conditions additionally require genuine rc0, negative rc1 and corresponding false clauses (638-649); this does not repair missing raw capsule integrity.
+
+`capsule_audit.audit`: unreadable -> ok false/unevaluable/unreadable; JSON parse errors -> failure; empty capsule -> records failure. Digest optional-null is RG72-2. Records equality enforced but no fixed46. Keys are exact raw key sets, with summary false a veto; canary absent raw, summary true a veto. HOME and TMPDIR are lexically under summary-provided root, no realpath/symlink check; summary's containment booleans are ignored (fixture audit_summary_contradiction: false booleans yet all clauses true). That latter conservative summary discrepancy does not itself falsely certify an unsafe raw environment, so not elevated to separate finding. Children exactly equals summary census, but no required class list. No signature or independent witness authenticity is established by matching a capsule against its own recomputed summary. Seven shapes mutate digest/record count/extra key/canary/HOME/TMPDIR/argv and keep original summary, so genuine audit rejects each named clause. Root and field-type validation are incomplete; malformed argv can raise rather than produce named adjudication [INFERENCE from63-68], not exercised.
+
+## Controls: do they skip the work?
+
+* c1_base_world (controls.py:138-155) runs new probe against old route; it skips **new checker environment implementation**, not all work (it executes route/probe machinery). Requires9/11 and named A10/A11 failures; does not itself require observed shim canary true, which frozen C1 separately requires.
+* c2_base_survivor (158-167) uses old probe and r71 patch; skips repaired checker-verdict selftest; requires expected survivor1. Executes mutation machinery.
+* c3_base_accepts (171-189) uses old checker, skipping new checker capsule audit, and separately invokes new standalone audit. Its intended negative control is valid, but aggregation ignores the audit half (RG72-3).
+* c1_constant_probe (192-201) writes11 all-true arms with empty observations and validates; skips measured route entirely. Validator rejects absence of observations, not arbitrary lies with nonempty dicts (seam-probe.py:676-697).
+* c2_constant_survivors (204-215) writes a survived mutant while claiming survivors=[] and validates; skips mutation execution. It checks row/list consistency, not actual execution or full frozen predicate (mutation-check.py:226-262).
+
+## Freeze order
+Read-only history shows declaration6316c105, four fixes17d8b5f/306cbb3/25ecc711/1563ea35, pre receipts f6f4f677, combined C3 receipt8ce89eaa, then first container34fe7aa7. Required declaration -> pre receipts -> container ordering is satisfied. Six sha256 pins are present in container47-53. Supersession gap is RG72-7. Container declaration_pointer line11 still says “two” fixes and contains `{FIX2}`; errata24/A0 correctly name all four, so this is a stale pointer defect, not evidence of wrong operative freeze.
+
+## Evidence commands and receipts
+All commands cwd `/home/vgpnk/Projects/shokunin/kaidoku-shokunin`:
+
+```
+git log --format='%H %s' --reverse 56241b1c8baff95862730c008f1ae5132b03388e.. -- tools/round-72 plans/round-72-claims.md .ufo/waves/round-72/claims.json .ufo/waves/round-72/l1/pre
+git diff 34fe7aa70b627d92e2d27dbce308d9f5bebda63d -- tools/round-72 .ufo/waves/round-72/claims.json plans/round-72-claims.md
+S=/fast/scratch/hyaku/kaidoku-r72/ReviewerGates; mkdir -p "$S"; trap 'rm -rf -- "$S"' EXIT
+cp /usr/bin/upx "$S/upx"
+TMPDIR="$S" python3 -I -B /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-72/w1/ReviewerGates/attack.py "$S"
+```
+
+Driver retained under own receipt directory, not installed as an instrument. First driver invocation failed because fixture read argv index5 as work; fixed. Second invocation completed. Its A11 selected a stale directory; isolated retry binds exact requested child log path and confirms green; frozen retry loads `git show 34fe7aa7:tools/round-72/seam-probe.py` in memory and confirms same. Existing completed audit/control/receipt fixtures were not rerun. Mocked boundaries are explicitly labeled; real checker/capsule rc observations are not mocks. All receipts copied/written under own lane before cleanup; sole named scratch directory removed by trap/finally after each use. Pinned UPX copied only into own scratch. No git writes.
+
+## Residual risks / verification gaps
+Working tree changed during review; hashes and line references are snapshot-specific. No full expensive route/probe or genuine controls battery was rerun; scoped assignment authorized the attacks above. No canonical run/resume/rerouting/saturation implementation is changed by these six instruments, so no unsupported continuity or saturation admission is made. A11 single-output overwrite and malformed-field exceptions remain statically evidenced risks, not executed claims. Findings remain recommendations; owner must reconcile freezes/supersessions and rerun canonical counting commands after any accepted repair.
+
+Self-evaluation: accuracy4 (concurrent edits limit latest-state claims), completeness4 (full route intentionally not rerun; narrow fixtures cover the assigned green gates), clarity4 (mock boundaries labeled), actionability4 (file:line and reproducer retained), conciseness4 (full predicate quotations intentionally repeated to satisfy assignment); average4.0. Improvement: evaluate final settled revision once, preserving these attacks as counterexamples.
+
+### C1: plan and container quotations
+Plan: > R72-C1 is verified iff the frozen seam probe, run at the measured revision as `python3 -I -B tools/round-72/seam-probe.py --root . --rev <measured> --tool tools/round-72/packed-elf.py --battery tools/round-72/mutation-check.py --pkg <REA 6.5.0 root> --work <scratch> --receipt <route receipt> --expect-upx <pinned copy> --nonce-commitment <pre-committed commitment> --json-out <receipt>`, reports `arms_passed 11` of `target 11` with `A11_checker_env` true — both shims' key sets exactly HOME/LANG/PATH/TMPDIR, the canary key absent, HOME and TMPDIR under the checker's run root, the checker's own `checker_child_env` recording at least two records whose child census contains `git` and `readelf` — while the same probe at the same revision against `--tool tools/round-71/packed-elf.py` reports 9 of 11 naming `A10_run_binding` and `A11_checker_env` false, the A11 observation showing the shim's canary present.
+
+Container claims[0]: > R72-C1 is verified iff the frozen seam probe, run at the measured revision as `python3 -I -B tools/round-72/seam-probe.py --root . --rev <measured> --tool tools/round-72/packed-elf.py --battery tools/round-72/mutation-check.py --pkg <REA 6.5.0 root> --work <scratch> --receipt <route receipt> --expect-upx <pinned copy> --nonce-commitment <pre-committed commitment> --json-out <receipt>`, reports `arms_passed 11` of `target 11` with `A11_checker_env` true — both shims' key sets exactly HOME/LANG/PATH/TMPDIR, the canary key absent, HOME and TMPDIR under the checker's run root, the checker's own `checker_child_env` recording at least two records whose child census contains `git` and `readelf` — while the same probe at the same revision against `--tool tools/round-71/packed-elf.py` reports 9 of 11 naming `A10_run_binding` and `A11_checker_env` false, the A11 observation showing the shim's canary present.
+
+Whitespace-normalized equality: `True`.
+
+### C2: plan and container quotations
+Plan: > R72-C2 is verified iff the frozen mutation battery, run at the measured revision as `python3 -I -B tools/round-72/mutation-check.py --root . --rev <measured> --tool tools/round-72/seam-probe.py --patch-set r72 --work <scratch> --json-out <receipt>`, exits 0 with the single `A10_binding_force_true` mutant `killed`, its `failed` list naming `a10-binding-from-checker`, pristine selftest green, no wrong-case kill, and target pin matched — while the same battery with `--patch-set r71 --rev b827a8b5d54f2885ec9be7786389f356c59226ce --tool tools/round-71/seam-probe.py` reports `survivor_count 1` and survivors `["A10_binding_force_true"]`; and the landing probe's A10 observation records `genuine_verdict {present true, nonce_ok true, binding_ok true}` with `wrong_nonce.nonce_ok false` and `broken_binding.binding_ok false` from the checker's JSON.
+
+Container claims[1]: > R72-C2 is verified iff the frozen mutation battery, run at the measured revision as `python3 -I -B tools/round-72/mutation-check.py --root . --rev <measured> --tool tools/round-72/seam-probe.py --patch-set r72 --work <scratch> --json-out <receipt>`, exits 0 with the single `A10_binding_force_true` mutant `killed`, its `failed` list naming `a10-binding-from-checker`, pristine selftest green, no wrong-case kill, and target pin matched — while the same battery with `--patch-set r71 --rev b827a8b5d54f2885ec9be7786389f356c59226ce --tool tools/round-71/seam-probe.py` reports `survivor_count 1` and survivors `["A10_binding_force_true"]`; and the landing probe's A10 observation records `genuine_verdict {present true, nonce_ok true, binding_ok true}` with `wrong_nonce.nonce_ok false` and `broken_binding.binding_ok false` from the checker's JSON.
+
+Whitespace-normalized equality: `True`.
+
+### C3: plan and container quotations
+Plan: > R72-C3 is verified iff the frozen capsule audit, run at the measured revision as `python3 -I -B tools/round-72/capsule-audit.py --tamper-battery --capsule .ufo/waves/round-71/l1/scores/c1-env-at-landing.jsonl --audit .ufo/waves/round-71/l1/scores/c1-env-audit.json --work <scratch> --json-out <receipt>`, exits 0 with the genuine capsule accepted (`ok true`, 46 records, every clause true) and all seven tampered shapes (`log_sha256`, `records`, `keys`, `canary`, `home_under_run`, `tmpdir_under_run`, `children`) rejected each naming its declared clause — and the round-72 receipt checker on the filed lying receipt (`--check-receipt <lying receipt> --capsule <polluted capsule> --nonce-commitment <commitment>`) exits 1 with `receipt_capsule: canary` in `failing` and `clauses.receipt_capsule false`, while the round-71 checker accepts the same lying receipt shaped from its own genuine route receipt (`met true`, `failing []`).
+
+Container claims[2]: > R72-C3 is verified iff the frozen capsule audit, run at the measured revision as `python3 -I -B tools/round-72/capsule-audit.py --tamper-battery --capsule .ufo/waves/round-71/l1/scores/c1-env-at-landing.jsonl --audit .ufo/waves/round-71/l1/scores/c1-env-audit.json --work <scratch> --json-out <receipt>`, exits 0 with the genuine capsule accepted (`ok true`, 46 records, every clause true) and all seven tampered shapes (`log_sha256`, `records`, `keys`, `canary`, `home_under_run`, `tmpdir_under_run`, `children`) rejected each naming its declared clause — and the round-72 receipt checker on the filed lying receipt (`--check-receipt <lying receipt> --capsule <polluted capsule> --nonce-commitment <commitment>`) exits 1 with `receipt_capsule: canary` in `failing` and `clauses.receipt_capsule false`, while the round-71 checker accepts the same lying receipt shaped from its own genuine route receipt (`met true`, `failing []`).
+
+Whitespace-normalized equality: `True`.

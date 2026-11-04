@@ -1,0 +1,40 @@
+# shim-idiom receipt — ScoutSource r72/w1, 2026-11-04T06:10:46Z
+# environment passed to every shim, and nothing else: {'PATH': '/usr/bin:/bin', 'HOME': '/tmp', 'LANG': 'C', 'TMPDIR': '/tmp'}
+# each shim is exec'd by python3 subprocess.run([path]) with that env; /bin/sh -> /usr/bin/bash
+# recorded entries are the bytes of the capsule the shim writes, split on NUL
+
+== shell-cat-self  (declaration/freeze bytes (6316c10:244, 34fe7aa:245))
+   shim:
+     #!/bin/sh
+     cat /proc/self/environ > <record>
+     exec /usr/bin/true "$@"
+   exit 0, capsule 119 bytes, sha256 811d7ad91666936a…
+   entries (7): ['PWD=/fast/scratch/hyaku/kaidoku-r72/ScoutSource', 'HOME=/tmp', 'LANG=C', 'TMPDIR=/tmp', 'SHLVL=1', 'PATH=/usr/bin:/bin', '_=/usr/bin/cat']
+
+== shell-cat-pid  (control: /proc/$$ (the shell itself))
+   shim:
+     #!/bin/sh
+     cat /proc/$$/environ > <record>
+     exec /usr/bin/true "$@"
+   exit 0, capsule 48 bytes, sha256 d8cf5bb2f5589568…
+   entries (4): ['PATH=/usr/bin:/bin', 'HOME=/tmp', 'LANG=C', 'TMPDIR=/tmp']
+
+== shell-redir-self  (control: shell performs the redirect)
+   shim:
+     #!/bin/sh
+     cat < /proc/self/environ > <record>
+     exec /usr/bin/true "$@"
+   exit 0, capsule 0 bytes, sha256 e3b0c44298fc1c14…
+   entries (0): []
+
+== perl-self  (current seam-probe.py:301-307)
+   shim:
+     #!/usr/bin/perl
+     open(my $in, '<', '/proc/self/environ') or exit 127;
+     binmode $in; local $/; my $data = <$in>; close $in;
+     open(my $out, '>', '<record>') or exit 127;
+     binmode $out; print $out $data; close $out;
+     exec '/usr/bin/true', @ARGV;
+   exit 0, capsule 48 bytes, sha256 d8cf5bb2f5589568…
+   entries (4): ['PATH=/usr/bin:/bin', 'HOME=/tmp', 'LANG=C', 'TMPDIR=/tmp']
+

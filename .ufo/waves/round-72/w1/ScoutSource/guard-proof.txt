@@ -1,0 +1,27 @@
+== census regex: grep -oE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' fixture-sources.md
+| S900
+ | S901
+  | S902
+   | S903
+== same regex, line numbers (grep -nE)
+5:| S900 | zero-indent row — https://example.invalid/zero | docs | A | s | a | t | mined | 2026-11-04 | 180d | x |
+6: | S901 | one-space row — https://example.invalid/one | docs | A | s | a | t | mined | 2026-11-04 | 180d | x |
+7:  | S902 | two-space row — https://example.invalid/two | docs | A | s | a | t | mined | 2026-11-04 | 180d | x |
+8:   | S903 | three-space row — https://example.invalid/three | docs | A | s | a | t | mined | 2026-11-04 | 180d | x |
+== matched-id count (census)
+4
+== URL-duplicate scan (all lines): grep -n 'proc_pid_environ' fixture-sources.md
+9:    | S904 | four-space row — https://man7.org/linux/man-pages/man5/proc_pid_environ.5.html | docs | A | s | a | t | mined | 2026-11-04 | 180d | x |
+== URL-duplicate scan restricted to census-matched rows: '^ {0,3}\|.*proc_pid_environ'
+   (exit 1 — no census-shaped match, so this scan misses the 4-space row)
+== the same two scans on the live registry
+   (exit 1 — no hit: url unused)
+== live registry census
+274
+181
+== ids absent: S275 / S276
+0
+== every registry line whose first cell is S274..S279
+191:| S274 | Python 3 tempfile documentation — https://doc
+== cell count of the last live row (11 expected)
+11 cells

@@ -1,0 +1,10 @@
+#!/bin/sh
+# ExecC1 shim v1 (superseded): plain `cat /proc/self/environ` measures the CAT
+# process's exec environment, not the shim's.  /bin/sh is bash on this host,
+# and bash augments the child environment with _=<command>, SHLVL, and an
+# updated PWD before exec -- so v1 records carry 7 keys
+# (HOME, LANG, PATH, PWD, SHLVL, TMPDIR, _), three of them shim-authored.
+# Kept only to document that harness artifact; the v2 fd shims are the
+# operative witness.
+/usr/bin/cat /proc/self/environ > /fast/scratch/hyaku/kaidoku-r72/ExecC1/records/readelf-"$(/usr/bin/date +%s%N)"-"$$.environ"
+exec /usr/bin/readelf "$@"

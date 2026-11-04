@@ -1,0 +1,43 @@
+fetch-receipt — ScoutSource (r72/w1), 2026-11-04
+================================================
+
+Scope: the assignment names one live fetch of
+https://man7.org/linux/man-pages/man5/proc.5.html and asks for the /proc/pid/environ
+paragraph inside it.  Both requests below returned HTTP 200.  One GET each (byte
+snapshot) plus one HEAD each (headers only, no body); no second body fetch was made,
+so byte stability across fetches is NOT measured here and is not claimed.
+
+1) GET + HEAD https://man7.org/linux/man-pages/man5/proc.5.html
+   GET   2026-11-04T06:01:39Z  HTTP/1.1 200 OK  Content-Length 31125
+   sha256 b197c5fa64577269f992d50f60acfd5e0cc3df756644ddd8bd19a02591272a97
+   HEAD  2026-11-04T06:03:55Z  Date: Wed, 04 Nov 2026 06:03:55 GMT
+   Server: Apache/2.4.58 (Ubuntu)
+   Last-Modified: Mon, 02 Nov 2026 20:20:30 GMT
+   ETag: "7995-65f50e092bf80"
+   Content-Type: text/html   Vary: Accept-Encoding   Accept-Ranges: bytes
+
+2) GET + HEAD https://man7.org/linux/man-pages/man5/proc_pid_environ.5.html
+   GET   2026-11-04T06:01:59Z  HTTP/1.1 200 OK  Content-Length 7747
+   sha256 93394d9edb801ad44e342e8e8ab057bea619d995803221edaf008226b2062c46
+   HEAD  2026-11-04T06:03:56Z  Date: Wed, 04 Nov 2026 06:03:56 GMT
+   Server: Apache/2.4.58 (Ubuntu)
+   Last-Modified: Mon, 02 Nov 2026 20:20:30 GMT
+   ETag: "1e43-65f50e092bf80"
+   Content-Type: text/html   Vary: Accept-Encoding   Accept-Ranges: bytes
+
+Why two URLs: man-pages 6.19 (the edition this host serves; footline
+"Linux man-pages 6.19  2026-02-08") splits proc(5) into per-file pages.  The served
+proc.5.html is a 31 125-byte stub: its body documents the filesystem, mount options and
+the /proc/pid directory, and the per-file sections are links.  `/proc/pid/environ` appears
+in proc.5.html only as a SEE ALSO link at snapshot line 386
+(`<a href="../man5/proc_pid_environ.5.html">proc_pid_environ(5)</a>`), and the strings
+"initial environment" and "name=value" do not occur in that snapshot.  The paragraph the
+assignment asks for is on the split page, fetched second, HTTP 200 as above.
+
+Snapshots in this directory:
+  proc.5.html               31 125 B  sha256 b197c5fa64577269f992d50f60acfd5e0cc3df756644ddd8bd19a02591272a97
+  proc_pid_environ.5.html    7 747 B  sha256 93394d9edb801ad44e342e8e8ab057bea619d995803221edaf008226b2062c46
+
+Both pages share Last-Modified 2026-11-02 20:20:30 GMT (one rebuild of the whole man7
+tree) but have distinct ETags: (path, mtime) pairs of two different resources, so the
+shared Last-Modified is not evidence that one page's text is on the other.

@@ -643,6 +643,9 @@ Retired: none.
 | a pre-committed run binding for saved receipts | the route takes `--challenge` + `--nonce-commitment`, records `run_nonce` and `run_binding = sha256(nonce:instrument.sha256:packed pins)`, and `--check-receipt --nonce-commitment` rejects a transplanted round-70 receipt, a wrong-nonce copy and a broken-binding copy each with its clause; replay/transplant rejection, not cryptographic authenticity | `.ufo/waves/round-71/l1/scores/c1-at-landing.json` (A10) | round 71 |
 | a lying-field forged-receipt battery over the first-cut defect world | the six verdict-relevant classes (unpacked_counts, packed_sha256, section_count/upx_list_rc, runs argv, refusal, format) are cut from the round-70 landing receipt, relabelled to the round-70 first-cut world, accepted by that first cut and rejected by the superseded reader naming the class | `.ufo/waves/round-71/l1/scores/c2-at-landing.json` (six lying rows); `tools/round-71/forged-receipts.py` | round 71 |
 | the SKILL registry block under row grammar v2 | the drift census splits on unescaped pipes, unescapes `\|`, reads owner/write/pinned positionally (pinned = the joined middle cells), reports every nonconformant row and duplicate instead of dying, and reads the four filed round-69 eight-cell rows without rewriting them | `.ufo/waves/round-71/l1/scores/c3-at-landing.json` (93 rows, 0 nonconformant); `tools/round-71/registry-census.py` | round 71 |
+| checker-mode child environments under the four-key allowlist (`--check-receipt --child-env-log`) | every checker-mode `git`/`readelf` child runs under `build_child_env()`, is recorded into the child-env log, and the checker JSON carries `checker_child_env`; A11 verifies it from independent perl shims (exact `/proc/self/environ` bytes) and the checker's own log, gating containment on the checker's run root | `.ufo/waves/round-72/l1/scores/c1-at-landing.json` (11/11; A11 true), base `.ufo/waves/round-72/l1/pre/c1-at-base.json` (9/11) | round 72 |
+| a checker-emitted binding verdict with an exact-case mutation kill | A10 reads `clauses.run_nonce`/`clauses.run_binding` and requires `met`/`clauses.met` agreement; the frozen `binding_ok = True` mutant that survived round 71 is killed by `a10-binding-from-checker` in the r72 patch set | `.ufo/waves/round-72/l1/scores/c2-at-landing.json` (killed, named case), base `.ufo/waves/round-72/l1/pre/c2-at-base.json` (survivor 1) | round 72 |
+| a receipt-bound raw-witness capsule audit | `capsule-audit.py`/`capsule_audit.py` re-derive seven clauses from the capsule bytes (digest when claimed, count, exact keys, canary, HOME/TMPDIR containment, child census), the checker audits a resolvable capsule and fails closed on a filed-but-absent one, and receipt-derived capsule paths never read outside the lane | `.ufo/waves/round-72/l1/scores/c3-at-landing.json` (46-record genuine accepted, 7/7 shapes rejected), `c3-lying-check.json` (clause false), base `.ufo/waves/round-72/l1/pre/c3-at-base.json` (the round-71 checker accepts the lying receipt) | round 72 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -5635,3 +5638,52 @@ forged-receipts scratch cleanup on failure (Sentinel SS-4); (e) the r63 planned 
 sweep stays open; (f) the standing duties re-run every round that lands receipts; the r58/r60
 bare-name findings and the r64 placeholder-token disposition stay named debt; the round-70 lesson
 errata are landed, not rewritten.
+
+## 2026-11-04 — round 72: checker-mode children, the checker's binding verdict, and the raw witness
+
+Base `56241b1c8baff95862730c008f1ae5132b03388e`; declaration `6316c1053f927a1a1cdc3e0960b70acab5f56381`
+(the six round-72 instruments, the plan, the nonce commitment, the census-start receipt), with four
+pre-freeze declaration fixes (`17d8b5f7…`, `306cbb3f…`, `25ecc711…`, `1563ea35…`) whose bytes are the
+pinned state; operative freeze `34fe7aa70b627d92e2d27dbce308d9f5bebda63d` (the first commit adding
+`.ufo/waves/round-72/claims.json`; the round-29 gate audits it CLEAN, findings []); supersessions
+`6375afe6…` (blob-module copy), `6284abe b` (perl shim), `4913b5e6…` (A11 log-derived census, capability
+fail-closed, strict control aggregate, `--receipt-rev`), `d8297e85…` (A11 pure verdict per conjunct,
+checker `met` agreement), `e67f3a1b…` (capsule read containment, `/usr/bin` tool preference),
+`72eeeca9…`/`2b5e894d…` (control receipt-rev). Landing: the record commit in the lane (see the round
+report). Three claims on three distinct axes, all capability acquisitions; the stagnation nudge
+applies (every owned axis 10.0, saturation 10.0, window 10), so the lowest-axis obligation is waived.
+
+| claim | axis | type | predicate (frozen sentence) | before → after | verdict |
+|---|---|---|---|---|---|
+| R72-C1 | coverage | capability acquisition (checker-mode child environments; Frontier → Core) | the frozen seam probe at the measured revision reports 11 of 11 arms with `A11_checker_env` true — both shims' key sets exactly HOME/LANG/PATH/TMPDIR, the canary absent, HOME/TMPDIR under the checker's run root, the checker's own `checker_child_env` recording at least two records whose census contains `git` and `readelf` — while the same probe against `tools/round-71/packed-elf.py` reports 9 of 11 naming A10/A11 false | base `l1/pre/c1-at-base.json`: 9 of 11, A10/A11 false, shim keys HOME/LANG/PATH/PWD/SHLVL/TMPDIR/_ with the canary; landing `l1/scores/c1-at-landing.json`: 11 of 11, `failed []`, A11 log-derived `{git:1, readelf:4}`, contain_root the checker run root | **verified** |
+| R72-C2 | calibration | capability acquisition (checker-emitted clauses + exact-case mutation kill) | the frozen mutation battery with `--patch-set r72` exits 0 with the `A10_binding_force_true` mutant killed, `failed` naming `a10-binding-from-checker`, pristine green, pin matched — while `--patch-set r71` on the round-71 probe reports survivor 1 | base `l1/pre/c2-at-base.json`: survivor 1; landing `l1/scores/c2-at-landing.json`: killed by the named case, target sha `39a2193e…`; A10's landing observation: genuine `{present true, nonce_ok true, binding_ok true}`, wrong-nonce `nonce_ok false`, broken-binding `binding_ok false`, `genuine_met true` | **verified** |
+| R72-C3 | operability | capability acquisition (the raw-witness capsule reader composed into the checker) | the frozen capsule battery exits 0 with the genuine 46-record capsule accepted and all seven tampered shapes rejected each naming its declared clause, and the round-72 checker on the lying receipt exits 1 with `receipt_capsule: canary` and `clauses.receipt_capsule false` — while the round-71 checker accepts the same lying receipt | base `l1/pre/c3-at-base.json`: the round-71 checker `met true`, `failing []`, no clauses over a polluted capsule; landing `l1/scores/c3-at-landing.json` (7/7 rejected, genuine accepted), `c3-genuine-filed.json` (clause true), `c3-lying-check.json` (clause false, canary named) | **verified** |
+
+**Capabilities entered.** (1) checker-mode child environments under the four-key allowlist
+(`--check-receipt --child-env-log`), first working round 72; (2) a checker-emitted binding verdict
+with an exact-case mutation kill, first working round 72; (3) a receipt-bound raw-witness capsule
+audit, first working round 72.
+
+**Name by surface.** R72-C1's surface is the checker-mode child inventory (a mode the round-71
+container explicitly excluded, atom A2), not a re-score of a rule the lane holds; R72-C2's surface is
+where A10's verdict comes from (the producer's emitted clauses); R72-C3's surface is the reader that
+opens a retained capsule's bytes.
+
+**Trends.** expansion **improved** (one admitted knowledge entry on the Frontier line "checker-mode
+child environments" plus the capsule-audit surface; SOURCES S275 admitted, S276 is the S274 column
+repair; the capability table gains three rows). quality **improved** (the round-71 blind spot is
+closed at its surface; the wave's five real defects — summary-trust, absent-capsule skip, strict
+control aggregate, contradictory-checker acceptance, outside-lane capsule reads — are fixed in-round
+under disclosed supersessions; four selftest-survivor classes are named debt). discernment
+**improved** (the wave's critic/reviewer/sentinel falsified the first cut and each fix is a named
+consequence; the source seat reversed the assignment's premise with a live fetch and the id guard was
+proved on an indented fixture).
+
+**planned (next steered round only):** (a) selftest coverage for the route's env-threading lines and
+the implicit-capsule path (MutReaders survivors a/b/c), and for the remaining A11 auxiliary conjuncts
+(MutProbe); (b) `seam-probe`/`forged-receipts` scratch cleanup on failure (round-71 Sentinel SS-4);
+(c) a producer-independent census for a hostile-wrapper class (CriticClaims' forged-witness attack)
+or an explicit scope retirement; (d) the r63 planned record-section sweep; (e) standing duties every
+round that lands receipts; the r58/r60 bare-name findings and the r64 placeholder-token disposition
+stay named debt.
+

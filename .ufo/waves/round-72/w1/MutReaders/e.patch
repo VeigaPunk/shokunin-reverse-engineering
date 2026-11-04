@@ -1,0 +1,11 @@
+--- a/tools/round-72/capsule_audit.py
++++ b/tools/round-72/capsule_audit.py
+@@ -36,7 +36,7 @@
+     """Descendant test without the sibling-prefix false green (QUALITY #119)."""
+     try:
+         root_abs = os.path.abspath(str(root))
+-        return os.path.commonpath([root_abs, os.path.abspath(str(path))]) == root_abs
++        return os.path.abspath(str(path)).startswith(root_abs)
+     except (TypeError, ValueError):
+         return False
+ 
