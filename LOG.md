@@ -4738,3 +4738,68 @@ tied-lowest axis). No nudge waiver is claimed.
   `validate_receipt` guards and the `battery()` cell survive their six mutants — routed to round 80),
   SentinelScope (no secret-bearing receipt field; path/scratch/`--rev` findings routed), ScribeSources,
   ScribeLesson, ScoutRouted and ConnectorSibling as filed. No claim was contradicted by a seat.
+
+## 2026-11-04 — round 80: the record's tokens bind whole, a receipt names a committed blob, and every refusal clause owns a case
+
+- **Round 80 — claims.** Base `16dfa009bf143080dfcdfc5f9ec34bd359536d90`; declaration
+  `84d68e90f8a1ea3a3a7f94a208695c21023c0472` (three frozen predicates, kill rules and controls, and the
+  frozen strictness fixture set `40f99456…`); instruments and base arms
+  `253fc81700745292dc267af4e98f16c685ba5015`; the gate revision and SKILL decision table
+  `b826010756ee32b13702899d9c6f83df55925d58`; the round-79 landing-receipt repair
+  `b00419fb8c3d083761034605fec2eed1897f60ad`; freeze `.ufo/waves/round-80/claims.json`. Three claims on
+  three axes, causally separable.
+- **Round 80 — R80-C1 (calibration), the delimited-token rule and the duplicate-cell rule.**
+  `tools/round-80/pointer-bind.py` keeps round 79's five cells, `same_path` rule, pointed-line digest and
+  `path-only` control, and adds (a) a token match that requires every occurrence to be delimited by a
+  slice edge or a character outside `[A-Za-z0-9._-]`, and (b) a cell map that counts every declared cell
+  and reports a repeated client in `duplicates` (`omp-pin`, `omp-pin#2`) instead of keeping the last.
+  `tools/round-80/strictness-battery.py` scores the candidate and the round-79 control on four frozen
+  red fixtures and two green controls. Base: `candidate_false_greens 4`, `control_false_greens 4`, greens
+  0. Landing: candidate 0, control 4, greens 0; the live record still reads `checks_total 5, matched 5,
+  mismatches 0, unparsed 0, duplicates []`. An independently written binder (`w1/ExecBinder`) scored 0
+  against the same fixtures, so the rule is not an artefact of one implementation.
+- **Round 80 — R80-C2 (freshness), receipt provenance.** `tools/round-80/receipt-provenance.py` sweeps
+  `.ufo/waves/round-<N>/l1/scores/*.json` at `--rev` (excluding `/attacks/`) and requires each receipt's
+  `instrument.sha256` to equal a committed blob of its `instrument.path` — tip, its own 40-hex `rev`, or
+  any committed revision of that path; the working tree and symbolic revs are not committed, and round
+  69's `prov-forged-instrument.json` is the declared negative control. Base: `receipts 34`, `flagged 2`,
+  `unexpected 1` naming `.ufo/waves/round-79/l1/scores/c2-at-landing.json`. The r79 receipt is re-taken
+  at its own record rev with the committed instrument bytes (`40905d39…`) and a disclosed
+  `instrument_supersessions` entry; landing: `flagged 1`, `unexpected 0`.
+- **Round 80 — R80-C3 (depth), clause-to-case binding.** `tools/round-78/attack-gate.py` gains eight
+  isolating selftest cases (29 → 37), one per remaining `validate_receipt` refusal clause; `SKILL.md`
+  gains the round-80 decision table (nine rows, fragment + declared case per clause); and
+  `tools/round-80/guard-battery.py` binds the nine clauses to their rows and cases and proves isolation
+  by deleting each clause in a copy. Base: `guards 9, rows 0, bound 0, survivors 9`, pristine 29/0.
+  Landing: `rows 9, bound 9, survivors 0`, pristine 37/0, `target_pin.matched true`. `w1/ExecGate`
+  reports `isolating true` on all nine mutants; `w1/ReviewerC3` independently reproduced the base tally
+  (8 survivors, 1 killed at `: refused without a reason`).
+- **Round 80 — repairs carried (not claims), the round-79 non-author spot-check's items.**
+  (1) the landing receipt re-taken with committed bytes; (2) the SKILL registry tallies corrected
+  (`tools/round-78/attack-gate.py` 26 → 37 cases, `tools/round-79/pointer-bind.py` 19 → 21) and the
+  entry commands added; (4) `freshness` enters as an owned axis with a measured baseline (9.71 → 10.0,
+  33/34 → 34/34 receipts bound); (5) an admit-side refusal with reason and flip in the round-80 lesson;
+  (6) the capability names are the table's names. Item 3 (the S296 word count) is carried in the
+  round-80 lesson's gate notes as a correction to the round-79 record, which stays append-only.
+- **Round 80 — routed, not adopted.** The six pre-existing eight-cell registry rows of rounds 77–79
+  (reported by `tools/round-71/registry-census.py` at `b8260107`: `cells>7` on
+  `tools/round-77/verdict-bind.py`, `prefile-receipt.py`, `gen-controls.py`,
+  `tools/round-78/attack-gate.py`, `tools/round-79/gate-mutation.py`, `pointer-bind.py`, plus
+  `pinned-empty` on `tools/round-78/surface-recheck.py`) are not rewritten this round; the battery's
+  record arm proves the duplicate signal, not a full battery run; `--validate` is internal consistency,
+  not authenticity.
+- **Round 80 — sources.** `corpus/SOURCES.md` 202 → 203 rows: S298 (Python `re` §`\b`, tier A,
+  14-word quote at line 747; the same document as S143 with a different anchor, stated in the row).
+  RFC 8259 §4 was opened this round but refused as a new row — S049 already holds that exact scope —
+  and S049's `used-by` gained this round's knowledge entry (the old → new change is in the lesson). Both snapshots sha256-pinned in
+  `.ufo/waves/round-80/l1/sources/`. Refused: RFC 8259 §4 as a duplicate of S049, the Wikipedia `JSON` article (tertiary, and its
+  ECMA-404 quotation undercuts the rule it appears to illustrate; flip recorded) and a Cloudflare-blocked
+  Stack Overflow page (`unreachable`, not fabrication). Census end: 203 rows, 24 W04, exit 0. New knowledge entry
+  `corpus/knowledge/2026-11-04-r80-strict-tokens-and-provenance.md`; the coverage map gains the round-80
+  row.
+- **Round 80 — wave.** `r80-w1`: 15 seats in one v1 wave, 4 executors, 2 scouts, 3 scribes, 2 reviewers,
+  1 critic, 1 mutation-tester, 1 sentinel, 1 connector; attack share 4/15 = 26.7 %; one connector; the L1
+  held the planner seat. Independent re-derivations agree with every counter's base and landing values
+  (`ExecBinder`, `ExecProv`, `ExecGuard`, `ExecGate`, `ReviewerC3`, `ScoutGate`, `ScoutRecord`).
+- **Round 80 — filing.** The lane is pushed and clean before the report; the report cites the pushed
+  lane hash and carries the three printed counting commands in `counting-command` blocks.

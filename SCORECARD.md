@@ -23,6 +23,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 | coverage | 9.72 → 10.0 | Round-79 self-assessment re-derivation: 162/162 knowledge files mapped at the round-79 record (`tools/round-66/coverage-selfcheck.py --selfcheck`; the receipt carries its own `rev`; `.ufo/waves/round-79/l1/scores/coverage-selfcheck-at-record.json`, `mismatches 0`), after the round-79 coverage-map row named the r79 entry; historical: round-76 157/157 at the round-76 record (`.ufo/waves/round-76/l1/scores/coverage-selfcheck-at-record.json`), after the round-76 coverage-map row named the two r76 entries; historical: round-75 self-assessment re-derivation 155/155 knowledge files mapped at the round-75 record (`.ufo/waves/round-75/l1/scores/coverage-selfcheck-at-record.json`), after the round-75 coverage-map row named the seven r69-r75 instrument entries the map had outgrown; historical: 148/148 at the round-68 record (`.ufo/waves/round-68/l1/scores/coverage-selfcheck-at-record.json`); 147/147 at the round-67 record (`.ufo/waves/round-67/l1/scores/coverage-selfcheck-at-record.json`), with recipe A's five currently unmappable stems emitted as `recipe_a_hidden`; the round-53 and round-51 index measurements stay historical in their own round sections, at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`, and in git history | `corpus/README.md` Coverage map; `tools/round-66/coverage-selfcheck.py --selfcheck` (atoms A1/A2, `recipe_a_equivalent`, `recipe_a_hidden`); the command A transcript re-run by `--equiv` | 66 (self-assessment fraction re-derived; score unchanged) |
 | depth | 10 → 10 | 25/25 queue-drain rule blocks have resolvable file/range citations at the round-48 landing (command A, new block 25 with the verdict-meaning table, `citation_resolved_rules 25`; receipt `.ufo/waves/round-48/l1/scores/`); 20/20 queue-drain rule blocks have resolvable file/range citations at `e1c83313f33a3d97edbd8fef402db2d06172fcdc` (round 41, command A, new block 20 at `SKILL.md:387-449` with table v3; craft section `SKILL.md:81-449`; R41-C2 itself stopped, `## Round 41`); 19/19 queue-drain rule blocks have resolvable file/range citations at `4d62ee5a86b4692a13f682b29ed7975e8d7e5326` (round 40, command A, new block 19 at `SKILL.md:348-375` with table v2; `.ufo/waves/round-40/w2/R40W2DepthCount.md`); 18/18 at `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39, command A, `citation_resolved_rules 18`, new block 18 at `SKILL.md:316-343` with its citations resolving; 17/17 at `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31; also 17/17 at `ebe2cb4a`, round 26). History: 9/9 at `638fb211` (luna-round-3); rule blocks grew from 9 to 17 in eight commits from `58116aa1` to `4072ebb3` (2026-10-18 and 2026-10-19), and the row kept 9/9 until round 25 added a recount at `08c7a7299ed61c3fdc30ddb0adfe4e812d5eac76`. **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | craft section `SKILL.md:81-343` (heading line 81, last non-blank line 343 at `52b0eb29`; the baseline range was `SKILL.md:77-191` at `a79945c4`); command A; measured `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39; prior recount `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31); baseline `a79945c4` | r1 measurement + luna-round-3; rule blocks added 2026-10-18 and 2026-10-19; count refreshed rounds 25, 26, 39 and 40 |
 | calibration | 0 → 10 | 4 → 0 self-assessment mismatches at the round-47 landing: `tools/round-47/record.py` re-derives 42 atoms (last two round sections plus the Owned-axes heads) and reports `mismatches []`, `corrections 2`, `exempted 1 <= 3`, battery `3/0` (`.ufo/waves/round-47/l1/scores/c2-at-A7.json`); 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; count measured at `c265db9bd3c0883fbaf4487f839559c85a736826` (`evidence/round-1-2026-10-15/result.json` `measured_revision`; the row said `75af886a` until round 26, which is the luna-round-2 receipt reconciliation, not command B's revision); luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/` | operator-steered r1 + luna-round-2; later calibration claims are in the round sections (outside closures: round 24 rejected-honest-stop, round 25 admitted) Round 50: the round-48 closure `corpus/lessons/round-48-verifier-spotcheck.md` graded calibration `rejected-harmed`; the round-49 record corrections measured `mismatches 9 → 0` (`.ufo/waves/round-49/l1/scores/c2-final.json`); this row is a finite proxy over the atoms its counters name, not an expertise score. |
+| freshness | 9.71 → 10.0 | R80-C2's first measurement (the axis enters this round, closing the round-79 non-author spot-check item 4): `tools/round-80/receipt-provenance.py --root . --rev b00419fb --from-round 60 --to-round 79` reports `receipts 34`, `flagged 1` (the declared negative control), `unexpected 0`, `validate` defect-free (`.ufo/waves/round-80/l1/scores/c2-at-landing.json`); the base arm at `16dfa009` reports `unexpected 1` on the same 34 receipts (`c2-at-base.json`), i.e. 33/34 → 34/34 bound = 9.71 → 10.0 by `round(10*numerator/denominator, 2)`. Limit: this is the lane's own receipt corpus, not a claim that any inspected target's evidence is fresh | 80 |
 
 Baseline source revision: `6645585873c4e66372b15687c47000abf8d91978`.
 `result.json` records the post-change source commit, observations and reviews;
@@ -661,6 +662,9 @@ Retired: none.
 | `surface recheck` | parses eight drift-prone surface values from `PROVINCE.md` with declared patterns and compares them typed to the live object the record names, with a `checked_at` date and an unparsed id list | `tools/round-78/surface-recheck.py`; `.ufo/waves/round-78/pre/c2-at-base.json` (checks_total 8, unparsed 0, and its mismatches 2 are the two corrections); the record run is `.ufo/waves/round-78/l1/scores/c2-at-record.json` | 78 |
 | `selftest mutation battery` | applies eight exact single-occurrence edits to a committed instrument at a measured revision and kills each only when its declared selftest case is present and failing there; an absent case survives, an anchor applied 0/>1 times and a copy without a summary line are inconclusive, and `sole_detector` records case independence | `.ufo/waves/round-79/l1/scores/c1-at-landing.json`, `pre/c1-at-base.json`, `pre/selftest-c1.json` | round-79 |
 | `line-bound pointer rule` (a revision of the round-78 `surface recheck` pointer rule) | binds five record pointer cells at the 1-based line or range they name, requires each pointer to name the declared live object and each declared token to occur there, and retains only a digest of the pointed lines; a path-only control is recorded as unable to fail on a moved line and never `ok` | `.ufo/waves/round-79/l1/scores/c2-at-landing.json`, `pre/c2-at-base.json`, `pre/controls/c2-path-only.json`, `pre/selftest-c2.json` | round-79 |
+| `delimited-token pointer rule` (revision of `line-bound pointer rule`) | a declared pin binds only where every occurrence is delimited (slice edge or outside `[A-Za-z0-9._-]`), with two green controls so a refuse-everything binder fails; a second `OMP`/`Devin` cell is counted (`checks_total 6`) and reported in `duplicates`, never collapsed last-wins | `python3 -I -B tools/round-80/strictness-battery.py --root . --impl tools/round-80/pointer-bind.py --control-impl tools/round-79/pointer-bind.py --work <scratch>` → candidate_false_greens 0, control 4; `.ufo/waves/round-80/l1/scores/c1-at-landing.json` | 80 |
+| `receipt provenance sweep` | every `l1/scores/*.json` receipt of rounds 60–79 must carry an `instrument.sha256` equal to a committed blob of its `instrument.path` (tip, its own 40-hex rev, or any committed revision); working-tree-only digests and symbolic revs are defects, and round 69's forged receipt is the declared negative control | `python3 -I -B tools/round-80/receipt-provenance.py --root . --rev <40-hex> --from-round 60 --to-round 79` → base unexpected 1, landing 0; `.ufo/waves/round-80/l1/scores/c2-at-base.json`, `c2-at-landing.json` | 80 |
+| `clause-to-case binding with isolation proof` | each `validate_receipt()` refusal clause is bound to one SKILL decision-table row and one declared selftest case, and the case must be present and failing when the clause is deleted in a copy; an absent case is a survivor and a summary-less copy is inconclusive | `python3 -I -B tools/round-80/guard-battery.py --root . --rev <40-hex> --work <scratch>` → base rows 0/survivors 9, landing rows 9/bound 9/survivors 0; `.ufo/waves/round-80/l1/scores/c3-at-base.json`, `c3-at-landing.json` | 80 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -6217,3 +6221,79 @@ red case; (c) execute every plan's printed counting command verbatim at the free
 `plan-command.py` instrument already does this — run it) and pin the base gate digest in the base control;
 (d) the round-78 spot-check's `receipt_auth`/`gate-exits` limits stay named debt; (e) standing duties every
 round that lands receipts; the r63 record-section sweep and the r58/r60/r64 items stay named debt.
+
+## 2026-11-04 — round 80: the record's tokens bind whole, a receipt names a committed blob, and every refusal clause owns a case
+
+Base `16dfa009bf143080dfcdfc5f9ec34bd359536d90`; declaration `84d68e90f8a1ea3a3a7f94a208695c21023c0472`
+(the three frozen predicates, kill rules and controls, and the frozen strictness fixture set); instruments
+and base arms `253fc81700745292dc267af4e98f16c685ba5015`; the gate revision and SKILL decision table
+`b826010756ee32b13702899d9c6f83df55925d58`; the round-79 landing-receipt repair
+`b00419fb8c3d083761034605fec2eed1897f60ad`; freeze `.ufo/waves/round-80/claims.json`. Three claims on
+three distinct axes, causally separable: C1 scores two binder implementations on one frozen fixture set,
+C2 reads committed git blobs, C3 reads the attack gate's own selftest output; no counter reads another
+claim's file, and no two claims write the same file.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies; R80-C1
+works a tied-lowest axis). The stagnation nudge's waiver is not met (capability rows entered in rounds
+74–79, inside the window). `freshness` enters as a fourth owned axis with its first measured baseline,
+closing the round-79 non-author spot-check's item 4.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R80-C1 | calibration | capability acquisition (`delimited-token pointer rule`) | `tools/round-80/strictness-battery.py` exits 0 with `cases 4`, `green_cases 2`, `candidate_false_greens 0`, `control_false_greens 4`, both green-refusal counts 0, `validate` defect-free; live arm `checks_total 5`, `matched 5`, `mismatches 0`, `unparsed 0`, `duplicates []` | base: `c1-at-base.json` — `candidate_false_greens 4` (the round-79 binder on the four frozen red fixtures), `control_false_greens 4`, greens 0; landing: `c1-at-landing.json` — candidate 0, control 4, greens 0, live 5/5 | **verified** |
+| R80-C2 | freshness (entering axis) | capability acquisition (`receipt provenance sweep`) | `tools/round-80/receipt-provenance.py --from-round 60 --to-round 79` exits 0 with `receipts 34`, `flagged 1`, `expected_control_flags 1`, `unexpected 0`, `validate` defect-free | base: `c2-at-base.json` — `flagged 2`, `unexpected 1` naming `.ufo/waves/round-79/l1/scores/c2-at-landing.json`; landing `b00419fb`: `flagged 1`, `unexpected 0` (`c2-at-landing.json`) | **verified** |
+| R80-C3 | depth | capability acquisition (`clause-to-case binding with isolation proof`) | `tools/round-80/guard-battery.py` exits 0 with `guards 9`, `rows 9`, `bound 9`, `survivors 0`, `pristine.cases 37`, `pristine.failures 0`, `target_pin.matched true`, `validate` defect-free | base: `c3-at-base.json` — `rows 0`, `bound 0`, `survivors 9`, pristine 29/0; landing `b8260107`: `rows 9`, `bound 9`, `survivors 0`, pristine 37/0, pin matched (`c3-at-landing.json`) | **verified** |
+
+**Capabilities entered.** (1) *delimited-token pointer rule* — a revision of round 79's line-bound
+pointer rule: every occurrence of a declared token must be delimited by a slice edge or a character
+outside `[A-Za-z0-9._-]`, and a repeated client cell is counted and reported; two green controls make a
+refuse-everything binder fail. (2) *receipt provenance sweep* — the lane's own receipt corpus against
+committed blobs, with a declared negative control. (3) *clause-to-case binding with isolation proof* —
+one row, one declared case and a deletion proof per refusal clause.
+
+**Capabilities rows appended** in the table above (`## Capabilities`), each with its landing receipt.
+
+**Name by surface.** R80-C1's surface is the binder's *match rule* and its cell map, not the five cells'
+values (round 79's surface; the 5/5 reading is unchanged and measured as the no-harm arm). R80-C2's
+surface is the receipt population's *provenance status*, not any instrument's behaviour. R80-C3's surface
+is the gate's *refusal clauses and their selftest cases*, not the gate's fixture battery (the ten attack
+classes are unchanged and unmeasured this round).
+
+**Repairs carried (not claims).** Round-79 non-author spot-check items 1 (a re-taken landing receipt with
+committed instrument bytes and a disclosed `instrument_supersessions` entry), 2 (the SKILL registry
+tallies: `tools/round-78/attack-gate.py` 26 → 37 cases, `tools/round-79/pointer-bind.py` 19 → 21, and the
+entry commands added), 3 (the S296 word count is corrected in the round-79 lesson's own gate notes rather
+than rewritten — see Routed), 4 (the `freshness` axis row above), 5 (the round-80 lesson's `## Gate` has
+one admit-side refusal with reason and flip) and 6 (the capability names are the table's names, used
+verbatim in the report). The four new registry rows are seven-cell rows; the pre-existing eight-cell rows
+of rounds 77–79 stay as named debt.
+
+**Routed (not adopted).** The six pre-existing `cells>7` registry rows (`tools/round-71/registry-census.py`
+at `b8260107`: `tools/round-77/verdict-bind.py`, `prefile-receipt.py`, `gen-controls.py`,
+`tools/round-78/attack-gate.py`, `surface-recheck.py` (also `pinned-empty`), `tools/round-79/gate-mutation.py`,
+`pointer-bind.py`) are debt this round did not rewrite; the `--validate`-is-not-authenticity limit
+(round-78/79) still stands; the battery's record arm proves the duplicate *signal*, not a full
+`--battery` run from a fixture repo in the selftest; the strict-token rule is a delimiter rule, not a
+version comparator.
+
+**Wave.** `r80-w1`: 15 seats in one v1 wave (4 executor, 2 scout, 3 scribe, 2 reviewer, 1 critic,
+1 mutation-tester, 1 sentinel, 1 connector); attack roles 4/15 = 26.7 %; one connector; the L1 held the
+planner seat (the validator rejects a planner role). Independent re-derivations: `ExecBinder` (its own
+binder, scored `candidate_false_greens 0` by this round's battery), `ExecProv` (its own sweep, base
+`receipts 34, flagged 2, unexpected 1`), `ExecGuard` (its own battery, base `guards 9, rows 0,
+survivors 9`), `ExecGate` (the nine isolating cases and the mutant table), `ReviewerC3` (independent
+clause enumeration and the base tally 8 survivors / 1 killed), `ScoutGate`, `ScoutRecord`,
+`MutInstruments`, `SentinelScope`, `CriticClaims`, `ScribeSources`, `ScribeKnowledge`, `ScribeLesson`,
+`ConnectorSibling`.
+
+**Filing.** The lane is pushed and clean before the report is filed; the report cites the pushed lane
+hash. The report carries the three printed counting commands in `counting-command` blocks and executes
+them.
+
+**planned (next steered round only):** (a) the six pre-existing eight-cell registry rows become
+seven-cell rows under the round-71 grammar, with a red case per defect class in a registry census
+selftest; (b) the battery's record arm gains a fixture-repo case so the duplicate signal is proved
+end-to-end without the live configs; (c) `tools/round-76/plan-command.py` runs every printed counting
+command in the round's own report at the freeze; (d) the round-78 spot-check's `receipt_auth`/`gate-exits`
+limits and the r63 record-section sweep stay named debt; (e) standing duties every round that lands
+receipts.
