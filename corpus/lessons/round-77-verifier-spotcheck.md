@@ -1,0 +1,106 @@
+author: hyaku closure (non-author integrator, @m_zfl)
+round: kaidoku 77, attempt 1
+base: 188562d43e3cc58b217ad7aa763fb296c5b8a0b7
+tip: 97280cadb87386e7968c3f90e8503f14d41695ea
+report: .ufo/reports/round-77/kaidoku.md (fleet commit `751664ae67da429aea06363cc60f7d4a2ec7bd15`, `kaidoku-shokunin <kaidoku@shokunin.local>`)
+verdict: **admitted** — both claims re-derived independently over committed bytes (C1: my own resolver over the annotation population and every bound clause; C2: the six arms, both receipt digests and the measured revisions recomputed); no owned axis harmed; the report is real work, not a marker. Status-neutral defects routed in §6: the wave accounting overstates seat evidence, one landed-changes row credits `1d84253a` with files that first landed at `37f5d069`, two in-round mistakes are prose rather than `## Mistakes` rows, the C2 revision-binding receipts do not retain the wrapper exit the record asserts, the forged-arms control does not retain the two defects the report counts, and the `Stale-lane` line lacks the required age/progressing statement.
+
+## 1. Step-1 conformance — PASS (with status-neutral defects)
+
+- **Report attribution and ordering.** `git -C /home/vgpnk/Projects/shokunin log --format='%an <%ae> %H %ci' -1 -- .ufo/reports/round-77/kaidoku.md` → `kaidoku-shokunin <kaidoku@shokunin.local> 751664ae67da429aea06363cc60f7d4a2ec7bd15 2026-11-04 08:27:35 -0300`. One report commit, lane identity; the lane tip `97280cad` is at 08:27:20 and the driver's completion line at 08:28:06, so the report landed after the lane work and before completion. `git merge-base --is-ancestor 751664ae origin/main` → 0.
+- **`SHONEN` heading.** `grep -c '^## SHONEN' .ufo/reports/round-77/kaidoku.md` → 1, followed by four `[~]` lines and no `[x]`; `SHONEN.md` carries four boxes and `git diff 188562d4 97280cad -- SHONEN.md` is empty.
+- **Cited lane commits.** `git rev-list --count 188562d4..97280cad` → 17; every cited token resolves (`git cat-file -e <h>^{commit}`) and is an ancestor of `refs/heads/main` (`git merge-base --is-ancestor` → 0): `819cf30e 6767a879 fd0b95bd 41543a54 440ee041 509c1051 63dc9c6f 2ae8da54 11f0b19e 88e73357 ff561504 1d84253a 37f5d069 88582548 6ff00080 9dc94ad9 97280cad`; the report header's base `188562d4`, declaration `819cf30e`, freeze `6767a879`, filing `88e73357` and tip `97280cad` all resolve and are ancestors.
+- **Lane clean and pushed.** `scripts/hyaku/jj-lane.sh state kaidoku-shokunin` → `branch=main local=97280cad… remote=97280cad… ahead=0 behind=0 head=detached tracked=0 untracked=0`; `git status --porcelain` empty; `git ls-remote origin refs/heads/main` → `97280cadb87386e7968c3f90e8503f14d41695ea`. No uncommitted round work.
+- **Prompt fidelity.** `.ufo/prompts/kaidoku-round-77.md` (704 lines) is committed at `c17ce813` (ancestor of `origin/main`) and its sections 1–5 normalize to the template byte-for-byte: rendering `templates/round-prompt.md` with `{{LANE}}=kaidoku`, `{{ROUND}}=77`, `{{FLEET_ROOT}}=/home/vgpnk/Projects/shokunin` and the lane-axes sentence leaves exactly one differing line — the template's `<kaidoku-repo>` placeholder versus the actual repo directory `kaidoku-shokunin` (`diff -u` → 1 line). It carries the five child-lane items (report path/name; commit-before-report ordering; `SHONEN` heading; commit-hash citation; lane write scope) and the round-level items (mission/axes binding, 1–3 claims on distinct axes with the lowest-axis duty, ≥8-seat one-batch L2 floor, commit-then-push, push scope, L0 channel), plus the hyaku addendum §6 and scratch discipline §7. The §3 L2 route rule defers to the host route table ("never pass `model`"); the addendum's run-14/13/11 maps are explicitly superseded and the latest 2026-11-03 amendment names the current map, so no quoted route map contradicts `MISSION.md`'s advisory buckets.
+- **Wave.** `r77-w1-dispatch.json` carries `counts {spawn 12, resume 0, total 12}` and one `taskCall` with 12 tasks; the policy block reads `waveMinLanes 8`, `waveMaxLanes 16`, so the one v1 wave is inside the band; `.ready`/`.ready.dispatched` retained and the dispatched map names all 12 seats; attack roles 6/12 = 50 % (2 reviewer, 1 critic, 1 mutation-tester, 1 sentinel, 1 revenger) and one connector; the L1 holds the planner seat as recorded. `r77-w1-results.json` `seats: 12`; `ExecC2Receipt` and `ReviewerC1` carry zero-byte output, and the report records both as dead with `note: null`. See §6 item 1 for the evidence-vs-output accounting defect.
+- **Gate evidence (verified, never executed).** `l1/scores/gate-at-freeze.json`, `gate-at-record.json`, `gate-at-tip.json` each record `exit 0` and a `round77` entry `{"verdict":"CLEAN","findings":[],"instruments":["tools/round-29/prefile-check.sh","tools/round-77/prefile-receipt.py","tools/round-77/verdict-bind.py"]}` with the freeze `6767a879…`; the three receipts carry integer `exit` 0. Round 76's routed defect 3 (a gate receipt without its exit) is closed.
+- **Sources census.** `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` → exit 0, `ok` row for `corpus/SOURCES.md`, 23 W04 duplicate-URL warnings (the report's count). Row count `grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|'` → 194 at `188562d4`, 197 at the tip; the three new rows are S289/S290/S291; malformed rows 0 and duplicate ids none (contract census commands).
+- **Watchdog digest (copied from the mutable log).** `2026-11-04T07:40:05-03:00 launch kaidoku round=77 pgid=1900018 driver=hyaku-inline attempt=1` (`.ufo/watchdog.log:2317`); `2026-11-04T08:28:06-03:00 complete kaidoku round=77; hyaku-inline attempt=1` (`:2326`). No `lane-dead-no-report kaidoku round=77` line exists, so attempt 1 was the only attempt.
+- **Marker test.** The report names 17 lane commits, the two claims and their receipts, the wave, the census and the trend verdicts; it is a report, not a completion marker.
+
+## 2. Per-claim re-check
+
+Neither lane instrument (counter, selftest, freeze gate, mutation battery) was executed — PROTOCOL §Gate standard, Closure consequence. Both claims are nevertheless **re-measured**, not merely evidence-verified: I recomputed each counter from the committed receipts with my own resolver and re-counted the populations from the record.
+
+**R77-C1 (calibration, capability acquisition) — verified by independent re-derivation.**
+
+Predicate constants equal the frozen file: extracting `PREDICATE` from `tools/round-77/verdict-bind.py` and comparing with `.ufo/waves/round-77/claims.json` `claims[]` → both `True` (614 and 734 characters); instrument sha256 `45280392ff6c59e4…` at `819cf30e` and at the tip.
+
+Population (plain counts over committed bytes): `SCORECARD.md` `## Capabilities` data rows `41`; rows whose first-working-round cell is a numeral ≥ 73 = `11` (lines 649–659; three rows carry dates in that cell and are outside the declared numeral scope); `PROVINCE.md` `- **Core — ` bullets = `7`; 11 + 7 = 18 in-scope cells. At base the two round-77 rows do not exist (9 in-scope), matching `pre/c1-at-base.json`.
+
+Every bound clause re-derived from the JSON receipt its cell names at the tip (my resolver: `mismatch_count`, `survivor_count`, `pristine.cases`, `len(atoms)`, `validate.defects`, `D24 → atoms[id^=D24].ok`, `arms_ok → [arms_ok, arms_total]`; type-strict comparison):
+
+```
+tip  .ufo/waves/round-77/l1/scores/c1-at-tip.json  → bound 25, unbound 2, mismatches 0
+base .ufo/waves/round-77/pre/c1-at-base.json       → bound 21, unbound 3, mismatches 4
+  MISMATCH  "## Capabilities row 'capability-row binding' …": 'D24 true' claimed True vs actual False
+  MISMATCH  "## Capabilities row 'capability-row binding' …": 'mismatch_count 0' claimed 0 vs actual 1
+  MISMATCH  'PROVINCE.md line 585': 'D24 true' claimed True vs actual False
+  MISMATCH  'PROVINCE.md line 585': 'mismatch_count 0' claimed 0 vs actual 1
+```
+
+The reported values match where reported: `pre/c1-at-base.json` rev `188562d4`, exit 1, `mismatch_count 4`, `population {bound_clauses 21, in_scope_rows 9, groups 18, unbound_clauses 3}`; `c1-at-record.json` rev `ff561504`, exit 0, `mismatch_count 0`, `population {bound_clauses 25, in_scope_rows 11, groups 24, unbound_clauses 2}`, `validate {bound_clauses 25, defects []}`; `c1-at-tip.json` rev `6ff00080`, same values. `git diff 6ff00080 97280cad -- SCORECARD.md PROVINCE.md` is empty, so the `6ff00080` measurement applies at the tip. All ten receipt paths the bound clauses name resolve at `6ff00080` (`git cat-file -e`).
+
+The two unbound clauses are honest limits, not passes: `forged_detected true` (round-73 C1) and `sole true` (round-75 C1) live inside nested structures (`arms[]`, `sole_detector`), which the closed top-level grammar does not resolve; they are counted as unbound and the report routes the grammar limit. This is the kill rule's "absent field treated as a pass" only if a reader counts them as green — the receipt does not.
+
+Do-nothing controls (evidence-verified from `pre/controls-c1.json`, not executed): `no-binding` `bound_clauses 0`, `mismatch_count 0`, `meets_target false`, `diverges true`; `all-false` `mismatch_count 24`, `meets_target false`, `diverges true`; `pointer-only` (round-76 audit at base) `exit 0`, `mismatch_count 0` — the false annotation stood under the pointer-only check. Selftest `pre/selftest-c1.json`: 15 cases, 0 failures, with red fixtures `red-absent-receipt`, `red-atom-count`, `red-false-annotation`, `red-no-json-pointer`, `red-of-total`, `red-type-mismatch`, `red-validate`, `unbound-unknown-field` and green look-alikes `green-pointer-only`, `green-prose`, `green-same-cell-true`, `green-vocabulary`, `qualifier-strip`, `scope-floor` (evidence-verified).
+
+**R77-C2 (operability, capability acquisition) — verified by independent re-derivation.**
+
+Predicate constant equal to `claims.json` (`True`, 734 characters); instrument sha256 `174eedb5636941…` at `819cf30e` and at the tip.
+
+```
+tip  .ufo/waves/round-77/l1/scores/c2-at-tip.json   → exit 0, ok true, arms_ok 6, arms_total 6, validate {arms 6, defects []}
+base .ufo/waves/round-77/pre/c2-at-base.json        → exit 1, ok false, arms_ok 4, arms_total 6; unmet: record-receipt, gate-exits
+clone-run detail:      exit 0, passed true, 'prefile: PASS', env [HOME,LANG,PATH,TMPDIR], rev 6ff00080…, sha256(stdout) == stdout_sha256
+record-receipt detail: exit 0, passed true, 'prefile: PASS', env [HOME,LANG,PATH,TMPDIR], rev 88e73357…, sha256(stdout) == stdout_sha256
+gate-exits: every `.ufo/waves/round-77/l1/scores/gate-*.json` carries an integer exit (0, 0, 0)
+```
+
+Filing receipt `l1/scores/prefile-at-filing.json`: `rev 88e73357c26c468f4c28d5f29fd5004358b695eb`, `exit 0`, `prefile: PASS`, `passed true`, `env_keys [HOME, LANG, PATH, TMPDIR]`; `sha256(jq -j .stdout)` = `37600bd23908f1fc56a8b9e1a966faca300013718ba8f890f360c6a67581d14a` = the recorded `stdout_sha256`. The revision-binding pair records `defects []` at the filing revision and a named defect when the expected revision is not `88e73357`; see §6 item 4 for the missing exit.
+
+Do-nothing controls (evidence-verified, not executed): `pre/controls/c2-gate-alone.json` — the gate alone prints `prefile: PASS` at exit 0 and `receipt_retained false`; `pre/controls/c2-forged-arms.json` — a battery receipt whose `arms_ok 6` sits above two `met false` arms is refused at exit 1 with `ok false`. Selftest `pre/selftest-c2.json`: 13 cases, 0 failures, with red fixtures `red-argv`, `red-battery-arms`, `red-battery-ok`, `red-digest`, `red-empty-stdout`, `red-env`, `red-line`, `red-no-exit`, `red-rev`, `red-verdict` and green look-alikes `green-fail-receipt`, `green-genuine`, `verdict-anchored` (evidence-verified).
+
+Mutation battery (`w1/MutationTester-4/mutation-receipt.json` and `MutationTester.md`, evidence-verified, not executed): 10 mutants, 8 killed by their declared cases, 2 survivors (`c1-rev-show-to-worktree`, `c2-nonint-exit-accepted`) — the two the report routes.
+
+## 3. Axes verdicts
+
+| axis | verdict | evidence |
+|---|---|---|
+| calibration | improved | R77-C1 runs and its receipt re-derives the record's annotation cells: base 4 value mismatches at exactly the two claimed cells → 0 over 25 bound clauses at the tip; the three false citations now name `c1-at-tip.json` (SCORECARD line 656 cell, R76-C1 after-cell line 5909, PROVINCE line 589) and the round bug class has a committed red fixture per failure shape. |
+| operability | improved | R77-C2 runs: the filing gate's verdict is retained with argv, revision, integer exit, verdict line, stdout digest and four-key child env; `arms_ok 4` of 6 at base → `6` of 6 at the record and tip; the digest re-derives from the bytes. |
+| coverage | unchanged | the round governs the lane's own instrument/record surface, already held (coverage-map row "Instrument and record layer, round 77", frontier note "moves no carrier ground"); no new carrier class, tool surface or source kind entered Core. |
+| depth | unchanged | the two knowledge entries document the grammar and receipt contract; no owned-axis row changed (`git diff 188562d4 97280cad -- SCORECARD.md` touches no `| coverage |`/`| depth |`/`| calibration |` row). |
+| freshness | unchanged | three sources opened this round and two re-used at the measured revision; no stale claim outside the corrected record cells was re-verified. |
+| adjacency | unchanged | `ConnectorCross` names `mado`'s `label-check.py` as a sibling precedent with the difference stated and absorbs nothing; `PROVINCE.md` additions name only `tools/round-77/*` and the round-29 gate. |
+
+No axis is harmed: the SCORECARD owned-axes rows are byte-identical between base and tip, the corpus changes are additive (two knowledge entries, one lesson, one QUALITY row, three SOURCES rows), and the record corrections replace false cells with re-derivable ones.
+
+## 4. Discernment spot-check (non-author)
+
+Sample from `corpus/lessons/round-77.md` `## Gate` — two admits, one reject — plus the S289 registry row's quote.
+
+| item | decision | re-opened source | agree/disagree | reason |
+|---|---|---|---|---|
+| S289 RFC 8259 §3 Values | admit (tier A, mined) | live `GET https://www.rfc-editor.org/rfc/rfc8259.txt` → HTTP 200, 28 360 B, sha256 `61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7` — byte-identical to the committed snapshot; quote at `grep -n` line 298; the three literal names follow at lines 298–302 | agree | the section states JSON's value taxonomy and separates the literal names from numbers, which grounds the type-strict `true`/`1` binding; the row's scope excludes schema conformance and REA authority, so it does not overreach. |
+| S290 GNU Bash §3.7.5 Exit Status | admit (tier A, mined) | live `GET https://www.gnu.org/software/bash/manual/bash.html` → HTTP 200, 1 040 954 B (the snapshot's size), quote at line 4435; snapshot sha256 `78d0eefbe60cfe73…` matches the row prefix | agree | "Bash itself returns the exit status of the last command" grounds recording the child shell's exit as the gate's own verdict; the row explicitly does not claim the gate's checks are correct. |
+| S291 `ast.literal_eval` | reject (tier C) | live `GET https://docs.python.org/3/library/ast.html` → HTTP 200, 362 493 B (the snapshot's size), quote at line 2760; `grep -c 'literal_eval' tools/round-77/verdict-bind.py` → 0 | agree | the binder's grammar is a closed JSON-literal grammar; `literal_eval` accepts Python-only spellings (`True`, `None`) the records never use and would widen it. The reason and flip condition are specific, and the consumer search shows no dependency. |
+| S289 registry row (new row's ≤25-word located quote) | row check | snapshot `rfc8259.txt` and the live bytes; 14-word contiguous quote at line 298; 28 360 B; digest prefix `61a5378f4255c720…`; `opened 2026-11-04`; `used-by corpus/knowledge/2026-11-04-r77-verdict-binding.md` | agree | the quote is contiguous, ≤25 words and at the named line; the snapshot digest matches the live bytes and the row is cited by the admitted entry. The quote stops before the literal names (line 299–300), but the digestion cites §3 Values, which carries them. |
+
+No disagreement was found; the gate and the outside check agree on both admits and the reject. `QUALITY.md` row 135 is grounded in the round lesson's mined mistake and cites it — the disagreement-to-criterion duty is satisfied for this round.
+
+## 5. Trend verdicts
+
+- **expansion: unchanged.** `SOURCES.md` 194 → 197 rows (two mined admits S289/S290, one rejected S291); the two new knowledge entries both sit on the already-held instrument/record ground named by the round-77 coverage-map row, which says "held … not a new carrier class", and the frontier note says "moves no carrier ground". No new source kind (the tier/kind histogram moves only by the three added rows; `spec`/`docs` were already held) and no `retired`/`frontier → core` move.
+- **quality: improved.** The false-annotation class that round 76 admitted is now caught and corrected: base 4 mismatches → 0 with the same population discipline; the two disputed cells name a receipt that records the claimed values; QUALITY row 135 adds the criterion with the lesson citation; the round's own `gen-controls` F1 defect (a control whose override ran after `__main__`, so it could not fail) was caught by a seat, repaired at `63dc9c6f` with a behavioural `diverges` assertion, and re-taken. No admitted entry failed its re-check.
+- **discernment: improved.** The wave's counter re-derivations agree with mine (`41` capability rows, `11` in-scope, `25` bound at the tip; `39`/`9`/`21` at the freeze) and the outside spot-check agrees with the gate on both admits and the reject; the wave's findings changed the record (F1 repair, the before-prose erratum appended, two mutation survivors and two grammar limits routed rather than called clean). The lane's own critic seat died mid-work, and its two suspicions were re-checked by the L1 and recorded as limits — a coverage gap named, not silently dropped.
+
+## 6. Routed defects (round 78 queue)
+
+1. **Wave accounting overstates returned evidence.** The report and the round-77 `LOG.md` entry say "10 seats returned evidence (all files under `.ufo/waves/round-77/w1/`)". `find .ufo/waves/round-77/w1 -maxdepth 1 -type d` → 9 seat dirs; 8 carry a substantive report (`*.md`), `CriticClaims/` is empty, and `SentinelScope` left no artifact. `CriticClaims` (766 B) and `SentinelScope` (372 B) returned mid-work progress notes only. State "8 substantive reports, 2 progress-only seats, 2 zero-byte dead seats" (or equivalent) instead.
+2. **Landed-changes table misattributes the C2 controls.** The `1d84253a` row claims "two C2 controls"; `git diff-tree --name-only 1d84253a` lists only `c1-at-record.json`, `c2-at-record.json`, the two `prefile-rev-binding-*` receipts, `LOG.md`, `SCORECARD.md`. The C2 control files first land at `37f5d069` (`git log --oneline -- .ufo/waves/round-77/pre/controls/c2-*.json` → one commit), whose table row says "re-created". Correct both rows.
+3. **Two mistakes are prose, not rows.** `corpus/lessons/round-77.md` `## Mistakes` carries one table row (record-vs-receipt) and two prose paragraphs (fixture for the wrong reason; a control that cannot fail). `CORPUS.md` requires one row per mistake (class · evidence · captured-by · fix) because prose alone does not record the prevention. Append rows for the two in the next lesson (append-only; never rewrite the filed bytes).
+4. **The C2 revision-binding receipts do not retain the exit.** `prefile-rev-binding-at-filing.json` and `-stale.json` record `validate`/`defects` but no wrapper `exit`, while the report and SCORECARD assert "exit 0"/"exit 1" beside them — the exact class R77-C2 closes for the gate. Add the integer `exit` (and, ideally, the checked revision) to those receipts next round.
+5. **The forged-arms control does not retain its defects.** `pre/controls/c2-forged-arms.json` records `exit 1`, `ok false` and the two unmet arms, but not the two validator defects the report says `--validate-battery` reports. Retain the refusal detail (or drop the "two defects" count).
+6. **`Stale-lane` line lacks the required statement.** The mission was open 07:40:05→08:28:06 (48 min > 2 × `TICK_SECONDS=450`), so the report must list it and say whether it was progressing or silent; it says only "Not stale". The lane was progressing (17 commits in scope), so the correct line is "open > 2 ticks, progressing".
+7. **Carried from the round's own routing (unchanged, must close).** Two mutation survivors (`c1-rev-show-to-worktree` exercises no `show()` case; `c2-nonint-exit-accepted` refuses a missing `exit` but not a string/bool one) need new selftest cases outside the frozen case counts; the two near-miss/no-claim cells (`(D24: true)`, `(mismatch 0)`, and the nested-field unbound clauses `forged_detected true` / `sole true`) need a field-path or minimal-bound-share rule; and the C2 `record-receipt`/`gate-exits` arm limits stay open.
