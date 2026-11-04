@@ -1,0 +1,164 @@
+{
+ "allowlist": [
+  "tools/round-76/plan-command.py",
+  "tools/round-80/pointer-bind.py",
+  "tools/round-81/record-integration.py",
+  "tools/round-82/conjunction-gate.py",
+  "tools/round-82/printed-command.py"
+ ],
+ "arms": [
+  {
+   "arm": "c1-executed",
+   "expected": "executed, rc in {0,1}, integer `refused`",
+   "met": true,
+   "observed": "rc 0, refused 3",
+   "row": {
+    "argv": [
+     "python3",
+     "-I",
+     "-B",
+     "tools/round-82/conjunction-gate.py",
+     "--battery",
+     "--root",
+     ".",
+     "--rev",
+     "96ac0ae41b12d9f8a4f02ba1a86f9013592d4772",
+     "--json-out",
+     "/fast/scratch/hyaku/kaidoku-r82/l1/final-production/receipts/c1.json"
+    ],
+    "command": "python3 -I -B tools/round-82/conjunction-gate.py --battery --root . --rev $REV --json-out $OUT",
+    "counter": {
+     "expected": null,
+     "field": "refused",
+     "matched": null,
+     "value": 3
+    },
+    "defects": [],
+    "executed": true,
+    "rc": 0,
+    "static_defects": [],
+    "stderr_tail": "",
+    "stdout_tail": "{\"binder_sha256_matches\": true, \"counter_sha256_matches\": true, \"forged_total\": 3, \"frozen_rule_accepts_forged\": 3, \"genuine_ok\": true, \"ok\": true, \"reasons\": [\"binder_digest_mismatch\", \"pristine_cases_below_floor\", \"pristine_failures_nonzero\"], \"refused\": 3}\n{\"validate_defects\": []}\n"
+   }
+  },
+  {
+   "arm": "selftest-fixture",
+   "expected": "the instrument's own --selftest executes at rc 0 as a pinned script",
+   "met": true,
+   "observed": "rc 0",
+   "row": {
+    "argv": [
+     "python3",
+     "-I",
+     "-B",
+     "tools/round-82/printed-command.py",
+     "--selftest",
+     "--root",
+     ".",
+     "--json-out",
+     "/fast/scratch/hyaku/kaidoku-r82/l1/final-production/receipts/selftest.json"
+    ],
+    "command": "python3 -I -B tools/round-82/printed-command.py --selftest --root . --json-out $OUT",
+    "counter": {
+     "expected": null,
+     "field": "cases",
+     "matched": null,
+     "value": 15
+    },
+    "defects": [],
+    "executed": true,
+    "rc": 0,
+    "static_defects": [],
+    "stderr_tail": "",
+    "stdout_tail": "{\n \"case_names\": [\n  \"bare-name-refused\",\n  \"ellipsis-refused\",\n  \"entry-cites-no-source-line\",\n  \"entry-cites-true\",\n  \"entry-cites-wrong-row\",\n  \"fixture-repo-top\",\n  \"metachar-refused\",\n  \"pin-match-accepts\",\n  \"pin-mismatch-refused\",\n  \"placeholder-refused\",\n  \"prefix-refused\",\n  \"row-parse-absent\",\n  \"row-parse-mined\",\n  \"row-parse-queued-unmet\",\n  \"unpinned-path-refused\"\n ],\n \"cases\": 15,\n \"failures\": [],\n \"selftest\": \"tools/round-82/printed-command.py\"\n}\nSELFTEST cases=15 failures=0\n"
+   }
+  },
+  {
+   "arm": "static-refusal",
+   "expected": "PLACEHOLDER_UNBOUND, no execution",
+   "met": true,
+   "observed": "PLACEHOLDER_UNBOUND: <measured>; SHELL_METACHAR: >; SHELL_METACHAR: <",
+   "row": {
+    "command": "python3 -I -B tools/round-82/conjunction-gate.py --battery --root . --rev <measured> --json-out $OUT",
+    "counter": null,
+    "defects": [
+     "PLACEHOLDER_UNBOUND: <measured>",
+     "SHELL_METACHAR: >",
+     "SHELL_METACHAR: <"
+    ],
+    "executed": false,
+    "rc": null,
+    "static_defects": [
+     "PLACEHOLDER_UNBOUND: <measured>",
+     "SHELL_METACHAR: >",
+     "SHELL_METACHAR: <"
+    ],
+    "stderr_tail": "",
+    "stdout_tail": ""
+   }
+  },
+  {
+   "arm": "argv-failure",
+   "expected": "executed at rc 2, EXECUTION_FAILED",
+   "met": true,
+   "observed": "EXECUTION_FAILED: rc 2: conjunction-gate.py: error: argument --json-out: expected one argument",
+   "row": {
+    "argv": [
+     "python3",
+     "-I",
+     "-B",
+     "tools/round-82/conjunction-gate.py",
+     "--battery",
+     "--root",
+     ".",
+     "--rev",
+     "96ac0ae41b12d9f8a4f02ba1a86f9013592d4772",
+     "--json-out"
+    ],
+    "command": "python3 -I -B tools/round-82/conjunction-gate.py --battery --root . --rev $REV --json-out",
+    "counter": null,
+    "defects": [
+     "EXECUTION_FAILED: rc 2: conjunction-gate.py: error: argument --json-out: expected one argument"
+    ],
+    "executed": true,
+    "rc": 2,
+    "static_defects": [],
+    "stderr_tail": "usage: conjunction-gate.py [-h] [--root ROOT] [--rev REV] [--battery]\n                           [--selftest] [--cli-selftest] [--work WORK]\n                           [--json-out JSON_OUT]\nconjunction-gate.py: error: argument --json-out: expected one argument\n",
+    "stdout_tail": ""
+   }
+  },
+  {
+   "arm": "r76-refusal",
+   "expected": "frozen helper refuses with 'script outside tools/round-76/'",
+   "met": true,
+   "observed": "rc 1, sentinel True"
+  },
+  {
+   "arm": "sourced",
+   "base_absent": true,
+   "defects": [
+    "SOURCED_ROW_UNMET"
+   ],
+   "entry_cites_row": true,
+   "met": false,
+   "plan_names_row": true,
+   "row_mined": false,
+   "row_present": true
+  }
+ ],
+ "arms_ok": 5,
+ "arms_total": 6,
+ "claims": ".ufo/waves/round-82/claims.json",
+ "instrument": {
+  "path": "tools/round-82/printed-command.py",
+  "sha256": "88b1dff2385547e1bdb2ecf802d667c38eabe929747075c27ae88f0c5c061487"
+ },
+ "ok": false,
+ "plan": "plans/round-82-claims.md",
+ "rev": "96ac0ae41b12d9f8a4f02ba1a86f9013592d4772",
+ "schema": "kaidoku-r82-printed-command-v1",
+ "validate": {
+  "checked": true,
+  "defects": []
+ }
+}

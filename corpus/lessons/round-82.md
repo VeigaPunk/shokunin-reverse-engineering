@@ -37,3 +37,13 @@ All eleven seats settled; Main delivered WAVE-DONE before final verification. Te
 - MutationGates retained eleven mutants: four killed, seven survivors (pin-call, static-refusal and five source checks). This is a bounded frozen selftest-coverage measurement, not proof that final selftests kill all mutants; survivors remain named future depth work. Old r81 counter's own outer-selftest defect remains inherited debt.
 
 SOURCES final changes are two new tier-A **rejected** rows, no new mined authority, and the documented S286/S299 cell changes. Source novelty is not inferred from a new identifier. The sourced knowledge now cites reopened mined S286. No external admit/reject agreement is self-awarded.
+
+## Final committed measurements
+
+At `96ac0ae41b12d9f8a4f02ba1a86f9013592d4772`, after WAVE-DONE: C1 exits 0, forged_total/refused 3/3, genuine_ok true, frozen_rule_accepts_forged 3, both pins true and validate defects empty. C2 exits 1, arms_ok 5/6, only sourced unmet, validate defects empty; target 6/6 is not met. Exact printed argv/stdout/stderr/exit records: `l1/scores/{c1,c2}-at-landing.execution.json`.
+
+Helper selftests 21/0 and 15/0; outer CLI self-invocations four expected exit/finding pairs, failures empty (`l1/scores/outer-cli.json`). The isolated C2 positive restores its historical source bytes only in private scratch and cannot certify the production source arm. One demonstrated C1 capability enters the table, no C2 capability.
+
+Disclosures gate exits 0; round82 custody CLEAN with explicit implementation supersessions, historical round80/81 flags retained. Required source census exits 0 both ends; rows 203→205, tiers A185/B10/C8→A187/B10/C8, mined184/rejected19→mined184/rejected21, two new rejected rows. Counts and immutable revisions: `l1/source-counts.json`. Knowledge index at measurement: 165 Markdown entries, none missing from coverage map (`coverage-no-harm.json`).
+
+Fleet misroot sweep found only unrelated fleet work, operator-owned scratch and the already-unattributed root `after` file; no own seat misroot identified and nothing outside the lane was moved/deleted. No tool installations. New QUALITY142 captures the source-collision mistake. Scratch cleanup and final prefile acceptance are retained at filing; no promotion assertion or whole-round admission.
