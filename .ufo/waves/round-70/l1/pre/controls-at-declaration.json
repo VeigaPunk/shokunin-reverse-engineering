@@ -1,0 +1,85 @@
+{
+ "arms": [
+  {
+   "id": "c1-base-accepts-forged",
+   "observed": {
+    "met": true,
+    "rc": 0,
+    "receipt_rev": "5cc845ca88c90e3e8ceb816f75fe44ddb6758a6d"
+   },
+   "ok": true
+  },
+  {
+   "id": "c1-constant-battery",
+   "observed": {
+    "defects": [
+     "mutants absent or empty"
+    ],
+    "rc": 1
+   },
+   "ok": true
+  },
+  {
+   "id": "c2-base-execformat-crash",
+   "observed": {
+    "rc": 1,
+    "stderr_tail": "  File \"/usr/lib/python3.14/subprocess.py\", line 1819, in _posix_spawn\n    self.pid = os.posix_spawn(executable, args, env, **kwargs)\n               ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nOSError: [Errno 8] Exec format error: '/fast/scratch/hyaku/kaidoku-r70/l1/c2-exec-gndwws6y/not-an-elf'\n",
+    "traceback": true
+   },
+   "ok": true
+  },
+  {
+   "id": "c2-base-impostor-runs",
+   "observed": {
+    "clause": "packer_mismatch: sha256 d8cfcfed7621a7672ce1942abf7aa9058796869ab348233670534e11ea7d1b9b != pin cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+    "impostor_executed": true,
+    "rc": 2
+   },
+   "ok": true
+  },
+  {
+   "id": "c2-new-refuses-unrun",
+   "observed": {
+    "clause": "packer_mismatch: sha256 a812c4fdc3c1d83ea7bdf4a5fefe6d14fdecedaaf3d84ce4d7dd8cbd4ad6ffb4 != pin cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+    "impostor_executed": false,
+    "rc": 2
+   },
+   "ok": true
+  },
+  {
+   "id": "c3-base-three-carrier",
+   "observed": {
+    "kinds": [
+     "executable",
+     "shared-object"
+    ],
+    "met": true,
+    "rc": 0,
+    "target": 3
+   },
+   "ok": true
+  },
+  {
+   "id": "c3-new-rejects-old-receipt",
+   "observed": {
+    "failing": [
+     "instrument.path tools/round-69/packed-elf.py != tools/round-70/packed-elf.py",
+     "instrument.sha256 4ac0d83baee352e42f63b9ced91df01c2ee01f508a35798e400f13478f8aebcc != blob at 8b82516182a269482f3a7dc96b50cd2ac349f3a6 (1601a5b8c91bac4cf3484ac6f1b0a74bd2a7c59590b7c42f149b510e7d021880)",
+     "rev 5ee94c56ce7490938ee38c2e5c10930a1fd1330a != 8b82516182a269482f3a7dc96b50cd2ac349f3a6",
+     "target 3 != 4"
+    ],
+    "rc": 1
+   },
+   "ok": true
+  }
+ ],
+ "base_instrument": "tools/round-69/packed-elf.py",
+ "base_rev": "5cc845ca88c90e3e8ceb816f75fe44ddb6758a6d",
+ "failures": [],
+ "instrument": "tools/round-70/packed-elf.py",
+ "ok": true,
+ "r69_receipt": ".ufo/waves/round-69/l1/scores/c3-at-landing.json",
+ "rev": "8b82516182a269482f3a7dc96b50cd2ac349f3a6",
+ "schema": "kaidoku-r70-controls-v1",
+ "scratch": "/fast/scratch/hyaku/kaidoku-r70/l1/controls-i4ko_47o"
+}
