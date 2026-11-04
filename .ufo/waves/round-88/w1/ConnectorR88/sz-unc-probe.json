@@ -1,0 +1,61 @@
+{
+ "seat": "ConnectorR88",
+ "round": 88,
+ "what": "sz_unc vs sz_cpr zeroed on one scratch jq pack: same upx -t signature, different repairability",
+ "host": {
+  "upx_sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+  "upx_version": "UPX comes with ABSOLUTELY NO WARRANTY; for details type 'upx -L'."
+ },
+ "lane": {
+  "head": "a14f0a426e7a59a992fa52f736f036374e4158d6",
+  "repair_sha256": "59ee51b0e63d3e089c23cee066b637841133412cee50748d84d717d61f8a0b46",
+  "r87_module_sha256": "96da7d8e981b04f5a598dc7eb8ec3f05eeae4b1498f769c83e72c67f6babec24"
+ },
+ "carrier": {
+  "source": "/usr/bin/jq",
+  "sha256": "e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806",
+  "packed_sha256": "e8b6c9e76b542435a476a584bbe0fdff813c4b05b6d6e9a8e8405b7c7975268a",
+  "packed_bytes": 14036
+ },
+ "locators": {
+  "packheader": 14000,
+  "l_info": 556,
+  "b0": 576,
+  "sentinel": 13988,
+  "u_len": 30800,
+  "method": 2,
+  "block0_sz_unc": 904,
+  "block0_sz_cpr": 252
+ },
+ "cells": {
+  "sz_unc": {
+   "upx_t_rc": 1,
+   "upx_t_tail": "upx: work/sz_unc-zeroed: CantUnpackException: b_info corrupted",
+   "repair_rc": 2,
+   "repair_wrote_output": false
+  },
+  "sz_cpr": {
+   "upx_t_rc": 1,
+   "upx_t_tail": "upx: work/sz_cpr-zeroed: CantUnpackException: b_info corrupted",
+   "repair_rc": 0,
+   "repair_wrote_output": true,
+   "fixed_upx_t_rc": 0,
+   "upx_d_rc": 0,
+   "restored_sha256": "e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806",
+   "output_equals_clean_packed": true
+  }
+ },
+ "verdict": {
+  "same_exception_text": true,
+  "exception_text": "b_info corrupted",
+  "sz_unc_repairable": false,
+  "sz_cpr_repairable": true
+ },
+ "reproduction": [
+  "cp /usr/bin/jq work/orig && upx --best -q -o work/packed work/orig",
+  "python3 -I -B probe.py   # r87 locators on work/packed; zero 4 bytes at b0 (sz_unc) and b0+4 (sz_cpr)",
+  "upx -t -q work/<f>-zeroed",
+  "python3 -I -B <LANE>/tools/round-88/upx-chain-repair.py --in work/<f>-zeroed --out work/<f>-fixed"
+ ],
+ "scratch": "work/ deleted after this receipt; values above are the durable record"
+}

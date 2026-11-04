@@ -705,8 +705,9 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   851,288); the shared object's chain accounts for 98,592 of 108,560 and is accepted on its single
   structural candidate. The frozen counter `tools/round-88/upx-chain-battery.py` scores 4 of 4 on the four
   round-70 carriers with `N1`/`N2`/`N3` true and the round-87 counter's 8 of 8 regression arm met
-  (`.ufo/waves/round-88/pre/c1-candidate-at-declaration.json`); the unchanged round-87 repair scores 0 of 4
-  on the same class. Entry: `corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md`.
+  (measured receipt `.ufo/waves/round-88/l1/scores/c1-at-a14f0a42.json`; the pre-freeze candidate record is
+  `.ufo/waves/round-88/pre/c1-candidate-at-declaration.json`); the unchanged round-87 repair scores 0 of 4
+  on the same class (`pre/c1-control-r87-anchor-at-base.json`). Entry: `corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md`.
 - **Held, not Core — the refusal-signature matrix:** 4 carriers × 17 single-field tampers, 68 cells, 63
   effective, 0 unclassified (`tools/round-88/field-tamper-matrix-v2.py`;
   `.ufo/waves/round-88/l1/scores/c2-matrix-at-declaration.json`), landed as craft rule block 28. It routes
