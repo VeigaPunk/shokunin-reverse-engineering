@@ -31,8 +31,10 @@ Derive `sz_cpr` from chain geometry, bounded twice:
 1. **Structural bound.** For each `l_info` candidate (found by its own `u_file_size`/version/format
    cross-check, round 87's locator), let `b0 = l_info + 20` and require `sz_cpr0 == 0` and
    `sz_unc0 > 0`. Scan `s1 > b0 + 12` for bytes that form a plausible `b_info` under block0's method
-   (or the PackHeader's) whose own chain reaches the end-of-chain sentinel; require
-   `0 < s1 - (b0 + 12) <= sz_unc0`.
+   (or the PackHeader's) whose own chain reaches the end-of-chain sentinel — directly, or through
+   the round-87 loader-resume step (on every measured carrier the contiguous chain stops at the
+   embedded loader: jq stops at 10097 with the sentinel at 13988 and the resumed chain at 13228, so
+   a contiguous-only reading yields zero candidates); require `0 < s1 - (b0 + 12) <= sz_unc0`.
 2. **Accounting bound.** With the derived value written, walk the chain from `b0` (and its resumed
    segment past the embedded loader) and sum the blocks' `sz_unc`. A candidate whose total exceeds the
    PackHeader's `u_len` (S309) is impossible; among the survivors the one accounting for the most
@@ -80,6 +82,11 @@ absent `ph.filter` are no-ops (the bytes were already zero), never "tolerated fi
   `szcpr-nonzero-not-derived`): the class is a *zeroed* length, not an arbitrary one.
 - The counter scores bytes, not provenance: a repair that read the carrier and re-packed it would score
   the same.
+- The class is the *compressed* length. `upx -t` answers `b_info corrupted` for a zeroed `sz_unc`
+  too (4 of the 8 `b_info corrupted` matrix cells) and there is no redundancy for the uncompressed
+  length: the repair refuses (`sz_unc0 == 0` guard). A packer-as-oracle repair (ascending
+  candidates, `upx -t` accepts) reaches the same 4 of 4 on this population — disclosed as a limit,
+  not claimed away (`w1/ReviewerC1/report.md` §2, R7).
 
 ## Counting command
 

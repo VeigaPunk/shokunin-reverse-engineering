@@ -57,8 +57,9 @@ carrier, so the target is not reachable without new work.
 
 **Claim.** The `## Queue-drain craft` rule block for packed-ELF refusal signatures lands: a tamper
 that reaches a field of a packed UPX 5.2.0 LE ELF is triaged by the refusal UPX itself prints, from a
-measured 4-carrier × 17-field matrix (`tools/round-88/field-tamper-matrix.py`, 68 cells, closed
-7-label vocabulary) rather than from a guess, with the repair move each signature implies.
+measured 4-carrier × 17-field matrix (`tools/round-88/field-tamper-matrix-v2.py`, 68 cells, 63
+effective, 10-label vocabulary — the v1 instrument's 7 labels left 5 cells unclassified; the v2
+supersession is recorded in `claims.json` `instrument_supersessions`) rather than from a guess, with the repair move each signature implies.
 
 **Predicate.** `tools/round-88/depth-blocks.py --root . --rev <measured>` reports `blocks 28`,
 `resolved 28`, `unresolved []`, exit 0, where a block resolves only when every
