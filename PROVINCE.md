@@ -511,3 +511,14 @@ The round-69 Core/promotion wording above is superseded: the shared-object route
 **measured Frontier, not promoted**, because the frozen C2/C3 counters admit fabricated
 receipts. C1's arm-false selftest is verified. The `--upx` seam executes before checking
 its hash; never supply an untrusted path. A new freeze must repair this ordering.
+
+
+## Round-70 additions to Core
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| The receipt readers bound to their producers — `--check-receipt` binds the measured revision, the instrument hash to the blob at that revision, every carrier row to the frozen table (id/pin/source/kind/ceiling), original and packed procedure counts to declared constants, each ratio to round(ceiling/orig, 4), format to `readelf -h` of the pinned source, plus the arms, control rcs, packer block, runs records and `before_ceilings`; and the hardened probe binds its receipt arms to the same producer fields | `tools/round-70/packed-elf.py --check-receipt --root . --rev <rev>`, `tools/round-70/forged-receipts.py` (ten frozen shapes + six lying-field classes + landing-world identity shapes), `tools/round-70/contract-probe.py` (six arms, registry-bound A5/A6) | forged battery exit 0 at the landing `7c155617`; controls exit 0 (`.ufo/waves/round-70/l1/scores/c1-at-landing.json`, `controls-at-landing.json`) | 2026-11-04 |
+| The safe packer seam — identity before first execution, the validated path threaded through every packer call, a four-key child-env allowlist (HOME/LANG/PATH/TMPDIR, HOME and TMPDIR inside the run's scratch), typed `broken_tool: node` and packer refusals instead of tracebacks, per-run `mkdtemp` scratch, no `/tmp` HOME fallback | `tools/round-70/seam-probe.py` (seven arms) against `tools/round-70/packed-elf.py` | 7 of 7 at the landing, 0 of 7 at the base `5cc845ca` naming all seven (`.ufo/waves/round-70/l1/scores/c2-at-landing.json`, `c2-at-base-recheck.json`) | 2026-11-04 |
+| A packed statically linked executable as a carrier class — `static-exe` beside executable and shared-object, fourth pinned carrier `/usr/bin/docker-init` (sha256 `0bd49c8d…`, 1268 procedures, ceiling 10/1268 = 0.0079) | `tools/round-70/packed-elf.py --check-receipt` over the four-carrier landing receipt | met true, target 4, carriers_matched 4, failing [] (`.ufo/waves/round-70/l1/scores/c3-check-at-landing.json`) | 2026-11-04 |
+
+Round-70 frontier note, 2026-11-04: the producer-bound readers, the safe seam and the static-exe carrier are **Core** for the pinned carriers under UPX 5.2.0 (`2026-11-04-r70-provenance-bound-receipts`; S272). Still Frontier: any other packer, anti-UPX stubs, packed PE/Mach-O, any static binary other than this pinned docker-init, other shared objects, semantic inventory equality, runtime env-capture of the seam arms, concurrent-collision coverage, and receipt authenticity beyond committed-field equality (round-70 M70-6).

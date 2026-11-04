@@ -5482,3 +5482,71 @@ The next freeze must repair the counter binding and hash before execution.
 R68-V5 final disposition: S271 now supersedes S269 with the correct 10-word quote;
 the earlier reason-only disposition above is superseded. SOURCES final population is
 178, not the intermediate 177. R68-V2 also repairs the four-column table delimiter.
+
+## 2026-11-04 — round 70: the readers are bound to their producers, the seam is safe, and a static executable joins the carriers
+
+Base `5cc845ca88c90e3e8ceb816f75fe44ddb6758a6d` (the carry-in recording the round-69 non-author closure before this
+declaration — the M69-7 fix); declaration `2c776725…`, operative declaration fix `8b825161…`; operative freeze
+`4737a542ae3b1b910d8fe43efbd572bc578b07c6` (the first commit adding `.ufo/waves/round-70/claims.json`; the round-29 gate
+audits it CLEAN in the pre-commit fixture `l1/scores/gate-preflight-fixture.json` and at the freeze
+`l1/scores/gate-preflight.txt`, disclosures 44/45 exact + missing [round-70] until this section's commit — the M69-1
+container-shape fix). Landing/supersession: `ca9817cf…` (six instruments superseded under the container's
+`instrument_supersessions`, predicates byte-unchanged), landing `7c155617…` (the settled wave + disclosures). Three
+claims on three distinct axes, all capability acquisitions; the stagnation nudge applies (every owned axis at 10.0,
+saturation 10.0, window 10), so the lowest-axis obligation is waived and this is a capability/frontier move.
+
+| claim | axis | type | predicate (frozen sentence) | before → after | verdict |
+|---|---|---|---|---|---|
+| R70-C1 | calibration | capability acquisition (provenance-bound receipt readers) + the repair of M69-8 | the frozen forged-receipt battery at the measured revision reports all ten shapes base-accepted and landing-rejected each naming its declared clause, the identity shapes rejected by the probe's A5/A6 with the base probe accepting, the genuine receipts accepted by both frozen readers, the battery's target pin/floor/work-dir/constant arms enforced | base: the r69 readers accept every shape (the M69-8 defect, `c1-at-declaration.json` base arms); landing: exit 0, 10/10 shapes rejected with clauses, F3L/F9L rejected by A5 alone, genuine 6/6, `work_run_rcs [0,0]` distinct (`.ufo/waves/round-70/l1/scores/c1-at-landing.json`) | **verified** (superseded counter, disclosed; M70-2's six lying fields bound) |
+| R70-C2 | operability | capability acquisition (the safe packer seam) + the repairs of M69-9/S-1, M69-10, M69-11 | the frozen seam probe reports arms_passed 7 of target 7 at the measured revision (A1 hash-before-exec, A2 threaded path, A3 child-env allowlist, A4 broken node typed, A5 exec-format typed, A6 no-/tmp HOME, A7 per-run work) and 0 of 7 at the base naming all seven | base `5cc845ca`: 0 of 7, all seven named, A2 argv0s `/usr/bin/upx` (`l1/pre/c2-at-base.json`, re-check `scores/c2-at-base-recheck.json`); landing `7c155617`: 7 of 7, failed [] (`scores/c2-at-landing.json`) | **verified** (superseded counter, disclosed; M70-3's A7 --pkg defect repaired) |
+| R70-C3 | coverage | capability acquisition (a packed statically linked executable as a carrier class) — Frontier → Core | the frozen receipt checker at the measured revision reports met true, target 4, carriers_matched 4, control_ok, failing [], ratios ≤ 0.75, one shared-object and one static-exe carrier, every row bound to the table; the round-69 receipt rejected on the producer binding and target 3 != 4 | base: the r69 receipt met true at target 3 (the world a do-nothing control holds); landing: exit 0 met true target 4 (`scores/c3-check-at-landing.json`), receipt `met_target true` carriers 4 of 4 `before_procedures [3, 3, 98, 3]` (`scores/c3-at-landing.json`); docker-init pin `0bd49c8d…` measured 1268/29/1111 → 3/3/5, ratio 0.0079 | **verified** |
+
+**Capabilities entered.** (4) provenance-bound receipt readers — a check that scores a saved receipt binds it to its
+producer (revision + instrument hash) and re-derives the payload from the frozen tables, first working round 70 (the
+round-69 numbered rows (4)-(6) were refused by that round's final correction and stay refused; these are this round's
+own entries); (5) the safe packer seam — identity before first execution, threaded validated path, four-key child-env
+allowlist, typed broken-node/exec-format refusals, per-run scratch — first working round 70; (6) a packed statically
+linked executable as a carrier class (`static-exe`, docker-init) — first working round 70.
+
+**Repairs carried (not claims).** R69-V1 (the carry-in precedes the declaration, commit `5cc845ca`), R69-V2 (the
+round-69 lesson's spot-check placeholder filled by an appended erratum), R69-V3/M69-1 (the container shape, gate CLEAN
+pre-commit), R69-V4 (the prefile receipt at the ticket tree before the report, close commit), and the standing duties
+(census start 178 / end 179 rows exit 0; the ExecSweep standing receipts: census3's 8-cell grammar finding on the r69
+SKILL rows is disclosed standing debt since `616a5f2f`, never repaired by rewriting filed bytes — M70-7).
+
+**Sources and frontier.** `corpus/SOURCES.md` 178 → 179 rows (S272 admitted: the Python `subprocess` env contract,
+snapshot sha `4b88b831…`, 14-word located quote, grounds R70-C2's A3/A6; the tempfile screen REJECTED on demand in the
+lesson Gate). Coverage map + knowledge index + frontier note landed; `PROVINCE.md` gains `## Round-70 additions to
+Core`; `corpus/knowledge/2026-11-04-r70-provenance-bound-receipts.md` is the new knowledge entry (provenance trio at
+line start, QUALITY #112); `corpus/QUALITY.md` gains rows 115 (a before-arm is cut from the world its base reader
+accepts) and 116 (a counter arm's argv is the callee's own contract); `SKILL.md` registers the six instruments.
+
+**Wave.** One v1 wave `r70-w1`, 16 seats (6 executor, 2 reviewer, 1 critic, 2 mutation-testers, 1 sentinel, 1 scout,
+1 connector, 2 scribes), attack share 5/16 = 31%. L1 held the planner seat. No residual call. All 16 settled, none
+dead (`r70-w1-results.json`). Wave findings drove the supersession: CriticClaims six lying fields (M70-2),
+ReviewerGates RG-1/RG-2/RG-3/RG-4 (M70-2/4/5), MutProbe's frozen A7 defect (M70-3), MutReaders 7/7 new mutants killed
+with exact-byte restoration, Sentinel no blocking finding (two advisories, one fixed in the supersession, one routed),
+Connector no sibling owner, ExecSweep's standing receipts (M70-7 disclosed).
+
+**Name by surface.** R70-C1's surface is the lane's measurement instruments (a reader that scores saved receipts), not
+a re-score of any rule the lane holds; R70-C2's surface is the packer seam's failure contract at the instrument
+boundary; R70-C3's surface is a new artifact class in the carrier set, named in PROVINCE Core and in the map.
+
+**Trends.** expansion **improved** (one admitted entry on ground held only as a Frontier line — packed static
+binaries — citing mined S272; registry +1; three capabilities enter the table). quality **improved** (the round-69
+quality harm is repaired at its surface: the S-1 execute-before-hash seam is closed with an unrun-impostor receipt,
+and the counters that admitted fabricated receipts now reject all sixteen forgery shapes with named clauses — before
+and after receipts committed at pinned paths). discernment **improved** (the wave's critic falsified the frozen
+first-cut counters and the lane recorded it, superseded under disclosure rather than smoothing it; the sentinel found
+no blocking defect; the source gate recorded one admit and one on-demand reject; the admission rule the round-69
+closure applied to C2/C3 is respected — those capabilities enter on this round's own measured receipts).
+
+**planned (next steered round only):** (a) runtime coverage of the seam arms routed this round — a child-env capture
+arm (the observed environment of a packer child, not the builder's returned dict), a concurrent A7 collision probe,
+and receipt authenticity beyond committed-field equality; (b) the six lying-field shapes and the landing-world probe
+shapes enter the frozen battery at the next freeze (they are the supersession's content now, named in
+`c1-at-landing.json`'s `landing_probe_shapes`); (c) M70-7: census3's frozen 7-cell grammar vs the 8-cell r69 SKILL
+registry rows — fix at the next freeze as a disclosed census3 supersession or a recorded grammar addendum, never by
+rewriting the filed r69 rows; (d) the persistent receipt-audit bare-name `package.json` finding gets a disposition;
+(e) the r63 planned record-section sweep stays open; (f) the standing duties re-run every round that lands receipts;
+the r58/r60 bare-name findings and the r64 placeholder-token disposition stay named debt.
