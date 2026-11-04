@@ -280,6 +280,14 @@ CONTROLS = {
                             "EXECUTION_FAILED rc 2",
     "ellipsis-rev": "a $REV replaced by an abbreviated hash: "
                     "PLACEHOLDER_UNBOUND",
+    "angle-placeholder": "an angle-bracket placeholder the ellipsis check does "
+                         "not see: PLACEHOLDER_UNBOUND, no execution",
+    "escape-out": "a $OUT that resolves outside the work root: REFUSED by "
+                  "containment, no execution",
+    "script-outside": "a script outside the lane's tools/ tree: REFUSED by the "
+                      "argv allowlist, no execution",
+    "shell-meta": "a block carrying a shell metacharacter: SHELL_METACHAR, no "
+                  "execution",
 }
 
 
@@ -304,13 +312,46 @@ def control(root: str, rev: str, work: str, name: str) -> dict:
         met = (row["executed"] and row["rc"] == 2
                and any(d.startswith("EXECUTION_FAILED")
                        for d in row["defects"]))
-    else:  # ellipsis-rev
+    elif name == "ellipsis-rev":
         command = ("python3 -I -B tools/round-76/record-audit.py --root . "
                    "--rev $REV\u2026 --json-out $OUT")
         row = run_block(root, rev, command, work,
                         os.path.join(work, "out.json"), "mismatch_count", "0")
         met = (not row["executed"]
                and any(d.startswith("PLACEHOLDER_UNBOUND")
+                       for d in row["static_defects"]))
+    elif name == "angle-placeholder":
+        command = ("python3 -I -B tools/round-76/record-audit.py --root . "
+                   "--rev <measured> --json-out $OUT")
+        row = run_block(root, rev, command, work,
+                        os.path.join(work, "out.json"), "mismatch_count", "0")
+        met = (not row["executed"]
+               and any(d.startswith("PLACEHOLDER_UNBOUND")
+                       for d in row["static_defects"]))
+    elif name == "escape-out":
+        command = ("python3 -I -B tools/round-76/record-audit.py --root . "
+                   "--rev $REV --json-out $OUT")
+        row = run_block(root, rev, command, work,
+                        os.path.join(work, "..", "escape.json"),
+                        "mismatch_count", "0")
+        met = (not row["executed"]
+               and any(d.startswith("REFUSED")
+                       for d in row["defects"]))
+    elif name == "script-outside":
+        command = ("python3 -I -B scripts/evil.py --root . "
+                   "--rev $REV --json-out $OUT")
+        row = run_block(root, rev, command, work,
+                        os.path.join(work, "out.json"), "mismatch_count", "0")
+        met = (not row["executed"]
+               and any(d.startswith("REFUSED")
+                       for d in row["defects"]))
+    else:  # shell-meta
+        command = ("python3 -I -B tools/round-76/record-audit.py --root . "
+                   "--rev $REV --json-out $OUT; echo done")
+        row = run_block(root, rev, command, work,
+                        os.path.join(work, "out.json"), "mismatch_count", "0")
+        met = (not row["executed"]
+               and any(d.startswith("SHELL_METACHAR")
                        for d in row["static_defects"]))
     return {"control": name, "expected": CONTROLS[name],
             "met": bool(met), "ok": bool(met), "row": row,

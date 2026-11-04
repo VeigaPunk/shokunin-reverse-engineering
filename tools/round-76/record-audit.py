@@ -407,9 +407,18 @@ _CAP_ROW = ("| a capability name | does one thing that the record can re-derive 
 _CAP_CLAIM = ("**Capabilities rows appended** in the table above (`## Capabilities`): "
               "`a capability name`, each with its `l1/scores` receipt.")
 
+_CAP_OTHER_ROW = _CAP_ROW.replace("| a capability name |",
+                                  "| another capability |")
+_CAP_CLAIM_WRAPPED = (
+    "**Capabilities rows appended** in the table above (`## Capabilities`): "
+    "`a capability\nname`, each with its `l1/scores` receipt.")
+
 CAPABILITY_CASES = {
+    # The table is POPULATED with a different row, so the per-name absent-row
+    # check is the only detector (round-76 wave survivor a: an empty table let
+    # the "no data rows" guard mask it).
     "cap-absent-row-red": lambda: capability_defects(
-        _cap_fixture([], _CAP_CLAIM), lambda p: True) != [],
+        _cap_fixture([_CAP_OTHER_ROW], _CAP_CLAIM), lambda p: True) != [],
     "cap-empty-evidence-red": lambda: capability_defects(
         _cap_fixture([_CAP_ROW.replace(
             "`.ufo/waves/round-75/l1/scores/c1.json`", "—")], _CAP_CLAIM),
@@ -428,6 +437,11 @@ CAPABILITY_CASES = {
     "cap-no-claim-line-red": lambda: capability_defects(
         _cap_fixture([_CAP_ROW], "**Capabilities entered.** nothing appended."),
         lambda p: True) != [],
+    # The claim wraps and the backticked name straddles the wrap (the round-75
+    # shape): a line-level parser extracts zero names and reports a false defect
+    # (round-76 wave survivor e).
+    "cap-wrapped-claim-accepts": lambda: capability_defects(
+        _cap_fixture([_CAP_ROW], _CAP_CLAIM_WRAPPED), lambda p: True) == [],
 }
 
 
