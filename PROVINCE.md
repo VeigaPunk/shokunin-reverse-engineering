@@ -15,14 +15,16 @@ host binutils as non-REA fallback readers.
 Drift-prone values: reverified 2026-10-20 (round 19) — configured REA MCP pins are Devin
 `rea-agents@6.7.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP
 `rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:8`), and Kimi
-`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite dropped the `enabled: false` key, so the live OMP file no longer records the disable (round-19 w1 `LiveConfigPins.md`). Cache/catalog The `17:55:49Z receipt` and its old line-number pointers are historical, not current registration evidence.
+`rea-agents@6.7.0` (`~/.kimi-code/config.toml:4126`); Devin/OMP were rewritten 2026-10-20 13:35:56 -03 outside the lane (they carried the superseded 6.5.0 pin before). The operator disabled the OMP rea entry for the hyaku phase (10:12 -03); that rewrite moved the disable into the file's `disabledServers` list, so the live OMP file records the disable in
+`disabledServers: ["rea"]` (re-read 2026-11-04, round 78, `.ufo/waves/round-78/l1/scores/c2-at-record.json`; the round-19
+w1 `LiveConfigPins.md` note that the rewrite dropped the record is superseded for the location, not for the disable). Cache/catalog The `17:55:49Z receipt` and its old line-number pointers are historical, not current registration evidence.
 identities (re-derived 2026-10-20, round 19): 6.7.0 at `/home/vgpnk/.npm/_npx/a1722018f28f9df2` — 153 CLI
 commands, 207 MCP tools, `tools_sha256=af39310c9591bb981893ec0d2188b1bcf6e9cc8ba3ac513d5bbefc8ddcb85639`; 6.5.0 at
 `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6` — 153 CLI commands, 207 MCP tools, `tools_sha256=805433f17bb4f709558ff20c04f96fe561fca2938fd0f459b1f8cc0f6b438ded`; historical 6.4.0 in npx cache directory
 `dea9475797100b20` (historical: directory absent 2026-10-20) — 127 CLI commands, 170 MCP tools,
 `tools_sha256=25802f6de8c14ba736dc61ff1cbc7c5cd738fd74426aa01338f2dd03e0911166` (historical pin)
 (L12 receipt, SHA-256 above). Installed shared REA skill is v42/207 tools; since 2026-10-20 13:35:56 -03 it is byte-identical to the 6.7.0 bundled skill (installed sha256 `fbcd39d6…`; the prior `c8639823…` variant survives only as a `.rea.backup` recovery file; round-19 w1 `SourcesRowAudit.md`). Doctor: the 6.7.0 doctor reports no Devin/OMP registration finding, the 6.5.0 doctor reports those registrations request 6.7.0 (`.ufo/waves/round-19/evidence/doctor/`); 6.4.0 expected v37 (historical L10 receipts).
-Reverified Ghidra/JDK 2026-10-20: `GHIDRA_INSTALL_DIR=/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`, `application.version=12.1.4` (build `2026-Sep-21 1613 UTC`); `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, Java `21.0.12.1` (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17`, `/home/vgpnk/.bashrc:28-29` (were `:23-24` before the 2026-10-19 `.bashrc` edit); `java -version 2>&1 | head -n 1` returned `openjdk version "21.0.12.1" 2026-08-18`).
+Reverified Ghidra/JDK 2026-11-04 (round 78 surface recheck, `.ufo/waves/round-78/l1/scores/c2-at-record.json`; the 2026-10-20 values were `21.0.12.1`): `GHIDRA_INSTALL_DIR=/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC`, `application.version=12.1.4` (build `2026-Sep-21 1613 UTC`); `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, Java `21.0.13` (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17`, `/home/vgpnk/.bashrc:28-29` (were `:23-24` before the 2026-10-19 `.bashrc` edit); `java -version 2>&1 | head -n 1` returned `openjdk version "21.0.13" 2026-10-20`).
 Provider-key inventory re-probed 2026-10-20 (round 19, names only, w1 `ProviderKeysRecheck.md`): `.bashrc:63-69` exports `REA_PWNTOOLS_PYTHON`, `REA_BINWALK_COMMAND`, `REA_UNBLOB_COMMAND`, `REA_APKTOOL_COMMAND`, `REA_ADB_PATH`, `REA_WAKARU_COMMAND` (bind the `@wakaru/cli-linux-x64` ELF, not node shim) and `REA_JADX_MCP_JAR`, all resolving to existing paths; these exports sit below the interactive guard (`.bashrc:34`), so a non-interactive shell does not see them; `REA_IDA_MCP_CONFIG` and `HOPPER_LAUNCHER_PATH` are unset. The r5-audit C8 correction was for REA 6.4.0 (historical): `APKTOOL_COMMAND_ENV=REA_APKTOOL_COMMAND`, now `.bashrc:66` (was `:61`) → `/usr/bin/apktool`.
 
 Probe/reconciliation conventions: `rea doctor` is the environment verdict;
@@ -44,7 +46,7 @@ Surfaces owned now — each verified on this host 2026-10-13.
 | REA MCP server | `~/.config/devin/mcp_config.json` + `~/.omp/agent/mcp.json` + `~/.kimi-code/config.toml` — config files pin `rea-agents` (Devin/OMP/Kimi 6.7.0 since 2026-10-20 13:35:56 -03; see surface summary) with env `GHIDRA_INSTALL_DIR`, `JAVA_HOME` | `binary_session {}` would inspect a running attached client; not exercised this round. CLI: `rea doctor` (6.7.0 doctor: no devin/omp registration finding, separate Kimi JSON registration missing) | round-19 re-grepped pin/sha256 record `.ufo/waves/round-19/evidence/province-pins-integrated.json`; doctor outputs in `.ufo/waves/round-19/evidence/doctor/` (doctor-6.5.0.txt, doctor-6.7.0.txt); historical readiness probe 2026-10-13 |
 | `rea` CLI | npx cache `~/.npm/_npx/*/node_modules/rea-agents` — no `rea` on PATH; 153 commands on the 6.5.0/6.7.0 pins, 127 on 6.4.0 (historical) | `npx -y rea-agents@6.4.0 --version` → `6.4.0` (2026-10-13 receipt) | wave 01/02/03 catalogs |
 | Ghidra provider | `GHIDRA_INSTALL_DIR` (876 MB install); headless `support/analyzeHeadless`; native decompiler `Ghidra/Features/Decompiler/os/linux_x86_64/decompile`; 39 processor modules; 34 features incl. PyGhidra/BSim | `rea doctor` → providerInspections `ghidra: configured+available`, 8/8 checks | `application.version=12.1.4`, build 2026-09-21, rev 8b6bbb85 |
-| JDK 21 substrate | `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, exported in `.bashrc:29` + `.profile:4` (re-read 2026-10-20, w1 `GhidraJdkRecheck`); sole Java on host | `java -version` → 21.0.12.1 full JDK | meets Ghidra `java.min=21` exactly; single-Java fragility noted |
+| JDK 21 substrate | `JAVA_HOME=/usr/lib/jvm/java-21-openjdk`, exported in `.bashrc:29` + `.profile:4` (re-read 2026-11-04, round 78 surface recheck; the 2026-10-20 w1 `GhidraJdkRecheck` recorded 21.0.12.1); sole Java on host | `java -version` → 21.0.13 full JDK | meets Ghidra `java.min=21` exactly; single-Java fragility noted |
 | Native ELF via Ghidra | `rea analyze/search/decompile <path>`; sessions `mkdtemp /tmp/rea-ghidra-*`, `-readOnly -deleteProject`, self-cleaning | `rea analyze <elf>` → overview + procedure inventory | `/usr/bin/jq`: 30 segments, 167 procedures, 190 strings, ~5.5s; `decompile 0x103fa0` recovered `process()` loop |
 | Electron/ASAR/JavaScript | `analyze_javascript_application` on `.asar` or extracted tree; `inspect_analysis_view` paging; asar archives pinned on host (12 live): obsidian ×2 + a config-dir copy, signal, 1Password, electron39/43 stubs, typora ×3 (r1 sweep missed them), chatgpt, zcode squashfs-root | `analyze_javascript_application` `detail:"summary"` on a small asar | `default_app.asar` (electron43) → 5 files, 41 findings, evidence `ev_2628de89…`; 1Password 480-file asar (count per the r4-06 erratum) + 188MB Rust N-API core (r4-06); AppImage inner asar via unblob/7z carve (r4-15) |
 | Archive/package inventory | `inspect_artifact`/`extract_artifact` (`available:true` in the live session as recorded for the 2026-10-13 host survey); pacman `.pkg.tar.zst` cache: 1,556 signed archives (2026-10-13 snapshot); current cache: 1,350 archive files, each with a matching `.sig` sidecar (arc3-loop1-round9 recount; −206 vs snapshot; see `corpus/knowledge/2026-10-13-pacman-packages.md` erratum); `.MTREE` per-file sha256; `pacman -Qkk` verify | `binary_session {}` capabilities | installed `jq` verified byte-identical to signed archive member (re-verified arc3-loop1-round9) |
@@ -614,3 +616,26 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   authenticity or signed receipts, REA-internal and packer-internal child processes, other packers/carriers,
   anti-UPX stubs, packed PE/Mach-O and semantic inventory equality.
 
+
+## Round-78 additions to Core
+
+- **Core — attack gate:** `tools/round-78/attack-gate.py` materialises ten committed attack fixtures
+  (`.ufo/waves/round-78/attacks/`), measures that the frozen round-77 instruments accept each one, and
+  refuses it by the one declared rule its class names: `receipt_auth` (a named receipt carries a 40-hex
+  `rev` and an `instrument.sha256` re-derived from the blob at that rev), `qualified_atom`,
+  `near_miss_field`, `negated_verdict`, `value_mismatch` (a parsed clause bound through a unique nested
+  key), `unbound_verdict` (a parsable clause that binds nothing — the round-77 instrument computes its
+  `defect` status and drops it), `clean_run`, `filing_rev`, `gate_receipt_schema`, `gate_receipt_rev`.
+  Retained evidence: `.ufo/waves/round-78/l1/scores/c1-at-record.json` (fixtures_total 10,
+  base_accepted 10, refused 10, validate defect-free).
+- **Core — surface recheck:** `tools/round-78/surface-recheck.py` parses eight drift-prone surface
+  values from `PROVINCE.md` with declared patterns and compares them typed to the live object the record
+  names (the three client configs' `rea` entry, the Ghidra provider's `application.properties`, the
+  `.bashrc` exports, `java -version`); a pointer that is not the declared live source is a defect, and
+  the receipt carries `checked_at`. Retained evidence: `.ufo/waves/round-78/l1/scores/c2-at-record.json`
+  (checks_total 8, matched 8, unparsed 0).
+- **Still Frontier:** registries outside the SKILL block, a complete GFM parser, cryptographic receipt
+  authenticity or signed receipts (the `rev`+`instrument.sha256` binding authenticates the producing
+  blob, not the author), REA-internal and packer-internal child processes, other packers/carriers,
+  anti-UPX stubs, packed PE/Mach-O and semantic inventory equality, and a record value whose live
+  object changes without a recheck.
