@@ -1,0 +1,142 @@
+[
+ {
+  "id": "RA-01",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "m = re.search(r\"count\\s+(\\d{1,3})(.*)$\", teaches)",
+  "replace": "m = re.search(r\"(\\d{1,3})(.*)$\", teaches)",
+  "declared_case": "a1-wrong-count"
+ },
+ {
+  "id": "RA-02",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "if not sup:",
+  "replace": "if False:",
+  "declared_case": "a1-no-superseding-row"
+ },
+ {
+  "id": "RA-03",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "if receipt_round < claim_round:",
+  "replace": "if False:",
+  "declared_case": "a3-stale-receipt-round"
+ },
+ {
+  "id": "RA-04",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "if not paths:",
+  "replace": "if False:",
+  "declared_case": "a3-no-receipt-named"
+ },
+ {
+  "id": "RA-05",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "ok = stem in sentence and not others",
+  "replace": "ok = not others",
+  "declared_case": "a2-docstring-drift"
+ },
+ {
+  "id": "RA-06",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "if len(sentences) != 1:",
+  "replace": "if not sentences:",
+  "declared_case": "a2-ambiguous-sentences"
+ },
+ {
+  "id": "RA-07",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "ok = declared == len(prior) and sorted(set(ids)) == sorted(set(prior))",
+  "replace": "ok = declared == len(prior) and bool(set(ids) & set(prior))",
+  "declared_case": "a1-wrong-id-set"
+ },
+ {
+  "id": "RA-08",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "ok = declared == len(prior) and sorted(set(ids)) == sorted(set(prior))",
+  "replace": "ok = sorted(set(ids)) == sorted(set(prior))",
+  "declared_case": "a1-wrong-count"
+ },
+ {
+  "id": "RA-09",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "r\"[0-9a-f]{40}\"",
+  "replace": "r\"[0-9a-f]{39,40}\"",
+  "declared_case": "a3-receipt-not-revision-stamped"
+ },
+ {
+  "id": "RA-10",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "ok = isinstance(rev, str) and re.fullmatch(r\"[0-9a-f]{40}\", rev or \"\") is not None",
+  "replace": "ok = isinstance(rev, str)",
+  "declared_case": "a3-receipt-not-revision-stamped"
+ },
+ {
+  "id": "RA-11",
+  "target": "tools/round-86/record-agreement.py",
+  "find": "blob = read(receipt)",
+  "replace": "blob = '{\"rev\": \"%s\", \"ok\": true}' % (\"a\" * 40)",
+  "declared_case": "a3-receipt-absent-at-rev"
+ },
+ {
+  "id": "GR-12",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "add(\"G1-row-present\", count == 1,",
+  "replace": "add(\"G1-row-present\", count >= 1,",
+  "declared_case": "duplicate-row"
+ },
+ {
+  "id": "GR-13",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "declared_map and observed == 0",
+  "replace": "observed == 0",
+  "declared_case": "incomplete-verdict-map"
+ },
+ {
+  "id": "GR-14",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "declared_map and observed == 0",
+  "replace": "declared_map and observed >= 0",
+  "declared_case": "selftest-nonzero-exit"
+ },
+ {
+  "id": "GR-15",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "for tok in (\"0=\", \"1=\", \"2=\"))",
+  "replace": "for tok in (\"0=\", \"1=\"))",
+  "declared_case": "incomplete-verdict-map"
+ },
+ {
+  "id": "GR-16",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "got = proc.returncode",
+  "replace": "got = 0",
+  "declared_case": "wrong-declared-exit"
+ },
+ {
+  "id": "GR-17",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "bool(pins) and len(present) == len(pins)",
+  "replace": "bool(pins)",
+  "declared_case": "pin-absent-at-rev"
+ },
+ {
+  "id": "GR-18",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "len(present) == len(pins)",
+  "replace": "len(present) >= 1",
+  "declared_case": "two-pins-one-absent"
+ },
+ {
+  "id": "GR-19",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "and owner_round.group(1) == tool_round.group(1)",
+  "replace": "and True",
+  "declared_case": "owner-round-mismatch"
+ },
+ {
+  "id": "GR-20",
+  "target": "tools/round-86/gate-registry.py",
+  "find": "r\"kaidoku-r(\\d+)$\"",
+  "replace": "r\"kaidoku-r(\\d+)\"",
+  "declared_case": "owner-trailing-text"
+ }
+]

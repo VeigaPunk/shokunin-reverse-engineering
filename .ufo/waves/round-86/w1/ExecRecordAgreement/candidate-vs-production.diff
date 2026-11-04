@@ -1,0 +1,931 @@
+--- /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-86/record-agreement.py	2026-11-04 18:13:56.522347559 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-86/w1/ExecRecordAgreement/candidate/tools/round-86/record-agreement.py	2026-11-04 18:24:28.528624641 -0300
+@@ -20,12 +20,19 @@
+                             `.ufo/waves/round-M/l1/scores/*.json` receipt with M >= R; that
+                             receipt must be a blob at --rev and carry a 40-hex `rev` field.
+ 
+-Reading rule: in `--rev` mode every path is read with `git show REV:path` (S255: a committed
+-object's bytes, never a worktree file). `--worktree <dir>` is the selftest/fixture mode only.
++Locating the objects (implementation, not atom text): the registry is the single table whose
++header opens `| id |` and carries `source` and `teaches` columns; its rows are the directly
++following `|` lines, 0-3 spaces indented, outside fenced code. The `| coverage |` row is the one
++under `## Owned axes` (the current assessment); history rows in other sections are not the row.
++
++Reading rule: in `--rev` mode every path is read as a committed blob (`git cat-file blob
++REV:path`; S255: a committed object's bytes, never a worktree file). `--rev` must be a full
++40-hex commit that resolves in --root, else exit 2. `--worktree <dir>` is FIXTURE MODE ONLY: it
++reads a directory, is refused together with `--rev` (exit 2), and its receipt is labelled
++`mode: worktree-fixture`, never a measurement.
+ 
+ Verdict: `mismatches` lists every atom id that is false. Exit 0 when `mismatches` is empty,
+-1 otherwise, 2 when an input cannot be read (a missing atom input is itself a mismatch only when
+-the record names it; an unreadable revision is exit 2).
++1 otherwise, 2 when the reading mode, revision, or control is unusable (UNEVALUABLE/REFUSED).
+ 
+ Control (`--control substring-only`): the cheap rule that skips the re-derivation — an atom is
+ agreed when the file merely CONTAINS the token it talks about. It is expected to ACCEPT the
+@@ -34,12 +41,14 @@
+ 
+ Limits (declared): these are three finite record atoms, not a whole-card audit. A1's grammar is
+ one declared sentence shape; A2 is a sentence-level check, not a semantics proof; A3 checks that
+-the named receipt exists and is revision-stamped, not that the receipt's numbers are right.
++the named receipts exist and the covering one is revision-stamped, not that its numbers are right.
++Residual: a non-covering receipt named by the row is not required to exist.
+ """
+ 
+ from __future__ import annotations
+ 
+ import argparse
++import ast
+ import hashlib
+ import json
+ import re
+@@ -52,22 +61,60 @@
+ SOURCES = "corpus/SOURCES.md"
+ MUTATION_CLOSURE = "tools/round-84/mutation-closure.py"
+ CARD = "SCORECARD.md"
++SCHEMA = "kaidoku-r86-record-agreement-v1"
++CONTROL_NAME = "substring-only"
+ 
+ STATUS_WORDS = ("inconclusive", "killed", "survived", "survivor")
++SUPERSEDE_RE = re.compile(r"supersedes S303(?!\d)")
++COUNT_CLAUSE_RE = re.compile(r"\bcount\s+(\d{1,3})\b(.*)$", re.S)
++ROW_RE = re.compile(r"^ {0,3}\|\s*S\d{3,}\s*\|")
++ID_IN_TEXT_RE = re.compile(r"\bS\d{3,}\b")
++RECEIPT_RE = re.compile(r"\.ufo/waves/round-(\d+)/l1/scores/[A-Za-z0-9._-]+\.json")
++REV_RE = re.compile(r"[0-9a-f]{40}")
++PIPE_OPEN_RE = re.compile(r"^ {0,3}\|")
++FENCE_OPEN_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
++FENCE_CLOSE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})\s*$")
+ 
+ 
+ class Unreadable(Exception):
+     pass
+ 
+ 
+-def git_show(root: Path, rev: str, path: str) -> str:
+-    proc = subprocess.run(
+-        ["git", "-C", str(root), "show", f"{rev}:{path}"],
+-        capture_output=True, text=True,
+-    )
+-    if proc.returncode != 0:
+-        raise Unreadable(f"{rev}:{path}: {proc.stderr.strip().splitlines()[-1] if proc.stderr.strip() else 'git show failed'}")
+-    return proc.stdout
++# ---------------------------------------------------------------- readers
++
++
++def git_blob(root: Path, rev: str, path: str) -> str:
++    """The committed blob at REV:PATH, as text. Anything else (tree, missing, binary) is unreadable."""
++    spec = f"{rev}:{path}"
++    kind = subprocess.run(["git", "-C", str(root), "cat-file", "-t", spec],
++                          capture_output=True, text=True)
++    if kind.returncode != 0 or kind.stdout.strip() != "blob":
++        raise Unreadable(f"{spec}: not a blob at this revision")
++    body = subprocess.run(["git", "-C", str(root), "cat-file", "blob", spec], capture_output=True)
++    if body.returncode != 0:
++        raise Unreadable(f"{spec}: cat-file failed")
++    try:
++        return body.stdout.decode("utf-8")
++    except UnicodeDecodeError as exc:
++        raise Unreadable(f"{spec}: not UTF-8 ({exc})") from exc
++
++
++def rev_reader(root: Path, rev: str):
++    def read(path: str) -> str:
++        return git_blob(root, rev, path)
++    return read
++
++
++def worktree_reader(work: Path):
++    def read(path: str) -> str:
++        try:
++            return (work / path).read_text(encoding="utf-8")
++        except (OSError, UnicodeDecodeError) as exc:
++            raise Unreadable(f"{path}: {exc}") from exc
++    return read
++
++
++# ---------------------------------------------------------------- markdown locating
+ 
+ 
+ def split_row(line: str) -> list[str]:
+@@ -79,14 +126,90 @@
+     return [c.strip() for c in re.split(r"(?<!\\)\|", body)]
+ 
+ 
+-def parse_registry(text: str) -> list[dict]:
+-    rows = []
+-    for line in text.splitlines():
+-        m = re.match(r"^ {0,3}\|\s*(S\d{3,})\s*\|", line)
+-        if not m:
++def fenced_flags(lines: list[str]) -> list[bool]:
++    flags, fence = [], None
++    for line in lines:
++        if fence is None:
++            m = FENCE_OPEN_RE.match(line)
++            flags.append(bool(m))
++            if m:
++                fence = m.group(1)
++        else:
++            flags.append(True)
++            close = FENCE_CLOSE_RE.match(line)
++            if close and close.group(1)[0] == fence[0] and len(close.group(1)) >= len(fence):
++                fence = None
++    return flags
++
++
++def is_delimiter(line: str) -> bool:
++    t = line.strip()
++    return t.startswith("|") and set(t) <= set("|:- ") and "---" in t
++
++
++def registry_rows(text: str):
++    """Return (header, rows, problems, ignored) for corpus/SOURCES.md.
++
++    A registry row is a line outside fenced code matching `^ {0,3}|\\s*S###` (the frozen row
++    shape). It counts only when it directly follows a blank line, the registry header, or another
++    registry row: a row-shaped line glued to prose is recorded in `ignored` and is not a row, so a
++    superseding row written inside a paragraph cannot satisfy A1. Blank lines between rows are
++    allowed (the registry is grouped in chunks). Exactly one `| id |` header with `source` and
++    `teaches` columns must precede the rows; every counted row must carry the header's cell count.
++    """
++    lines = text.splitlines()
++    fenced = fenced_flags(lines)
++    head, delim_line, headers = None, None, 0
++    rows, problems, ignored = [], [], []
++    prev = "blank"
++    for idx, line in enumerate(lines):
++        if fenced[idx]:
++            prev = "other"
++            continue
++        if line.strip() == "":
++            prev = "blank"
++            continue
++        if idx == delim_line:
++            prev = "header"
++            continue
++        if not PIPE_OPEN_RE.match(line):
++            prev = "other"
+             continue
+         cells = split_row(line)
+-        rows.append({"id": m.group(1), "cells": cells, "line": line})
++        if (cells[:1] == ["id"] and {"source", "teaches"} <= set(cells) and idx + 1 < len(lines)
++                and not fenced[idx + 1] and is_delimiter(lines[idx + 1])):
++            head, delim_line, headers = cells, idx + 1, headers + 1
++            prev = "header"
++            continue
++        if not ROW_RE.match(line):
++            prev = "other"
++            continue
++        if prev == "other":
++            ignored.append(idx + 1)
++            prev = "other"
++            continue
++        if head is None:
++            problems.append(f"line {idx + 1}: registry row before any registry header")
++        elif len(cells) != len(head):
++            problems.append(f"line {idx + 1}: {len(cells)} cells, header has {len(head)}")
++        else:
++            rows.append({"id": cells[0], "cells": cells, "line": idx + 1})
++        prev = "row"
++    if headers != 1:
++        return None, [], [f"expected exactly one registry header, found {headers}"], ignored
++    return head, rows, problems, ignored
++
++
++def owned_axes_coverage_rows(card: str):
++    lines = card.splitlines()
++    if "## Owned axes" not in [line.rstrip() for line in lines]:
++        return None
++    section, rows = None, []
++    for line in lines:
++        if line.startswith("## "):
++            section = line[3:].strip()
++        elif line.startswith("| coverage |") and section == "Owned axes":
++            rows.append(line)
+     return rows
+ 
+ 
+@@ -94,96 +217,121 @@
+ 
+ 
+ def atom_supersede_count(read) -> tuple[bool, dict]:
+-    text = read(SOURCES)
+-    rows = parse_registry(text)
+-    if not rows:
+-        return False, {"why": "no registry rows parsed"}
+-    url_rows = [r["id"] for r in rows if URL_TOKEN in (r["cells"][1] if len(r["cells"]) > 1 else "")]
+-    sup = [r for r in rows if len(r["cells"]) > 6 and r["cells"][6].startswith("supersedes S303")]
++    head, rows, problems, ignored = registry_rows(read(SOURCES))
++    if head is None:
++        return False, {"why": problems[0]}
++    if problems:
++        return False, {"why": "malformed registry row(s)", "problems": problems,
++                       "ignored_row_shaped_lines": ignored}
++    col_source, col_teaches = head.index("source"), head.index("teaches")
++    url_rows = [r["id"] for r in rows if URL_TOKEN in r["cells"][col_source]]
++    sup = [r for r in rows if SUPERSEDE_RE.match(r["cells"][col_teaches])]
+     if not sup:
+-        return False, {"why": "no row whose teaches opens `supersedes S303`",
+-                       "url_rows": url_rows}
++        return False, {"why": "no row whose teaches opens `supersedes S303`", "url_rows": url_rows}
+     row = sup[-1]
+-    teaches = row["cells"][6]
+-    # declared grammar: `... count N (S###/S###/...) ...` — the count is the integer that
+-    # follows the word `count`, and the id list is every id after it.
+-    m = re.search(r"count\s+(\d{1,3})(.*)$", teaches)
+-    prior = [i for i in url_rows if i not in (row["id"], "S303")]
++    teaches = row["cells"][col_teaches]
++    prior = sorted(i for i in url_rows if i not in (row["id"], "S303"))
++    if len(re.findall(r"\bcount\b", teaches)) != 1:
++        return False, {"why": "superseding row must state exactly one `count` clause",
++                       "row": row["id"], "teaches": teaches[:120]}
++    m = COUNT_CLAUSE_RE.search(teaches)
+     if not m:
+         return False, {"why": "superseding row states no `count N` clause", "row": row["id"],
+                        "teaches": teaches[:120]}
+     declared = int(m.group(1))
+-    ids = [i for i in re.findall(r"\bS\d{3,}\b", m.group(2)) if i != row["id"]]
+-    ok = declared == len(prior) and sorted(set(ids)) == sorted(set(prior))
++    # declared grammar: `... count N (S###/S###/...) ...` — the id list is every id after the count.
++    listed = [i for i in ID_IN_TEXT_RE.findall(m.group(2)) if i != row["id"]]
++    ok = (declared == len(prior) and len(listed) == declared
++          and len(set(listed)) == len(listed) and sorted(listed) == prior)
+     return ok, {"superseding_row": row["id"], "declared_count": declared,
+-                "prior_rows": prior, "declared_ids": sorted(set(ids)),
+-                "url_rows_total": len(url_rows)}
++                "prior_rows": prior, "declared_ids": sorted(listed),
++                "url_rows_total": len(url_rows), "ignored_row_shaped_lines": ignored}
++
++
++def _is_not_case_present(test: ast.expr) -> bool:
++    return (isinstance(test, ast.UnaryOp) and isinstance(test.op, ast.Not)
++            and isinstance(test.operand, ast.Name) and test.operand.id == "case_present")
+ 
+ 
+ def atom_docstring_status(read) -> tuple[bool, dict]:
+-    text = read(MUTATION_CLOSURE)
+-    lines = text.splitlines()
+-    label = None
+-    for i, line in enumerate(lines):
+-        if re.match(r"\s*(?:el)?if not case_present:\s*$", line):
+-            for follow in lines[i + 1:i + 6]:
+-                m = re.search(r'entry\["status"\]\s*=\s*"([a-z_]+)"', follow)
+-                if m:
+-                    label = m.group(1)
+-                    break
+-            break
+-    if label is None:
+-        return False, {"why": "no `elif not case_present:` branch with a status assignment"}
+-    m = re.search(r'"""(.*?)"""', text, re.S)
+-    if not m:
+-        return False, {"why": "no module docstring"}
+-    doc = re.sub(r"\s+", " ", m.group(1))
+-    sentences = [s for s in re.split(r"(?<=[.;:])\s+", doc) if "absent declared case" in s]
++    try:
++        tree = ast.parse(read(MUTATION_CLOSURE))
++    except SyntaxError as exc:
++        return False, {"why": f"target does not parse: {exc}"}
++    branches = [n for n in ast.walk(tree) if isinstance(n, ast.If) and _is_not_case_present(n.test)]
++    if len(branches) != 1:
++        return False, {"why": f"expected exactly one `not case_present` branch, found {len(branches)}"}
++    assigned = set()
++    for stmt in branches[0].body:
++        for node in ast.walk(stmt):
++            if (isinstance(node, ast.Assign) and len(node.targets) == 1
++                    and isinstance(node.targets[0], ast.Subscript)
++                    and isinstance(node.targets[0].slice, ast.Constant)
++                    and node.targets[0].slice.value == "status"
++                    and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str)):
++                assigned.add(node.value.value)
++    if len(assigned) != 1:
++        return False, {"why": "the `not case_present` branch must assign exactly one status",
++                       "assigned": sorted(assigned)}
++    label = assigned.pop()
++    doc = ast.get_docstring(tree)
++    if doc is None:
++        return False, {"why": "no module docstring", "code_status": label}
++    doc = re.sub(r"\s+", " ", doc)
++    sentences = [s.strip() for s in re.split(r"(?<=[.;:])\s+", doc)
++                 if "absent declared case" in s.lower()]
+     if len(sentences) != 1:
+         return False, {"why": "docstring does not name an absent declared case in exactly one sentence",
+                        "code_status": label, "sentences": sentences}
+     sentence = sentences[0]
++    low = sentence.lower()
+     stem = label[:5]
+-    others = [w for w in STATUS_WORDS if w[:5] != stem and re.search(rf"\b{w}", sentence)]
+-    ok = stem in sentence and not others
+-    return ok, {"code_status": label, "sentence": sentence.strip(), "conflicting_words": others}
+-
+-
+-def atom_receipt_pointer(read) -> tuple[bool, dict]:
+-    card = read(CARD)
+-    rows = [line for line in card.splitlines() if line.startswith("| coverage |")]
++    names_status = re.search(rf"\b{re.escape(stem)}", low) is not None
++    others = [w for w in STATUS_WORDS if w[:5] != stem and re.search(rf"\b{w}", low)]
++    ok = names_status and not others
++    return ok, {"code_status": label, "sentence": sentence, "conflicting_words": others}
++
++
++def atom_receipt_pointer(read) -> tuple[bool, dict]:
++    rows = owned_axes_coverage_rows(read(CARD))
++    if rows is None:
++        return False, {"why": "no `## Owned axes` section in SCORECARD"}
+     if len(rows) != 1:
+-        return False, {"why": f"expected exactly one `| coverage |` row, found {len(rows)}"}
++        return False, {"why": f"expected exactly one `| coverage |` row under `## Owned axes`, found {len(rows)}"}
+     cells = split_row(rows[0])
+     round_cell = cells[-1] if cells else ""
+     m = re.match(r"\s*(\d{1,3})\b", round_cell)
+     if not m:
+         return False, {"why": "coverage row's last cell states no round", "cell": round_cell}
+     claim_round = int(m.group(1))
+-    paths = re.findall(r"\.ufo/waves/round-(\d+)/l1/scores/([A-Za-z0-9._-]+\.json)", rows[0])
+-    if not paths:
++    named = sorted({(int(r.group(1)), r.group(0)) for r in RECEIPT_RE.finditer(rows[0])})
++    if not named:
+         return False, {"why": "coverage row names no `.ufo/waves/round-M/l1/scores/*.json` receipt",
+                        "claim_round": claim_round}
+-    newest = max(paths, key=lambda p: int(p[0]))
+-    receipt_round = int(newest[0])
+-    receipt = f".ufo/waves/round-{newest[0]}/l1/scores/{newest[1]}"
+-    if receipt_round < claim_round:
++    newest = max(rnd for rnd, _ in named)
++    covering = [path for rnd, path in named if rnd == newest]
++    if newest < claim_round:
+         return False, {"why": "named receipt predates the row's own round",
+-                       "claim_round": claim_round, "receipt": receipt,
+-                       "receipt_round": receipt_round}
+-    try:
+-        blob = read(receipt)
+-    except Unreadable as exc:
+-        return False, {"why": "named receipt is not a blob at this revision", "receipt": receipt,
+-                       "error": str(exc)}
+-    try:
+-        data = json.loads(blob)
+-    except json.JSONDecodeError as exc:
+-        return False, {"why": "named receipt is not JSON", "receipt": receipt, "error": str(exc)}
+-    rev = data.get("rev") if isinstance(data, dict) else None
+-    ok = isinstance(rev, str) and re.fullmatch(r"[0-9a-f]{40}", rev or "") is not None
+-    return ok, {"claim_round": claim_round, "receipt": receipt, "receipt_round": receipt_round,
+-                "receipt_rev": rev}
++                       "claim_round": claim_round, "receipts": [p for _, p in named],
++                       "receipt_round": newest}
++    revs = {}
++    for path in covering:
++        try:
++            blob = read(path)
++        except Unreadable as exc:
++            return False, {"why": "named receipt is not a blob at this revision", "receipt": path,
++                           "error": str(exc)}
++        try:
++            data = json.loads(blob)
++        except json.JSONDecodeError as exc:
++            return False, {"why": "named receipt is not JSON", "receipt": path, "error": str(exc)}
++        rev = data.get("rev") if isinstance(data, dict) else None
++        if not (isinstance(rev, str) and REV_RE.fullmatch(rev)):
++            return False, {"why": "named receipt is not a JSON object with a 40-hex `rev` field",
++                           "receipt": path, "json_type": type(data).__name__}
++        revs[path] = rev
++    return True, {"claim_round": claim_round, "covering_receipts": covering,
++                  "receipt_round": newest, "receipt_revs": revs}
+ 
+ 
+ ATOMS = (
+@@ -220,7 +368,7 @@
+     return hashlib.sha256(path.read_bytes()).hexdigest()
+ 
+ 
+-def evaluate(read, rev: str, root: Path) -> dict:
++def run_atoms(read) -> list[dict]:
+     atoms = []
+     for atom_id, fn in ATOMS:
+         try:
+@@ -228,14 +376,24 @@
+         except Unreadable as exc:
+             ok, detail = False, {"why": "input unreadable", "error": str(exc)}
+         atoms.append({"id": atom_id, "ok": ok, "detail": detail})
++    return atoms
++
++
++def instrument_record(root: Path) -> dict:
++    instrument = Path(__file__).resolve()
++    rel = instrument.relative_to(root) if instrument.is_relative_to(root) else instrument
++    return {"path": str(rel), "sha256": digest(instrument)}
++
++
++def evaluate(read, rev: str, root: Path, mode: str) -> dict:
++    atoms = run_atoms(read)
+     mismatches = [a["id"] for a in atoms if not a["ok"]]
+-    instrument = Path(__file__).resolve()
+     return {
+-        "schema": "kaidoku-r86-record-agreement-v1",
++        "schema": SCHEMA,
++        "mode": mode,
+         "rev": rev,
+         "root": str(root),
+-        "instrument": {"path": str(instrument.relative_to(root)) if instrument.is_relative_to(root) else str(instrument),
+-                       "sha256": digest(instrument)},
++        "instrument": instrument_record(root),
+         "atoms": atoms,
+         "mismatches": mismatches,
+         "agreed": len(atoms) - len(mismatches),
+@@ -244,18 +402,15 @@
+     }
+ 
+ 
+-def run_control(name: str, read, rev: str, root: Path) -> dict:
+-    if name != "substring-only":
+-        raise SystemExit(f"unknown control {name}")
++def run_control(read, rev: str, root: Path, mode: str) -> dict:
+     atoms = control_substring_only(read)
+     mismatches = [a["id"] for a in atoms if not a["ok"]]
+-    instrument = Path(__file__).resolve()
+     return {
+-        "schema": "kaidoku-r86-record-agreement-v1-control",
+-        "control": name,
++        "schema": SCHEMA + "-control",
++        "mode": mode,
++        "control": CONTROL_NAME,
+         "rev": rev,
+-        "instrument": {"path": str(instrument.relative_to(root)) if instrument.is_relative_to(root) else str(instrument),
+-                       "sha256": digest(instrument)},
++        "instrument": instrument_record(root),
+         "atoms": atoms,
+         "mismatches": mismatches,
+         "ok": not mismatches,
+@@ -265,23 +420,30 @@
+ 
+ # ---------------------------------------------------------------- selftest
+ 
+-FIXTURE_SOURCES_OK = """# SOURCES
+-| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
+-|---|---|---|---|---|---|---|---|---|---|---|
+-| S001 | a | docs | A | x | x | t | mined | 2026-11-04 | 180d | |
+-| S083 | https://example.invalid/rea-agents-6.5.0.tgz | code | A | x | x | t | rejected | 2026-11-04 | 180d | |
+-| S090 | https://example.invalid/rea-agents-6.5.0.tgz | code | A | x | x | t | rejected | 2026-11-04 | 180d | |
+-| S119 | https://example.invalid/rea-agents-6.5.0.tgz | code | A | x | x | t | rejected | 2026-11-04 | 180d | |
+-| S303 | https://example.invalid/rea-agents-6.5.0.tgz | code | A | x | x | t | rejected | 2026-11-04 | 180d | |
+-| S305 | https://example.invalid/rea-agents-6.5.0.tgz | code | A | x | x | supersedes S303 — corrected prior-row count 3 (S083/S090/S119); still not anchored | rejected | 2026-11-04 | 180d | |
+-"""
+-FIXTURE_SOURCES_WRONG_COUNT = FIXTURE_SOURCES_OK.replace("count 3", "count 4")
+-FIXTURE_SOURCES_WRONG_IDS = FIXTURE_SOURCES_OK.replace("(S083/S090/S119)", "(S083/S090/S001)")
+-FIXTURE_SOURCES_NO_SUPERSEDE = FIXTURE_SOURCES_OK.replace(
+-    "corrected prior-row count 3 (S083/S090/S119); still not anchored",
+-    "prior-row count stated only in prose (see the round lesson); still not anchored")
++SOURCES_HEAD = (
++    "# SOURCES\n\n## Registry\n\n"
++    "| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n"
++    "|---|---|---|---|---|---|---|---|---|---|---|\n"
++)
++URL = "https://example.invalid/rea-agents-6.5.0.tgz"
++GOOD_TEACH = "supersedes S303 — corrected prior-row count 3 (S083/S090/S119); still not anchored"
++
++
++def srow(rid: str, teaches: str, source: str = URL, indent: str = "") -> str:
++    return f"{indent}| {rid} | {source} | code | A | x | x | {teaches} | rejected | 2026-11-04 | 180d | |"
++
++
++def sources_doc(s305: str | None = GOOD_TEACH, s305_source: str = URL, s305_indent: str = "",
++                extra: tuple[str, ...] = (), tail: str = "") -> str:
++    rows = [srow("S001", "t", source="local note"), srow("S083", "t"), srow("S090", "t"),
++            srow("S119", "t"), srow("S303", "t")]
++    if s305 is not None:
++        rows.append(srow("S305", s305, source=s305_source, indent=s305_indent))
++    rows.extend(extra)
++    return SOURCES_HEAD + "\n".join(rows) + "\n" + tail
++
+ 
+-FIXTURE_CODE_OK = '''#!/usr/bin/env python3
++CODE_OK = '''#!/usr/bin/env python3
+ """Counter: a status per mutant.
+ 
+   survived      the mutant run did not fail the declared case
+@@ -289,148 +451,313 @@
+ 
+ QUALITY 138: an absent declared case is a survivor, never a pass.
+ """
++import sys
++
++
+ def score(case_present):
++    entry = {}
++    if case_present:
++        entry["status"] = "killed"
+     if not case_present:
+-        entry = {}
+         entry["status"] = "survived"
+-        return entry
++    return entry
+ '''
+-FIXTURE_CODE_DRIFT = FIXTURE_CODE_OK.replace(
+-    "an absent declared case is a survivor, never a pass",
+-    "an absent declared case is inconclusive, never a pass")
+-FIXTURE_CODE_TWO_SENTENCES = FIXTURE_CODE_OK.replace(
+-    "QUALITY 138: an absent declared case is a survivor, never a pass.",
+-    "QUALITY 138: an absent declared case is a survivor, never a pass. An absent declared case is a survivor.")
++CODE_ELIF = CODE_OK.replace('    if not case_present:\n', '    elif not case_present:\n')
+ 
+-FIXTURE_CARD_OK = (
+-    "| coverage | 9.0 -> 9.5 | evidence (`.ufo/waves/round-7/l1/scores/coverage.json`) | 7 (row) |\n"
+-    "| depth | 9.0 -> 9.0 | x | 5 |\n"
+-)
+-FIXTURE_CARD_STALE = FIXTURE_CARD_OK.replace("round-7/l1", "round-6/l1")
+-FIXTURE_CARD_NONE = FIXTURE_CARD_OK.replace("`.ufo/waves/round-7/l1/scores/coverage.json`", "`.ufo/waves/round-7/l1/scores/` (directory only, no receipt named)")
+-FIXTURE_RECEIPT = '{"rev": "%s", "ok": true}\n' % ("a" * 40)
+-FIXTURE_RECEIPT_BAD_REV = '{"rev": "abc123", "ok": true}\n'
++CARD_OK = """# Scorecard
+ 
++## Owned axes
+ 
+-def selftest() -> int:
+-    cases = []
++| Axis | Baseline → current | Observable | Evidence | Last-change round |
++|---|---|---|---|---|
++| coverage | 9.0 → 9.5 | x | `.ufo/waves/round-7/l1/scores/coverage.json` | 7 |
++| depth | 9.0 → 9.0 | x | x | 5 |
+ 
+-    def case(name, expect_ok, files, atom_index):
+-        cases.append((name, expect_ok, files, atom_index))
++## Round history
+ 
+-    base = {
+-        "corpus/SOURCES.md": FIXTURE_SOURCES_OK,
+-        "tools/round-84/mutation-closure.py": FIXTURE_CODE_OK,
+-        "SCORECARD.md": FIXTURE_CARD_OK,
+-        ".ufo/waves/round-7/l1/scores/coverage.json": FIXTURE_RECEIPT,
+-    }
+-    case("genuine-agreement", True, base, None)
+-    case("a1-wrong-count", False, {**base, "corpus/SOURCES.md": FIXTURE_SOURCES_WRONG_COUNT}, 0)
+-    case("a1-wrong-id-set", False, {**base, "corpus/SOURCES.md": FIXTURE_SOURCES_WRONG_IDS}, 0)
+-    case("a1-no-superseding-row", False, {**base, "corpus/SOURCES.md": FIXTURE_SOURCES_NO_SUPERSEDE}, 0)
+-    case("a2-docstring-drift", False, {**base, "tools/round-84/mutation-closure.py": FIXTURE_CODE_DRIFT}, 1)
+-    case("a2-ambiguous-sentences", False, {**base, "tools/round-84/mutation-closure.py": FIXTURE_CODE_TWO_SENTENCES}, 1)
+-    case("a3-stale-receipt-round", False, {**base, "SCORECARD.md": FIXTURE_CARD_STALE}, 2)
+-    case("a3-no-receipt-named", False, {**base, "SCORECARD.md": FIXTURE_CARD_NONE}, 2)
+-    case("a3-receipt-absent-at-rev", False, {k: v for k, v in base.items() if not k.endswith("coverage.json")}, 2)
+-    case("a3-receipt-not-revision-stamped", False, {**base, ".ufo/waves/round-7/l1/scores/coverage.json": FIXTURE_RECEIPT_BAD_REV}, 2)
+-
+-    failures = []
+-    with tempfile.TemporaryDirectory(prefix="r86-record-agreement-selftest-") as tmp:
+-        root = Path(tmp)
+-        for name, expect_ok, files, atom_index in cases:
+-            work = root / name
+-            for rel, text in files.items():
+-                target = work / rel
+-                target.parent.mkdir(parents=True, exist_ok=True)
+-                target.write_text(text)
++| coverage | 8.0 → 9.0 | old | `.ufo/waves/round-3/l1/scores/old.json` | 3 |
++"""
++RECEIPT_PATH = ".ufo/waves/round-7/l1/scores/coverage.json"
++RECEIPT_OK = '{"rev": "%s", "ok": true}\n' % ("a" * 40)
++GENUINE = {"corpus/SOURCES.md": sources_doc(), MUTATION_CLOSURE: CODE_OK,
++           CARD: CARD_OK, RECEIPT_PATH: RECEIPT_OK}
+ 
+-            def read(path: str, _work: Path = work) -> str:
+-                try:
+-                    return (_work / path).read_text()
+-                except OSError as exc:
+-                    raise Unreadable(f"{path}: {exc}") from exc
+ 
+-            atoms = []
+-            for atom_id, fn in ATOMS:
+-                try:
+-                    ok, detail = fn(read)
+-                except Unreadable as exc:
+-                    ok, detail = False, {"error": str(exc)}
+-                atoms.append({"id": atom_id, "ok": ok, "detail": detail})
+-            if atom_index is None:
+-                ok = all(a["ok"] for a in atoms)
+-                if ok is not expect_ok:
+-                    failures.append(f"{name}: expected ok={expect_ok}, atoms={[a['ok'] for a in atoms]}")
+-            else:
+-                ok = atoms[atom_index]["ok"]
+-                if ok is not expect_ok:
+-                    failures.append(f"{name}: expected ok={expect_ok}, got {ok}")
+-            # the control must ACCEPT the defective record (it cannot fail on a word)
+-            if atom_index is not None:
+-                control_atoms = control_substring_only(read)
+-                if not control_atoms[atom_index]["ok"]:
+-                    failures.append(f"{name}: control refused a defective record (not a cheap-rule control)")
+-        # the control accepts the genuine world too
+-        work = root / "genuine-agreement"
++def _write_tree(root: Path, files: dict[str, str]) -> None:
++    for rel, text in files.items():
++        target = root / rel
++        target.parent.mkdir(parents=True, exist_ok=True)
++        target.write_text(text, encoding="utf-8")
+ 
+-        def genuine_read(path: str) -> str:
+-            return (work / path).read_text()
+ 
+-        control_atoms = control_substring_only(genuine_read)
+-        if not all(a["ok"] for a in control_atoms):
+-            failures.append("control refused the genuine world")
++def _git(cwd: Path, *args: str) -> str:
++    return subprocess.run(["git", "-C", str(cwd), *args], check=True,
++                          capture_output=True, text=True).stdout.strip()
+ 
+-    print(f"SELFTEST cases={len(cases) + 1} failures={len(failures)}")
+-    for failure in failures:
+-        print(f"FAIL {failure}")
+-    return 0 if not failures else 1
+ 
++def _commit_tree(root: Path, files: dict[str, str]) -> str:
++    root.mkdir(parents=True, exist_ok=True)
++    _git(root, "init", "-q")
++    _write_tree(root, files)
++    _git(root, "add", "-A")
++    _git(root, "-c", "user.name=r86-selftest", "-c", "user.email=r86-selftest@invalid",
++         "-c", "commit.gpgsign=false", "commit", "-q", "-m", "fixture")
++    return _git(root, "rev-parse", "HEAD")
+ 
+-# ---------------------------------------------------------------- main
+ 
++def _atom_cases() -> list[tuple[str, str, bool, dict]]:
++    """(name, atom, expect_ok, files). atom is an atom id, or 'all' for the three together."""
++    A1, A2, A3 = "A1-s303-supersede-count", "A2-docstring-status", "A3-receipt-pointer"
++    g = dict(GENUINE)
++
++    def with_src(text: str) -> dict:
++        return {**g, "corpus/SOURCES.md": text}
++
++    def with_code(text: str) -> dict:
++        return {**g, MUTATION_CLOSURE: text}
++
++    def with_card(text: str, extra: dict | None = None) -> dict:
++        return {**g, CARD: text, **(extra or {})}
++
++    return [
++        ("genuine-agreement", "all", True, dict(g)),
++        # A1 — registry row, count clause and id list
++        ("a1-wrong-count", A1, False, with_src(sources_doc(GOOD_TEACH.replace("count 3", "count 4")))),
++        ("a1-id-missing-and-foreign", A1, False,
++         with_src(sources_doc(GOOD_TEACH.replace("(S083/S090/S119)", "(S083/S090/S001)")))),
++        ("a1-id-list-longer-than-count", A1, False,
++         with_src(sources_doc(GOOD_TEACH.replace("(S083/S090/S119)", "(S083/S090/S119/S119)")))),
++        ("a1-superseding-row-states-no-count", A1, False,
++         with_src(sources_doc(GOOD_TEACH.replace("corrected prior-row count 3 (S083/S090/S119)",
++                                                 "prior-row count stated only in prose")))),
++        ("a1-row-in-prose-paragraph", A1, False,
++         with_src(sources_doc(None, tail="\nIn prose: | S305 | " + URL + " | code | A | x | x | "
++                                         + GOOD_TEACH + " | rejected | 2026-11-04 | 180d | |\n"))),
++        ("a1-row-indent-3-spaces-accepted", A1, True,
++         with_src(sources_doc(GOOD_TEACH, s305_indent="   "))),
++        ("a1-row-indent-4-spaces-refused", A1, False,
++         with_src(sources_doc(GOOD_TEACH, s305_indent="    "))),
++        ("a1-blank-lines-between-rows-accepted", A1, True,
++         with_src(sources_doc(GOOD_TEACH).replace("\n" + srow("S119", "t"), "\n\n" + srow("S119", "t")))),
++        ("a1-url-row-after-blank-line-is-counted", A1, False,
++         with_src(sources_doc(GOOD_TEACH, extra=("", srow("S306", "t"))))),
++        ("a1-row-glued-after-prose-line-refused", A1, False,
++         with_src(sources_doc(None, tail="\nNote, the superseding row follows:\n"
++                                         + srow("S305", GOOD_TEACH) + "\n"))),
++        ("a1-row-inside-fenced-code", A1, False,
++         with_src(sources_doc(None, tail="\n```\n" + srow("S305", GOOD_TEACH) + "\n```\n"))),
++        ("a1-teaches-supersedes-other-id", A1, False,
++         with_src(sources_doc(GOOD_TEACH.replace("supersedes S303 —", "supersedes S3031 —")))),
++        ("a1-count-clause-repeated", A1, False,
++         with_src(sources_doc(GOOD_TEACH + "; count 3 (S083/S090/S119)"))),
++        ("a1-malformed-extra-pipe", A1, False,
++         with_src(sources_doc(GOOD_TEACH + " | extra"))),
++        ("a1-newest-superseding-row-wrong", A1, False,
++         with_src(sources_doc(GOOD_TEACH, s305_source="local note",
++                              extra=(srow("S306", GOOD_TEACH.replace("count 3", "count 4")),)))),
++        ("a1-older-superseding-row-wrong-newest-right", A1, True,
++         with_src(sources_doc(GOOD_TEACH.replace("count 3", "count 4"), s305_source="local note",
++                              extra=(srow("S306", GOOD_TEACH),)))),
++        # A2 — docstring sentence and code branch
++        ("a2-absent-case-says-inconclusive", "A2-docstring-status", False,
++         with_code(CODE_OK.replace("is a survivor, never a pass", "is inconclusive, never a pass"))),
++        ("a2-two-absent-case-sentences", "A2-docstring-status", False,
++         with_code(CODE_OK.replace("never a pass.\n", "never a pass. An absent declared case is a survivor.\n"))),
++        ("a2-status-only-in-other-sentence", "A2-docstring-status", False,
++         with_code(CODE_OK.replace("is a survivor, never a pass.", "is never a pass.")
++                   .replace("inconclusive  an anchor does not occur exactly once",
++                            "inconclusive  an anchor does not occur exactly once. Survived mutants are listed apart."))),
++        ("a2-other-sentence-status-does-not-refuse", "A2-docstring-status", True,
++         with_code(CODE_OK.replace("inconclusive  an anchor does not occur exactly once",
++                                   "inconclusive  an anchor does not occur exactly once. An inconclusive mutant is reported apart."))),
++        ("a2-conflicting-word-in-absent-sentence", "A2-docstring-status", False,
++         with_code(CODE_OK.replace("is a survivor, never a pass.", "is a survivor, not inconclusive, never a pass."))),
++        ("a2-second-not-case-present-branch", "A2-docstring-status", False,
++         with_code(CODE_OK + '\n\ndef other(case_present):\n    entry = {}\n    if not case_present:\n'
++                              '        entry["status"] = "killed"\n    return entry\n')),
++        ("a2-elif-branch-form-accepted", "A2-docstring-status", True, with_code(CODE_ELIF)),
++        # A3 — the Owned-axes coverage row and its receipt
++        ("a3-stale-receipt-round", "A3-receipt-pointer", False, with_card(CARD_OK.replace("| 7 |", "| 8 |"))),
++        ("a3-no-receipt-named", "A3-receipt-pointer", False,
++         with_card(CARD_OK.replace("`.ufo/waves/round-7/l1/scores/coverage.json`",
++                                   "`.ufo/waves/round-7/l1/scores/` (directory only)"))),
++        ("a3-receipt-absent-at-rev", "A3-receipt-pointer", False,
++         {k: v for k, v in g.items() if k != RECEIPT_PATH}),
++        ("a3-receipt-rev-39-hex", "A3-receipt-pointer", False,
++         with_card(CARD_OK, {RECEIPT_PATH: '{"rev": "%s", "ok": true}\n' % ("a" * 39)})),
++        ("a3-receipt-rev-6-hex", "A3-receipt-pointer", False,
++         with_card(CARD_OK, {RECEIPT_PATH: '{"rev": "abc123", "ok": true}\n'})),
++        ("a3-receipt-json-list-not-object", "A3-receipt-pointer", False,
++         with_card(CARD_OK, {RECEIPT_PATH: '["%s"]\n' % ("a" * 40)})),
++        ("a3-receipt-not-json", "A3-receipt-pointer", False,
++         with_card(CARD_OK, {RECEIPT_PATH: "{rev: aaaa"})),
++        ("a3-two-receipts-only-older-exists", "A3-receipt-pointer", False,
++         with_card(CARD_OK.replace("`.ufo/waves/round-7/l1/scores/coverage.json`",
++                                   "`.ufo/waves/round-7/l1/scores/coverage.json`, "
++                                   "`.ufo/waves/round-8/l1/scores/next.json`"))),
++        ("a3-two-receipts-both-exist", "A3-receipt-pointer", True,
++         with_card(CARD_OK.replace("`.ufo/waves/round-7/l1/scores/coverage.json`",
++                                   "`.ufo/waves/round-7/l1/scores/coverage.json`, "
++                                   "`.ufo/waves/round-8/l1/scores/next.json`"),
++                   {".ufo/waves/round-8/l1/scores/next.json": RECEIPT_OK})),
++        ("a3-history-row-does-not-count", "A3-receipt-pointer", True, dict(g)),
++        ("a3-no-owned-axes-section", "A3-receipt-pointer", False,
++         with_card(CARD_OK.replace("## Owned axes", "## Axes"))),
++        ("a3-two-owned-axes-coverage-rows", "A3-receipt-pointer", False,
++         with_card(CARD_OK.replace("| depth |", "| coverage | 1 → 2 | y | z | 7 |\n| depth |"))),
++        ("a3-receipt-path-is-directory", "A3-receipt-pointer", False,
++         {k: v for k, v in g.items() if k != RECEIPT_PATH}
++         | {".ufo/waves/round-7/l1/scores/coverage.json/inner.txt": "x"}),
++    ]
++
++
++def _rev_cases() -> list[tuple[str, str, bool, dict, dict]]:
++    """(name, atom, expect_ok, committed, worktree) — the reading rule is the case."""
++    defective = dict(GENUINE)
++    defective["corpus/SOURCES.md"] = sources_doc(GOOD_TEACH.replace("count 3", "count 4"))
++    return [
++        ("rev-reads-committed-bytes-not-worktree-edits", "all", True, dict(GENUINE), defective),
++        ("rev-refuses-committed-defect-despite-clean-worktree", "A1-s303-supersede-count", False,
++         defective, dict(GENUINE)),
++    ]
++
++
++def _cli(argv: list[str], cwd: Path) -> int:
++    return subprocess.run([sys.executable, "-I", "-B", str(Path(__file__).resolve()), *argv],
++                          capture_output=True, text=True, cwd=cwd).returncode
++
++
++def _eval_atoms(read) -> tuple[list[dict], list[dict]]:
++    return run_atoms(read), control_substring_only(read)
++
++
++def _check(atoms, control, atom: str, expect: bool) -> tuple[bool, bool]:
++    """Returns (got, passed). A defective-record case also requires the control to accept it."""
++    by_id = {a["id"]: a for a in atoms}
++    if atom == "all":
++        got = all(a["ok"] for a in atoms)
++        return got, got is expect
++    got = by_id[atom]["ok"]
++    passed = got is expect
++    if not expect:
++        ctrl = {a["id"]: a for a in control}[atom]["ok"]
++        passed = passed and ctrl
++    return got, passed
+ 
++
++def selftest(out_json: str | None) -> int:
++    results: list[dict] = []
++    with tempfile.TemporaryDirectory(prefix="r86-record-agreement-selftest-") as tmp:
++        base = Path(tmp)
++        for name, atom, expect, files in _atom_cases():
++            work = base / name
++            _write_tree(work, files)
++            read = worktree_reader(work)
++            atoms, control = _eval_atoms(read)
++            got, passed = _check(atoms, control, atom, expect)
++            results.append({"name": name, "kind": "worktree-atoms", "atom": atom,
++                            "expect": expect, "got": got, "ok": passed})
++
++        for name, atom, expect, committed, worktree in _rev_cases():
++            repo = base / name
++            rev = _commit_tree(repo, committed)
++            _write_tree(repo, worktree)
++            read = rev_reader(repo, rev)
++            atoms, control = _eval_atoms(read)
++            got, passed = _check(atoms, control, atom, expect)
++            results.append({"name": name, "kind": "rev-atoms", "atom": atom,
++                            "expect": expect, "got": got, "ok": passed})
++
++        defect_repo = base / "cli-defect-repo"
++        defect = dict(GENUINE)
++        defect["corpus/SOURCES.md"] = sources_doc(GOOD_TEACH.replace("count 3", "count 4"))
++        defect_rev = _commit_tree(defect_repo, defect)
++        good_repo = base / "cli-good-repo"
++        good_rev = _commit_tree(good_repo, dict(GENUINE))
++        good_wt = base / "cli-good-worktree"
++        _write_tree(good_wt, dict(GENUINE))
++
++        cli_cases = [
++            ("cli-worktree-with-rev-refused", 2,
++             ["--root", str(good_repo), "--worktree", str(good_wt), "--rev", good_rev]),
++            ("cli-unknown-control-refused", 2,
++             ["--root", str(good_repo), "--rev", good_rev, "--control", "file-exists"]),
++            ("cli-rev-not-full-sha-refused", 2, ["--root", str(good_repo), "--rev", "HEAD"]),
++            ("cli-rev-unknown-refused", 2, ["--root", str(good_repo), "--rev", "b" * 40]),
++            ("cli-no-mode-refused", 2, ["--root", str(good_repo)]),
++            ("cli-rev-genuine-exits-0", 0, ["--root", str(good_repo), "--rev", good_rev]),
++            ("cli-worktree-fixture-genuine-exits-0", 0, ["--worktree", str(good_wt)]),
++            ("cli-rev-defect-exits-1", 1, ["--root", str(defect_repo), "--rev", defect_rev]),
++            ("cli-control-accepts-defect-exits-0", 0,
++             ["--root", str(defect_repo), "--rev", defect_rev, "--control", CONTROL_NAME]),
++        ]
++        for name, want, argv in cli_cases:
++            code = _cli(argv, base)
++            results.append({"name": name, "kind": "cli", "atom": "cli", "expect": want,
++                            "got": code, "ok": code == want})
++
++    failures = [r for r in results if not r["ok"]]
++    for r in results:
++        verdict = "PASS" if r["ok"] else "FAIL"
++        print(f"CASE {r['name']} kind={r['kind']} atom={r['atom']} expect={r['expect']} "
++              f"got={r['got']} {verdict}")
++    summary = f"SELFTEST cases={len(results)} failures={len(failures)}"
++    print(summary)
++    for r in failures:
++        print(f"FAIL {r['name']}: expected {r['expect']}, got {r['got']}")
++    if out_json:
++        out = Path(out_json)
++        out.parent.mkdir(parents=True, exist_ok=True)
++        out.write_text(json.dumps({"summary": summary, "exit": 0 if not failures else 1,
++                                   "cases": results}, indent=1, sort_keys=True) + "\n")
++    return 0 if not failures else 1
++
++
++# ---------------------------------------------------------------- main
++
++
+ def main() -> int:
+-    ap = argparse.ArgumentParser()
+-    ap.add_argument("--root", default=".")
+-    ap.add_argument("--rev")
+-    ap.add_argument("--worktree")
+-    ap.add_argument("--control", choices=["substring-only"])
+-    ap.add_argument("--selftest", action="store_true")
+-    ap.add_argument("--json-out")
++    ap = argparse.ArgumentParser(description="Round-86 record-agreement counter (see module docstring).")
++    ap.add_argument("--root", default=".", help="lane root; a git work tree for --rev")
++    ap.add_argument("--rev", help="measured revision: full 40-hex commit; every path is read as its committed blob")
++    ap.add_argument("--worktree", help="FIXTURE MODE ONLY: read paths from this directory; refused with --rev")
++    ap.add_argument("--control", choices=[CONTROL_NAME], help="cheap-rule control (expected to accept the defective records)")
++    ap.add_argument("--selftest", action="store_true", help="run the counter's selftest fixtures")
++    ap.add_argument("--selftest-json", help="with --selftest: also write the case table to this path")
++    ap.add_argument("--json-out", help="write the receipt to this path")
+     args = ap.parse_args()
+ 
+     if args.selftest:
+-        return selftest()
++        return selftest(args.selftest_json)
++    if args.rev is not None and args.worktree is not None:
++        print("REFUSED: --worktree is fixture mode only and cannot be combined with --rev", file=sys.stderr)
++        return 2
+ 
+     root = Path(args.root).resolve()
+-    if not (root / SOURCES).exists() and not args.rev:
+-        print("UNEVALUABLE: root has no corpus/SOURCES.md and no --rev given", file=sys.stderr)
+-        return 2
+-
+-    if args.worktree:
++    if args.rev is not None:
++        if not REV_RE.fullmatch(args.rev):
++            print("REFUSED: --rev must be a full 40-hex commit id", file=sys.stderr)
++            return 2
++        probe = subprocess.run(["git", "-C", str(root), "rev-parse", "--verify", "--quiet",
++                                f"{args.rev}^{{commit}}"], capture_output=True, text=True)
++        if probe.returncode != 0 or probe.stdout.strip() != args.rev:
++            print(f"UNEVALUABLE: {args.rev} is not a commit in {root}", file=sys.stderr)
++            return 2
++        rev, mode, read = args.rev, "rev", rev_reader(root, args.rev)
++    elif args.worktree is not None:
+         work = Path(args.worktree).resolve()
+-
+-        def read(path: str) -> str:
+-            try:
+-                return (work / path).read_text()
+-            except OSError as exc:
+-                raise Unreadable(f"{path}: {exc}") from exc
+-
+-        rev = f"worktree:{work}"
+-    else:
+-        if not args.rev:
+-            print("UNEVALUABLE: --rev or --worktree is required", file=sys.stderr)
++        if not work.is_dir():
++            print(f"UNEVALUABLE: --worktree {work} is not a directory", file=sys.stderr)
+             return 2
+-        rev = args.rev
+-
+-        def read(path: str) -> str:
+-            return git_show(root, rev, path)
++        rev, mode, read = f"worktree:{work}", "worktree-fixture", worktree_reader(work)
++    else:
++        print("UNEVALUABLE: --rev is required (or --worktree for fixture mode)", file=sys.stderr)
++        return 2
+ 
+     if args.control:
+-        receipt = run_control(args.control, read, rev, root)
++        receipt = run_control(read, rev, root, mode)
+     else:
+-        receipt = evaluate(read, rev, root)
++        receipt = evaluate(read, rev, root, mode)
+ 
+     text = json.dumps(receipt, indent=1, sort_keys=True)
+     if args.json_out:

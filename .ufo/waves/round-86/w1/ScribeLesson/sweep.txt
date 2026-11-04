@@ -1,0 +1,48 @@
+# ScribeLesson — the S303 cell is wrong at BASE 2cf0b7ff93c698809bed321f7338276a22d6beb9
+
+Command (read-only git; the lane tree is never written):
+
+  git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 2cf0b7ff93c698809bed321f7338276a22d6beb9:corpus/SOURCES.md \
+      | grep -n -F 'rea-agents-6.5.0.tgz'
+
+Output — the eight rows whose source cell carries the URL:
+
+  85: S079
+  86: S080
+  89: S083
+  96: S090
+  98: S092
+  125: S119
+  129: S123
+  219: S303
+
+Command — the counter's own count at the same revision:
+
+  python3 -I -B tools/round-86/record-agreement.py --root . --rev 2cf0b7ff93c698809bed321f7338276a22d6beb9 \
+      --json-out .ufo/waves/round-86/w1/ScribeLesson/receipts/c1-at-base-rederived.json
+
+Output — the A1 atom detail:
+
+{
+  "detail": {
+    "url_rows": [
+      "S079",
+      "S080",
+      "S083",
+      "S090",
+      "S092",
+      "S119",
+      "S123",
+      "S303"
+    ],
+    "why": "no row whose teaches opens `supersedes S303`"
+  },
+  "id": "A1-s303-supersede-count",
+  "ok": false
+}
+
+Verdict: the cell at corpus/SOURCES.md:219 reads "the registry already holds this URL in five
+scopes (S083/S090/S092/S119/S123)". Eight rows carry the URL; seven of them precede S303
+(S079/S080/S083/S090/S092/S119/S123), so the cell undercounts by two and names only the rows
+whose scope mentions the tarball. No row whose `teaches` cell opens `supersedes S303` exists,
+so the count has nowhere to be re-derived from except the wrong cell itself.

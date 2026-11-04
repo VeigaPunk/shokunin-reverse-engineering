@@ -1,0 +1,362 @@
+{
+ "revision": "0864a7bdbf185583773d1a3f3416de76e9cab137",
+ "pristine": {
+  "record-agreement": {
+   "green": true,
+   "rc": 0,
+   "summary": "SELFTEST cases=11 failures=0"
+  },
+  "gate-registry": {
+   "green": true,
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0"
+  }
+ },
+ "rows": [
+  {
+   "id": "RA-01",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a1-wrong-count",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [
+    "FAIL genuine-agreement: expected ok=True, atoms=[False, True, True]"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=11 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "5991855e47ad45c10a8e21594905ba072bbc343929a5e6b93907be20b71d1aa5",
+   "survival_class": "missing",
+   "missing_case": "a1-count-binding-isolated",
+   "note": "Fixture `9 rows touched; corrected prior-row count 3 (S083/S090/S119)` expects ok=True. Pristine ok=True, mutant ok=False (verified). Current kill is incidental: genuine-agreement fails, the declared case does not."
+  },
+  {
+   "id": "RA-02",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a1-no-superseding-row",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=11 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "4dbb3a7bdc3a1401278701533c2e0f992e9dd5284cd337527e43d4c72f42f319",
+   "survival_class": "missing",
+   "missing_case": "a1-no-superseding-row-truly",
+   "note": "The fixture named a1-no-superseding-row still contains a row whose teaches opens `supersedes S303` (S305), so the `if not sup` branch is never reached; the case exercises the no-count-clause path. Needed: a fixture with no such row, expect ok=False. Under the mutant that fixture would raise IndexError at `sup[-1]` [INFERENCE from source, not run]."
+  },
+  {
+   "id": "RA-03",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a3-stale-receipt-round",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=11 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "2e67da7c48c217a3529751557b80ba7b202e8f69397faead70f1fa439d5ba096",
+   "survival_class": "missing",
+   "missing_case": "a3-stale-receipt-blob-present",
+   "note": "The stale fixture's round-6 receipt is absent, so the blob read rejects it and the M>=R comparison is never the deciding check. Stale card + round-6 blob with 40-hex rev expects ok=False: pristine False, mutant True (verified)."
+  },
+  {
+   "id": "RA-04",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a3-no-receipt-named",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 1,
+   "summary": null,
+   "traceback_tail": "ValueError: max() iterable argument is empty",
+   "mutant_sha256": "5fefc63a1f30c8c48af2b39afa59fbfe677eabd0c7017ccbe7f6ce1bd918670c",
+   "survival_class": "missing",
+   "missing_case": "a3-no-receipt-named-isolated",
+   "note": "Mutant raises ValueError from max([]). The selftest only catches Unreadable, so the whole run dies with a traceback and no named FAIL line. Needs a per-case guard that reports `FAIL <case>: exception`."
+  },
+  {
+   "id": "RA-05",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a2-docstring-drift",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=11 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "a615ccc0b80fdaa1b2abc48ea5d5a012e5752febc84afcc558c6861054543afc",
+   "survival_class": "missing",
+   "missing_case": "a2-sentence-no-status-word",
+   "note": "The drift fixture's sentence contains the conflicting word `inconclusive`, so `not others` alone rejects it and the stem-absent path is never exercised. Sentence with no status word expects ok=False: pristine False, mutant True (verified)."
+  },
+  {
+   "id": "RA-06",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a2-ambiguous-sentences",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL a2-ambiguous-sentences: expected ok=False, got True"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=11 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "ec918f3fe78e6980869a95b0e7e6305af9da53a077e4217c53128b47a6872d2a",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "RA-07",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a1-wrong-id-set",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL a1-wrong-id-set: expected ok=False, got True"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=11 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "949f827681b4d1a39fdcf7c9edf1675b414c036d782a61cd1387b7add8033f02",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "RA-08",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a1-wrong-count",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL a1-wrong-count: expected ok=False, got True"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=11 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "149fc626a04f77647ae21f3ff0fb29ea7b80024c1fdae69e3188ed20323b76c3",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "RA-09",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a3-receipt-not-revision-stamped",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=11 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "7665f5844428295ccebf33e786cb219d17fe5dd015e13ca7fc9d7dca65d80150",
+   "survival_class": "missing",
+   "missing_case": "a3-receipt-rev-39-hex",
+   "note": "Fixture rev is 6 chars (`abc123`), which 39-40 also rejects. A receipt with a 39-hex rev expects ok=False: pristine False, mutant True (verified)."
+  },
+  {
+   "id": "RA-10",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a3-receipt-not-revision-stamped",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL a3-receipt-not-revision-stamped: expected ok=False, got True"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=11 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "7c45ba09066f86598824366c1197707826b1a95d877b07d7d6a671193b6f7d9d",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "RA-11",
+   "target": "tools/round-86/record-agreement.py",
+   "declared_case": "a3-receipt-absent-at-rev",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL a3-receipt-absent-at-rev: expected ok=False, got True",
+    "FAIL a3-receipt-not-revision-stamped: expected ok=False, got True"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=11 failures=2",
+   "traceback_tail": null,
+   "mutant_sha256": "d2d738760c732a003ef64fb5512d2c49039a8ce1aee1c69746a70a0a1642088d",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "GR-12",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "duplicate-row",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "c6653d46e8bee2bbdb117b0614ab660d8c60518b1ab341f0991e265320d769f5",
+   "survival_class": "missing",
+   "missing_case": "duplicate-row-G1-attribution",
+   "note": "The duplicate-row case checks only the aggregate ok. With find_row None, G2-G5 also fail, so the G1 rule is never individually observable. Per-atom assertion G1 ok=False on the duplicate fixture: pristine False, mutant True (verified)."
+  },
+  {
+   "id": "GR-13",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "incomplete-verdict-map",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL incomplete-verdict-map: expected ok=False, mismatches=[]"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=8 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "2b6a386cdfffa06d1d4ea00c6e3911ec7625e17fbfac0dc0ce5028751e85d695",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "GR-14",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "selftest-nonzero-exit",
+   "case_exists": false,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "89db4ac2f5aa4d5014e07f9f26e7156f4bcb8ed9193f66a179e3df868825cd95",
+   "survival_class": "equivalent",
+   "missing_case": null,
+   "note": "Equivalent on the current row: G3 runs the identical argv (`-I -B ... --selftest`, declared exit 0), so it catches the same nonzero exit and the aggregate is unchanged (verified). Not a selftest gap unless a row's self-test cell differs from --selftest."
+  },
+  {
+   "id": "GR-15",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "incomplete-verdict-map",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "e924ca34d86ccd0ab2499ddec4c5bb8300ef717a92f161da4442b8393b69855d",
+   "survival_class": "missing",
+   "missing_case": "verdict-map-no-exit-2",
+   "note": "NO_MAP_ROW has no `0=` at all, so the partial-map path is unexercised. Verdict `0=clean; 1=flagged` expects ok=False: pristine False, mutant True (verified)."
+  },
+  {
+   "id": "GR-16",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "wrong-declared-exit",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "2447ea978c2b63cfefcea3c63782a5b89d9b54c41d649963bc66318cf55c0361",
+   "survival_class": "missing",
+   "missing_case": "child-exit-mismatch-probe",
+   "note": "wrong-declared-exit declares 3 against got=0, so the mutant also fails it. Needed: a row declaring exit 0 on a `--probe` command that exits 2 (fixture tool needs a --probe branch): pristine False, mutant True (verified)."
+  },
+  {
+   "id": "GR-17",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "pin-absent-at-rev",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "e0948426ded3ab4ad89777ab781093415e4221f06959b5f4eb5ff106963853d5",
+   "survival_class": "missing",
+   "missing_case": "pin-blob-absent-round-84",
+   "note": "BAD_PIN_ROW rewrites the pin to `round-85/absent.json`, which the claims.json regex does not match, so pins=[] and G4 fails on the empty-pin path. The absent-blob branch is never reached. Pin `round-84/claims.json` (absent): pristine False, mutant True (verified)."
+  },
+  {
+   "id": "GR-18",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "two-pins-one-absent",
+   "case_exists": false,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "7ed03ce24f0dd1523334c6864ba1167a89d6afe35934a75e0352e54a6fbd4ff3",
+   "survival_class": "missing",
+   "missing_case": "two-pins-one-absent",
+   "note": "Two pins, one absent: pristine False, mutant (>=1) True (verified)."
+  },
+  {
+   "id": "GR-19",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "owner-round-mismatch",
+   "case_exists": true,
+   "anchor_occurrences": 1,
+   "status": "killed",
+   "observed_failures": [
+    "FAIL owner-round-mismatch: expected ok=False, mismatches=[]"
+   ],
+   "rc": 1,
+   "summary": "SELFTEST cases=8 failures=1",
+   "traceback_tail": null,
+   "mutant_sha256": "e2448806b14a0263b903b0e20216f535ccf98771ec5d9f2ba4538bc29fa1f7ff",
+   "survival_class": null,
+   "missing_case": null,
+   "note": "killed by declared case"
+  },
+  {
+   "id": "GR-20",
+   "target": "tools/round-86/gate-registry.py",
+   "declared_case": "owner-trailing-text",
+   "case_exists": false,
+   "anchor_occurrences": 1,
+   "status": "survived",
+   "observed_failures": [],
+   "rc": 0,
+   "summary": "SELFTEST cases=8 failures=0",
+   "traceback_tail": null,
+   "mutant_sha256": "2f78de240ce9e85a8222acda3fbc46ee4aa6c939242969a850ebefebfa7ec0f0",
+   "survival_class": "missing",
+   "missing_case": "owner-trailing-text",
+   "note": "Owner cell `kaidoku-r85 (old)` expects ok=False: pristine False, mutant True (verified)."
+  }
+ ],
+ "counts": {
+  "survived": 13,
+  "killed": 7
+ },
+ "pristine_green": {
+  "record-agreement": true,
+  "gate-registry": true
+ }
+}
