@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work3/binder/pristine.py	2026-11-04 10:51:49.111420704 -0300
++++ /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work3/binder/b8-rev-acceptance-widened.py	2026-11-04 10:51:49.384692453 -0300
+@@ -450,7 +450,7 @@
+     if not isinstance(record.get("sha256"), str) or len(record.get("sha256") or "") != 64:
+         defects.append("record sha256 is not a 64-hex digest")
+     rev = record.get("rev")
+-    if not is_commit_sha(rev):
++    if not (isinstance(rev, str) and len(rev) >= 1):
+         defects.append("record rev is not a 40-hex commit")
+     if not receipt.get("checked_at"):
+         defects.append("checked_at is absent")

@@ -1,0 +1,33 @@
+{
+ "seat": "ExecBinder",
+ "wave": "r80-w1",
+ "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "landing_path": "tools/round-80/pointer-bind.py",
+ "artifacts": [
+  {"path": "pointer-bind.py", "sha256": "b01e7b494acd88caed037a473824ab0b0cb524b520659114c4d46234a1ff8f8a",
+   "lines": 755,
+   "produced_by": "python3 -I -B pointer-bind.py --selftest  (exit 0, SELFTEST cases=61 failures=0)"},
+  {"path": "fixture-probe.py", "sha256": "8a137c8559f05fcb094a22c830318a3a3cde9e0492c131fe1edf8e9518065a82",
+   "produced_by": "seat probe, not the L1 battery"},
+  {"path": "selftest.log", "sha256": "2b449d52d3312a209ddd2ccf1564f7593a7443cb7777913ca6ef9af25cae3665",
+   "produced_by": "TMPDIR=/fast/scratch/hyaku/kaidoku-r80/ExecBinder python3 -I -B pointer-bind.py --selftest"},
+  {"path": "live-16dfa009.json", "sha256": "001c0f120ceb599b08ad1e08296682e6583e9b92af845081b9f208332475ad8e",
+   "produced_by": "python3 -I -B pointer-bind.py --root <lane> --rev 16dfa009 --json-out live-16dfa009.json (exit 0)"},
+  {"path": "live-84d68e90.json", "sha256": "0589b8c688fe9e2373ab399a70e3b2f68b2f4b24c54b9f8d71f746bc949a6fee",
+   "produced_by": "same with --rev 84d68e90 (lane tip; exit 0)"},
+  {"path": "control-path-only.json", "sha256": "147d80c498cd32622b7ff58dee689cfc9c0e92a5197aa2d4bbe8f316b19ec44e",
+   "produced_by": "same with --control path-only (exit 1, by design: a control receipt is never ok)"},
+  {"path": "fixture-probe.json", "sha256": "0889ccab8bbe12ff57f3569b4f5ccc36f0a2aeac0dd3592ca288cb2b0c35552f",
+   "produced_by": "fixture-probe.py on .ufo/waves/round-80/l1/fixtures/strictness.json (exit 0)"},
+  {"path": "dup-receipt.json", "sha256": "cbbba3ea0c3643adf4cac99332a836af7dbedd2bba9effcabf9bb058703c3166",
+   "produced_by": "pointer-bind.py --root <scratch fixture repo> --rev HEAD (exit 1, checks_total 6, duplicates [omp-pin])"},
+  {"path": "mutation-sweep.json", "sha256": "01afc8bbfadb08b804f74bb98e3f11830e805fe65c35e749d4edce215d2e5d3d",
+   "produced_by": "seat one-edit mutant sweep, 20 mutants, 20 killed"}
+ ],
+ "notes": [
+  "instrument.path in every receipt is the landing path tools/round-80/pointer-bind.py; the recorded sha256 is this candidate's byte digest, so C2 provenance matches only if the L1 lands the file byte-identically.",
+  "parse_record returns (checks, unparsed, duplicates); bind(pointer, tokens, lines) keeps round-79's shape.",
+  "No tool was installed or upgraded for this seat."
+ ]
+}

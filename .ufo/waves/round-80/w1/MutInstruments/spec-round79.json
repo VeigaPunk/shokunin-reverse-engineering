@@ -1,0 +1,74 @@
+{
+  "targets": [
+    {
+      "name": "round79-pointer-bind",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-79/pointer-bind.py",
+      "selftest_args": [],
+      "mutants": [
+        {
+          "id": "m1-invert-duplicate-id",
+          "anchor": "if len(ids) != len(set(ids)):",
+          "replacement": "if len(ids) == len(set(ids)):",
+          "edit": "invert the duplicate-check-id comparison (flags unique ids, accepts duplicates)",
+          "killer_case": "green-forged-consistent (false positive) / needs a red duplicate-id case to pin the true direction"
+        },
+        {
+          "id": "m2-invert-checks-total",
+          "anchor": "if len(checks) != receipt.get(\"checks_total\"):",
+          "replacement": "if len(checks) == receipt.get(\"checks_total\"):",
+          "edit": "invert the checks_total re-derive comparison",
+          "killer_case": "green-forged-consistent (false positive); a red checks_total case is missing"
+        },
+        {
+          "id": "m3-drop-start-bound",
+          "anchor": "if start < 1 or end < start:",
+          "replacement": "if end < start:",
+          "edit": "drop the start>=1 foot of the forward-range guard",
+          "killer_case": "bind('f.json:0', ['x'], 4 lines) must report the not-1-based reason"
+        },
+        {
+          "id": "m4-drop-token-scan",
+          "anchor": "missing = [token for token in tokens if not any(token in line for line in pointed)]",
+          "replacement": "missing = []",
+          "edit": "drop the per-token occurrence scan, so every parsed pointer matches",
+          "killer_case": "red-stale-line, red-range-token-outside"
+        },
+        {
+          "id": "m5-drop-digest-guard",
+          "anchor": "if check.get(\"matched\") and not check.get(\"line_sha256\"):",
+          "replacement": "if check.get(\"matched\") and not check.get(\"line_sha256\") and False:",
+          "edit": "drop the matched-without-digest defects.append",
+          "killer_case": "red-forged-no-digest"
+        },
+        {
+          "id": "m6-drop-control-guard",
+          "anchor": "if receipt.get(\"ok\") and receipt.get(\"control\") is not None:",
+          "replacement": "if receipt.get(\"ok\") and receipt.get(\"control\") is not None and False:",
+          "edit": "drop the ok-under-a-control defects.append",
+          "killer_case": "red-forged-control-ok"
+        },
+        {
+          "id": "m7-instrument-digest-constant",
+          "anchor": "if inst.get(\"sha256\") != sha256_bytes(pathlib.Path(__file__).read_bytes()):",
+          "replacement": "if inst.get(\"sha256\") != \"0\" * 64:",
+          "edit": "replace the instrument-digest comparison with a constant bound",
+          "killer_case": "green-forged-consistent"
+        },
+        {
+          "id": "m8-drop-range-order",
+          "anchor": "and 1 <= start <= end):",
+          "replacement": "and 1 <= start):",
+          "edit": "drop the start<=end foot of the matched-range conjunct",
+          "killer_case": "validate a forged receipt with line_start 3 / line_end 2 and matched True: pristine flags 'matched without a 1-based line range', mutant is silent"
+        },
+        {
+          "id": "m9-drop-unparsed-overlap",
+          "anchor": "if check.get(\"matched\") and check.get(\"unparsed\"):",
+          "replacement": "if check.get(\"matched\") and check.get(\"unparsed\") and False:",
+          "edit": "drop the matched-and-unparsed defects.append",
+          "killer_case": "validate a forged receipt with checks[0].unparsed True and matched True: pristine flags, mutant is silent"
+        }
+      ]
+    }
+  ]
+}

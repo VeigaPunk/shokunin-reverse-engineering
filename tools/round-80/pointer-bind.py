@@ -205,13 +205,14 @@ def parse_record(text: str) -> tuple[list[dict], list[str], list[str]]:
         cells = found.get(client) or []
         if not cells:
             unparsed.append(check_id)
-            checks.append({"id": check_id, "pointer": "",
+            checks.append({"id": check_id, "base_id": check_id, "pointer": "",
                            "tokens": []})
             continue
         if len(cells) > 1:
             duplicates.append(check_id)
         for index, (pin, pointer) in enumerate(cells, start=1):
             checks.append({"id": check_id if index == 1 else f"{check_id}#{index}",
+                           "base_id": check_id,
                            "pointer": pointer,
                            "tokens": [f"rea-agents@{pin}"]})
     ghidra_ptr = RE_GHIDRA_PTR.search(text)
@@ -220,7 +221,7 @@ def parse_record(text: str) -> tuple[list[dict], list[str], list[str]]:
         unparsed.append("ghidra-version")
         checks.append({"id": "ghidra-version", "pointer": "", "tokens": []})
     else:
-        checks.append({"id": "ghidra-version",
+        checks.append({"id": "ghidra-version", "base_id": "ghidra-version",
                        "pointer": f"{ghidra_ptr.group(1)}:{ghidra_ptr.group(2)}",
                        "tokens": [f"application.version={ghidra_value.group(1)}"]})
     bashrc = RE_BASHRC_PTR.search(text)
@@ -264,8 +265,11 @@ def battery(root: str, rev: str, control: str | None) -> dict:
             entry = bind(check["pointer"], check["tokens"], lines)
             entry = {"id": check["id"], **entry}
             entry["path"] = expand(entry["path"])
-        entry["declared_path"] = expand(DECLARED.get(check["id"], ""))
-        entry["path_is_declared"] = declared_ok(check["id"], check["pointer"].rsplit(":", 1)[0])
+        base_id = check.get("base_id") or check["id"]
+        entry["base_id"] = base_id
+        entry["declared_path"] = expand(DECLARED.get(base_id, ""))
+        entry["path_is_declared"] = declared_ok(base_id,
+                                               check["pointer"].rsplit(":", 1)[0])
         if not entry["path_is_declared"]:
             entry["matched"] = False
             entry["reason"] = (entry.get("reason") or "") + (
@@ -329,6 +333,8 @@ def validate_receipt(receipt: dict) -> dict:
     for check in checks:
         if check.get("matched") and check.get("unparsed"):
             defects.append(f"{check.get('id')}: matched and unparsed")
+        if check.get("matched") and not (check.get("base_id") or check.get("id")):
+            defects.append(f"{check.get('id')}: matched without a base id")
         if check.get("matched") and check.get("path_is_declared") is not True:
             defects.append(f"{check.get('id')}: matched without naming the declared live object")
         if check.get("matched") and check.get("mode") != "delimited":
@@ -454,6 +460,8 @@ def selftest() -> int:
          (len(dup_checks), dup_unparsed, dup_ids), (6, [], ["omp-pin"]))
     case("red-duplicate-omp-second-cell",
          [c["id"] for c in dup_checks[1:3]], ["omp-pin", "omp-pin#2"])
+    case("green-duplicate-cells-carry-base-id",
+         [c.get("base_id") for c in dup_checks[1:3]], ["omp-pin", "omp-pin"])
     devin_record = record + "Devin `rea-agents@6.7.0` (`/home/x/devin2.json:9`)\n"
     case("red-duplicate-devin-counted",
          parse_record(devin_record)[2], ["devin-pin"])

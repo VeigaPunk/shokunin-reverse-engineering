@@ -86,13 +86,12 @@ def bind_ok(module, case: dict) -> bool:
 
 
 def duplicate_refused(receipt: dict, cell_id: str) -> bool:
+    """The Rule's conjunction: every declared cell counted AND the id reported."""
     duplicates = receipt.get("duplicates") or []
-    if isinstance(duplicates, list) and cell_id in duplicates:
-        return True
     total = receipt.get("checks_total")
-    if isinstance(total, int) and total > 5 and receipt.get("ok") is not True:
-        return True
-    return False
+    return bool(isinstance(duplicates, list) and cell_id in duplicates
+                and isinstance(total, int) and total > 5
+                and receipt.get("ok") is not True)
 
 
 def make_fixture_repo(template: str, append_cell: str, work: str) -> str:
@@ -185,10 +184,11 @@ class FakeModule:
     """Selftest implementation with injected behaviour per case id."""
 
     def __init__(self, refuse_reds: bool, refuse_greens: bool,
-                 duplicate_signal: bool = True):
+                 duplicate_signal: bool = True, collapsed_count: bool = False):
         self.refuse_reds = refuse_reds
         self.refuse_greens = refuse_greens
         self.duplicate_signal = duplicate_signal
+        self.collapsed_count = collapsed_count
 
     def bind(self, pointer, tokens, lines):
         red = any("6.7.05" in line or "6.7.00" in line or line.startswith("x")
@@ -202,9 +202,10 @@ class FakeModule:
         record = pathlib.Path(root, "PROVINCE.md").read_text()
         omp = record.count("OMP `")
         total = 5 + max(0, omp - 1)
-        return {"checks_total": total, "matched": total,
-                "duplicates": ["omp-pin"] if (omp > 1 and self.duplicate_signal)
-                else [], "ok": not (omp > 1 and self.duplicate_signal)}
+        signal = omp > 1 and self.duplicate_signal
+        counted = 5 if (self.collapsed_count and signal) else total
+        return {"checks_total": counted, "matched": counted,
+                "duplicates": ["omp-pin"] if signal else [], "ok": not signal}
 
 
 def selftest() -> int:
@@ -239,6 +240,10 @@ def selftest() -> int:
     no_signal = score(FakeModule(False, False, duplicate_signal=False), fixtures,
                       work)
     case("red-duplicate-without-signal", no_signal["false_greens"], 2)
+    collapsed = score(FakeModule(False, False, collapsed_count=True), fixtures,
+                      work)
+    case("red-duplicate-signal-with-collapsed-count",
+         collapsed["false_greens"], 2)
 
     # validate: consistent receipt clean; tampered counts named
     base = {"cases": 1, "green_cases": 1,

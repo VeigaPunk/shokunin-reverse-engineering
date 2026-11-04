@@ -1,0 +1,289 @@
+{
+ "schema": "kaidoku-r80-scribe-sources-v1",
+ "seat": "ScribeSources",
+ "round": 80,
+ "date": "2026-11-04",
+ "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+ "declaration": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+ "lane_head": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+ "head_parent_is_base": true,
+ "scratch": "/fast/scratch/hyaku/kaidoku-r80/ScribeSources/ created with mkdir -p, used as cwd and TMPDIR root, removed with trap 'rm -rf -- \"$S\"' EXIT; nothing in this receipt depends on it",
+ "snapshots": [
+  {
+   "id": "rfc8259.txt",
+   "url": "https://www.rfc-editor.org/rfc/rfc8259.txt",
+   "form": "plain text",
+   "status": 200,
+   "bytes": 28360,
+   "sha256": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7",
+   "path": ".ufo/waves/round-80/w1/ScribeSources/rfc8259.txt",
+   "note": "byte-identical to the snapshot S289 already holds (28 360 B, digest prefix 61a5378f4255c720)"
+  },
+  {
+   "id": "re.html",
+   "url": "https://docs.python.org/3/library/re.html",
+   "form": "HTML",
+   "status": 200,
+   "bytes": 257722,
+   "sha256": "24ef5ff00f937cee65b83d527638fe1c1fc573578851e296f4bca0c4da3828a6",
+   "path": ".ufo/waves/round-80/w1/ScribeSources/re.html",
+   "note": "S143's 2026-10-28 snapshot of the same URL was 257 706 B sha256 f169ed06...; the live page is 16 B larger today, so this row pins its own snapshot"
+  }
+ ],
+ "quotes": [
+  {
+   "source": "https://www.rfc-editor.org/rfc/rfc8259.txt",
+   "snapshot": "rfc8259.txt",
+   "text": "The names within an object SHOULD be unique.",
+   "words": 8,
+   "line": 322,
+   "line_numbering": "grep -n over the raw bytes; splitlines() reports 327 because 5 form feeds precede it and the file holds 16 in total",
+   "line_sha256": "4f3b9accb6e37142c51e05017690ee349fe70db47689481621c461b6a2d31a57",
+   "quote_sha256": "7081c92b764d57657acb9b8f750d18ee05eaae0bd5d7af68e7129de4fb45e623",
+   "anchor": "section 4 Objects (raw line 316); the sentence closes the paragraph at lines 318-322, followed by the object ABNF at lines 324-327 and the interoperability paragraph at lines 329-344"
+  },
+  {
+   "source": "https://docs.python.org/3/library/re.html",
+   "snapshot": "re.html",
+   "text": "Matches the empty string, but only at the beginning or end of a word.",
+   "words": 14,
+   "line": 747,
+   "line_numbering": "raw HTML line; the h4 carrying the \\b spelling is raw line 746 and the paragraph runs to line 755",
+   "line_sha256": "af345fa45692cf6a5d73cc29d9b0510df2b777230e25de0f21b9d11d907a44e8",
+   "quote_sha256": "2e383a44169feaff05b86b3186460547ad489e0cb16b918188cd703364a27f7e",
+   "anchor": "section id `b`, span id `re-syntax-special-word-boundary`, h4 at raw line 746"
+  }
+ ],
+ "duplicate_check": {
+  "commands": [
+   "grep -n 'rfc-editor\\.org' corpus/SOURCES.md",
+   "grep -n 'docs\\.python\\.org/3/library/re\\.html' corpus/SOURCES.md",
+   "grep -n 'docs\\.python\\.org' corpus/SOURCES.md",
+   "grep -n 're-syntax\\|#re-' corpus/SOURCES.md",
+   "grep -nF '\\b' corpus/SOURCES.md",
+   "grep -n 'word boundary' corpus/SOURCES.md"
+  ],
+  "host_hits": {
+   "rfc-editor.org": 4,
+   "docs.python.org": 19
+  },
+  "url_hits": {
+   "https://www.rfc-editor.org/rfc/rfc8259.txt": [
+    "corpus/SOURCES.md:205 (S289, section 3 Values, same 28 360 B and digest prefix 61a5378f4255c720)"
+   ],
+   "https://www.rfc-editor.org/rfc/rfc8259": [
+    "corpus/SOURCES.md:55 (S049, section 4 Objects and duplicate-name interoperability)"
+   ],
+   "https://docs.python.org/3/library/re.html": [
+    "corpus/SOURCES.md:149 (S143, anchor re.fullmatch)"
+   ],
+   "https://docs.python.org/3/library/re.html#re-syntax-special-word-boundary": []
+  },
+  "verdicts": [
+   {
+    "source": "RFC 8259 section 4 Objects",
+    "verdict": "refused_reuse",
+    "why": "the .txt URL is already held by S289 with byte-identical bytes (28 360 B, sha256 61a5378f...), and the requested anchor is already carried by S049, whose scope cell names duplicate-name interoperability and whose anchor cell names section 4 Objects. A third RFC 8259 row would duplicate text the registry already holds twice.",
+    "action": "do not append; cite S049 and add this receipt to S049's used-by cell"
+   },
+   {
+    "source": "Python re \\b",
+    "verdict": "row",
+    "why": "the page URL is held by S143 but its anchor is not: S143 anchors `re.fullmatch(pattern, string, flags=0)`, a whole-string equality primitive in the module-contents section, while this anchor is the zero-width word-boundary assertion in the syntax section. Lane precedent treats a different fragment of a held page as a new row (S260 subprocess.html versus S272 subprocess.html#subprocess.Popen; S274 versus S276), and the two anchors answer different questions: whether the whole string is equal versus where a word ends.",
+    "action": "append as S297"
+   },
+   {
+    "source": "host check",
+    "verdict": "note",
+    "why": "a held host alone is not a bar: docs.python.org already carries 19 citing lines across distinct pages (json, re, subprocess, hashlib, os.path, shlex, argparse, ast, stdtypes, tempfile, tomllib, sys, cmdline). The bar is the URL plus its anchor, not the host."
+   }
+  ],
+  "conclusion": "one row to append (S297) and one optional rejected-status row (S298); the RFC 8259 duplicate-name ground is a reuse of S049, so no RFC row is appended and no id is consumed by it",
+  "anchor_hits": {
+   "literal \\b token": 0,
+   "phrase word boundary": 0,
+   "phrase word-boundary": 0,
+   "re-syntax or #re- fragment": 0
+  }
+ },
+ "rejection": {
+  "url": "https://stackoverflow.com/questions/21832701/does-json-syntax-allow-duplicate-keys-in-an-object",
+  "title": "Does JSON syntax allow duplicate keys in an object?",
+  "opened": "the rendered page returned HTTP 403 with a 5 753 B Cloudflare interstitial titled 'Just a moment...' (snapshot `so-dupkeys.html`, sha256 d6404958d372f26c801631c285b3662201332a6d11ee20b555eaece6a5643eea), so the content was opened through the Stack Exchange API 2.3 instead: question 21 802 701 with body, HTTP 200, 1 387 B (`so-api.json`, sha256 79f61b333a97352450d4d1bdd88b7b3f85d42cc29c85daa5fdc0764fe49a3500), and its 12 answers, HTTP 200, 21 102 B (`so-answers.json`, sha256 e086dc8b33e4d61857d3c29f9f1140aa3211eda93cdadab8653657875ff47846)",
+  "what_it_says": "the score-226 answer opens 'Yes but is not recommended' and then quotes RFC 8259's 'The names within an object SHOULD be unique' with the BCP 14 reading of SHOULD; the score-161 answer quotes ECMA-404 and notes that JSON itself specifies no behaviour",
+  "reason": "it is community commentary whose normative sentence is the RFC's own, reproduced by quotation; its added content is interpretation plus a vote ranking, and both drift without notice. Grounding the duplicate-cell refusal on it would put a mutable, vote-ordered page where the registry requires a primary text, and S049 already holds the primary sentence with its interoperability paragraph.",
+  "flip": "flip only if the lane needs observed implementer practice as a separate object of study rather than the normative ground - for example a claim of the form 'implementers report last-wins in practice'. Then it becomes a community tier-B row whose source cell carries the answer's own `last_edit_date` and the API snapshot digest, because the page is editable and vote-ordered; a claim about what the grammar permits still cites S049."
+ },
+ "screened_not_registered": [
+  {
+   "url": "https://en.wikipedia.org/wiki/JSON",
+   "status": 200,
+   "bytes": 478308,
+   "sha256": "b5d0c2cc28d3c71ea18ee35b587f78b55a8fa0380e2f94e3ff55b35370ad72d9",
+   "path": ".ufo/waves/round-80/w1/ScribeSources/wiki-json.html",
+   "located": "a bullet stating that JSON objects may contain multiple members with the same name and that the behaviour of implementations processing duplicate names is unpredictable",
+   "why_not": "a tertiary encyclopedia paraphrase of the RFC 8259 section 4 interoperability paragraph, with no normative text of its own and no stable revision pin; it is neither the primary ground (S049) nor the blog-or-Q&A rejection this seat must record, so its bytes are retained and it is not registered"
+  }
+ ],
+ "next_ids": {
+  "highest_held": "S296",
+  "next_assignable": "S297",
+  "next_free_after_append": "S298",
+  "optional_rejection_row": "assigned at landing: S298 if the withheld RFC row is not landed, else S299",
+  "method": "grep -oE 'S[0-9]{3,}' corpus/SOURCES.md | sort -u | tail -5 -> S292 S293 S294 S295 S296"
+ },
+ "rows_draft": [
+  {
+   "id": "S297",
+   "disposition": "append",
+   "why": "new anchor on a held page, see duplicate_check verdict",
+   "row": "| S297 | Python `re` documentation, `\\b` word-boundary assertion — https://docs.python.org/3/library/re.html#re-syntax-special-word-boundary (snapshot `re.html`, 257 722 B, sha256 `24ef5ff00f937cee65b83d527638fe1c1fc573578851e296f4bca0c4da3828a6`, in `.ufo/waves/round-80/w1/ScribeSources/`) | docs | A | the zero-width assertion that a match sits at the beginning or end of a word, where a word is a run of `\\w` characters; it grounds the delimited-token vocabulary R80-C1's binder uses, not the frozen alphabet itself (the frozen token characters add `.` and `-` to `\\w`, and `\\w` on str patterns is Unicode-aware while that alphabet is ASCII-only) and not `re.fullmatch` (S143) | `\\b` entry, section id `b`, span id `re-syntax-special-word-boundary`, raw HTML line 746, first sentence at line 747 | `\\b` matches only at a boundary between a word character and a non-word character or the string ends, so a declared pin is checked as a delimited token rather than a substring; `.` and `-` are not word characters, so `\\b` still bounds inside `rea-agents@6.7.0-rc1` and the frozen rule is deliberately stricter | mined | 2026-11-04 | on-release | .ufo/waves/round-80/w1/ScribeSources/receipt.json |"
+  },
+  {
+   "id": "S298",
+   "disposition": "withhold",
+   "why": "refused reuse: identical URL bytes to S289 and the section-4 anchor already carried by S049; the id stays reserved and must not be consumed",
+   "row": "| S298 | RFC 8259 section 4 Objects, duplicate names — https://www.rfc-editor.org/rfc/rfc8259.txt (snapshot `rfc8259.txt`, 28 360 B, sha256 `61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7`, in `.ufo/waves/round-80/w1/ScribeSources/`) | spec | A | the object grammar's duplicate-name sentence and the interoperability paragraph that follows it: unique names are a SHOULD, and receivers of a non-unique object behave unpredictably, so the lane's duplicate-cell refusal is its own stricter policy and not an RFC requirement | section 4 Objects, raw line 322 (`grep -n` numbering; splitlines reports 327), interoperability paragraph at raw lines 329-344 | The names within an object SHOULD be unique, and where they are not, receivers disagree (last-wins in many, error or all-pairs in others), so a record declaring the same client cell twice is ambiguous on the sender's side and must be reported as a duplicate rather than collapsed last-wins | mined | 2026-11-04 | 365d | — |",
+   "id_reserved": false
+  }
+ ],
+ "gate_block_draft": {
+  "schema": "kaidoku-r80-source-gate-v1",
+  "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "declaration": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "instrument": {
+   "path": "corpus/SOURCES.md",
+   "blob": "27771e681c59b22ddfff03e035a8d7485fbf006c",
+   "sha256": "3b7f44f6878cf153d7ca321956b2edc4ba96748af7b90b7f0eb9870ffdd55364",
+   "note": "digest of the COMMITTED blob at HEAD; the worktree copy is byte-identical today, and this pre-append digest does not describe the landed instrument - recompute it from the committed blob after the append, per R80-C2"
+  },
+  "rows": [
+   {
+    "id": "S297",
+    "append": true,
+    "snapshot": {
+     "path": ".ufo/waves/round-80/w1/ScribeSources/re.html",
+     "bytes": 257722,
+     "sha256": "24ef5ff00f937cee65b83d527638fe1c1fc573578851e296f4bca0c4da3828a6"
+    },
+    "pointer": {
+     "line": 747,
+     "line_sha256": "af345fa45692cf6a5d73cc29d9b0510df2b777230e25de0f21b9d11d907a44e8",
+     "quote_sha256": "2e383a44169feaff05b86b3186460547ad489e0cb16b918188cd703364a27f7e",
+     "words": 14
+    }
+   },
+   {
+    "id": "S298",
+    "append": false,
+    "reuse_of": [
+     "S049",
+     "S289"
+    ],
+    "snapshot": {
+     "path": ".ufo/waves/round-80/w1/ScribeSources/rfc8259.txt",
+     "bytes": 28360,
+     "sha256": "61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7"
+    },
+    "pointer": {
+     "line": 322,
+     "line_sha256": "4f3b9accb6e37142c51e05017690ee349fe70db47689481621c461b6a2d31a57",
+     "quote_sha256": "7081c92b764d57657acb9b8f750d18ee05eaae0bd5d7af68e7129de4fb45e623",
+     "words": 8
+    }
+   }
+  ],
+  "checks": [
+   "snapshot bytes and sha256 recomputed from the named path",
+   "pointer line number indexes the raw bytes the snapshot holds",
+   "pointer line sha256 equals the digest of that raw line",
+   "quote sha256 equals the digest of the cited sentence",
+   "row splits on the column separator into 11 cells with no escaped separator"
+  ],
+  "expected": {
+   "rows": 1,
+   "withheld": 1,
+   "cells_per_row": 11
+  }
+ },
+ "rejection_row_draft": {
+  "disposition": "optional",
+  "note": "lane precedent registers rejections as rows with status rejected (S144, S291, S294); the L1 may land this one or keep the rejection in the receipt only. It is not one of the two drafted rows and its id is left unassigned on purpose: assign the next free id at landing (S298 if the withheld RFC 8259 row is not landed, otherwise S299), so the registry keeps no gap.",
+  "row": "| — | Stack Overflow question 21 802 701, duplicate JSON keys — https://stackoverflow.com/questions/21832701 (content opened through the Stack Exchange API 2.3, snapshots `so-api.json` 1 387 B sha256 79f61b33… and `so-answers.json` 21 102 B sha256 e086dc8b…; the rendered page returned HTTP 403, 5 753 B) | community | C | duplicate JSON names as a Q&A sees them; not the grammar and not a requirement | top answer, score 226: 'Yes but is not recommended' followed by a quotation of RFC 8259 and of BCP 14's SHOULD | REJECTED: the normative sentence is the RFC's, reproduced by quotation, and the page's own contribution is vote-ordered interpretation that drifts without notice. Flip: the claim becomes about observed implementer practice rather than the grammar, and the row then pins the answer's `last_edit_date` and the API snapshot digest. | rejected | 2026-11-04 | 180d | — |"
+ },
+ "log_entry_draft": "- 2026-11-04 round 80 — Question: which texts ground R80-C1's two rules, a duplicate-cell refusal and an exact-token delimited match? Where searched: the two known official URLs (rfc-editor.org `rfc8259.txt`, docs.python.org `re.html`), one GET each (HTTP 200; 28 360 and 257 722 bytes), plus one Q&A reached through the Stack Exchange API because its rendered page returned HTTP 403. Identified 3, screened 3, included 1 (S297 `\\b`), reused 1 (S049 for the section 4 duplicate-name sentence; S289 already holds the same RFC bytes), excluded 1 (the Q&A, community commentary that quotes the RFC). Stop: the grammar and boundary questions are answered by a primary text each, and the remaining duplicate-key material is a paraphrase of the sentence S049 already carries.",
+ "findings": [
+  {
+   "id": "F1-rfc-refused-reuse",
+   "finding": "the requested RFC 8259 section-4 ground is already in the registry twice and must not become a third row",
+   "evidence": [
+    "corpus/SOURCES.md:205 S289 holds https://www.rfc-editor.org/rfc/rfc8259.txt and records 28 360 B with digest prefix 61a5378f4255c720; today's fetch is 28 360 B sha256 61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7, the same 16 hex characters",
+    "corpus/SOURCES.md:55 S049 holds https://www.rfc-editor.org/rfc/rfc8259 with anchor 'section 4 Objects' and scope 'duplicate-name interoperability'"
+   ],
+   "action": "cite S049; add this receipt to S049's used-by cell; do not append S298"
+  },
+  {
+   "id": "F2-re-page-drift",
+   "finding": "the re.html page changed between S143's snapshot and today",
+   "evidence": [
+    "S143 cell: 2026-10-28, 257,706 bytes, sha256 f169ed065bf6e6ad779dd7049e6e4ce4ac1081c10eb3f40cd079b0a1f9d11f6a",
+    "today: 2026-11-04, HTTP 200, 257,722 bytes, sha256 24ef5ff00f937cee65b83d527638fe1c1fc573578851e296f4bca0c4da3828a6; +16 bytes, different digest"
+   ],
+   "action": "the row pins its own snapshot; the pointer line digest (af345fa4…) is what makes the quote checkable across page drift"
+  },
+  {
+   "id": "F3-b-is-not-the-frozen-alphabet",
+   "finding": "`\\b` and the frozen C1 alphabet diverge in both directions, so `\\b` can ground the vocabulary but not the rule",
+   "evidence": [
+    "`\\b` accepts: pattern \\brea-agents@6\\.7\\.0\\b matches 'args = [ \"rea-agents@6.7.0-rc1\" ]' (char after the pin is '-', a non-word char); the frozen rule refuses it because '-' is a token character",
+    "`\\b` refuses: the same pattern does not match 'x rea-agents@6.7.0é' because \\w on str patterns is Unicode-aware and treats U+00E9 as a word character; the frozen ASCII alphabet treats it as a delimiter and accepts",
+    "`\\b` also refuses both frozen reds: 'rea-agents@6.7.05' and 'rea-agents@6.7.00' end in digits, which are word characters"
+   ],
+   "action": "keep [A-Za-z0-9._-] as the rule and cite S297 for the boundary terminology only"
+  },
+  {
+   "id": "F4-fixtures-cannot-separate-b-boundary",
+   "finding": "the frozen fixture set does not discriminate a `\\b`-only binder from the frozen rule",
+   "evidence": [
+    "rb01 continuation is '5' and rb02 is '0' (both digits), so `\\b` refuses both; gr01 'rea-agents@6.7.0\"' and gr02 'GHIDRA_INSTALL_DIR=' are accepted by both",
+    "a `\\b`-only binder would therefore score candidate_false_greens 0 and green_refusals 0 on the frozen six and still mis-bind a hyphen- or dot-continued superstring"
+   ],
+   "action": "not actionable inside this seat: the fixture set is frozen by the guard commit. If the L1 wants discrimination, a fifth red fixture 'rea-agents@6.7.0-rc1' would separate the rules, but that is an amendment, not a scribe edit"
+  },
+  {
+   "id": "F5-so-rendered-blocked",
+   "finding": "the Q&A's rendered page could not be opened",
+   "evidence": [
+    "HTTP 403, 5 753 bytes, title 'Just a moment...' (Cloudflare interstitial), snapshot so-dupkeys.html",
+    "content obtained through the official Stack Exchange API 2.3: question body 1 387 B and 12 answers 21 102 B, both HTTP 200"
+   ],
+   "action": "recorded as an API open, never as a rendered-page open"
+  },
+  {
+   "id": "F6-registry-action",
+   "finding": "the only registry action this seat recommends is one append plus one used-by update",
+   "evidence": [
+    "append S297 (new anchor on a held page)",
+    "add .ufo/waves/round-80/w1/ScribeSources/receipt.json to S049's used-by"
+   ],
+   "action": "S298 stays reserved and unconsumed"
+  }
+ ],
+ "limits": [
+  "ids S297/S298 are this seat's reading of the highest id at 84d68e90; other seats may claim ids, so re-read `grep -oE 'S[0-9]{3,}'` at landing",
+  "gate_block_draft.instrument.sha256 is the pre-append committed blob digest 3b7f44f6…; after the append it no longer describes the instrument, so recompute it from the committed blob (this is exactly the R80-C2 rule)",
+  "the RFC sentence is a SHOULD, not a MUST; the duplicate-cell refusal is the lane's stricter policy, which the row's scope cell states",
+  "RFC line numbers are grep numbering; splitlines() reports 327 for the quoted line because 5 form feeds precede it",
+  "the re.html quote line is raw HTML; the sentence is plain text inside one <p> element at line 747 and the paragraph continues to line 755",
+  "no tool was installed or upgraded: no pacman transaction, no uv, no npx; the only network use is four GETs (rfc8259.txt, re.html, stackoverflow rendered page, Stack Exchange API question and answers) plus one Wikipedia GET for the screened background artifact",
+  "scratch dir created with mkdir -p and removed with rm -rf after copying every receipt into the evidence dir; no /tmp path was written by this seat",
+  "no lane production file was touched: only files under .ufo/waves/round-80/w1/ScribeSources/ and the report .ufo/waves/round-80/w1/ScribeSources.md"
+ ],
+ "self_checks": {
+  "row_cell_count": "each drafted row splits on '|' into 13 parts whose first and last are empty, i.e. 11 cells; no cell is empty; no escaped separator appears",
+  "quote_line_located": "`in` test against the exact raw line: rfc line 322 and re line 747",
+  "base_parent": "git rev-parse 84d68e90^ -> 16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "instrument_committed": "git ls-tree HEAD corpus/SOURCES.md -> 27771e681c59b22ddfff03e035a8d7485fbf006c; its sha256 3b7f44f6… equals sha256 of the worktree copy",
+  "tools": "Python 3.14.8, curl 8.23.0"
+ }
+}

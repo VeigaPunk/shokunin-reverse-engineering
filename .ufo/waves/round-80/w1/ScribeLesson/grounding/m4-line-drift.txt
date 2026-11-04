@@ -1,0 +1,16 @@
+# m4 line-drift: the same line number resolves to different text at two committed blobs
+# blob 91d23dad (a1f9b81c, ed68cd0a) vs blob 40905d39 (868710d6..tip)
+--- 91d23dad:106 ---
+    missing = [token for token in tokens if not any(token in line for line in pointed)]
+--- 40905d39:106 ---
+def git_show(root: str, rev: str, path: str) -> bytes | None:
+--- 91d23dad:127 ---
+    pins = {name: (pin, pointer) for name, pin, pointer in RE_PIN.findall(text)}
+--- 40905d39:127 ---
+    start = int(match.group("start"))
+--- 40905d39:142 / :163 (the strictness rows cite these) ---
+    missing = [token for token in tokens if not any(token in line for line in pointed)]
+    pins = {name: (pin, pointer) for name, pin, pointer in RE_PIN.findall(text)}
+--- reviewerC2 row ---
+
+## 5. Findings

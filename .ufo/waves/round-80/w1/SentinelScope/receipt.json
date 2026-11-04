@@ -1,0 +1,119 @@
+{
+ "schema": "kaidoku-r80-sentinel-scope-v1",
+ "round": 80,
+ "seat": "SentinelScope",
+ "wave": "r80-w1",
+ "measured_at": "2026-11-04T10:55:10-03:00",
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+ "declaration_guard": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+ "lane_head_at_review": "b00419fb8c3d083761034605fec2eed1897f60ad",
+ "lane_head_final": "6037f599552ad574bf9b3e7fddacb788f725944b",
+ "instrument_digests_unchanged_at_final_head": true,
+ "arms_remeasured_at_final_head": {"c1_fixtures": "4/2 reds 0 candidate false greens, 4 control false greens", "c1_live": "5/5", "c2": "34/1/1/0", "c3": "9/9/9/0 pristine 37/0, target_pin.matched false without --expect-sha256"},
+ "landed_instruments": {
+  "tools/round-80/pointer-bind.py": "2e4a7852c791862b2e0626b07803f6250f189d95c4234d14dcfb35800b1f5c01",
+  "tools/round-80/strictness-battery.py": "2b26d75a1277fbc57bb17336719727ce1595759138aa2ff0083585a360d11342",
+  "tools/round-80/receipt-provenance.py": "b59068d68857a6ebfdde2ebb0864d41c888f9eb896a254ba6a19fb5525e42b10",
+  "tools/round-80/guard-battery.py": "b9b3b10c41a329f18ff5b39a4f546875101285ee97d2385de6c36ac84c508272"
+ },
+ "arms_remeasured": {
+  "c1_fixtures": {"cases": 4, "green_cases": 2, "candidate_false_greens": 0, "control_false_greens": 4, "candidate_green_refusals": 0, "control_green_refusals": 0, "validate_defects": [], "exit": 0},
+  "c1_live": {"checks_total": 5, "matched": 5, "mismatches": 0, "unparsed": 0, "duplicates": [], "exit": 0},
+  "c1_base_arm_round79_as_candidate": {"candidate_false_greens": 4, "exit": 1},
+  "c2_target": {"receipts": 34, "flagged": 1, "expected_control_flags": 1, "unexpected": 0, "validate_defects": [], "exit": 0},
+  "c2_base_arm": {"receipts": 34, "flagged": 2, "expected_control_flags": 1, "unexpected": 1, "unexpected_receipt": ".ufo/waves/round-79/l1/scores/c2-at-landing.json", "exit": 1},
+  "c3_target": {"guards": 9, "rows": 9, "bound": 9, "survivors_count": 0, "pristine_cases": 37, "pristine_failures": 0, "validate_defects": [], "exit": 0},
+  "c3_target_pinned": {"target_pin_matched": true, "ok": true},
+  "c3_base_arm": {"guards": 9, "rows": 0, "bound": 0, "survivors_count": 9, "pristine_cases": 29, "pristine_failures": 0, "exit": 1},
+  "selftests": {"strictness-battery": {"cases": 8, "failures": 0}, "pointer-bind": {"cases": 33, "failures": 0}, "receipt-provenance": {"cases": 14, "failures": 0}, "guard-battery": {"cases": 19, "failures": 0}}
+ },
+ "leaks": {
+  "status": "one evidence-side leak of pointed-line bytes; no secret material anywhere",
+  "instrument_compliance": {
+   "pointer_bind": "retains pointer, tokens, path, declared_path, 1-based range, line_sha256 of the pointed slice, and delimiter_evidence {token, occurrences, delimited, reason}; a refusal names the maximal [A-Za-z0-9._-@]+ run around the match",
+   "live_receipt": {"file": "SentinelScope/live-at-head.json", "bytes": 3426, "pointed_line_byte_hits": 0, "env_key": false, "disabled_servers": false}
+  },
+  "findings": [
+   {
+    "id": "L1",
+    "severity": "low",
+    "file": ".ufo/waves/round-80/w1/ScoutRecord/receipt.json",
+    "field": "cells[i].pointed_line",
+    "also_in": [".ufo/waves/round-80/w1/ScoutRecord/probe.json (cells[i].pointed_lines)", ".ufo/waves/round-80/w1/ScoutRecord/probe.out", ".ufo/waves/round-80/w1/ScoutRecord/report.md", ".ufo/waves/round-80/w1/ScoutRecord.md"],
+    "content_class": "five pointed live lines verbatim: the Devin and OMP pin lines, the Kimi argv line, application.version=12.1.4, and the two .bashrc exports",
+    "secret_material": false,
+    "impact": "violates the wave's digest-only convention for pointed lines; no token, env block or key value is exposed",
+    "remediation": "drop pointed_line/pointed_lines, keep line_sha256"
+   }
+  ],
+  "secret_sweep": {"scope": [".ufo/waves/round-80/", "tools/round-80/"], "patterns": ["sk-<12+>", "Bearer <6+>", "\"api_key\"", "\"apiKey\"", "\"password\":", "\"env\":"], "hits": 0},
+  "notes": ["tools/round-80/pointer-bind.py:433 carries the frozen fixture rb02 (rea-agents@6.7.00), not the live @6.7.0 line", "prose quotes in ScribeKnowledge/draft-entry.md and ScribeSources.md are synthetic fixture strings (@6.7.00, @6.7.0-rc1)"]
+ },
+ "path_checks": {
+  "status": "instrument paths are vetted before git; one hardcoded-/tmp fallback and one fixed-name delete",
+  "provenance_instrument_path": {
+   "rejects_absolute_before_git": true,
+   "rejects_dotdot_before_git": true,
+   "verdict_on_violation": "unsafe-instrument-path",
+   "option_injection": {"probe": "instrument.path = --output=<scratch>/PWN.txt", "verdict": "uncommitted-digest", "file_created": false},
+   "working_tree_fallback": {"probe": "digest equals the sha256 of an untracked instrument file", "verdict": "uncommitted-digest", "flagged": true},
+   "symbolic_rev": {"probe": "--rev main", "result": "unevaluable, exit 2"}
+  },
+  "guard_battery_execution": "reads git show <rev>:tools/round-78/attack-gate.py and executes only copies written to --work (pristine.py, m<NN>.py); the lane file is never executed",
+  "writes": {"guard_battery": ["--work", "--json-out"], "receipt_provenance": ["--json-out"], "pointer_bind": ["--json-out"], "strictness_battery": ["--work", "--json-out"]},
+  "findings": [
+   {"id": "P1", "severity": "medium", "file": "tools/round-80/strictness-battery.py", "evidence": "work = args.work or os.path.join(os.environ.get(\"TMPDIR\", \"/tmp\"), \"strictness-battery\"); selftest() uses os.environ.get(\"TMPDIR\", \"/tmp\") + \"/strictness-selftest\"", "impact": "the frozen command omits --work, so TMPDIR-unset reproduction creates a git fixture repo at /tmp/strictness-battery and rmtrees /tmp/strictness-battery/fixture-repo", "remediation": "require --work, or default to tempfile.mkdtemp(prefix=\"strictness-battery-\")"},
+   {"id": "P2", "severity": "low", "file": "tools/round-80/strictness-battery.py", "evidence": "make_fixture_repo shutil.rmtree(work/fixture-repo) then recreates a fixed name", "impact": "a caller's reused work dir loses a child named fixture-repo", "remediation": "tempfile.mkdtemp(dir=work)"},
+   {"id": "P3", "severity": "informational", "file": "tools/round-80/pointer-bind.py", "evidence": "read_lines() opens the path named in PROVINCE.md; declared_ok() only vetoes the match afterwards", "impact": "a tampered record turns the binder into a file-existence/sha256 oracle over an arbitrary path; the record is lane-committed", "remediation": "resolve and compare the pointer to DECLARED before reading"}
+  ]
+ },
+ "child_env": {
+  "status": "guard battery holds the allowlist in code; provenance and binder children inherit the whole environment; no run records the env it used",
+  "guard_battery": {"keys": ["HOME", "LANG", "PATH", "TMPDIR"], "tmpdir": "--work", "interpreter": "python3 from PATH", "recorded_in_receipt": false, "home_fallback": "/tmp"},
+  "receipt_provenance": {"keys": "inherited (no env= argument on any git child)", "recorded_in_receipt": false, "reachable_vars": ["GIT_DIR", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_CONFIG_*", "SSH_*"]},
+  "pointer_bind": {"keys": "inherited (git show / git rev-parse, no env=)", "recorded_in_receipt": false},
+  "strictness_battery": {"impl_execution": "importlib import in-process, so the impl runs with the battery's full environment", "fixture_git": "git init/add/commit inherit the full environment"},
+  "findings": [
+   {"id": "E1", "severity": "low", "file": "tools/round-80/guard-battery.py", "evidence": "child_env(tmpdir) returns exactly HOME/LANG/PATH/TMPDIR and is passed to every run_selftest, but the receipt has no child_env_keys field while the gate's own receipt contract requires env_keys == [HOME, LANG, PATH, TMPDIR]", "impact": "a reader cannot verify from the receipt which environment the mutants ran in", "remediation": "record child_env_keys and gate on it in validate_receipt"},
+   {"id": "E2", "severity": "medium", "file": "tools/round-80/receipt-provenance.py", "evidence": "subprocess.run([\"git\", \"-C\", root, ...], capture_output=True) with no env= on every call", "impact": "GIT_DIR overrides -C for the whole sweep; GIT_OBJECT_DIRECTORY / GIT_ALTERNATE_OBJECT_DIRECTORIES can make an arbitrary object store the source of 'committed' blobs, so a digest that is not a blob of this lane can resolve bound; the receipt records no environment", "remediation": "pass the four-key child_env and record the key list"}
+  ]
+ },
+ "wave_bounds": {
+  "status": "no seat git/jj write, no write outside a seat's evidence dir or its sanctioned report file",
+  "git": {"reflog": "only the existing 'export from jj' entries plus the L1's round-80 commits", "stash": "empty", "worktrees": 1, "extra_branches": 0},
+  "jj": {"newest_ops": ["10:41:43 jj commit -m 'round-80: the declaration, the frozen strictness fixtures and the r80-w1 dispatch (15 seats)'", "10:41:45 jj --config snapshot.auto-track=none() git push --remote origin --bookmark main"], "attribution": "L1 declaration, before the first seat write at 10:43", "seat_ops": 0},
+  "nested_repos": 0,
+  "production_changes": {"route": "L1 commits only", "commits": ["253fc817 the three instruments and their base arms", "b8260107 the gate's nine clauses get one isolating case and a decision-table row each (37 cases)", "b00419fb the round-79 landing receipt is re-taken with committed instrument bytes and a full rev, disclosed", "6037f599 the record / closure (LOG.md, SCORECARD.md, corpus, claims, round-80 l1/scores)"], "final_tree": "clean at 6037f599", "earlier_working_tree_modifications": ["corpus/SOURCES.md (L1 scribe integration)", ".ufo/waves/round-79/l1/scores/c2-at-landing.json (disclosure-only reason edit)"]},
+  "tmp_writes": {"attribution": "other lanes (kama-r82, r83, alma, mori-r87); the only code path to /tmp in this wave is P1"},
+  "findings": [
+   {"id": "B1", "severity": "low", "file": ".ufo/waves/round-80/w1/ExecBinder/__pycache__/pointer-bind.cpython-314.pyc", "impact": "a compiled artefact inside the seat's own evidence dir; not a bound breach", "remediation": "delete it and run imports with -B"},
+   {"id": "B2", "severity": "low", "file": ".ufo/waves/round-80/w1/ExecProv/selftest.txt", "evidence": "recorded SELFTEST cases=19 failures=3 against the 10:46:24 candidate revision; the instrument changed at 10:46:52 and the file was rewritten at 10:47:17 to failures=0", "impact": "a retained selftest log without the instrument digest cannot be tied to a revision", "remediation": "record the instrument digest beside every retained log"}
+  ]
+ },
+ "forgery_limit": {
+  "status": "validate is consistency in all four instruments; only the run binds to artefacts",
+  "per_instrument": {
+   "pointer-bind.py": {"validate_is": "internal consistency (counts, duplicates, line_sha256 non-empty, path_is_declared, range, delimiter evidence, record rev/digest shapes, instrument digest == own file)", "artifact_binding": "the run reads PROVINCE.md at the resolved rev and the five live files", "proven_forgery": "a hand-authored receipt with 5 checks, line_sha256=d*64, record.rev=e*40, record.sha256=f*64 validates with defects [] and exit 0"},
+   "strictness-battery.py": {"validate_is": "internal consistency (false_greens/green_refusals from its own rows; cases from its own fixture.red_ids; ok implies candidate 0/0 and control == 4)", "artifact_binding": "the run loads both impls and the frozen fixture file", "proven_forgery": "any rows with candidate.false_greens 0 validate; nothing re-reads the fixtures or either impl"},
+   "receipt-provenance.py": {"validate_is": "internal consistency plus one non-empty guard ('ok true over an empty population')", "artifact_binding": "the run reads receipts and instrument blobs from git at --rev and refuses a symbolic rev", "proven_forgery": "a row {receipt: .../invented.json, instrument: tools/round-70/invented.py, sha256: b*64, verdict: bound, matched_rev: c*40} validates with defects [] and exit 0; an empty population with ok true is rejected"},
+   "guard-battery.py": {"validate_is": "internal consistency (guards/rows/bound/survivors_count from its own lists; killed entries must have present && failed; pristine summary present; rev 40-hex; instrument digest)", "artifact_binding": "the run reads the gate and SKILL blobs at --rev and executes one mutant per clause; the validator never reads the repo", "proven_forgery": "fabricated clauses/table_rows/per_clause with a consistent ok would validate; only the run binds"}
+  },
+  "unguarded_shapes": [
+   {"id": "C2-empty", "detail": "a small population is caught only by the predicate's receipts 34; the validator only blocks receipts 0 with ok true"},
+   {"id": "C3-empty-set", "detail": "guards > 0, not guards == 9; a one-clause gate with one row, one killed, zero survivors and a matched pin yields ok true, exit 0, guards 1 (reproduced); the landed CLI has no --expect-guards"}
+  ],
+  "predicate_reproducibility": {
+   "id": "C3-a",
+   "severity": "medium",
+   "evidence": "the frozen sentence runs guard-battery.py --root . --rev <measured> --json-out <receipt> and requires target_pin.matched true, but matched = bool(expect_sha256) and expect_sha256 == actual; without --expect-sha256 the run exits 0 with ok true and target_pin.matched false (c3-at-head.json), with it matched true (c3-at-head-pinned.json)",
+   "impact": "the frozen sentence cannot be reproduced from its own command; the L1 landing receipt carries expected == actual == df6fb856..., so the flag was used at landing but is not in the sentence",
+   "remediation": "append --expect-sha256 <gate blob digest> to the frozen command, or default the expectation to the gate blob at --rev"
+  },
+  "shape_mismatch": "the survivor count is survivors_count; 'survivors' in the receipt JSON is the list"
+ },
+ "evidence_dir": ".ufo/waves/round-80/w1/SentinelScope/",
+ "evidence_files": ["c1-at-head.json", "c1-base-landed.json", "live-at-head.json", "c2-at-head.json", "c2-base-landed.json", "c3-at-head.json", "c3-at-head-pinned.json", "c3-base-landed.json", "guard-target.json", "prov-landed.json", "prov2-landed.json", "p-forged-row.json", "p-forged-empty.json", "forged-binder-landed.json"],
+ "scratch": "/fast/scratch/hyaku/kaidoku-r80/SentinelScope/ (removed before yield)",
+ "limits": ["the 34 historical receipts' contents were not re-derived; the sweep's verdicts and counts were checked against the frozen arms plus a synthetic root", "the /tmp attribution for other lanes is by filename and mtime only", "the forged receipts were authored under this seat's scratch; they show what --validate accepts, not that a filed receipt is forged", "the hostile GIT_OBJECT_DIRECTORY path is stated from the code, not exercised"]
+}

@@ -15,6 +15,8 @@ new ones this round found in its own surface, with the corrected bytes as the ch
 
 | M80-6 | A new row for a URL already held — the append ran before the duplicate check, so S297 re-rowed RFC 8259 §4 although S049 already teaches that exact scope. | `.ufo/waves/round-80/l1/pre-append-url-check.txt` names the holders (S049 and S289 for the RFC, S143 for the `re` page); the census's `W04` fired for S297 (and fires for S298, the deliberate different-anchor row) — a warning, exit 0, which is why the gate did not stop the append. | The corpus rule (`a URL already held is a refused reuse, not a row`) plus the census `W04`; neither is fatal, so the check has to run before the append. | Drop S297, cite S049 and extend its `used-by` (`corpus/lessons/round-21.md` → `corpus/lessons/round-21.md, corpus/knowledge/2026-11-04-r80-strict-tokens-and-provenance.md`, recorded here as the old → new change); the pre-append check is now a committed receipt. Shown able to fail: the check prints S049 for the RFC URL, so the append is refused; it also prints S143 for the `re` URL, which is why S298 declares itself the same document with a different anchor. |
 
+| M80-7 | A renamed identifier loses a lookup keyed on the old one — a duplicate cell renamed `omp-pin#2` missed `DECLARED.get()`, so the cell was forced `matched False` with the false reason "the pointer does not name the declared live object" although it points at the right file and line. | `tools/round-80/pointer-bind.py` `declared_ok()` against the frozen duplicate fixture: `checks_total 6, matched 5, mismatches 1`, unbound cell `omp-pin#2` (w1/ReviewerC1 §7). | `ReviewerC1` §7, by reading the receipt's own reason against the fixture; the frozen battery could not see it because refusal is the expected red outcome. | Each check carries a `base_id`, and the declared-object lookup uses it. Shown able to fail: the same fixture now reads `checks_total 6, matched 6, mismatches 0, duplicates ["omp-pin"], ok false`, and a selftest case pins the base id on both cells (34 cases). |
+
 Sweep that found none of a sixth class: `grep -rn 'defects.append\|DUP\|duplicates' tools/round-79 tools/round-78/attack-gate.py`
 was read clause by clause by `w1/ScoutGate` and `w1/ReviewerC3`; no further refusal clause exists in
 `validate_receipt()` beyond the nine the table now binds (clause count 9 at both revisions,
@@ -38,6 +40,21 @@ illustrate. Flip: admit only if a claim needs the grammar-versus-interoperabilit
 evidence. **Second candidate, unreachable:** a Stack Overflow question on duplicate JSON keys — the
 fetch returned a Cloudflare challenge page (`Just a moment...`, 5 753 B); class `unreachable`, not
 fabrication, so no row and no quote.
+
+## Limits
+
+- The C1 record arm now requires the Rule's conjunction (id reported **and** every declared cell
+  counted); a candidate that reports the id but keeps the collapsed count is a false green with its
+  own selftest case. The battery still has no *green record* control: an implementation that reports
+  `duplicates` on every record would fail only the separate live arm (`duplicates []`), which a
+  hardcoded receipt could fake — the lane's standing authenticity limit.
+- The C3 binding rule does not forbid one case from killing two clauses; the landed set is one-to-one
+  (`w1/ExecGate/mutants.json`, `other_cases_failed []` on all nine) but the rule permits the weaker
+  case, and `CriticClaims` demonstrated a two-defect assertion that fails on two mutants.
+- The C2 sweep's `symbolic-rev` class covers the named symbolic names (`@HEAD@`, `HEAD`, `main`,
+  `master`, `tip`, `@`); other non-40-hex revs are still read as "no declared rev" rather than a
+  defect, so an abbreviated rev is tolerated where a symbolic one is not.
+- `--validate` remains internal consistency, not authenticity (rounds 78–79).
 
 ## Sources
 

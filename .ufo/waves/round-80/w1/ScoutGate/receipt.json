@@ -1,0 +1,576 @@
+{
+  "attack_rows": 10,
+  "base_rev": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "clause_count": 9,
+  "clauses": [
+    {
+      "condition": "len(ids) != len(set(ids))",
+      "declared_prefix": "duplicate fixture id",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "duplicate fixture id",
+      "emitted_starts_with_declared_prefix": true,
+      "enclosing_if_line": 781,
+      "end_line": 782,
+      "fires_in_pristine_selftest": false,
+      "gid": "G01-duplicate-fixture-id",
+      "index": 1,
+      "line": 782,
+      "message_literal": "duplicate fixture id",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": "duplicate fixture id",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        782,
+        782
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "set(ids) != declared",
+      "declared_prefix": "fixture ids",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "fixture ids ['receipt-unauth'] differ from the declared set",
+      "emitted_starts_with_declared_prefix": true,
+      "enclosing_if_line": 784,
+      "end_line": 786,
+      "fires_in_pristine_selftest": false,
+      "gid": "G02-fixture-id-set",
+      "index": 2,
+      "line": 785,
+      "message_literal": "fixture ids ",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": "fixture ids",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        785,
+        786
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "fixture.get('fixture') != next((a['fixture'] for a in ATTACKS if a['id'] == fixture.get('id')))",
+      "declared_prefix": ": fixture dir mismatch",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "receipt-unauth: fixture dir mismatch",
+      "emitted_starts_with_declared_prefix": false,
+      "enclosing_if_line": 788,
+      "end_line": 790,
+      "fires_in_pristine_selftest": false,
+      "gid": "G03-fixture-dir-mismatch",
+      "index": 3,
+      "line": 790,
+      "message_literal": ": fixture dir mismatch",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": ": fixture dir mismatch",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        790,
+        790
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "not isinstance((fixture.get('base') or {}).get('accepted'), bool)",
+      "declared_prefix": ": base.accepted is not a bool",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "receipt-unauth: base.accepted is not a bool",
+      "emitted_starts_with_declared_prefix": false,
+      "enclosing_if_line": 791,
+      "end_line": 792,
+      "fires_in_pristine_selftest": false,
+      "gid": "G04-base-accepted-not-bool",
+      "index": 4,
+      "line": 792,
+      "message_literal": ": base.accepted is not a bool",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": ": base.accepted is not a bool",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        792,
+        792
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "fixture.get('refused') and (not fixture.get('reasons'))",
+      "declared_prefix": ": refused without a reason",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "receipt-unauth: refused without a reason",
+      "emitted_starts_with_declared_prefix": false,
+      "enclosing_if_line": 793,
+      "end_line": 794,
+      "fires_in_pristine_selftest": true,
+      "gid": "G05-refused-without-reason",
+      "index": 5,
+      "line": 794,
+      "message_literal": ": refused without a reason",
+      "pinned": true,
+      "pinned_by": [
+        "red-validate-refused-no-reason"
+      ],
+      "prefix": ": refused without a reason",
+      "reaching_cases": [
+        "red-validate-refused-no-reason"
+      ],
+      "reaching_kind": "pinned",
+      "statement_span": [
+        794,
+        794
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "reason.get('rule') != fixture.get('rule')",
+      "declared_prefix": ": refused by ",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "receipt-unauth: refused by not_the_declared_rule, not its declared rule",
+      "emitted_starts_with_declared_prefix": false,
+      "enclosing_if_line": 796,
+      "end_line": 798,
+      "fires_in_pristine_selftest": false,
+      "gid": "G06-refused-other-rule",
+      "index": 6,
+      "line": 797,
+      "message_literal": ": refused by ",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": ": refused by ",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        797,
+        798
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "receipt.get('base_accepted') != sum((1 for f in receipt.get('fixtures') or [] if (f.get('base') or {}).get('accepted')))",
+      "declared_prefix": "base_accepted does not re-derive",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "base_accepted does not re-derive from the fixture list",
+      "emitted_starts_with_declared_prefix": true,
+      "enclosing_if_line": 799,
+      "end_line": 801,
+      "fires_in_pristine_selftest": false,
+      "gid": "G07-base-accepted-count",
+      "index": 7,
+      "line": 801,
+      "message_literal": "base_accepted does not re-derive from the fixture list",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": "base_accepted does not re-derive",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        801,
+        801
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "receipt.get('refused') != sum((1 for f in receipt.get('fixtures') or [] if f.get('refused')))",
+      "declared_prefix": "refused does not re-derive",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "refused does not re-derive from the fixture list",
+      "emitted_starts_with_declared_prefix": true,
+      "enclosing_if_line": 802,
+      "end_line": 804,
+      "fires_in_pristine_selftest": false,
+      "gid": "G08-refused-count",
+      "index": 8,
+      "line": 804,
+      "message_literal": "refused does not re-derive from the fixture list",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": "refused does not re-derive",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        804,
+        804
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    },
+    {
+      "condition": "inst.get('sha256') != sha256_bytes(pathlib.Path(__file__).read_bytes())",
+      "declared_prefix": "instrument sha256 is not",
+      "declared_prefix_in_literal": true,
+      "emitted_example": "instrument sha256 is not this file's digest",
+      "emitted_starts_with_declared_prefix": true,
+      "enclosing_if_line": 806,
+      "end_line": 807,
+      "fires_in_pristine_selftest": false,
+      "gid": "G09-instrument-digest",
+      "index": 9,
+      "line": 807,
+      "message_literal": "instrument sha256 is not this file's digest",
+      "pinned": false,
+      "pinned_by": [],
+      "prefix": "instrument sha256 is not",
+      "reaching_cases": [],
+      "reaching_kind": "none",
+      "statement_span": [
+        807,
+        807
+      ],
+      "static_callers": [
+        "red-validate-refused-no-reason"
+      ]
+    }
+  ],
+  "cross_check_inflight_battery": {
+    "absent_cases": [
+      "red-validate-duplicate-fixture-id",
+      "red-validate-fixture-id-set",
+      "red-validate-fixture-dir",
+      "red-validate-base-accepted-bool",
+      "red-validate-refused-other-rule",
+      "red-validate-base-accepted-count",
+      "red-validate-refused-count",
+      "red-validate-instrument-digest"
+    ],
+    "base_arm_no_block": {
+      "bound": 0,
+      "rows": 0,
+      "unbound": 9
+    },
+    "bound_at_base": 1,
+    "bound_clause": "G05 (red-validate-refused-no-reason)",
+    "guards": 9,
+    "method": "imported read-only; called enumerate_clauses/parse_table/bind on the gate and the L1 guard-table draft",
+    "observed_at": "2026-11-04T10:47:41-03:00",
+    "path": "tools/round-80/guard-battery.py",
+    "rows": 9,
+    "rules_confirmed": {
+      "case_decl_regex": "case\\(\\s*\"([^\"]+)\" (double quotes required)",
+      "child_env": "TMPDIR = --work; HOME falls back to /tmp only when unset and is not a write target",
+      "header_skip": "clause_id.lower() in ('clause','clause id') and separator skip via set(line) <= set('|-: ')",
+      "match": "row['fragment'] in clause['message'] (segment, not startswith)"
+    },
+    "sha256": "b9b3b10c41a329f18ff5b39a4f546875101285ee97d2385de6c36ac84c508272",
+    "status": "untracked, in flight (another seat); not a lane deliverable",
+    "table_defects": []
+  },
+  "deletion_tally": {
+    "clauses": [
+      {
+        "cases": 29,
+        "declared_prefix": "duplicate fixture id",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G01-duplicate-fixture-id",
+        "index": 1,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": "fixture ids",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G02-fixture-id-set",
+        "index": 2,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": ": fixture dir mismatch",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G03-fixture-dir-mismatch",
+        "index": 3,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": ": base.accepted is not a bool",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G04-base-accepted-not-bool",
+        "index": 4,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": ": refused without a reason",
+        "exit": 1,
+        "failing_cases": [
+          "red-validate-refused-no-reason"
+        ],
+        "failures": 1,
+        "gid": "G05-refused-without-reason",
+        "index": 5,
+        "killed": true,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": ": refused by ",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G06-refused-other-rule",
+        "index": 6,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": "base_accepted does not re-derive",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G07-base-accepted-count",
+        "index": 7,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": "refused does not re-derive",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G08-refused-count",
+        "index": 8,
+        "killed": false,
+        "stderr_tail": []
+      },
+      {
+        "cases": 29,
+        "declared_prefix": "instrument sha256 is not",
+        "exit": 0,
+        "failing_cases": [],
+        "failures": 0,
+        "gid": "G09-instrument-digest",
+        "index": 9,
+        "killed": false,
+        "stderr_tail": []
+      }
+    ],
+    "deviations_from_expected": [],
+    "expected_shape": "9 clauses, 8 survivors, 1 killed (: refused without a reason)",
+    "killed": 1,
+    "method": "one copy per clause in scratch; the single defects.append(...) statement replaced by pass at its exact AST span; run python3 -I -B <copy> --selftest",
+    "mutant_diff_shape": {
+      "clause-02": "2 lines to 1 (multi-line f-string)",
+      "clause-06": "2 lines to 1 (multi-line f-string)",
+      "others": "1 line to 1"
+    },
+    "survivors": 8
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "kind": "observed",
+      "text": "validate_receipt holds exactly nine defects.append statements, at lines 782,785,790,792,794,797,801,804,807; two are two-line f-strings (785-786, 797-798)."
+    },
+    {
+      "id": "F2",
+      "kind": "observed",
+      "text": "Exactly one selftest case calls validate_receipt: red-validate-refused-no-reason (line 921). The instrumented pristine selftest fires only clause 5; no case reaches clauses 1-4, 6-9, so none is reached incidentally."
+    },
+    {
+      "id": "F3",
+      "kind": "observed",
+      "text": "Independent deletion tally reproduces the ticket's expected base shape exactly: 9 clauses, 8 survivors, 1 killed (clause 5, : refused without a reason, killing red-validate-refused-no-reason with failures 1, exit 1, cases 29). No deviation."
+    },
+    {
+      "id": "F4",
+      "kind": "observed",
+      "text": "Pristine --selftest: cases 29, failures 0, exit 0; gate sha256 4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf equals the blob at 16dfa009 (blob 5925deccb971bafb2957daac5f388a84d28b4be6) and the worktree."
+    },
+    {
+      "id": "F5",
+      "kind": "observed",
+      "text": "Target arithmetic is consistent with the tally: 37 - 29 = 8 = survivor count, and the L1 guard-table draft declares 8 new case names plus the existing red-validate-refused-no-reason for G05."
+    },
+    {
+      "id": "F6",
+      "kind": "observed",
+      "text": "Four declared 'message prefixes' (G03-G06) are not string prefixes of the emitted defect, which begins with the interpolated fixture id: 'receipt-unauth: fixture dir mismatch'. startswith(prefix) binds 5 of 9; substring/segment matching binds 9 of 9. G06's prefix ends in a significant space (': refused by ')."
+    },
+    {
+      "id": "F7",
+      "kind": "observed",
+      "text": "R80-C3's provenance sentence does not re-derive: round-79's gm-f/gm-g/gm-h are mutants of tools/round-79/gate-mutation.py (sha 682f1e78...), pinned against rev ed68cd0a; none names tools/round-78/attack-gate.py. The round-78 gate's only recorded clause mutant is round-78 MutGate m08 (refused-without-reason, survivor at rev c9d986eb, sha 961d5a23). At base 16dfa009 that clause is killed and eight others survive."
+    },
+    {
+      "id": "F8",
+      "kind": "observed",
+      "text": "The L1 guard-table draft has 11 pipe-rows inside its markers: a header row, a separator row and the 9 data rows. A battery that treats every pipe-row as a data row reports rows 11 and two orphan rows (the frozen kill rule)."
+    },
+    {
+      "id": "F9",
+      "kind": "observed",
+      "text": "Each of the nine clauses is independently fireable with a receipt that yields exactly one defect, so nine isolating cases are constructible without co-firing."
+    },
+    {
+      "id": "F10",
+      "kind": "inference",
+      "text": "The guard-battery's base survivors count of 9 is a declared-binding count (no rows at base means no clause has a declared case), not a raw deletion tally; it does not contradict the 8-survivor tally. A reviewer comparing the two numbers must not read it as an off-by-one."
+    }
+  ],
+  "fireability": [
+    {
+      "defect_count": 1,
+      "defects": [
+        "duplicate fixture id"
+      ],
+      "fired": true,
+      "gid": "G01-duplicate-fixture-id",
+      "index": 1
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "fixture ids ['receipt-unauth'] differ from the declared set"
+      ],
+      "fired": true,
+      "gid": "G02-fixture-id-set",
+      "index": 2
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "receipt-unauth: fixture dir mismatch"
+      ],
+      "fired": true,
+      "gid": "G03-fixture-dir-mismatch",
+      "index": 3
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "receipt-unauth: base.accepted is not a bool"
+      ],
+      "fired": true,
+      "gid": "G04-base-accepted-not-bool",
+      "index": 4
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "receipt-unauth: refused without a reason"
+      ],
+      "fired": true,
+      "gid": "G05-refused-without-reason",
+      "index": 5
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "receipt-unauth: refused by not_the_declared_rule, not its declared rule"
+      ],
+      "fired": true,
+      "gid": "G06-refused-other-rule",
+      "index": 6
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "base_accepted does not re-derive from the fixture list"
+      ],
+      "fired": true,
+      "gid": "G07-base-accepted-count",
+      "index": 7
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "refused does not re-derive from the fixture list"
+      ],
+      "fired": true,
+      "gid": "G08-refused-count",
+      "index": 8
+    },
+    {
+      "defect_count": 1,
+      "defects": [
+        "instrument sha256 is not this file's digest"
+      ],
+      "fired": true,
+      "gid": "G09-instrument-digest",
+      "index": 9
+    }
+  ],
+  "gate": {
+    "function": "validate_receipt",
+    "function_span": [
+      778,
+      808
+    ],
+    "lines": 974,
+    "path": "tools/round-78/attack-gate.py",
+    "sha256": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+    "sha256_at_base": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+    "worktree_equals_base": true
+  },
+  "gate_sha256": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "measured_rev": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "open_unknowns": [
+    "R80-C3 base arm (rows 0, bound 0, survivors 9) is asserted by the claim; tools/round-80/guard-battery.py does not exist at base, so that arm is not reproducible before the battery is written.",
+    "Whether the battery counts header/separator pipe-rows as orphans is unspecified by the frozen contract; the draft contains both."
+  ],
+  "pristine": {
+    "cases": 29,
+    "command": "python3 -I -B tools/round-78/attack-gate.py --selftest",
+    "cwd": "/fast/scratch/hyaku/kaidoku-r80/ScoutGate (isolated, TMPDIR set)",
+    "exit": 0,
+    "failures": 0
+  },
+  "role": "scout (read-only recon)",
+  "round": 80,
+  "schema": "kaidoku-r80-scoutgate-receipt-v1",
+  "seat": "ScoutGate",
+  "selftest_call_sites": [
+    {
+      "case": "red-validate-refused-no-reason",
+      "expr": "validate_receipt(no_reason)[\"defects\"]",
+      "line": 921
+    }
+  ],
+  "selftest_trace": {
+    "fired_clauses": [
+      5
+    ],
+    "method": "instrumented copy appends the clause index before each defects.append; one --selftest run",
+    "summary": "SELFTEST cases=29 failures=0",
+    "trace": [
+      5
+    ]
+  },
+  "wave": "r80-w1"
+}

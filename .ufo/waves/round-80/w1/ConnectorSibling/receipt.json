@@ -1,0 +1,257 @@
+{
+  "seat": "ConnectorSibling",
+  "role": "connector (cross-lane pattern finding, read-only across sibling lanes; absorbed nothing, edited nothing)",
+  "round": 80,
+  "wave": "w1",
+  "lane": "kaidoku-shokunin",
+  "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "declaration": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "measurements": ".ufo/waves/round-80/w1/ConnectorSibling/measurements.txt",
+  "report": ".ufo/waves/round-80/w1/ConnectorSibling.md",
+
+  "sibling_impls": [
+    {
+      "path": "chousa-shokunin/tools/digest-in-tree.py",
+      "axis": "freshness",
+      "rule": "extracts every 64-hex sha256 pin from ONE receipt and requires each to equal the sha256 of a blob committed at --revision (default HEAD), or of any blob object with --all-objects; the matched blob's path is printed but never matched; a receipt with no pin exits 2 (NO_DIGESTS, fail-closed)",
+      "scope": "one receipt file; every 64-hex token anywhere in it; path-agnostic",
+      "evidence": "digest-in-tree.py:2-23,64-88,140-186"
+    },
+    {
+      "path": "chousa-shokunin/tools/receipt-pin.py",
+      "axis": "freshness",
+      "rule": "a receipt header line `SHA256=<64 lowercase hex> <repo-relative path>` must equal `git -C ROOT cat-file blob REVISION:PATH`; the header REVISION must equal the caller-named --revision; committed bytes, never the working tree; header consistency is explicitly NOT execution authenticity",
+      "scope": "one receipt per invocation; one caller-named 40-hex revision; path and digest are taken from the same header line",
+      "evidence": "receipt-pin.py:1-16,27,40-58,81-87"
+    },
+    {
+      "path": "tameshi-shokunin/tools/receipt-window.py",
+      "axis": "freshness",
+      "rule": "a receipt is admissible only with a nonempty unique id, a lowercase 64-hex instrument_sha256, an aware ISO-8601 measurement_interval with start<=end, and an instrument sha that is a member of the contract's frozen/installed set or its classified historical table; frozen-vs-installed disagreement imposes an edit-window ordering on measurement_interval",
+      "scope": "a receipt batch against one contract.json; allowlist membership only, no byte re-derivation",
+      "evidence": "receipt-window.py:1-15,82-119,154-172"
+    },
+    {
+      "path": "tameshi-shokunin/tools/receipt-measure.py",
+      "axis": "freshness",
+      "rule": "runner for a frozen instrument; keeps FROZEN_GATE_SHA / FROZEN_MEASURE_SHA as literals and a digest->name table for four historical instruments; reports the runner's own sha256 separately from the instrument's identity",
+      "scope": "its own round-20 instrument identity and a fixed receipt set; not a general sweep",
+      "evidence": "receipt-measure.py:2-9,22-30,296-298"
+    },
+    {
+      "path": "kama-shokunin/tools/citation-provenance.py",
+      "axis": "freshness",
+      "rule": "every registry-required citation must appear in a nominated document as the exact token `cite(<rev>, <path>, sha256=<64 lowercase hex>)`, and `git cat-file <rev>:<path>` must hash to that digest; missing and mismatching rows are counted separately",
+      "scope": "registry rows x nominated document set (corpus lessons, SOURCES, SCORECARD, LOG); pin and path are adjacent inside a required token",
+      "evidence": "citation-provenance.py:1-24,27-30"
+    },
+    {
+      "path": "kama-shokunin/tools/digest-ledger.py",
+      "axis": "freshness",
+      "rule": "every full 64-hex run cited by any .md/.tsv document is classified against the blob set of a revision (git mode) or a directory, via a committed ledger whose classes include `external` (must equal the named file's sha256) and `unverifiable` (requires a reason note); no cited digest may be unexplained",
+      "scope": "whole-lane document population, excluding .ufo/, the ledger itself and the append-only disclosure file; classification, not only acceptance",
+      "evidence": "digest-ledger.py:1-30 (provenance: considerthese/2026-10-25.md proposal 1)"
+    },
+    {
+      "path": "kama-shokunin/tools/round72-receipt-tip-binding.py",
+      "axis": "freshness",
+      "rule": "every receipt path a round's self-record cites must exist at the tip, carry a `# tip=<40-hex>` / `# rev=<40-hex>` header naming an ancestor of the tip, and every commit in `<rev>..<tip>` may touch only the round's declared record paths; findings are classified unbound/shifted/stale; exit 2 rather than a silent zero when the population is empty",
+      "scope": "one round's self-record citations, read as blobs at --tip (never the worktree or index)",
+      "evidence": "round72-receipt-tip-binding.py:1-26"
+    },
+    {
+      "path": "kama-shokunin/tools/round74-receipt-claim-binding.py",
+      "axis": "calibration",
+      "rule": "a revision token binds only with a non-word, non-hyphen boundary before and a hex-looking negative lookahead after: `(?:^|[^\\w-])(?:#\\s*)?(?:tip|rev)=([0-9a-fA-F]{40})(?![0-9a-fA-F])`, case-insensitive; claims are graded per paragraph so wrapped/offset citations cannot escape",
+      "scope": "40-hex revision tokens in a self-record's paragraphs; hex alphabet only",
+      "evidence": "round74-receipt-claim-binding.py:82,12-40"
+    },
+    {
+      "path": "kama-shokunin/tools/round75-survivor-probe.py",
+      "axis": "depth",
+      "rule": "applies five named source mutations to a copy of the committed instrument, requires the pristine selftest green and every mutated copy red, names the selftest arm that fails for each mutant, and marks a mutant `sole_detector` only when exactly one case fails; refuses a count-only cheat whose mutation catalogue is empty",
+      "scope": "one target module's --selftest; five mutants; arm names declared in code, not in a document table",
+      "evidence": "round75-survivor-probe.py:1-60"
+    },
+    {
+      "path": "kumitate-shokunin/scripts/routed-ledger.mjs",
+      "axis": "calibration",
+      "rule": "quotes bind by word-boundary containment `(^|[^A-Za-z0-9])quote([^A-Za-z0-9]|$)` with >=3 words and uniqueness inside the section; answers bind at the exact named line with no window; a second non-open row for the same (round,item) is ROW_CONTRADICTED and is skipped rather than counted",
+      "scope": "routed ledger rows, quotes and answer paths; ledger document only",
+      "evidence": "routed-ledger.mjs:87-95,340-346"
+    },
+    {
+      "path": "kake-shokunin/scripts/citing_set.py",
+      "axis": "calibration",
+      "rule": "token grammar is `^S[0-9]{3,}$`; a citation range requires a word boundary before the left endpoint's `S` and after the right endpoint's digits, and is scanned independently of the literal token rule; a population id the grammar can never produce is rejected instead of measured clean (population_id_unreachable)",
+      "scope": "citation ids in a population-bounded citing set; boundary rule is endpoint-contextual, not token-global",
+      "evidence": "citing_set.py:24-29,176-190"
+    },
+    {
+      "path": "tsukuroi-shokunin/tools/check-knowledge-refs-r68.py",
+      "axis": "calibration",
+      "rule": "the frozen predicate is `S\\d{3,}` with NO word boundary, and the selftest case `glued-ids-are-counted` asserts that a glued id (S138_S999, S998a) still counts; the opposite polarity of R80-C1, deliberately",
+      "scope": "knowledge-ref ids inside a revision's scoped documents",
+      "evidence": "check-knowledge-refs-r68.py:455-467"
+    },
+    {
+      "path": "kotodama-shokunin/tools/check-gate-battery.py",
+      "axis": "depth",
+      "rule": "runs seven structural gate selftests in a disposable mirror with a before/after per-file sha256 and path-set snapshot, then validates every committed baseline (gate_sha256 pin against the live gate, declared input digests against snapshot bytes, expected verdict shape, 10/10 registered-gate coverage); a baseline is never re-executed and a registered gate without one is BASELINE-GATE-UNCOVERED",
+      "scope": "ten registered gates plus their committed baselines; no code-clause-to-document-row binding anywhere in the file",
+      "evidence": "check-gate-battery.py:1-70,156-170,420-440"
+    },
+    {
+      "path": "kotodama-shokunin/tools/check-gate-quotes.py",
+      "axis": "calibration",
+      "rule": "quoted runs inside `## Gate` rows of a lesson must not exceed 25 words; spans are taken left-to-right, grouped into runs, and counted by whitespace tokens",
+      "scope": "prose only; the nearest sibling analogue to a per-row quotation check and still not a code binding",
+      "evidence": "check-gate-quotes.py:1-40"
+    }
+  ],
+
+  "delta": {
+    "C1_calibration": {
+      "adds": [
+        "record-level duplicate DECLARATION counting: every declared cell is counted (checks_total includes both) and the duplicate id is carried in `duplicates`. No sibling counts both: kumitate ROW_CONTRADICTED skips the second row (routed-ledger.mjs:343 `continue`), kotodama raises P-DUPLICATE-KEY on the second key (d2-typed-labels.py:245-248,336-338) and refuses the parse, kama labels a repeated key `duplicate key` on an outcome row (round45-claim-outcome-audit.py:216-217). R80-C1 is the only one that keeps the population size honest while still naming the duplicate.",
+        "a delimiter class shaped like a token alphabet rather than like `\\w`: `[A-Za-z0-9._-]` keeps `.` and `-` inside a version pin. kama round74's `(?:^|[^\\w-])` (round74-receipt-claim-binding.py:82) would treat `.` as a delimiter; its rule is safe only because its subject is a 40-hex run.",
+        "a two-arm calibration shape: the round-79 implementation is scored as a do-nothing control that MUST reproduce the weakness (control_false_greens 4) beside the candidate. No sibling scores a deliberate weak control on the same fixture set; kama round75 has pristine-green/mutant-red but no weak-control arm."
+      ],
+      "lacks": [
+        "`+` in the delimiter class. The version alphabet is [0-9A-Za-z.-+]; with `+` outside the class, `rea-agents@6.7.0` binds `rea-agents@6.7.0+build.5` (measurements M5). Four frozen red cases and both green controls are unchanged by adding `+`, but the fixture set is frozen at the declaration, so this is a round-81 limit, not a repair.",
+        "a uniqueness requirement across cells. kumitate requires a quote to be unique within its section (routed-ledger.mjs:28,89-95); R80-C1 has no equivalent, so two different clients may legitimately resolve to the same line with the same token. Not a defect, a scope difference.",
+        "the left-boundary treatment is intentionally stricter than every sibling (`-` and `.` are token chars, so `x-rea-agents@6.7.0` refuses). Siblings would accept it. This is the correct direction for a package pin and should not be relaxed."
+      ]
+    },
+    "C2_freshness": {
+      "adds": [
+        "path binding. chousa's digest-in-tree.py scans `for oid, path in blobs: if computed[oid] == want` and never matches on `path` (digest-in-tree.py:160-171), so a receipt that pins the digest of a DIFFERENT committed file passes it; R80-C2 fails that receipt because the digest is not of its declared `instrument.path`. This is the one dimension no sibling checks.",
+        "a population sweep with a declared exclusion (`/attacks/`), an expected-negative-control class (`prov-forged-instrument.json`) and an `unexpected` counter that must be 0. chousa receipt-pin takes one receipt and one caller-named revision; kama citation-provenance takes registry-required rows in nominated docs; neither has an expected/unexpected control split over a population.",
+        "the three-leg acceptance order (declared rev -> branch tip -> any committed revision of the branch) makes the rule satisfiable for honest historical receipts while still failing worktree-only digests. Measured: round-78 c1-at-tip.json is honest at its own rev (MATCH) and round-79 c2-at-landing.json is not (MISMATCH), so the flag is not a false positive."
+      ],
+      "lacks": [
+        "an exit-2 could-not-evaluate class. All three siblings that do committed-blob work reserve it: chousa digest-in-tree `2 = usage/environment` (digest-in-tree.py:21-23), chousa receipt-pin `2 usage or environment fault` (receipt-pin.py:12-16), kama round72 `2 could-not-evaluate` and explicitly 'never a silent 0' (round72-receipt-tip-binding.py:20-26). R80-C2's frozen predicate names only exit 0 and exit 1, so a git failure or unreadable `--root` can be reported as `flagged N` — an environment fault read as data. Adding exit 2 does not touch either frozen arm.",
+        "a reported exclusion counter. The surface sentence yields 141 receipts by the literal glob; the frozen target `receipts 34` is reachable only with the undeclared filter 'carries instrument{path,sha256}' and 107 receipts vanish silently (measurements M1). chousa's digest-in-tree prints `SCANNED_BLOBS=<n>` beside its mode; no sibling prints an EXCLUDED count. This is the move below.",
+        "a classification for a legitimately unverifiable instrument. kama digest-ledger has `external` and `unverifiable`+note (digest-ledger.py:1-30); R80-C2 has no escape class, so any future receipt whose instrument is generated rather than committed is simply flagged. No such receipt exists in the current 34 (2 of the 34 pin tools/round-78/attack-gate.py and both are committed blobs), so this is a forward limit, not a live defect."
+      ]
+    },
+    "C3_depth": {
+      "adds": [
+        "the only implementation in the fleet that binds a documentation table row to a code clause AND to a selftest case with a deletion proof. kotodama check-gate-battery.py binds baselines to gates (digests and pins) but has no clause->row relation; kama round75-survivor-probe.py proves mutation kills and names the failing arm, but the binding target is a hardcoded dict, not a document; kumitate's `case` set is gate-local. The round-80 SKILL marker block is a new artifact class.",
+        "a bijection constraint (no clause without a row, no orphan row, no duplicate clause id, no two rows on one clause). Sibling tables are unbound prose or purely code-side registries.",
+        "the guard count is taken from the source (9 `defects.append` sites) rather than declared, so an instrument that grows a tenth clause would break `guards 9` visibly instead of passing."
+      ],
+      "lacks": [
+        "the message matcher semantics. 4 of 9 frozen 'prefixes' (G03..G06) are INFIXES of their message because the f-string starts with the fixture id: `rb01: fixture dir mismatch` (attack-gate.py:790,792,794,797). `startswith` binds at most 5 of 9 and `bound 9` becomes unreachable; containment binds all nine and no prefix is contained in a second message, so containment + uniqueness is unambiguous (measurements M4). This is the highest-risk trap in the round.",
+        "the case arithmetic. pristine.cases is 29 today (SELFTEST cases=29 failures=0, M6) and G05's case `red-validate-refused-no-reason` already exists at attack-gate.py:921, so 37 means exactly EIGHT new isolating cases. Nine new cases report 38 and violate the frozen `pristine.cases 37`.",
+        "`sole_detector` is deliberately NOT required. kama round75 marks a mutant sole-detector only when exactly one case fails (round75-survivor-probe.py:197-200) and round-79's gate-mutation.py reuses that (`sole_detector: killed and len(failed)==1`, gate-mutation.py:197-200) and validates it (`:255-259`). R80-C3 requires one declared case that FAILS; a seat that reuses round-79's stricter semantics will report survivors for clauses whose deletion also trips an aggregate case.",
+        "per-mutant evidence retention (`--keep` / `--json` per-mutant blocks) that kama round75 carries; R80-C3's receipt shape is not frozen at that level of detail."
+      ]
+    }
+  },
+
+  "considerthese": {
+    "exists": false,
+    "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/considerthese",
+    "verified": "cd <lane> && ls -d considerthese -> 'No such file or directory', exit 2 (measurements M8)",
+    "fleet": "17 of the 21 lane roots carry considerthese/; the four without are kaidoku-shokunin, kotodama-shokunin, souji-shokunin, tabi-shokunin",
+    "proposal_named": null,
+    "report_line": "`considerthese/` does not exist in this lane (verified: `ls -d considerthese` -> absent, exit 2), so no unimplemented proposal can be named from it.",
+    "note": "The nearest cross-lane substitute is kama's `considerthese/2026-10-25.md` proposal 1, which is already implemented as kama-shokunin/tools/digest-ledger.py; it is named as provenance in the delta table, not adopted."
+  },
+
+  "overlap": {
+    "cross_lane_round_80": {
+      "shared_instrument_path": "none",
+      "shared_receipt": "none",
+      "evidence": "grep -rIn -E 'instrument\\.sha256|l1/scores|receipt-provenance|pointer-bind|attack-gate' over the round-80 wave trees of kake, kama, kengaku, kotoba, kumitate, mado, mori, tameshi -> 0 lines (measurements M9)",
+      "convergence_only": [
+        "kama-shokunin round-80 C2 (tools/round80-engine-pin-relations.py) is the same shape as R80-C2 on a different subject: a pinned ref must re-derive from a live/committed source, the register must cover every engine, and every row's receipt path must exist and be committed. Different population, different artifacts, no shared file.",
+        "kengaku-shokunin round-80 SentinelReceiptsR80.md audits producer provenance (LANE_TIP vs executed checkout) over its own receipts; same defect family as R80-C2, no kaidoku path involved.",
+        "tameshi-shokunin round-80 T80W1R1/R2 are receipt re-derivation reviewers over their own rounds."
+      ]
+    },
+    "read_only_cross_round_touches_of_this_lane": [
+      "kama-shokunin/.ufo/waves/round-80/w1/CN01Connector.md:40,43 read kaidoku corpus/evidence/round-41/c1/V4/oracle.tsv and tools/round-50/oracle/*.tsv as substring hash collisions (false positives, not pins)",
+      "kumitate-shokunin/.ufo/waves/round-80/w1/K80ConnectSiblings.md:102-108 read kaidoku .ufo/waves/round-50/w3/ExecTriageV5.md and its patch (bullet-scoped assertion pattern)",
+      "mado-shokunin/.ufo/waves/round-80/w1/R80ConnSiblings.md:58 reads kaidoku corpus/knowledge/2026-10-13-crash-evidence.md (waybar core artifact)",
+      "all three are read-only reads of pre-round-80 surfaces; none writes or depends on a round-80 kaidoku path"
+    ],
+    "in_lane_cross_claim_coupling": {
+      "claims": ["R80-C2", "R80-C3"],
+      "fact": "C3 edits tools/round-78/attack-gate.py to add the eight isolating cases; that file is the declared instrument of 2 of C2's 34 receipts (.ufo/waves/round-78/l1/scores/c1-at-record.json -> a86f6d4d..., c1-at-tip.json -> 961d5a23...), both committed blobs of the path (measurements M2).",
+      "consequence": "C2 stays green only because its rule accepts a blob of the path at ANY committed revision. Under a tip-only leg both receipts would flip and the frozen target `flagged 1` would become `flagged 3`. The two claims are coupled through that leg; the C3 seat must not 'repair' those receipts and the C2 seat must not narrow the leg to the tip.",
+      "routing": "no cross-lane routing needed; this is L1-internal sequencing"
+    }
+  },
+
+  "findings": [
+    {
+      "id": "F1",
+      "claim": "R80-C1",
+      "severity": "limit",
+      "statement": "The delimiter class [A-Za-z0-9._-] omits `+`, so a declared pin binds a live token carrying semver build metadata (rea-agents@6.7.0 vs rea-agents@6.7.0+build.5) — the same defect class the claim kills.",
+      "evidence": "measurements M5",
+      "action": "name in the round-80 lesson; add `+` and a fifth fixture class at round 81 (the fixture set is frozen now)"
+    },
+    {
+      "id": "F2",
+      "claim": "R80-C2",
+      "severity": "reachability",
+      "statement": "The frozen target `receipts 34` is not reachable from the frozen surface sentence: the literal glob yields 141 receipts for rounds 60-79 excluding /attacks/, and 34 only under the undeclared filter 'carries instrument{path,sha256}'. 107 receipts drop out invisibly.",
+      "evidence": "measurements M1",
+      "action": "report the exclusion count in the receipt (the move below) and state the population predicate in the docstring"
+    },
+    {
+      "id": "F3",
+      "claim": "R80-C2",
+      "severity": "risk",
+      "statement": "No exit-2 could-not-evaluate class: an unresolvable --root, a missing git or an unreadable receipt can surface as `flagged N`, an environment fault read as data. All three sibling committed-blob tools reserve exit 2.",
+      "evidence": "measurements M10 (digest-in-tree.py:21-23; receipt-pin.py:12-16; round72-receipt-tip-binding.py:20-26)",
+      "action": "add exit 2 for environment faults; it touches neither frozen arm (0 target, 1 base)"
+    },
+    {
+      "id": "F4",
+      "claim": "R80-C3",
+      "severity": "trap",
+      "statement": "Four of the nine 'clause prefixes' are infixes (the message starts with the fixture id), so a startswith matcher binds at most 5/9 and `bound 9` is unreachable. Containment + uniqueness binds all nine and is unambiguous.",
+      "evidence": "measurements M4"
+    },
+    {
+      "id": "F5",
+      "claim": "R80-C3",
+      "severity": "arithmetic",
+      "statement": "pristine.cases is 29 today and G05's case already exists at attack-gate.py:921, so the frozen 37 fixes exactly 8 new isolating cases; nine new cases report 38 and violate the frozen value.",
+      "evidence": "measurements M6"
+    },
+    {
+      "id": "F6",
+      "claim": "R80-C3",
+      "severity": "risk",
+      "statement": "round-79's `sole_detector` (exactly one failing case) must not be reused; R80-C3 only requires the declared case to fail. Reusing sole-detection over-constrains and can leave survivors.",
+      "evidence": "measurements M10 (round75-survivor-probe.py:197-200; round-79/gate-mutation.py:197-200,255-259)"
+    }
+  ],
+
+  "move": {
+    "id": "population-self-description",
+    "one_sentence": "Make the R80-C2 receipt print its population predicate and three counters — `receipts`, `excluded_no_instrument`, `excluded_attacks` — and have `--validate` re-derive all three from the receipt's own file list, so the 34 is reproducible instead of assumed.",
+    "axis": "freshness",
+    "why_non_obvious": "The gap is not in the rule but in the number: the sweep can score `receipts 34` correctly while 107 matching receipts are outside the class it never states. chousa prints SCANNED_BLOBS beside its mode and kama prints ledger class counts, but no sibling prints its EXCLUDED count next to its INCLUDED one; the shape is a synthesis of chousa's counter line and kama digest-ledger's classification discipline.",
+    "harm_check": "Target arm unchanged (receipts 34, flagged 1, expected_control_flags 1, unexpected 0); base arm unchanged (flagged 2, unexpected 1); no claim text changes; no fixture changes; the receipt gains two integer counters and one sentence.",
+    "risks": [
+      "`--validate` must re-derive the new counters from the receipt's own excluded list, or the added counters become unvalidated prose; the C2 kill rule already forbids a `--validate` defect.",
+      "A future round that changes the population must change the excluded count with it; the counter makes that visible but also makes a silent population change louder — which is the point.",
+      "An empty population still lands on exit 1 (count != 34) rather than exit 2; F3's exit-2 class should be added in the same edit or the counter will merely document the ambiguity."
+    ],
+    "verification": "After the C2 seat implements it: run the sweep at base 16dfa009 and at the measured rev. Expect `receipts 34 excluded_no_instrument 107` on both runs, `flagged 2`/`unexpected 1` at base, `flagged 1`/`unexpected 0` at target, and `--validate` defect-free with the counters re-derived from the receipt's own lists. A run with `receipts 141` means the filter was not applied; a run with `excluded_no_instrument 0` means the filter was applied but not the exclusion count."
+  },
+
+  "scratch": {
+    "path": "/fast/scratch/hyaku/kaidoku-r80/ConnectorSibling",
+    "used_for": "TMPDIR for the single attack-gate --selftest run; no fixture repo was created; no --work path was passed",
+    "removed": true
+  },
+  "tools_installed": [],
+  "lane_writes": "none outside .ufo/waves/round-80/w1/ConnectorSibling/ and the report at .ufo/waves/round-80/w1/ConnectorSibling.md"
+}

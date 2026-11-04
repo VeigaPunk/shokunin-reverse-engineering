@@ -1,0 +1,153 @@
+{
+  "schema": "kaidoku-r80-scribe-knowledge-v1",
+  "seat": "ScribeKnowledge",
+  "role": "scribe",
+  "round": 80,
+  "wave": "r80-w1",
+  "date": "2026-11-04",
+  "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "declaration": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "lane_head_at_draft": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "base_is_ancestor_of_head": true,
+  "title": "Four bindings: an exact token, a unique cell, a committed blob, an isolating case",
+  "proposed_entry_path": "corpus/knowledge/2026-11-04-r80-four-bindings.md",
+  "deliverables": {
+    "entry": ".ufo/waves/round-80/w1/ScribeKnowledge/draft-entry.md",
+    "coverage_row": ".ufo/waves/round-80/w1/ScribeKnowledge/coverage-row.md",
+    "sources_used_by": ".ufo/waves/round-80/w1/ScribeKnowledge/sources-used-by.md",
+    "receipt": ".ufo/waves/round-80/w1/ScribeKnowledge/receipt.json",
+    "report": ".ufo/waves/round-80/w1/ScribeKnowledge.md"
+  },
+  "cites": [
+    {
+      "id": "S297",
+      "status": "round-80 row, disposition append",
+      "source": "Python `re` documentation, `\\b` word-boundary assertion, https://docs.python.org/3/library/re.html#re-syntax-special-word-boundary",
+      "anchor": "section id `b`, span id `re-syntax-special-word-boundary`, raw HTML line 746; first sentence at raw line 747",
+      "quote": "Matches the empty string, but only at the beginning or end of a word.",
+      "quote_words": 14,
+      "snapshot": ".ufo/waves/round-80/w1/ScribeSources/re.html (257 722 B, sha256 24ef5ff00f937cee65b83d527638fe1c1fc573578851e296f4bca0c4da3828a6, HTTP 200)",
+      "used_for": "section 1, the delimiter/boundary shape of the exact-token rule",
+      "verified": "corpus/SOURCES.md has no word-boundary row (grep -in 'word boundary' returns 0 hits); the row is new, assigned S297 by .ufo/waves/round-80/w1/ScribeSources/receipt.json next_ids.next_assignable"
+    },
+    {
+      "id": "S049",
+      "status": "held since round 21, no cell change, used-by appended in the draft",
+      "source": "RFC 8259 section 4 Objects, https://www.rfc-editor.org/rfc/rfc8259",
+      "anchor": "December 2017, section 4 Objects, page 6",
+      "quote": "The names within an object SHOULD be unique.",
+      "companion_quote": "Many implementations report the last name/value pair only.",
+      "companion_locus": "raw lines 333-334 (grep -n numbering over the fetched .txt)",
+      "used_for": "section 2, why a last-wins reader is a documented behaviour and cannot be relied on to notice a duplicate",
+      "verified": "corpus/SOURCES.md:55 scope cell already names 'duplicate-name interoperability'; teaches cell already states duplicate names have unpredictable receiver behavior"
+    },
+    {
+      "id": "S143",
+      "status": "held since round 47, used-by appended in the draft",
+      "source": "Python `re` documentation, https://docs.python.org/3/library/re.html",
+      "anchor": "re.fullmatch(pattern, string, flags=0)",
+      "used_for": "section 1, the equality-over-containment principle the exact-token rule inherits; explicitly NOT cited for fullmatch as the binding primitive",
+      "verified": "corpus/SOURCES.md:149 teaches cell names the superstring example ('order-ish' fails an 'order' token test)"
+    },
+    {
+      "id": "S289",
+      "status": "held since round 77, cited as the byte-identical prior snapshot",
+      "source": "RFC 8259 section 3 Values, https://www.rfc-editor.org/rfc/rfc8259.txt",
+      "snapshot": "28 360 B, sha256 61a5378f4255c720…",
+      "used_for": "evidence that the round-80 RFC fetch is byte-identical to bytes the registry already holds, so a third RFC 8259 row is a refused reuse",
+      "verified": "sha256 of .ufo/waves/round-80/w1/ScribeSources/rfc8259.txt equals 61a5378f4255c720beb2a4b4a63b29540147c140f36988bf086291989b4cd2d7"
+    },
+    {
+      "id": "S298",
+      "status": "withheld, must not be consumed",
+      "source": "RFC 8259 section 4 (the duplicate-name candidate)",
+      "reason": "refused reuse: identical bytes to S289's snapshot and the section-4 anchor is already carried by S049; the sources seat records disposition withhold",
+      "used_by": "none"
+    }
+  ],
+  "commands": [
+    {
+      "purpose": "R80-C1 strictness battery (candidate vs round-79 control on the frozen fixtures)",
+      "argv": "python3 -I -B tools/round-80/strictness-battery.py --root . --impl tools/round-80/pointer-bind.py --control-impl tools/round-79/pointer-bind.py --fixtures .ufo/waves/round-80/l1/fixtures/strictness.json --json-out <receipt>",
+      "expected_fields": ["cases 4", "green_cases 2", "candidate_false_greens 0", "control_false_greens 4", "candidate_green_refusals 0", "control_green_refusals 0"],
+      "state": "pending the landing receipt",
+      "executed_by_this_seat": false
+    },
+    {
+      "purpose": "R80-C1 live arm on the lane record",
+      "argv": "python3 -I -B tools/round-80/pointer-bind.py --root . --rev <measured> --json-out <live>",
+      "expected_fields": ["checks_total 5", "matched 5", "mismatches 0", "unparsed 0", "duplicates []", "exit 0"],
+      "state": "pending the landing receipt",
+      "executed_by_this_seat": false
+    },
+    {
+      "purpose": "R80-C2 receipt-provenance sweep (base arm)",
+      "argv": "python3 -I -B tools/round-80/receipt-provenance.py --root . --rev 16dfa009bf143080dfcdfc5f9ec34bd359536d90 --from-round 60 --to-round 79",
+      "observed": {"receipts": 34, "flagged": 2, "expected_control_flags": 1, "unexpected": 1, "unexpected_receipts": [".ufo/waves/round-79/l1/scores/c2-at-landing.json"], "expected_controls": ["prov-forged-instrument.json"], "validate": {"defects": [], "flagged": 2, "receipts": 34, "unexpected": 1}},
+      "receipt": ".ufo/waves/round-80/l1/scores/c2-at-base.json",
+      "state": "base arm measured; target arm (flagged 1, unexpected 0) pending the landing receipt",
+      "executed_by_this_seat": false
+    },
+    {
+      "purpose": "R80-C3 guard battery (rows, bindings, survivors)",
+      "argv": "python3 -I -B tools/round-80/guard-battery.py --root . --rev <measured> --json-out <receipt>",
+      "expected_fields": ["guards 9", "rows 9", "bound 9", "survivors 0", "pristine.cases 37", "pristine.failures 0", "target_pin.matched true"],
+      "state": "pending the landing receipt",
+      "executed_by_this_seat": false
+    },
+    {
+      "purpose": "base-blob clause inventory (nine defects.append lines in validate_receipt)",
+      "argv": "git show 16dfa009bf143080dfcdfc5f9ec34bd359536d90:tools/round-78/attack-gate.py | grep -n 'defects.append'",
+      "observed": "nine clauses inside validate_receipt at lines 782, 785, 790, 792, 794, 797, 801, 804, 807; seven further clauses outside the function at lines 582-607",
+      "executed_by_this_seat": true
+    },
+    {
+      "purpose": "base selftest case count",
+      "argv": "git show 16dfa009bf143080dfcdfc5f9ec34bd359536d90:tools/round-78/attack-gate.py | grep -c 'case(\"'",
+      "observed": 29,
+      "executed_by_this_seat": true
+    },
+    {
+      "purpose": "committed blobs of the round-79 binder (the unrecoverable-digest check)",
+      "argv": "for rev in $(git log --all --format=%H -- tools/round-79/pointer-bind.py); do git cat-file blob \"$rev:tools/round-79/pointer-bind.py\" | sha256sum; done",
+      "observed": "two distinct digests over the path's committed revisions: 40905d396245313b… and 91d23dade98d831f…; neither equals the r79 receipt's a0044c4c5006ac0f…",
+      "executed_by_this_seat": true
+    },
+    {
+      "purpose": "C2 population denominator (seat-local, no lane receipt)",
+      "argv": "python3 - <<'EOF' (glob .ufo/waves/*/l1/scores/*.json, keep rounds 60-79, drop /attacks/, keep receipts whose instrument block carries path and sha256) EOF",
+      "observed": {"files_in_range": 141, "with_instrument_block": 34},
+      "executed_by_this_seat": true,
+      "note": "seat-local count: it explains why the frozen denominator is 34, but it is not a lane receipt and no entry sentence treats it as one"
+    }
+  ],
+  "base_arms_cited": [
+    {"arm": "C1 candidate behaviour on the frozen set", "value": "rb01/rb02 matched=True; rb03/rb04 checks_total=5, duplicates=ABSENT", "receipt": ".ufo/waves/round-80/w1/ScribeLesson/grounding/c1-base-arm.txt"},
+    {"arm": "C2 sweep at 16dfa009", "value": "receipts 34, flagged 2, expected_control_flags 1, unexpected 1", "receipt": ".ufo/waves/round-80/l1/scores/c2-at-base.json"},
+    {"arm": "C3 clause deletion at the 29-case gate", "value": "mutants 9, killed 1 (: refused without a reason), survivors 8", "receipt": ".ufo/waves/round-80/w1/ReviewerC3/deletion-receipt.json"},
+    {"arm": "C3 pristine selftest after the eight new cases", "value": "SELFTEST cases=37 failures=0", "receipt": ".ufo/waves/round-80/w1/ExecGate/selftest-pristine.json"},
+    {"arm": "C3 table block text (not yet in SKILL.md)", "value": "nine rows G01-G09 with prefixes and case names", "receipt": ".ufo/waves/round-80/w1/ExecGate/guard-table-draft.md"}
+  ],
+  "pending_the_landing_receipt": [
+    "R80-C1 battery counts (cases, green_cases, candidate_false_greens, control_false_greens, candidate_green_refusals, control_green_refusals)",
+    "R80-C1 live arm (checks_total, matched, mismatches, unparsed, duplicates)",
+    "R80-C2 target arm (flagged 1, unexpected 0)",
+    "R80-C3 battery binding (rows 9, bound 9, survivors 0, target_pin.matched true)",
+    "the SKILL.md block's landed row count"
+  ],
+  "risks": [
+    "The round-80 sources seat fetched RFC 8259 section 4 and withheld it as a refused reuse (S298). If the L1 lands a third RFC 8259 row anyway, the entry's duplicate-cell citation should move to that row and S049's used-by must not be double-claimed; as drafted it cites S049 only.",
+    "The C1 live arm is measured against the lane record at <measured>; the entry cites PROVINCE.md's five cells as the surface and states no live count, so the entry does not date-stamp a record state the landing may have moved.",
+    "The provenance rule's 'any committed revision of the branch' clause proves membership, not execution; the entry states this as a limit rather than letting the predicate's green read as run authenticity.",
+    "The C2 denominator (34 of 141) is a seat-local count; it is reported with its command and not attributed to a lane receipt.",
+    "The guard table block was still absent from SKILL.md at draft time; the entry says so and marks the landed row count pending, so a reader cannot mistake the draft for a landed block."
+  ],
+  "bounds": {
+    "wrote_only_under": ".ufo/waves/round-80/w1/ScribeKnowledge/ and .ufo/waves/round-80/w1/ScribeKnowledge.md",
+    "scratch": "/fast/scratch/hyaku/kaidoku-r80/ScribeKnowledge/ created with mkdir -p; no computation depended on it; removed before yield",
+    "lane_production_files_edited": false,
+    "git_writes": false,
+    "network_fetches_by_this_seat": false,
+    "tools_installed_or_upgraded": "none"
+  }
+}

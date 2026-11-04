@@ -1,0 +1,12 @@
+--- /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work3/prov/pristine.py	2026-11-04 10:51:49.521998664 -0300
++++ /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work3/prov/p5-all-flags-expected.py	2026-11-04 10:51:49.815589308 -0300
+@@ -213,8 +213,7 @@
+     """(receipts, flagged, expected_control_flags, unexpected) from the rows."""
+     receipts = len(rows)
+     flagged_rows = [row for row in rows if row.get("verdict") != "committed"]
+-    expected = [row for row in flagged_rows
+-                if os.path.basename(str(row.get("path", ""))) in CONTROLS]
++    expected = list(flagged_rows)
+     return receipts, len(flagged_rows), len(expected), len(flagged_rows) - len(expected)
+ 
+ 

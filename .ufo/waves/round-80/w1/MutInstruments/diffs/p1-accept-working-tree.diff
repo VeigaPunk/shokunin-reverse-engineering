@@ -1,0 +1,13 @@
+--- /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work3/prov/pristine.py	2026-11-04 10:51:49.521998664 -0300
++++ /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work3/prov/p1-accept-working-tree.py	2026-11-04 10:51:49.580058836 -0300
+@@ -182,6 +182,10 @@
+             body = bodies.get(expression)
+             if body is not None:
+                 pairs.append((revision, sha256_bytes(body)))
++    worktree = os.path.join(root, path)
++    if os.path.isfile(worktree):
++        with open(worktree, "rb") as handle:
++            pairs.append((tip, sha256_bytes(handle.read())))
+     INDEX_CACHE[(tip, path)] = pairs
+     return pairs
+ 

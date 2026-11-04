@@ -1,0 +1,165 @@
+{
+  "targets": [
+    {
+      "name": "binder",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-80/w1/ExecBinder/pointer-bind.py",
+      "selftest_args": [],
+      "mutants": [
+        {
+          "id": "b1-substring-reintroduced",
+          "anchor": "        if undelimited:",
+          "replacement": "        if undelimited and False:",
+          "edit": "accept an undelimited occurrence (round 79's bare substring rule)",
+          "killer_case": "red-substring-live-token, red-substring-argv-token, red-mixed-occurrence"
+        },
+        {
+          "id": "b2-drop-closing-delimiter",
+          "anchor": "                          and (not after or after not in TOKEN_CHARS)),",
+          "replacement": "                          ),",
+          "edit": "keep the opening delimiter foot, drop the closing one, so `@6.7.05` binds `@6.7.0`",
+          "killer_case": "red-substring-live-token"
+        },
+        {
+          "id": "b3-last-wins-collapse",
+          "anchor": "        for number, (pin, pointer) in enumerate(declared, 1):",
+          "replacement": "        for number, (pin, pointer) in enumerate(declared[-1:], 1):",
+          "edit": "collapse duplicate client cells to the last one (the round-79 defect)",
+          "killer_case": "red-duplicate-omp-cell, red-duplicate-omp-counted, red-duplicate-devin-cell"
+        },
+        {
+          "id": "b4-drop-duplicate-report",
+          "anchor": "        if len(declared) > 1:",
+          "replacement": "        if False and len(declared) > 1:",
+          "edit": "stop reporting a duplicated cell id",
+          "killer_case": "red-duplicate-omp-cell, red-duplicate-devin-cell"
+        },
+        {
+          "id": "b5-drop-ok-duplicates",
+          "anchor": "        if duplicates:",
+          "replacement": "        if duplicates and False:",
+          "edit": "drop the ok-true-with-duplicate-cells defects.append",
+          "killer_case": "red-forged-duplicates-under-ok"
+        },
+        {
+          "id": "b6-drop-delimited-evidence",
+          "anchor": "        if item.get(\"delimited\") is not True:",
+          "replacement": "        if False:",
+          "edit": "accept delimiter evidence that never says delimited",
+          "killer_case": "red-forged-no-delimiter"
+        },
+        {
+          "id": "b7-bounded-ignores-duplicates",
+          "anchor": "                and unparsed == 0 and not duplicates)",
+          "replacement": "                and unparsed == 0)",
+          "edit": "let the verdict ignore duplicate cells",
+          "killer_case": "red-bounded-duplicate, red-bounded-five-with-duplicate"
+        },
+        {
+          "id": "b8-rev-acceptance-widened",
+          "anchor": "    if not is_commit_sha(rev):",
+          "replacement": "    if not (isinstance(rev, str) and len(rev) >= 1):",
+          "edit": "accept a symbolic rev in a receipt",
+          "killer_case": "red-forged-rev-symbolic"
+        },
+        {
+          "id": "b9-drop-start-bound",
+          "anchor": "    if start < 1 or end < start:",
+          "replacement": "    if end < start:",
+          "edit": "drop the start>=1 foot of the forward-range guard",
+          "killer_case": "bind('f.json:0', ['x'], 4 lines) must report the not-1-based reason"
+        },
+        {
+          "id": "b10-occurrences-zero-accepted",
+          "anchor": "        if not isinstance(item.get(\"occurrences\"), int) or item[\"occurrences\"] < 1:",
+          "replacement": "        if not isinstance(item.get(\"occurrences\"), int) or item[\"occurrences\"] < 0:",
+          "edit": "accept delimiter evidence claiming zero occurrences",
+          "killer_case": "a forged check whose delimiter_evidence has occurrences 0 and delimited True must be a defect"
+        },
+        {
+          "id": "b11-drop-evidence-token-match",
+          "anchor": "    if sorted(str(item.get(\"token\")) for item in evidence) != sorted(map(str, tokens)):",
+          "replacement": "    if False:",
+          "edit": "stop matching the evidence token set to the declared tokens",
+          "killer_case": "a forged check whose delimiter_evidence names another token must be a defect"
+        }
+      ]
+    },
+    {
+      "name": "prov",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-80/w1/ExecProv/receipt-provenance.py",
+      "selftest_args": [],
+      "mutants": [
+        {
+          "id": "p1-accept-working-tree",
+          "anchor": "    INDEX_CACHE[(tip, path)] = pairs",
+          "replacement": "    worktree = os.path.join(root, path)\n    if os.path.isfile(worktree):\n        with open(worktree, \"rb\") as handle:\n            pairs.append((tip, sha256_bytes(handle.read())))\n    INDEX_CACHE[(tip, path)] = pairs",
+          "edit": "count the working-tree bytes as a committed blob (the R80-C2 kill rule)",
+          "killer_case": "red-working-tree-only"
+        },
+        {
+          "id": "p2-attacks-not-excluded",
+          "anchor": "            if \"/attacks/\" in \"/\" + relative:",
+          "replacement": "            if False:",
+          "edit": "let /attacks/ fixtures into the population",
+          "killer_case": "red-attacks-excluded"
+        },
+        {
+          "id": "p3-symbolic-rev-accepted",
+          "anchor": "    if symbolic.returncode == 0 and name:",
+          "replacement": "    if symbolic.returncode == 0 and name and False:",
+          "edit": "treat a symbolic ref as a committed revision",
+          "killer_case": "red-symbolic-rev"
+        },
+        {
+          "id": "p4-bad-digest-not-skipped",
+          "anchor": "        if not RE_HEX64_ANY.fullmatch(digest):",
+          "replacement": "        if False:",
+          "edit": "stop skipping a malformed digest, so it becomes a scored row",
+          "killer_case": "red-no-instrument-skipped"
+        },
+        {
+          "id": "p5-all-flags-expected",
+          "anchor": "    expected = [row for row in flagged_rows\n                if os.path.basename(str(row.get(\"path\", \"\"))) in CONTROLS]",
+          "replacement": "    expected = list(flagged_rows)",
+          "edit": "count every flagged receipt as the declared control",
+          "killer_case": "green-expected-control"
+        },
+        {
+          "id": "p6-drop-unexpected-guard",
+          "anchor": "    if receipt.get(\"unexpected\") != unexpected:",
+          "replacement": "    if receipt.get(\"unexpected\") != unexpected and False:",
+          "edit": "drop the unexpected re-derive defects.append",
+          "killer_case": "a consistent receipt whose unexpected is wrong but whose ok still re-derives must be a defect"
+        },
+        {
+          "id": "p7-drop-self-digest",
+          "anchor": "        if instrument_block.get(\"sha256\") != self_digest():",
+          "replacement": "        if instrument_block.get(\"sha256\") != self_digest() and False:",
+          "edit": "drop the instrument self-digest defects.append",
+          "killer_case": "red-validate-self-digest"
+        },
+        {
+          "id": "p8-drop-matched-rev-guard",
+          "anchor": "            if not isinstance(matched, str) or not RE_FULL.fullmatch(matched):",
+          "replacement": "            if False:",
+          "edit": "accept a committed row with no matched revision",
+          "killer_case": "red-validate-committed-without-rev"
+        },
+        {
+          "id": "p9-drop-receipts-guard",
+          "anchor": "    if receipt.get(\"receipts\") != receipts:",
+          "replacement": "    if receipt.get(\"receipts\") != receipts and False:",
+          "edit": "drop the receipts re-derive defects.append",
+          "killer_case": "red-validate-receipts"
+        },
+        {
+          "id": "p10-drop-checked-at",
+          "anchor": "    if not receipt.get(\"checked_at\"):",
+          "replacement": "    if not receipt.get(\"checked_at\") and False:",
+          "edit": "drop the checked_at defects.append",
+          "killer_case": "a receipt with checked_at deleted must be a defect"
+        }
+      ]
+    }
+  ]
+}

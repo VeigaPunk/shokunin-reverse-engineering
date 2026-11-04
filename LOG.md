@@ -4781,6 +4781,16 @@ tied-lowest axis). No nudge waiver is claimed.
   33/34 → 34/34 receipts bound); (5) an admit-side refusal with reason and flip in the round-80 lesson;
   (6) the capability names are the table's names. Item 3 (the S296 word count) is carried in the
   round-80 lesson's gate notes as a correction to the round-79 record, which stays append-only.
+- **Round 80 — in-round repairs the wave forced (disclosed in `claims.json` `counter_repairs`).**
+  `CriticClaims` showed (a) the C1 record arm accepted either the duplicate signal or the count while
+  the Rule requires both, and (b) a symbolic declared rev could still bind through the tip, leaving the
+  C2 kill rule's symbolic-rev clause unenforced; both counters now implement the frozen sentences
+  (9 and 16 selftest cases) and every arm was re-taken with the final bytes. The seat also showed the
+  C3 printed command omitted `--expect-sha256` while the predicate requires `target_pin.matched true`;
+  the printed command now carries it. `ReviewerC1` §7 also showed a duplicate cell renamed
+  `omp-pin#2` losing its `DECLARED` lookup and being forced unbound with a false reason; each check now
+  carries its `base_id` and both duplicate cells bind. Predicates, targets and kill rules are unchanged;
+  every arm was re-taken with the final bytes; the landed C3 mutant set is one-to-one.
 - **Round 80 — routed, not adopted.** The six pre-existing eight-cell registry rows of rounds 77–79
   (reported by `tools/round-71/registry-census.py` at `b8260107`: `cells>7` on
   `tools/round-77/verdict-bind.py`, `prefile-receipt.py`, `gen-controls.py`,

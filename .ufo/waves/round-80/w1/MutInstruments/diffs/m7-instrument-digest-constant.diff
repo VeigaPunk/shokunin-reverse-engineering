@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work/round79-pointer-bind/pristine.py	2026-11-04 10:43:36.120493318 -0300
++++ /fast/scratch/hyaku/kaidoku-r80/MutInstruments/work/round79-pointer-bind/m7-instrument-digest-constant.py	2026-11-04 10:43:36.351692216 -0300
+@@ -291,7 +291,7 @@
+     if not receipt.get("checked_at"):
+         defects.append("checked_at is absent")
+     inst = receipt.get("instrument") or {}
+-    if inst.get("sha256") != sha256_bytes(pathlib.Path(__file__).read_bytes()):
++    if inst.get("sha256") != "0" * 64:
+         defects.append("instrument sha256 is not this file's digest")
+     if receipt.get("ok") and (len(checks) != 5 or matched != len(checks) or unparsed):
+         defects.append("ok true but the check set is not fully bound")

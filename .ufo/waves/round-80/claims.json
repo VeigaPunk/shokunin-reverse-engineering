@@ -31,12 +31,34 @@
    "axis": "depth",
    "before": "base 16dfa009: guards 9, rows 0, bound 0, survivors 9, pristine 29/0 (.ufo/waves/round-80/l1/scores/c3-at-base.json)",
    "counter": "tools/round-80/guard-battery.py",
-   "counting_command": "python3 -I -B tools/round-80/guard-battery.py --root . --rev <40-hex> --expect-sha256 <gate digest> --work <scratch> --json-out <receipt>",
+   "counting_command": "python3 -I -B tools/round-80/guard-battery.py --root . --rev <40-hex> --expect-sha256 <gate digest at that rev> --work <scratch> --json-out <receipt>",
    "id": "R80-C3",
    "kill_rule": "a clause counted bound whose declared case is absent or passes on its mutant; a declared case that fails pristine (not isolating); a duplicate clause id, orphan row or row naming no clause; a non-compiling or summary-less copy counted killed; survivors 0 with fewer than 9 guards; a pristine case count that does not re-derive from the instrument; a target pin not re-derived from the same revision",
    "predicate": "R80-C3 is verified iff tools/round-80/guard-battery.py --root . --rev <measured> --expect-sha256 <gate digest> exits 0 with guards 9, rows 9, bound 9, survivors 0, pristine.cases 37, pristine.failures 0, target_pin.matched true and a defect-free validate, while at base 16dfa009 the same command exits 1 with guards 9, rows 0, bound 0, survivors 9",
    "surface": "tools/round-78/attack-gate.py's validate_receipt() refusal clauses (nine) and the round-80 SKILL decision table that binds each to a declared case",
    "type": "capability acquisition"
+  }
+ ],
+ "counter_repairs": [
+  {
+   "finding": "CriticClaims: `duplicate_refused()` accepted EITHER the duplicate id OR a count above five, while the frozen Rule requires every declared cell counted AND the id reported; a candidate that reports the id but keeps the collapsed count passed.",
+   "instrument": "tools/round-80/strictness-battery.py",
+   "repair": "the refusal now requires the conjunction (duplicates contains the id, checks_total > 5, ok false) and a selftest case proves a signal-with-collapsed-count candidate is a false green (9 cases). Rule, predicate, target and kill rule unchanged; both arms re-taken."
+  },
+  {
+   "finding": "CriticClaims: a receipt whose declared rev is symbolic (`@HEAD@`, `main`) could still bind through the tip, so the frozen kill rule's symbolic-rev clause was not enforced.",
+   "instrument": "tools/round-80/receipt-provenance.py",
+   "repair": "a declared symbolic rev is now its own defect class (`symbolic-rev`), with a case for a tip digest under `main` and a green case for an empty rev (16 cases). Rule, predicate, target and kill rule unchanged; both arms re-taken."
+  },
+  {
+   "finding": "CriticClaims: the C3 predicate requires `target_pin.matched true` while the command printed in the plan omitted `--expect-sha256`, under which `matched` is false.",
+   "instrument": "the printed counting command (record only)",
+   "repair": "the printed command now carries `--expect-sha256 <gate digest at that rev>` (claims.json and the report); the counter, predicate, target and kill rule are unchanged."
+  },
+  {
+   "finding": "ReviewerC1 \u00a77: duplicate cells were renamed `omp-pin#2`, and `declared_ok` looked the id up in `DECLARED`, which has no `#2` key \u2014 so the second cell was forced `matched False` with the false reason 'the pointer does not name the declared live object'.",
+   "instrument": "tools/round-80/pointer-bind.py",
+   "repair": "each check carries its declared `base_id` and the declared-object lookup uses it, so a duplicate cell binds independently (`checks_total 6, matched 6, mismatches 0, duplicates [\"omp-pin\"], ok false` on the frozen duplicate fixture); a selftest case pins the base id on both cells (34 cases). Predicate, target and kill rule unchanged; the C1 arms were re-taken."
   }
  ],
  "declaration_pointer": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
@@ -56,12 +78,26 @@
  "instruments": {
   "tools/round-78/attack-gate.py": "df6fb85670549ff1a03f925a3bed456cc3b64a311ae8681754c8efcc567149d6",
   "tools/round-80/guard-battery.py": "b9b3b10c41a329f18ff5b39a4f546875101285ee97d2385de6c36ac84c508272",
-  "tools/round-80/pointer-bind.py": "2e4a7852c791862b2e0626b07803f6250f189d95c4234d14dcfb35800b1f5c01",
-  "tools/round-80/receipt-provenance.py": "b59068d68857a6ebfdde2ebb0864d41c888f9eb896a254ba6a19fb5525e42b10",
-  "tools/round-80/strictness-battery.py": "2b26d75a1277fbc57bb17336719727ce1595759138aa2ff0083585a360d11342"
+  "tools/round-80/pointer-bind.py": "a5755ba1884f0c8d695d16289edbf5dff420e72d7552d424c2cc2df7bb94a438",
+  "tools/round-80/receipt-provenance.py": "80f10a7351c6aaf25ec1cfaac4c2580e2894558c7a16a2661cb5be6ad0f2c64d",
+  "tools/round-80/strictness-battery.py": "f2aa8422f4d5ac93d1e3ed2823eb72869694b46682e90d8e1e908c0555da2a0a"
  },
  "loaded_by_counter": {
   "tools/round-29/prefile-check.sh": "9a403dc11594a78a23629034bced6b6e0b33160f08a30d00a53d4bd860c1390d"
+ },
+ "receipts": {
+  "c1": {
+   "base": ".ufo/waves/round-80/l1/scores/c1-at-base.json",
+   "landing": ".ufo/waves/round-80/l1/scores/c1-at-landing.json"
+  },
+  "c2": {
+   "base": ".ufo/waves/round-80/l1/scores/c2-at-base.json",
+   "landing": ".ufo/waves/round-80/l1/scores/c2-at-landing.json"
+  },
+  "c3": {
+   "base": ".ufo/waves/round-80/l1/scores/c3-at-base.json",
+   "landing": ".ufo/waves/round-80/l1/scores/c3-at-landing.json"
+  }
  },
  "round": 80,
  "schema": "kaidoku-r80-claims-v1"

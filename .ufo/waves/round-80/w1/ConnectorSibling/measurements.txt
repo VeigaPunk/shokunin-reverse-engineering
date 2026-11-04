@@ -1,0 +1,232 @@
+# ConnectorSibling — measurements (round 80 w1)
+
+Lane: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+Base: 16dfa009bf143080dfcdfc5f9ec34bd359536d90
+Declaration (guard for plans/round-80-claims.md): 84d68e90f8a1ea3a3a7f94a208695c21023c0472
+All commands below were run read-only against the lane and against sibling
+lane trees under /home/vgpnk/Projects/shokunin/*/tools/ and */scripts/.
+No lane production file was written; no VCS mutation was issued.
+
+---------------------------------------------------------------------------
+M1. Receipt population: the frozen surface sentence vs the frozen number
+---------------------------------------------------------------------------
+Command (replicates the C2 surface sentence literally: l1/scores/*.json for
+rounds 60..79, excluding any path containing /attacks/, top level only):
+
+  python3 - <<'PY'
+  import glob, json, os
+  files=[p for r in range(60,80) for p in sorted(glob.glob(f'.ufo/waves/round-{r}/l1/scores/*.json')) if '/attacks/' not in p]
+  ...
+  PY
+
+Output:
+
+  A total: 141
+  B with instrument{path,sha256} anywhere: 34
+  C filename contains 'landing': 46
+  population with instrument: 34 without: 107
+
+Instrument paths of the 34:
+
+      6  tools/round-69/packed-elf.py
+      5  tools/round-76/plan-command.py
+      4  tools/round-68/registry-conformance.py
+      3  tools/round-76/record-audit.py
+      3  tools/round-79/gate-mutation.py
+      3  tools/round-79/pointer-bind.py
+      2  tools/round-77/verdict-bind.py
+      2  tools/round-77/prefile-receipt.py
+      2  tools/round-78/attack-gate.py
+      2  tools/round-78/surface-recheck.py
+      1  tools/round-68/packed-elf.py
+      1  tools/round-70/packed-elf.py
+
+Reading: the literal surface yields 141 receipts; the frozen target
+`receipts 34` is reachable only with an undeclared filter — "carries an
+instrument{path,sha256} block". 107 of 141 receipts fall out of the class
+silently and no counter reports them.
+
+---------------------------------------------------------------------------
+M2. Committed blob sets for the two instrument paths named in the claims
+---------------------------------------------------------------------------
+  git -C <lane> log --format=%H -- tools/round-79/pointer-bind.py
+  (2 commits) -> blob sha256s: 40905d396245313bedb7d0ae25b63f322b39e8e877371630e84d7616f12cb877
+                                91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90
+
+  git -C <lane> log --format=%H -- tools/round-78/attack-gate.py
+  (6 commits) -> blob sha256s: 4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf   (HEAD)
+                                961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0
+                                b07ca269be41bba243f77d04028a9ab971bfa04473d391983ff312af64a8f52e
+                                a86f6d4d94987ac07a2c68ef18168ea23dc577cfb078dba90485a577cbda7d43
+                                36988c0f912e62d85fa1fb4b272a1f064d32ce350231c956e06cfd0cd7c305cf
+                                780089e3fa5888d3550dde14043f8f83108a972da1e43be5ad1e661b0da6d173
+
+---------------------------------------------------------------------------
+M3. The declared-rev leg, measured on two receipts of the population
+---------------------------------------------------------------------------
+  .ufo/waves/round-78/l1/scores/c1-at-tip.json
+    declared rev      : 51c08cda7788dae2eb50add9cad768b6bfa99088
+    instrument.sha256 : 961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0
+    blob at rev:path  : 961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0 MATCH
+
+  .ufo/waves/round-79/l1/scores/c2-at-landing.json
+    declared rev      : ed68cd0a6cc790cca342380a2d80d1927a668c8c
+    instrument.sha256 : a0044c4c5006ac0f7e7fe57513c28bc9f98002aaab188575b87b0377466f9811
+    blob at rev:path  : 91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90 MISMATCH
+
+Reading: c1-at-tip.json is honest at its own recorded rev (its "at-tip" is
+that round's tip, not the current one); c2-at-landing.json is unrecoverable
+(a0044c4c is not in the 2-blob history of the path). No staleness finding.
+
+---------------------------------------------------------------------------
+M4. R80-C3: are the nine "clause prefixes" prefixes?
+---------------------------------------------------------------------------
+Simulated messages rebuilt from tools/round-78/attack-gate.py
+(defects.append sites: 782, 785, 790, 792, 794, 797, 801, 804, 807) with a
+fixture id of "rb01"; prefixes taken verbatim from the frozen claim list.
+
+  clause  startswith  contained_in_own  own_idx  hits_per_prefix
+  G01  True   True   0  [0]
+  G02  True   True   0  [1]
+  G03  False  True   0  [2]
+  G04  False  True   0  [3]
+  G05  False  True   0  [4]
+  G06  False  True   0  [5]
+  G07  True   True   0  [6]
+  G08  True   True   0  [7]
+  G09  True   True   0  [8]
+  cross_containment: []
+
+Reading: 4 of 9 clause texts (G03..G06) are INFIXES of their message —
+`f"{fixture.get('id')}: fixture dir mismatch"` renders `rb01: fixture dir
+mismatch` — so `message.startswith(prefix)` binds at most 5 of 9 and the
+frozen target `bound 9` becomes unreachable. Containment binds all nine, and
+no prefix is contained in more than one message, so containment + uniqueness
+is a clean bijection (no ambiguity).
+
+---------------------------------------------------------------------------
+M5. R80-C1: the delimiter class against the semver alphabet
+---------------------------------------------------------------------------
+Rule under test (plans/round-80-claims.md, C1): an occurrence is delimited
+when bounded by start/end of line or a char outside [A-Za-z0-9._-].
+
+  True   pinned exactly              |   "rea-agents@6.7.0",
+  False  longer digits 6.7.05        |   "rea-agents@6.7.05",
+  False  longer digits 6.7.00        | args = [ "-y", "rea-agents@6.7.00", "mcp" ]
+  True   semver build +build.5       | args = [ "-y", "rea-agents@6.7.0+build.5", "mcp" ]
+  False  semver prerelease -rc1      | args = [ "-y", "rea-agents@6.7.0-rc1", "mcp" ]
+  True   pnpm path segment /         | node_modules/.pnpm/rea-agents@6.7.0/node_modules/rea-agents
+  False  sentence-final period glued | the pin is rea-agents@6.7.0.
+
+Reading: the version alphabet is [0-9A-Za-z.-+] (semver: alnum, dot,
+hyphen, plus for build metadata). The frozen class omits `+`, so a declared
+pin `rea-agents@6.7.0` binds a live token `rea-agents@6.7.0+build.5` — the
+same "shorter pin inside a longer live token" class the claim exists to kill.
+Four frozen red cases and both green controls are unaffected by adding `+`
+(6.7.05, 6.7.00 still refused; gr01/gr02 still bound). The frozen fixture set
+cannot be extended this round (it is frozen at the declaration), so this is a
+named limit, not a repair.
+
+---------------------------------------------------------------------------
+M6. R80-C3: pristine selftest and the case arithmetic
+---------------------------------------------------------------------------
+  TMPDIR=<scratch>/tmp python3 -I -B tools/round-78/attack-gate.py --selftest
+  ...
+  {"case": "red-validate-refused-no-reason", "got": ["receipt-unauth: refused without a reason"], "pass": true, ...}
+  SELFTEST cases=29 failures=0
+  EXIT=0
+
+  grep -cE '^\s+case\(' tools/round-78/attack-gate.py  ->  29
+  grep -n 'red-validate' tools/round-78/attack-gate.py ->  921: red-validate-refused-no-reason
+
+Reading: pristine.cases is 29 today, not 37. The frozen target 37 therefore
+fixes the number of NEW isolating cases at exactly 8 (29 + 8 = 37), and G05's
+case already exists at line 921. An implementation that writes 9 new cases
+reports 38 and violates the frozen `pristine.cases 37` (kill rule: "a
+`pristine.cases` value that does not re-derive"). The nine rows and the eight
+new cases are the arithmetic the seat must hit.
+
+---------------------------------------------------------------------------
+M7. Base-arm evidence for the two flagged receipts (claim text, not re-measured)
+---------------------------------------------------------------------------
+  plans/round-80-claims.md, C2 base arm, quotes:
+    `.ufo/waves/round-79/l1/scores/c2-at-landing.json` records an instrument
+    digest (`a0044c4c50…`) that matches no committed blob of
+    `tools/round-79/pointer-bind.py`
+  M2/M3 above independently confirm a0044c4c is not any committed blob of
+  that path (only 40905d39 and 91d23dad exist). The class is real.
+
+---------------------------------------------------------------------------
+M8. considerthese presence
+---------------------------------------------------------------------------
+  cd <lane> && ls -d considerthese ; echo exit=$?
+    ls: cannot access 'considerthese': No such file or directory
+    exit=2
+
+  for d in */PROVINCE.md; do l=${d%/PROVINCE.md}; [ -d "$l/considerthese" ] || echo "NO considerthese: $l"; done
+    NO considerthese: kaidoku-shokunin
+    NO considerthese: kotodama-shokunin
+    NO considerthese: souji-shokunin
+    NO considerthese: tabi-shokunin
+
+Reading: 17 of the 21 lane roots carry considerthese/; this lane does not.
+
+---------------------------------------------------------------------------
+M9. Do any sibling round-80 trees touch this lane's round-80 surfaces?
+---------------------------------------------------------------------------
+  grep -rIn -E 'instrument\.sha256|l1/scores|receipt-provenance|pointer-bind|attack-gate' \
+    kake/... kama/... kengaku/... kotoba/... kumitate/... mado/... mori/... tameshi/...
+    (each under .ufo/waves/round-80)
+  -> 0 lines
+
+Reading: no shared instrument path and no shared receipt. Cross-lane
+convergence exists at the defect-class level only (M10), never as a shared
+artifact.
+
+---------------------------------------------------------------------------
+M10. Sibling rule lines read (line numbers are in the sibling tree at read time)
+---------------------------------------------------------------------------
+  chousa-shokunin/tools/digest-in-tree.py:2-23,64-88,140-186
+    every 64-hex pin in ONE receipt must equal the sha256 of a committed blob
+    ANYWHERE at --revision (or --all-objects); path is printed, never matched;
+    no pin -> exit 2 NO_DIGESTS (fail-closed, no vacuous pass)
+  chousa-shokunin/tools/receipt-pin.py:1-16,27,54-58,81-87
+    `SHA256=<64hex> <path>` header digest must equal `git cat-file blob
+    REVISION:PATH`; one receipt; caller-named 40-hex --revision
+  tameshi-shokunin/tools/receipt-window.py:1-15,82-119,154-172
+    instrument_sha256 must be lowercase 64-hex and a member of the contract's
+    frozen/installed/historical set, with edit-window discipline; membership,
+    never byte re-derivation
+  tameshi-shokunin/tools/receipt-measure.py:2-9,296-298
+    frozen FROZEN_GATE_SHA / FROZEN_MEASURE_SHA constants + embedded historical
+    digest->name table
+  kama-shokunin/tools/citation-provenance.py:1-24
+    `cite(<rev>, <path>, sha256=<hex>)` tokens must equal `git cat-file
+    <rev>:<path>`; scope = registry-required rows across nominated documents
+  kama-shokunin/tools/digest-ledger.py:1-30
+    every cited 64-hex classified against the blob set of a rev/dir; ledger
+    classes include `external` and `unverifiable` (+ required note)
+  kama-shokunin/tools/round72-receipt-tip-binding.py:1-26
+    every cited receipt carries `# tip=`/`# rev=`, must be an ancestor of the
+    tip, and `<rev>..<tip>` may touch only declared record paths; exit 2
+    "never a silent 0 -- S052: a check that collected nothing cannot pass"
+  kama-shokunin/tools/round74-receipt-claim-binding.py:82
+    HEADER_RE_V2 = (?:^|[^\w-])(?:#\s*)?(?:tip|rev)=([0-9a-fA-F]{40})(?![0-9a-fA-F]), re.I
+  kama-shokunin/tools/round75-survivor-probe.py:1-60
+    5 named source mutations on a copy; pristine green, every mutant red, each
+    mapped to one named arm; `sole_detector` = exactly one failing case
+  kumitate-shokunin/scripts/routed-ledger.mjs:87-95,340-346
+    wb() = (^|[^A-Za-z0-9])quote([^A-Za-z0-9]|$) + unique within section;
+    ROW_CONTRADICTED skips a second non-open row instead of counting both
+  kake-shokunin/scripts/citing_set.py:24-29,176-190
+    token ^S[0-9]{3,}$; a range needs \b before the left `S` and \b after the
+    right digits; a population id the grammar cannot produce is rejected
+  tsukuroi-shokunin/tools/check-knowledge-refs-r68.py:455-467
+    frozen predicate is S\d{3,} with NO word boundary; selftest
+    `glued-ids-are-counted` asserts glued ids count (opposite polarity)
+  kotodama-shokunin/tools/check-gate-battery.py:1-70
+    isolated gate selftests + committed baseline validation (gate_sha256 pin
+    against the live gate, input digests against snapshot bytes, 10/10
+    coverage); no clause->row binding anywhere
+  kotodama-shokunin/tools/check-gate-quotes.py:1-40
+    quoted runs <= 25 words per `## Gate` row (prose cap, no code binding)

@@ -1,0 +1,241 @@
+{
+ "inconclusive": [],
+ "mutants": [
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "invert the duplicate-check-id comparison (flags unique ids, accepts duplicates)",
+   "exit": 1,
+   "failures": 1,
+   "id": "m1-invert-duplicate-id",
+   "killed_by": [
+    "green-forged-consistent"
+   ],
+   "mutant_sha256": "037e9ad56f0ba0b2f6d9f4c1c9a27a57f1b21feba71cb75fd71ed4e7a3128b07",
+   "sole_detector": true,
+   "summary_present": true,
+   "survived": false,
+   "target": "round79-pointer-bind",
+   "verdict": "killed"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "invert the checks_total re-derive comparison",
+   "exit": 1,
+   "failures": 1,
+   "id": "m2-invert-checks-total",
+   "killed_by": [
+    "green-forged-consistent"
+   ],
+   "mutant_sha256": "cc04fb27e939410186c3853ea05688d47a099d2c92df9a1042b611f61da9418a",
+   "sole_detector": true,
+   "summary_present": true,
+   "survived": false,
+   "target": "round79-pointer-bind",
+   "verdict": "killed"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "drop the start>=1 foot of the forward-range guard",
+   "exit": 0,
+   "failures": 0,
+   "id": "m3-drop-start-bound",
+   "killed_by": [],
+   "mutant_sha256": "3ffa1f82a947205c71fed30ccaeb2b955d7159f332c002a9a81d1620c34e6948",
+   "sole_detector": false,
+   "summary_present": true,
+   "survived": true,
+   "target": "round79-pointer-bind",
+   "verdict": "survived"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "drop the per-token occurrence scan, so every parsed pointer matches",
+   "exit": 1,
+   "failures": 2,
+   "id": "m4-drop-token-scan",
+   "killed_by": [
+    "red-range-token-outside",
+    "red-stale-line"
+   ],
+   "mutant_sha256": "888c728a7767abe2f4c05113d08c23e91e4342f03e816d0b574ffef6755f31c8",
+   "sole_detector": false,
+   "summary_present": true,
+   "survived": false,
+   "target": "round79-pointer-bind",
+   "verdict": "killed"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "drop the matched-without-digest defects.append",
+   "exit": 1,
+   "failures": 1,
+   "id": "m5-drop-digest-guard",
+   "killed_by": [
+    "red-forged-no-digest"
+   ],
+   "mutant_sha256": "9d777c845e364068205e227bf872c2243342642ccaf9323e61c1bfc10fc9f2d3",
+   "sole_detector": true,
+   "summary_present": true,
+   "survived": false,
+   "target": "round79-pointer-bind",
+   "verdict": "killed"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "drop the ok-under-a-control defects.append",
+   "exit": 1,
+   "failures": 1,
+   "id": "m6-drop-control-guard",
+   "killed_by": [
+    "red-forged-control-ok"
+   ],
+   "mutant_sha256": "310422179817eeb411ad58208dd1a8c54adb542d3fa35d20e2c5ca85f541c32d",
+   "sole_detector": true,
+   "summary_present": true,
+   "survived": false,
+   "target": "round79-pointer-bind",
+   "verdict": "killed"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "replace the instrument-digest comparison with a constant bound",
+   "exit": 1,
+   "failures": 1,
+   "id": "m7-instrument-digest-constant",
+   "killed_by": [
+    "green-forged-consistent"
+   ],
+   "mutant_sha256": "5a9b11c4a72103469ec09e3ff799323d81f2887d5d0e5fea20db51af1e0719ea",
+   "sole_detector": true,
+   "summary_present": true,
+   "survived": false,
+   "target": "round79-pointer-bind",
+   "verdict": "killed"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "drop the start<=end foot of the matched-range conjunct",
+   "exit": 0,
+   "failures": 0,
+   "id": "m8-drop-range-order",
+   "killed_by": [],
+   "mutant_sha256": "d37e9d5e5a3dbaf112f61f45d80d27b441bc5482a3002a9a7c6e2a2125cf1923",
+   "sole_detector": false,
+   "summary_present": true,
+   "survived": true,
+   "target": "round79-pointer-bind",
+   "verdict": "survived"
+  },
+  {
+   "anchor_occurrences": 1,
+   "cases": 21,
+   "edit": "drop the matched-and-unparsed defects.append",
+   "exit": 0,
+   "failures": 0,
+   "id": "m9-drop-unparsed-overlap",
+   "killed_by": [],
+   "mutant_sha256": "d9635bfda0e9f5e62d95141063c6db1fbab49b5152e565da88e392c83b421db9",
+   "sole_detector": false,
+   "summary_present": true,
+   "survived": true,
+   "target": "round79-pointer-bind",
+   "verdict": "survived"
+  }
+ ],
+ "schema": "mutinstruments-r80-v1",
+ "spec_errors": [],
+ "survivors": [
+  {
+   "case_that_would_kill": "bind('f.json:0', ['x'], 4 lines) must report the not-1-based reason",
+   "edit": "drop the start>=1 foot of the forward-range guard",
+   "id": "m3-drop-start-bound",
+   "mutant": "/fast/scratch/hyaku/kaidoku-r80/MutInstruments/work/round79-pointer-bind/m3-drop-start-bound.py",
+   "target": "round79-pointer-bind"
+  },
+  {
+   "case_that_would_kill": "validate a forged receipt with line_start 3 / line_end 2 and matched True: pristine flags 'matched without a 1-based line range', mutant is silent",
+   "edit": "drop the start<=end foot of the matched-range conjunct",
+   "id": "m8-drop-range-order",
+   "mutant": "/fast/scratch/hyaku/kaidoku-r80/MutInstruments/work/round79-pointer-bind/m8-drop-range-order.py",
+   "target": "round79-pointer-bind"
+  },
+  {
+   "case_that_would_kill": "validate a forged receipt with checks[0].unparsed True and matched True: pristine flags, mutant is silent",
+   "edit": "drop the matched-and-unparsed defects.append",
+   "id": "m9-drop-unparsed-overlap",
+   "mutant": "/fast/scratch/hyaku/kaidoku-r80/MutInstruments/work/round79-pointer-bind/m9-drop-unparsed-overlap.py",
+   "target": "round79-pointer-bind"
+  }
+ ],
+ "targets": [
+  {
+   "anchor_checks": [
+    {
+     "id": "m1-invert-duplicate-id",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m2-invert-checks-total",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m3-drop-start-bound",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m4-drop-token-scan",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m5-drop-digest-guard",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m6-drop-control-guard",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m7-instrument-digest-constant",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m8-drop-range-order",
+     "occurrences": 1,
+     "ok": true
+    },
+    {
+     "id": "m9-drop-unparsed-overlap",
+     "occurrences": 1,
+     "ok": true
+    }
+   ],
+   "bytes": 19552,
+   "name": "round79-pointer-bind",
+   "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-79/pointer-bind.py",
+   "pristine": {
+    "cases": 21,
+    "exit": 0,
+    "failing_cases": [],
+    "failures": 0,
+    "summary_present": true
+   },
+   "sha256": "40905d396245313bedb7d0ae25b63f322b39e8e877371630e84d7616f12cb877"
+  }
+ ],
+ "work": "/fast/scratch/hyaku/kaidoku-r80/MutInstruments/work"
+}

@@ -1,0 +1,68 @@
+    # round 80 (R80-C3): one isolating case per validate_receipt() clause, so every
+    # sentence of the frozen refusal rule is load-bearing.  Each fixture is built so
+    # exactly one clause can fire, and each case pins the whole defect list.
+    def guard_receipt():
+        return {
+            "fixtures": [{"id": a["id"], "fixture": a["fixture"],
+                          "base": {"accepted": True},
+                          "refused": False, "rule": a["rule"], "reasons": []}
+                         for a in ATTACKS],
+            "base_accepted": len(ATTACKS), "refused": 0,
+            "instrument": {"path": "tools/round-78/attack-gate.py",
+                           "sha256": sha256_bytes(
+                               pathlib.Path(__file__).read_bytes())},
+        }
+
+    def guard_counters(receipt):
+        receipt["base_accepted"] = sum(
+            1 for f in receipt["fixtures"] if (f.get("base") or {}).get("accepted"))
+        receipt["refused"] = sum(1 for f in receipt["fixtures"] if f.get("refused"))
+        return receipt
+
+    duplicate = guard_receipt()
+    duplicate["fixtures"].append(dict(duplicate["fixtures"][0]))
+    case("red-validate-guard-duplicate-id",
+         validate_receipt(guard_counters(duplicate))["defects"],
+         ["duplicate fixture id"])
+    missing = guard_receipt()
+    removed = missing["fixtures"].pop(1)
+    case("red-validate-guard-id-set",
+         validate_receipt(guard_counters(missing))["defects"],
+         [f"fixture ids {[removed['id']]} differ from the declared set"])
+    wrong_dir = guard_receipt()
+    wrong_dir["fixtures"][0]["fixture"] = "elsewhere"
+    case("red-validate-guard-dir-mismatch",
+         validate_receipt(guard_counters(wrong_dir))["defects"],
+         [f"{ATTACKS[0]['id']}: fixture dir mismatch"])
+    wrong_bool = guard_receipt()
+    wrong_bool["fixtures"][0]["base"] = {"accepted": "yes"}
+    case("red-validate-guard-base-bool",
+         validate_receipt(guard_counters(wrong_bool))["defects"],
+         [f"{ATTACKS[0]['id']}: base.accepted is not a bool"])
+    no_reason = guard_receipt()
+    no_reason["fixtures"][0]["refused"] = True
+    case("red-validate-guard-refused-no-reason",
+         validate_receipt(guard_counters(no_reason))["defects"],
+         [f"{ATTACKS[0]['id']}: refused without a reason"])
+    other_rule = guard_receipt()
+    other_rule["fixtures"][0]["refused"] = True
+    other_rule["fixtures"][0]["reasons"] = [{"rule": "unrelated"}]
+    case("red-validate-guard-refused-by-rule",
+         validate_receipt(guard_counters(other_rule))["defects"],
+         [f"{ATTACKS[0]['id']}: refused by unrelated, not its declared rule"])
+    stale_base = guard_receipt()
+    stale_base["base_accepted"] = 0
+    case("red-validate-guard-base-rederive", validate_receipt(stale_base)["defects"],
+         ["base_accepted does not re-derive from the fixture list"])
+    stale_refused = guard_receipt()
+    stale_refused["fixtures"][0]["refused"] = True
+    stale_refused["fixtures"][0]["reasons"] = [{"rule": ATTACKS[0]["rule"]}]
+    stale_refused["refused"] = 0
+    case("red-validate-guard-refused-rederive",
+         validate_receipt(stale_refused)["defects"],
+         ["refused does not re-derive from the fixture list"])
+    bad_digest = guard_receipt()
+    bad_digest["instrument"]["sha256"] = "0" * 64
+    case("red-validate-guard-instrument-digest",
+         validate_receipt(bad_digest)["defects"],
+         ["instrument sha256 is not this file's digest"])

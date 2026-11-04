@@ -1,0 +1,663 @@
+{
+  "artefacts": {
+    "attack-receipt.json": "attacks A-D",
+    "binding-lab.py": "scorer + attacks + discriminator",
+    "clauses.json": "my enumeration",
+    "deletion-driver.py": "my deletion driver",
+    "deletion-receipt-candidate.json": "candidate tally",
+    "deletion-receipt.json": "base tally",
+    "discriminate-execgate.json / discriminate-atk-b.json / discriminate-atk-c.json": "condition-disabled runs",
+    "score-execgate-draft-block.json": "candidate + ExecGate draft block",
+    "score-execgate-noblock.json": "candidate, no block (base arm shape)",
+    "score-execgate-with-block.json": "candidate + my block"
+  },
+  "binding_attacks": {
+    "A_two_clause_prefix": {
+      "caught_by_frozen": "conditional: caught if row-to-clause is a total match with the bijection enforced (bound 8, clause 6 has two rows); missed if the matcher takes the first match (bound 9, no issue).  The frozen text pins 'exactly one row' per clause but never says what to do with a prefix that matches several, so the battery must be explicit.",
+      "construction": "G05's prefix rewritten from `: refused without a reason` to `: refused`, which prefixes both clause 5 and clause 6; every case still real.",
+      "first_match": {
+        "bound": 9,
+        "issues": [],
+        "rows": 9,
+        "survivors": 0
+      },
+      "total_match": {
+        "bound": 8,
+        "issues": [
+          {
+            "matches": [
+              5,
+              6
+            ],
+            "prefix": ": refused",
+            "row": "G05-refused-no-reason",
+            "why": "several clauses"
+          },
+          {
+            "clause": 6,
+            "rows": [
+              "G05-refused-no-reason",
+              "G06-refused-other-rule"
+            ],
+            "why": "more than one row"
+          }
+        ],
+        "rows": 9,
+        "survivors": 1
+      },
+      "variant": "identifier laxity: a substring case-name matcher would accept `red-validate-base-accepted` against both `...-bool` and `...-count`; exact names are required."
+    },
+    "B_source_literal": {
+      "bound": 9,
+      "caught_by_frozen": "no.  Present, pristine-green and dead on its own mutant is exactly the frozen test, and the source-text cases satisfy even cross-mutant exclusivity.  The condition-disabled mutant is the discriminator that catches them (8 of 9 stay green).",
+      "construction": "8 injected cases assert a clause's message text is present in `pathlib.Path(__file__)` (needles split so the case body cannot satisfy them), clause 5 keeps the existing behaviour case, block names the injected cases.",
+      "discriminator": {
+        "behavioural": 1,
+        "source_text_only": 8
+      },
+      "guards": 9,
+      "pristine": {
+        "cases": 37,
+        "exit": 0,
+        "failures": 0,
+        "summary": "SELFTEST cases=37 failures=0"
+      },
+      "rows": 9,
+      "strict_isolating": 9,
+      "survivors": 0
+    },
+    "C_universal_case": {
+      "bound": 9,
+      "caught_by_frozen": "no.  The frozen text never requires distinct cases per clause nor exclusivity, so one case can bind all nine.  A case that fails on pristine as well is caught by pristine.failures 0; the pristine-green variant is not.",
+      "construction": "one case (count of `defects.append` lines == 17) passes pristine and fails on every mutant; seven pads bring the count to 37; the same case is declared in all nine rows.",
+      "discriminator": {
+        "behavioural": 0,
+        "source_text_only": 9
+      },
+      "distinct_declared_cases": 1,
+      "guards": 9,
+      "pristine": {
+        "cases": 37,
+        "exit": 0,
+        "failures": 0,
+        "summary": "SELFTEST cases=37 failures=0"
+      },
+      "rows": 9,
+      "strict_isolating": 0,
+      "survivors": 0
+    },
+    "D_merged_clause": {
+      "caught_by_frozen": "yes, twice: `guards 9` fails at 8, and the frozen kill rule names 'survivors 0 reached with fewer than 9 guards'.  A refactor that keeps nine appends but merges two conditions into one message also loses one frozen prefix, so `bound 9` fails.  This holds only if `guards` and the clause list are re-derived from the source in the receipt; a hardcoded 9 would miss it.",
+      "clause_lines": [
+        782,
+        785,
+        790,
+        793,
+        796,
+        800,
+        803,
+        806
+      ],
+      "compiles": true,
+      "construction": "clauses 4 and 5 merged into one `defects.append` behind one `or` condition (a plausible refactor).",
+      "guards": 8,
+      "pristine_cases": 29,
+      "pristine_failures": 1
+    }
+  },
+  "candidate_scoring": {
+    "candidate_receipt_claims": {
+      "bound": 9,
+      "candidate": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-80/w1/ExecGate/attack-gate.py",
+      "candidate_sha256": "df6fb85670549ff1a03f925a3bed456cc3b64a311ae8681754c8efcc567149d6",
+      "clauses": 9,
+      "mutants": "<elided>",
+      "ok": true,
+      "pristine": {
+        "cases": 37,
+        "exit": 0,
+        "failing": [],
+        "failures": 0,
+        "summary": "SELFTEST cases=37 failures=0"
+      },
+      "survivors": []
+    },
+    "gate": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-80/w1/ExecGate/attack-gate.py",
+    "gate_sha256": "df6fb85670549ff1a03f925a3bed456cc3b64a311ae8681754c8efcc567149d6",
+    "verdict": "pass: the candidate gate and the draft block meet every frozen count under an independent implementation",
+    "with_draft_block": {
+      "binding_issues": [],
+      "bound": 9,
+      "clause_lines": [
+        782,
+        785,
+        790,
+        792,
+        794,
+        797,
+        801,
+        804,
+        807
+      ],
+      "clause_prefixes_match_frozen": true,
+      "distinct_declared_cases": 9,
+      "duplicate_row_ids": [],
+      "guards": 9,
+      "nonconforming_rows": [],
+      "per_case": [
+        {
+          "case": "red-validate-duplicate-fixture-id",
+          "clause_prefix": "duplicate fixture id",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 1,
+          "pristine_pass": true,
+          "row": "G01-duplicate-fixture-id"
+        },
+        {
+          "case": "red-validate-fixture-id-set",
+          "clause_prefix": "fixture ids",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 2,
+          "pristine_pass": true,
+          "row": "G02-fixture-id-set"
+        },
+        {
+          "case": "red-validate-fixture-dir",
+          "clause_prefix": ": fixture dir mismatch",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 3,
+          "pristine_pass": true,
+          "row": "G03-fixture-dir"
+        },
+        {
+          "case": "red-validate-base-accepted-bool",
+          "clause_prefix": ": base.accepted is not a bool",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 4,
+          "pristine_pass": true,
+          "row": "G04-base-accepted-bool"
+        },
+        {
+          "case": "red-validate-refused-no-reason",
+          "clause_prefix": ": refused without a reason",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 5,
+          "pristine_pass": true,
+          "row": "G05-refused-no-reason"
+        },
+        {
+          "case": "red-validate-refused-other-rule",
+          "clause_prefix": ": refused by ",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 6,
+          "pristine_pass": true,
+          "row": "G06-refused-other-rule"
+        },
+        {
+          "case": "red-validate-base-accepted-count",
+          "clause_prefix": "base_accepted does not re-derive",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 7,
+          "pristine_pass": true,
+          "row": "G07-base-accepted-count"
+        },
+        {
+          "case": "red-validate-refused-count",
+          "clause_prefix": "refused does not re-derive",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 8,
+          "pristine_pass": true,
+          "row": "G08-refused-count"
+        },
+        {
+          "case": "red-validate-instrument-digest",
+          "clause_prefix": "instrument sha256 is not",
+          "exists": true,
+          "fails_on_other_mutants": [],
+          "isolating": true,
+          "killed_by_its_mutant": true,
+          "n": 9,
+          "pristine_pass": true,
+          "row": "G09-instrument-digest"
+        }
+      ],
+      "pristine": {
+        "cases": 37,
+        "exit": 0,
+        "failures": 0,
+        "summary": "SELFTEST cases=37 failures=0"
+      },
+      "rows": 9,
+      "strict_isolating": 9,
+      "survivors": 0
+    },
+    "with_reviewer_block": {
+      "binding_issues": [],
+      "bound": 9,
+      "guards": 9,
+      "pristine": {
+        "cases": 37,
+        "exit": 0,
+        "failures": 0,
+        "summary": "SELFTEST cases=37 failures=0"
+      },
+      "rows": 9,
+      "strict_isolating": 9,
+      "survivors": 0
+    },
+    "without_block": {
+      "bound": 0,
+      "guards": 9,
+      "isolated_without_row": 9,
+      "pristine": {
+        "cases": 37,
+        "exit": 0,
+        "failures": 0,
+        "summary": "SELFTEST cases=37 failures=0"
+      },
+      "rows": 0,
+      "survivors": 9
+    }
+  },
+  "claim": "R80-C3",
+  "clause_count": 9,
+  "clauses": [
+    {
+      "condition": "len(ids) != len(set(ids))",
+      "enclosing": "function level",
+      "end_line": 782,
+      "fstring": false,
+      "id_hint": "G01",
+      "line": 782,
+      "literal": "duplicate fixture id",
+      "n": 1,
+      "prefix": "duplicate fixture id",
+      "trigger": "the receipt's fixtures list carries the same id twice"
+    },
+    {
+      "condition": "set(ids) != declared",
+      "enclosing": "function level",
+      "end_line": 786,
+      "fstring": true,
+      "id_hint": "G02",
+      "line": 785,
+      "literal": "fixture ids {sorted(set(ids) ^ declared)} differ from the declared set",
+      "n": 2,
+      "prefix": "fixture ids",
+      "trigger": "the fixture id set differs from the ATTACKS-declared set"
+    },
+    {
+      "condition": "fixture.get('fixture') != next(a['fixture'] for a in ATTACKS if a['id'] == fixture.get('id'))",
+      "enclosing": "for fixture in receipt.get('fixtures') or []:",
+      "end_line": 790,
+      "fstring": true,
+      "id_hint": "G03",
+      "line": 790,
+      "literal": "{fixture.get('id')}: fixture dir mismatch",
+      "n": 3,
+      "prefix": ": fixture dir mismatch",
+      "trigger": "a fixture row names a different fixture directory than its declared id"
+    },
+    {
+      "condition": "not isinstance((fixture.get('base') or {}).get('accepted'), bool)",
+      "enclosing": "for fixture in receipt.get('fixtures') or []:",
+      "end_line": 792,
+      "fstring": true,
+      "id_hint": "G04",
+      "line": 792,
+      "literal": "{fixture.get('id')}: base.accepted is not a bool",
+      "n": 4,
+      "prefix": ": base.accepted is not a bool",
+      "trigger": "a fixture's base.accepted is missing or not a JSON bool"
+    },
+    {
+      "condition": "fixture.get('refused') and not fixture.get('reasons')",
+      "enclosing": "for fixture in receipt.get('fixtures') or []:",
+      "end_line": 794,
+      "fstring": true,
+      "id_hint": "G05",
+      "line": 794,
+      "literal": "{fixture.get('id')}: refused without a reason",
+      "n": 5,
+      "prefix": ": refused without a reason",
+      "trigger": "a fixture is marked refused but carries no reasons list"
+    },
+    {
+      "condition": "reason.get('rule') != fixture.get('rule')",
+      "enclosing": "for reason in fixture.get('reasons') or []: (nested inside the fixture loop)",
+      "end_line": 798,
+      "fstring": true,
+      "id_hint": "G06",
+      "line": 797,
+      "literal": "{fixture.get('id')}: refused by {reason.get('rule')}, not its declared rule",
+      "n": 6,
+      "prefix": ": refused by ",
+      "trigger": "a refusal reason names a rule other than the fixture's declared rule"
+    },
+    {
+      "condition": "receipt.get('base_accepted') != sum(1 for f in fixtures if (f.get('base') or {}).get('accepted'))",
+      "enclosing": "function level",
+      "end_line": 801,
+      "fstring": false,
+      "id_hint": "G07",
+      "line": 801,
+      "literal": "base_accepted does not re-derive from the fixture list",
+      "n": 7,
+      "prefix": "base_accepted does not re-derive",
+      "trigger": "the receipt's base_accepted total is not the count of accepted fixture bases"
+    },
+    {
+      "condition": "receipt.get('refused') != sum(1 for f in fixtures if f.get('refused'))",
+      "enclosing": "function level",
+      "end_line": 804,
+      "fstring": false,
+      "id_hint": "G08",
+      "line": 804,
+      "literal": "refused does not re-derive from the fixture list",
+      "n": 8,
+      "prefix": "refused does not re-derive",
+      "trigger": "the receipt's refused total is not the count of refused fixture rows"
+    },
+    {
+      "condition": "inst.get('sha256') != sha256_bytes(pathlib.Path(__file__).read_bytes())",
+      "enclosing": "function level",
+      "end_line": 807,
+      "fstring": false,
+      "id_hint": "G09",
+      "line": 807,
+      "literal": "instrument sha256 is not this file's digest",
+      "n": 9,
+      "prefix": "instrument sha256 is not",
+      "trigger": "the receipt's instrument sha256 is not the running file's own digest"
+    }
+  ],
+  "condition_discriminator": {
+    "execgate_candidate": {
+      "behavioural": 9,
+      "pristine": {
+        "cases": 37,
+        "failures": 0
+      },
+      "source_text_only": 0
+    },
+    "scope": "all nine ExecGate cases observe the clause's behaviour, so the landed candidate does not exploit attack B."
+  },
+  "declaration_commit": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "deletion_tally": {
+    "base": {
+      "killed": 1,
+      "killed_by": [
+        ": refused without a reason"
+      ],
+      "mutants": 9,
+      "survivor_clauses": [
+        "duplicate fixture id",
+        "fixture ids",
+        ": fixture dir mismatch",
+        ": base.accepted is not a bool",
+        ": refused by ",
+        "base_accepted does not re-derive",
+        "refused does not re-derive",
+        "instrument sha256 is not"
+      ],
+      "survivors": 8,
+      "unevaluable": 0,
+      "unevaluable_clauses": []
+    },
+    "base_per_clause": [
+      {
+        "failing": [],
+        "n": 1,
+        "prefix": "duplicate fixture id",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [],
+        "n": 2,
+        "prefix": "fixture ids",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [],
+        "n": 3,
+        "prefix": ": fixture dir mismatch",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [],
+        "n": 4,
+        "prefix": ": base.accepted is not a bool",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [
+          "red-validate-refused-no-reason"
+        ],
+        "n": 5,
+        "prefix": ": refused without a reason",
+        "verdict": "killed"
+      },
+      {
+        "failing": [],
+        "n": 6,
+        "prefix": ": refused by ",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [],
+        "n": 7,
+        "prefix": "base_accepted does not re-derive",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [],
+        "n": 8,
+        "prefix": "refused does not re-derive",
+        "verdict": "survivor"
+      },
+      {
+        "failing": [],
+        "n": 9,
+        "prefix": "instrument sha256 is not",
+        "verdict": "survivor"
+      }
+    ],
+    "base_pristine": {
+      "cases": 29,
+      "exit": 0,
+      "failing": [],
+      "failures": 0,
+      "summary": "SELFTEST cases=29 failures=0"
+    },
+    "base_shape_expected": {
+      "killed": [
+        ": refused without a reason"
+      ],
+      "survivors": 8
+    },
+    "base_shape_matches": true,
+    "candidate": {
+      "killed": 9,
+      "killed_by": [
+        "duplicate fixture id",
+        "fixture ids",
+        ": fixture dir mismatch",
+        ": base.accepted is not a bool",
+        ": refused without a reason",
+        ": refused by ",
+        "base_accepted does not re-derive",
+        "refused does not re-derive",
+        "instrument sha256 is not"
+      ],
+      "mutants": 9,
+      "survivor_clauses": [],
+      "survivors": 0,
+      "unevaluable": 0,
+      "unevaluable_clauses": []
+    },
+    "candidate_per_clause": [
+      {
+        "failing": [
+          "red-validate-duplicate-fixture-id"
+        ],
+        "n": 1,
+        "prefix": "duplicate fixture id",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-fixture-id-set"
+        ],
+        "n": 2,
+        "prefix": "fixture ids",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-fixture-dir"
+        ],
+        "n": 3,
+        "prefix": ": fixture dir mismatch",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-base-accepted-bool"
+        ],
+        "n": 4,
+        "prefix": ": base.accepted is not a bool",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-refused-no-reason"
+        ],
+        "n": 5,
+        "prefix": ": refused without a reason",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-refused-other-rule"
+        ],
+        "n": 6,
+        "prefix": ": refused by ",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-base-accepted-count"
+        ],
+        "n": 7,
+        "prefix": "base_accepted does not re-derive",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-refused-count"
+        ],
+        "n": 8,
+        "prefix": "refused does not re-derive",
+        "verdict": "killed"
+      },
+      {
+        "failing": [
+          "red-validate-instrument-digest"
+        ],
+        "n": 9,
+        "prefix": "instrument sha256 is not",
+        "verdict": "killed"
+      }
+    ],
+    "candidate_pristine": {
+      "cases": 37,
+      "exit": 0,
+      "failing": [],
+      "failures": 0,
+      "summary": "SELFTEST cases=37 failures=0"
+    },
+    "note": "the claim's base arm 'survivors 9' is the battery's clause-to-row measure; this tally measures mutant survival and is 8 survivors / 1 killed.  They agree: all nine clauses are unbound at base, and only clause 5 has a selftest case at all."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "contract",
+      "status": "open",
+      "text": "The frozen prefix set is not literally a message prefix for clauses 3-6: their message literals begin with the fixture-id placeholder, while the frozen prefixes begin at `: `.  A battery implementing `message.startswith(prefix)` on the template binds 0 of those four; a battery implementing it on the rendered message binds 0 as well, because the message begins with the fixture id.  The only consistent reading is 'prefix of the literal text after the leading `{...}` placeholder'.  Both seats must implement that reading identically or R80-C3's rows/bound numbers diverge without either being wrong."
+    },
+    {
+      "id": "F2",
+      "severity": "high",
+      "status": "open",
+      "text": "Attack B lands: eight source-text assertions satisfy every frozen count (rows 9, bound 9, survivors 0, pristine 37/0) and even cross-mutant exclusivity.  The predicate never inspects what a case observes.  Fix: also run the condition-disabled mutant per clause and require the declared case to go red there (demonstrated: 8 of 8 vacuous cases stay green)."
+    },
+    {
+      "id": "F3",
+      "severity": "high",
+      "status": "open",
+      "text": "Attack C lands: a single pristine-green, all-mutant-failing case declared in all nine rows scores bound 9 / survivors 0 / pristine 37/0.  The frozen rule never requires nine distinct cases nor cross-mutant exclusivity.  Fix: require `len(set(declared_cases)) == 9` and, per clause, the declared case to pass on the other eight mutants."
+    },
+    {
+      "id": "F4",
+      "severity": "medium",
+      "status": "conditional",
+      "text": "Attack A (a prefix that matches two clauses) is caught only under a total-match + bijection implementation (bound 8); a first-match implementation scores bound 9 with no issue.  Make ambiguity an explicit receipt defect."
+    },
+    {
+      "id": "F5",
+      "severity": "low",
+      "status": "closed",
+      "text": "Attack D (merged clause) is caught by `guards 9` and by the frozen empty-set kill rule, provided the receipt re-derives the guard list from the source."
+    },
+    {
+      "id": "F6",
+      "severity": "medium",
+      "status": "open",
+      "text": "`tools/round-80/guard-battery.py` is absent at my check, so `target_pin.matched` and the battery's own `--validate` are unverified here; this seat verifies the inputs those fields must consume (nine guards, nine rows, nine isolating cases, pristine 37/0)."
+    },
+    {
+      "id": "F7",
+      "severity": "low",
+      "status": "note",
+      "text": "ExecGate's `selftest-pristine.json` names `tools/round-78/attack-gate.py` with the candidate digest df6fb856...; that receipt is provenance-true only after the candidate lands at that path.  It must not be filed into `l1/scores/` before the gate lands (R80-C2's class)."
+    }
+  ],
+  "lane_head_at_check": "84d68e90f8a1ea3a3a7f94a208695c21023c0472",
+  "method": {
+    "candidate_scoring": "same enumeration and mutation applied to the candidate blob, plus a table-block parser that binds each row to exactly one clause by the frozen prefix and reads the case name from the fourth cell.",
+    "clauses": "ast.parse of the blob at the rev; Expr(Call(Attribute(Name('defects'),'append'))) inside validate_receipt; literal text from the first argument; enclosing condition read from the source.",
+    "deletion": "one copy per clause with that statement replaced by `pass`; python3 -I -B <copy> --selftest; child env exactly {PATH,HOME,TMPDIR,LANG}; failing cases read from the case JSON lines.",
+    "discriminator": "per clause, replace the enclosing `if` test with False while leaving the message literal in the file; a behavioural case must go red, a source-text case stays green."
+  },
+  "rev": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "risks": [
+    "My prefix canonicalization is one of two plausible readings (F1); if the landed battery reads the frozen prefixes differently, `rows`/`bound` will disagree with this receipt even though both implementations are faithful to their reading.",
+    "The condition-disabled discriminator is my strengthening, not part of the frozen predicate; F2/F3 are advisory for the L1 and do not block the frozen target.",
+    "`target_pin` and the battery's `--validate` are out of reach until `tools/round-80/guard-battery.py` exists."
+  ],
+  "seat": "ReviewerC3"
+}

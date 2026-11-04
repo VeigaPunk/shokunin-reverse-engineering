@@ -1,0 +1,134 @@
+{
+  "seat": "ReviewerC3",
+  "instrument": "tools/round-78/attack-gate.py",
+  "rev": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "blob": "5925deccb971bafb2957daac5f388a84d28b4be6",
+  "worktree_sha256": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf",
+  "method": "ast.parse of the blob at the rev; walk validate_receipt's FunctionDef; collect Expr(Call(func=Attribute(Name('defects'),'append'))); take node.lineno/end_lineno and the first arg's literal text; cross-read by hand for the enclosing condition.",
+  "function": "validate_receipt",
+  "clause_count": 9,
+  "clauses": [
+    {
+      "n": 1,
+      "id_hint": "G01",
+      "line": 782,
+      "end_line": 782,
+      "literal": "duplicate fixture id",
+      "prefix": "duplicate fixture id",
+      "fstring": false,
+      "condition": "len(ids) != len(set(ids))",
+      "enclosing": "function level",
+      "trigger": "the receipt's fixtures list carries the same id twice"
+    },
+    {
+      "n": 2,
+      "id_hint": "G02",
+      "line": 785,
+      "end_line": 786,
+      "literal": "fixture ids {sorted(set(ids) ^ declared)} differ from the declared set",
+      "prefix": "fixture ids",
+      "fstring": true,
+      "condition": "set(ids) != declared",
+      "enclosing": "function level",
+      "trigger": "the fixture id set differs from the ATTACKS-declared set"
+    },
+    {
+      "n": 3,
+      "id_hint": "G03",
+      "line": 790,
+      "end_line": 790,
+      "literal": "{fixture.get('id')}: fixture dir mismatch",
+      "prefix": ": fixture dir mismatch",
+      "fstring": true,
+      "condition": "fixture.get('fixture') != next(a['fixture'] for a in ATTACKS if a['id'] == fixture.get('id'))",
+      "enclosing": "for fixture in receipt.get('fixtures') or []:",
+      "trigger": "a fixture row names a different fixture directory than its declared id"
+    },
+    {
+      "n": 4,
+      "id_hint": "G04",
+      "line": 792,
+      "end_line": 792,
+      "literal": "{fixture.get('id')}: base.accepted is not a bool",
+      "prefix": ": base.accepted is not a bool",
+      "fstring": true,
+      "condition": "not isinstance((fixture.get('base') or {}).get('accepted'), bool)",
+      "enclosing": "for fixture in receipt.get('fixtures') or []:",
+      "trigger": "a fixture's base.accepted is missing or not a JSON bool"
+    },
+    {
+      "n": 5,
+      "id_hint": "G05",
+      "line": 794,
+      "end_line": 794,
+      "literal": "{fixture.get('id')}: refused without a reason",
+      "prefix": ": refused without a reason",
+      "fstring": true,
+      "condition": "fixture.get('refused') and not fixture.get('reasons')",
+      "enclosing": "for fixture in receipt.get('fixtures') or []:",
+      "trigger": "a fixture is marked refused but carries no reasons list"
+    },
+    {
+      "n": 6,
+      "id_hint": "G06",
+      "line": 797,
+      "end_line": 798,
+      "literal": "{fixture.get('id')}: refused by {reason.get('rule')}, not its declared rule",
+      "prefix": ": refused by ",
+      "fstring": true,
+      "condition": "reason.get('rule') != fixture.get('rule')",
+      "enclosing": "for reverence in fixture.get('reasons') or []: (nested inside the fixture loop)",
+      "trigger": "a refusal reason names a rule other than the fixture's declared rule"
+    },
+    {
+      "n": 7,
+      "id_hint": "G07",
+      "line": 801,
+      "end_line": 801,
+      "literal": "base_accepted does not re-derive from the fixture list",
+      "prefix": "base_accepted does not re-derive",
+      "fstring": false,
+      "condition": "receipt.get('base_accepted') != sum(1 for f in fixtures if (f.get('base') or {}).get('accepted'))",
+      "enclosing": "function level",
+      "trigger": "the receipt's base_accepted total is not the count of accepted fixture bases"
+    },
+    {
+      "n": 8,
+      "id_hint": "G08",
+      "line": 804,
+      "end_line": 804,
+      "literal": "refused does not re-derive from the fixture list",
+      "prefix": "refused does not re-derive",
+      "fstring": false,
+      "condition": "receipt.get('refused') != sum(1 for f in fixtures if f.get('refused'))",
+      "enclosing": "function level",
+      "trigger": "the receipt's refused total is not the count of refused fixture rows"
+    },
+    {
+      "n": 9,
+      "id_hint": "G09",
+      "line": 807,
+      "end_line": 807,
+      "literal": "instrument sha256 is not this file's digest",
+      "prefix": "instrument sha256 is not",
+      "fstring": false,
+      "condition": "inst.get('sha256') != sha256_bytes(pathlib.Path(__file__).read_bytes())",
+      "enclosing": "function level",
+      "trigger": "the receipt's instrument sha256 is not the running file's own digest"
+    }
+  ],
+  "other_defects_append_in_file": {
+    "count": 8,
+    "lines": [
+      582,
+      592,
+      595,
+      597,
+      599,
+      603,
+      605,
+      607
+    ],
+    "note": "check_receipt_like() carries 8 more append sites at 582..607; none is inside validate_receipt and none is in scope for R80-C3. Total append statements in the blob: 17."
+  }
+}

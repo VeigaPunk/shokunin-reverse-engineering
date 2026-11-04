@@ -1,0 +1,116 @@
+{
+  "targets": [
+    {
+      "name": "guard",
+      "path": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-80/w1/ExecGuard/guard-battery.py",
+      "selftest_args": [],
+      "mutants": [
+        {
+          "id": "g1-drop-duplicate-clause-id",
+          "anchor": "        if len(group) > 1:",
+          "replacement": "        if False:",
+          "edit": "drop the duplicate-clause-id defects.append",
+          "killer_case": "red-duplicate-clause-id"
+        },
+        {
+          "id": "g2-drop-ambiguous-prefix",
+          "anchor": "        if len(matches) > 1:",
+          "replacement": "        if len(matches) > 1 and False:",
+          "edit": "drop the ambiguous-prefix defects.append",
+          "killer_case": "red-ambiguous-prefix"
+        },
+        {
+          "id": "g3-drop-prefix-binds-other",
+          "anchor": "        if matches[0][\"clause_id\"] != row[\"clause_id\"]:",
+          "replacement": "        if False:",
+          "edit": "drop the prefix-binds-another-clause defects.append",
+          "killer_case": "a row whose prefix matches exactly one clause that is not its declared clause must be a defect"
+        },
+        {
+          "id": "g4-drop-case-absent-from-source",
+          "anchor": "        if not row[\"case_in_source\"]:",
+          "replacement": "        if False:",
+          "edit": "drop the case-absent-from-selftest-source defects.append",
+          "killer_case": "red-case-absent-from-source"
+        },
+        {
+          "id": "g5-drop-duplicate-case",
+          "anchor": "        if len(row_ids) > 1:",
+          "replacement": "        if False:",
+          "edit": "drop the one-case-per-row defects.append",
+          "killer_case": "red-case-declared-twice"
+        },
+        {
+          "id": "g6-mutate-nonunique-accepted",
+          "anchor": "    if hits != 1:",
+          "replacement": "    if hits < 1:",
+          "edit": "accept a clause statement that occurs more than once",
+          "killer_case": "red-mutate-nonunique"
+        },
+        {
+          "id": "g7-killed-without-failing-case",
+          "anchor": "    if not entry[\"case_failed\"]:",
+          "replacement": "    if False:",
+          "edit": "judge a mutant killed even when its declared case passes",
+          "killer_case": "red-case-passes-on-mutant"
+        },
+        {
+          "id": "g8-drop-case-present",
+          "anchor": "    if not entry[\"case_present\"]:",
+          "replacement": "    if False:",
+          "edit": "stop reporting the absent-declared-case reason",
+          "killer_case": "red-case-absent-in-mutant asserts status and case_present only, not the reason"
+        },
+        {
+          "id": "g9-verdict-drop-rows",
+          "anchor": "    if rows != guards or bound != guards:",
+          "replacement": "    if bound != guards:",
+          "edit": "let the exit verdict ignore a row-count mismatch",
+          "killer_case": "verdict_exit(2, 1, 2, 0, 0) must be 1"
+        },
+        {
+          "id": "g10-verdict-drop-survivors",
+          "anchor": "    if survivors != 0 or pristine_failures != 0:",
+          "replacement": "    if pristine_failures != 0:",
+          "edit": "let the exit verdict ignore surviving clauses",
+          "killer_case": "verdict_exit(1, 1, 1, 1, 0) must be 1"
+        },
+        {
+          "id": "g11-drop-pristine-cases",
+          "anchor": "    if pristine.get(\"cases\") != len(pristine.get(\"case_names\") or []):",
+          "replacement": "    if False:",
+          "edit": "drop the pristine.cases re-derive defects.append",
+          "killer_case": "red-validate-pristine-cases"
+        },
+        {
+          "id": "g12-drop-target-pin",
+          "anchor": "    if pin.get(\"matched\") != bool(isinstance(expected, str) and expected == actual):",
+          "replacement": "    if False:",
+          "edit": "drop the target_pin.matched re-derive defects.append",
+          "killer_case": "a receipt whose target_pin.matched disagrees with its expected/actual must be a defect"
+        },
+        {
+          "id": "g13-drop-guards-rederive",
+          "anchor": "    if receipt.get(\"guards\") != len(clauses):",
+          "replacement": "    if False:",
+          "edit": "drop the guards re-derive defects.append",
+          "killer_case": "a receipt whose guards disagrees with its clause list must be a defect"
+        },
+        {
+          "id": "g14-drop-killed-case-guard",
+          "anchor": "            if not (mutant.get(\"case_present\") and mutant.get(\"case_failed\")):",
+          "replacement": "            if False:",
+          "edit": "accept a killed clause whose declared case did not fail",
+          "killer_case": "red-validate-killed-without-case"
+        },
+        {
+          "id": "g15-empty-set-allowed",
+          "anchor": "    if guards <= 0:",
+          "replacement": "    if guards < 0:",
+          "edit": "let an empty clause set pass the exit verdict",
+          "killer_case": "red-empty-set-verdict"
+        }
+      ]
+    }
+  ]
+}

@@ -49,6 +49,8 @@ EXPECTED_CONTROLS = ("prov-forged-instrument.json",)
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 RECEIPT = re.compile(r"^\.ufo/waves/round-(\d+)/l1/scores/.+\.json$")
+# A receipt that names its revision symbolically names no committed revision.
+SYMBOLIC_REV = frozenset({"@head@", "head", "main", "master", "tip", "@"})
 
 
 class Unevaluable(Exception):
@@ -151,6 +153,14 @@ def classify(entries: list[dict], resolver: Resolver) -> dict:
         row = {"receipt": path, "instrument": ipath, "sha256": digest,
                "declared_rev": entry.get("rev") or "", "verdict": "",
                "matched_rev": "", "reason": ""}
+        declared = str(entry.get("rev") or "").strip()
+        if declared and declared.lower() in SYMBOLIC_REV:
+            row["verdict"] = "symbolic-rev"
+            row["reason"] = (f"declared rev {declared!r} is a symbolic name, not a "
+                             f"committed revision")
+            row["expected_control"] = pathlib.PurePosixPath(path).name in EXPECTED_CONTROLS
+            rows.append(row)
+            continue
         if not safe_instrument_path(ipath):
             row["verdict"] = "unsafe-instrument-path"
             row["reason"] = "instrument path escapes the lane or is not a relative path"
@@ -246,7 +256,8 @@ def validate_receipt(receipt: dict) -> dict:
         defects.append("unexpected_receipts does not re-derive from rows")
     for row in rows:
         if row.get("verdict") not in ("bound", "uncommitted-digest",
-                                      "unsafe-instrument-path", "unparsed-digest"):
+                                      "unsafe-instrument-path", "unparsed-digest",
+                                      "symbolic-rev"):
             defects.append(f"{row.get('receipt')}: unknown verdict")
         if row.get("verdict") == "bound" and not HEX40.match(row.get("matched_rev") or ""):
             defects.append(f"{row.get('receipt')}: bound without a 40-hex revision")
@@ -328,6 +339,10 @@ def selftest() -> int:
          one([entry(".ufo/waves/round-79/l1/scores/a.json", dig_wt, "main")])["unexpected"], 1)
     case("red-symbolic-rev-not-a-commit",
          one([entry(".ufo/waves/round-79/l1/scores/a.json", dig_wt, "@HEAD@")])["unexpected"], 1)
+    case("red-symbolic-rev-with-tip-digest",
+         one([entry(".ufo/waves/round-79/l1/scores/a.json", dig_tip, "main")])["unexpected"], 1)
+    case("green-empty-rev-tip-digest",
+         one([entry(".ufo/waves/round-79/l1/scores/a.json", dig_tip, "")])["unexpected"], 0)
     case("green-declared-control-counted",
          one([entry(".ufo/waves/round-69/l1/scores/prov-forged-instrument.json",
                     dig_wt)])["expected_control_flags"], 1)
