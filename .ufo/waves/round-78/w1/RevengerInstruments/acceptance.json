@@ -1,0 +1,905 @@
+{
+ "classes": [
+  {
+   "accepted": true,
+   "base_name": "record_clean",
+   "code_path": "verdict-bind.py:118-136 Resolver.receipt reads `git show rev:path` and json.loads it; :361-405 bind_cell passes that dict to bind; :197-222 bind compares atoms[id].ok (201-215) and receipt[field] (216-222); :447 `ok = not defects and bound > 0`. No code reads receipt.rev or receipt.instrument, so a hand-authored receipt with the claimed values is accepted.",
+   "declared_rule": "receipt_auth",
+   "evidence": {
+    "defects": [],
+    "first_commit": "f4ea4449fe7165dd59abb9d99b717fd09e8ae2c8",
+    "fixture_rev": "f4ea4449fe7165dd59abb9d99b717fd09e8ae2c8",
+    "instrument_exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 2,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 0
+    },
+    "rebound": [],
+    "scored_rows": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/green-forged.json",
+      "reason": null,
+      "status": "bound"
+     },
+     {
+      "actual": 0,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/green-forged.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ]
+   },
+   "fixture": "a1-forged-receipt",
+   "id": "receipt-unauth",
+   "instrument": "verdict-bind",
+   "would_refuse_if": "the receipt's atoms[].ok or mismatch_count differed from the claimed value (value_mismatch), the file were absent at rev (absent_receipt), or the binder required a 40-hex rev plus an instrument pin that re-derives from the blob at that rev"
+  },
+  {
+   "accepted": true,
+   "base_name": "record_clean",
+   "code_path": "verdict-bind.py:74 QUALIFIER_RE `^[A-Za-z][A-Za-z0-9_-]*:\\s*` strips `D24:` leaving the clause `true`; :156-175 parse_clause matches none of its seven regexes and returns None; :368 `parsed = [c for c in clauses if c is not None]` drops it. `mismatch 0` matches no regex either (MISMATCH_RE is :81 `^(\\d+)\\s+mismatches$`); only `D24 true` binds.",
+   "declared_rule": "qualified_atom",
+   "evidence": {
+    "defects": [],
+    "first_commit": "26d5d179161ef7ef1e996cd467c9658dea71d381",
+    "fixture_rev": "e8b930fc5e1ab93e2d8ea634bf0550e0cee87761",
+    "instrument_exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 1
+    },
+    "rebound": [
+     ".ufo/waves/round-78/l1/scores/green-authed.json"
+    ],
+    "scored_rows": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/green-authed.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ]
+   },
+   "fixture": "a2-repunctuated",
+   "id": "qualified-atom",
+   "instrument": "verdict-bind",
+   "would_refuse_if": "the one surviving clause (`D24 true`) were false, or the qualifier stripping were removed so `D24: true` parsed as an atom claim and `mismatch 0` as `mismatch_count 0` against a receipt that says 1"
+  },
+  {
+   "accepted": true,
+   "base_name": "record_clean",
+   "code_path": "verdict-bind.py:156-175 parse_clause: `mismatch 0` matches no grammar rule (MISMATCH_RE :81 wants `0 mismatches`; FIELD_RE :77 wants `field value` with a bare field name) -> None -> dropped at :368. `D24 true` binds through :196-211.",
+   "declared_rule": "near_miss_field",
+   "evidence": {
+    "defects": [],
+    "first_commit": "b6b23552cb11d828a06a635fc4ee40a92e08a6ee",
+    "fixture_rev": "26231e6f7f239f0f2f2ad0ebb4e169efb8f094ec",
+    "instrument_exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 1
+    },
+    "rebound": [
+     ".ufo/waves/round-78/l1/scores/green-authed.json"
+    ],
+    "scored_rows": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/green-authed.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ]
+   },
+   "fixture": "a3-near-miss",
+   "id": "near-miss-field",
+   "instrument": "verdict-bind",
+   "would_refuse_if": "the clause were spelled in the defined grammar (`0 mismatches` or `mismatch_count 0`) against a receipt that says otherwise, or an unparsable clause counted as a defect instead of being skipped"
+  },
+  {
+   "accepted": true,
+   "base_name": "record_clean",
+   "code_path": "verdict-bind.py:156-175 parse_clause returns None for the English clause `the receipt does not record D24 false`; it is dropped at :368. There is no negation rule anywhere; the second clause `D24 true` binds (:196-211) and carries the group.",
+   "declared_rule": "negated_verdict",
+   "evidence": {
+    "defects": [],
+    "first_commit": "3ed7e2ff4a8712e92a64b338bda5154f2ecedccb",
+    "fixture_rev": "f3459a746d288cb12062ff802721961ed415f3bf",
+    "instrument_exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 0
+    },
+    "rebound": [
+     ".ufo/waves/round-78/l1/scores/green-authed.json"
+    ],
+    "scored_rows": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/green-authed.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ]
+   },
+   "fixture": "a4-negated",
+   "id": "negated-verdict",
+   "instrument": "verdict-bind",
+   "would_refuse_if": "the negated claim were scored as its opposite, or any prose clause produced a defect instead of being skipped"
+  },
+  {
+   "accepted": true,
+   "base_name": "record_clean",
+   "code_path": "verdict-bind.py:197-222 bind's field branch: `forged_detected` is not an atom id (ATOM_ID_RE :75 `^[A-Z][0-9]`), and the lookup is `receipt[field]` on the top level, so :217 returns `(False, 'unbound', {'reason': 'unknown_field'})`; bind_cell :399-400 counts it as unbound (not a defect) and the receipt's nested `arms[0].observed.verdict.forged_detected: false` is never read.",
+   "declared_rule": "value_mismatch",
+   "evidence": {
+    "defects": [],
+    "first_commit": "1537db72c2a28ccfba0964738fd066f31e028d87",
+    "fixture_rev": "a3c446cff58c6e421f65c6513b3bb1c00834d232",
+    "instrument_exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 1
+    },
+    "rebound": [
+     ".ufo/waves/round-78/l1/scores/nested.json"
+    ],
+    "scored_rows": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/nested.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ]
+   },
+   "fixture": "a5-nested-field",
+   "id": "nested-hidden-mismatch",
+   "instrument": "verdict-bind",
+   "would_refuse_if": "the binder resolved nested keys (the round-78 `resolve_field` does) and compared the nested `false` to the claimed `true`"
+  },
+  {
+   "accepted": true,
+   "base_name": "record_clean",
+   "code_path": "verdict-bind.py:200-203 `atoms` absent -> `return False, 'defect', {'reason': 'no_atoms'}`; bind_cell :394-402 only routes `status == 'bound'` into `result['defects']` and sends every other status to `result['unbound'] += 1`, so the defect row is dropped and :447 sees `not defects`.",
+   "declared_rule": "unbound_verdict",
+   "evidence": {
+    "defects": [],
+    "first_commit": "4e933b08363aeab0e32ab8f6d81b9b7aaea03a05",
+    "fixture_rev": "c294453d9213ed48b073781fd6c296f002ec5326",
+    "instrument_exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 1
+    },
+    "rebound": [
+     ".ufo/waves/round-78/l1/scores/dropped.json"
+    ],
+    "scored_rows": [
+     {
+      "actual": null,
+      "claimed": null,
+      "clause": "D24 true",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/dropped.json",
+      "reason": "no_atoms",
+      "status": "defect"
+     },
+     {
+      "actual": 0,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "label": "PROVINCE.md line 5",
+      "path": ".ufo/waves/round-78/l1/scores/dropped.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ]
+   },
+   "fixture": "a6-dropped-defect",
+   "id": "dropped-defect",
+   "instrument": "verdict-bind",
+   "would_refuse_if": "bind_cell routed the `defect` status into `result['defects']` (the round-78 `unbound_verdict` rule), i.e. the receipt lost the atom the clause names"
+  },
+  {
+   "accepted": true,
+   "base_name": "arm:clone-run",
+   "code_path": "prefile-receipt.py:214-223 arm A1: `ok = (receipt['exit'] in (0, 1) and receipt['prefile_line'] is not None and not check_receipt(receipt))` -- exit 1 with `prefile: FAIL` is a valid receipt, so a failing gate run counts as a clean one.",
+   "declared_rule": "clean_run",
+   "evidence": {
+    "arm": {
+     "arm": "clone-run",
+     "detail": {
+      "argv": [
+       "bash",
+       "/fast/scratch/hyaku/kaidoku-r78/RevengerInstruments/work-3bb87162/base-work/unclean-clone-run/clone-run/lane/tools/round-29/prefile-check.sh",
+       "/fast/scratch/hyaku/kaidoku-r78/RevengerInstruments/work-3bb87162/base-work/unclean-clone-run/clone-run/lane"
+      ],
+      "env_keys": [
+       "HOME",
+       "LANG",
+       "PATH",
+       "TMPDIR"
+      ],
+      "exit": 1,
+      "lane": "/fast/scratch/hyaku/kaidoku-r78/RevengerInstruments/work-3bb87162/base-work/unclean-clone-run/clone-run/lane",
+      "passed": false,
+      "prefile_line": "prefile: FAIL",
+      "rev": "35941e8265ba783d84e9ebd5ba8d30b16010ff27",
+      "schema": "kaidoku-r77-prefile-receipt-v1",
+      "stderr_tail": "",
+      "stdout": "prefile: tree clean\nprefile: ledger1 legacy ledger absent at 35941e8265ba783d84e9ebd5ba8d30b16010ff27\nprefile: FAIL\n",
+      "stdout_lines": 3,
+      "stdout_sha256": "4732d39ff01462f2c6a4f55bfeca7e15ff98d0bbc610a2651b5b64652d7d7a29"
+     },
+     "met": true,
+     "observed": "rc 1, prefile: FAIL, receipt_defects []"
+    },
+    "arms_ok": 4,
+    "arms_total": 6,
+    "first_commit": "84797957f077cf6c49a0ec4591b1b8cec6cba80f",
+    "fixture_rev": "35941e8265ba783d84e9ebd5ba8d30b16010ff27",
+    "instrument_exit": 1,
+    "rebound": [
+     ".ufo/waves/round-77/l1/scores/prefile-at-filing.json",
+     ".ufo/waves/round-78/l1/scores/prefile-at-filing.json"
+    ]
+   },
+   "fixture": "b1-fail-run",
+   "id": "unclean-clone-run",
+   "instrument": "prefile-receipt",
+   "would_refuse_if": "A1 required `exit == 0` and the PASS token (`receipt['prefile_line'] == 'prefile: PASS'`), or the run left no verdict line / a malformed receipt"
+  },
+  {
+   "accepted": true,
+   "base_name": "arm:record-receipt",
+   "code_path": "prefile-receipt.py:226-239 arm A2: `defects = check_receipt(receipt)`, i.e. `expect_rev` is not passed; :158-160 in check_receipt compares `rev` only when `expect_rev` is given, so a filing receipt at rev 000...0 with exit 0 is met.",
+   "declared_rule": "filing_rev",
+   "evidence": {
+    "arm": {
+     "arm": "record-receipt",
+     "detail": {
+      "argv": [
+       "bash",
+       "tools/round-29/prefile-check.sh",
+       "/fixture"
+      ],
+      "env_keys": [
+       "HOME",
+       "LANG",
+       "PATH",
+       "TMPDIR"
+      ],
+      "exit": 0,
+      "lane": "/fixture",
+      "passed": true,
+      "prefile_line": "prefile: PASS",
+      "rev": "0000000000000000000000000000000000000000",
+      "schema": "kaidoku-r77-prefile-receipt-v1",
+      "stderr_tail": "",
+      "stdout": "prefile: tree clean\nprefile: PASS\n",
+      "stdout_lines": 2,
+      "stdout_sha256": "a16dfbab8f7ccc90d9d4a0c8fdd769c2b3b51b952cfe30dfc9896c9869cc4549"
+     },
+     "met": true,
+     "observed": "exit 0, defects []"
+    },
+    "arms_ok": 5,
+    "arms_total": 6,
+    "first_commit": "211f4526963c93cbdc63a05622722f7ed2e2e306",
+    "fixture_rev": "211f4526963c93cbdc63a05622722f7ed2e2e306",
+    "instrument_exit": 1,
+    "rebound": []
+   },
+   "fixture": "b2-stale-filing",
+   "id": "stale-filing-rev",
+   "instrument": "prefile-receipt",
+   "would_refuse_if": "A2 called `check_receipt(receipt, expect_rev=rev)` (the routed one-line fix) or required the receipt rev to be an ancestor of the measured rev"
+  },
+  {
+   "accepted": true,
+   "base_name": "arm:gate-exits",
+   "code_path": "prefile-receipt.py:241-276 arm A3: for each `gate-*.json` it parses the JSON and accepts any dict with an integer `exit` (:265-266), falling back to an `^exit=(\\d+)$` text grep (:268); `ok = bool(gate_files) and not missing` (:274). A one-key `{\"exit\": 0}` is therefore a valid gate receipt.",
+   "declared_rule": "gate_receipt_schema",
+   "evidence": {
+    "arm": {
+     "arm": "gate-exits",
+     "detail": {},
+     "met": true,
+     "observed": "round-78: 1 gate receipts, missing []"
+    },
+    "arms_ok": 6,
+    "arms_total": 6,
+    "first_commit": "7ab345bc3cae8f529c527d64b4008f696f065836",
+    "fixture_rev": "d8847a63c745d3cf220eebf314e7b0f8dc6f438f",
+    "instrument_exit": 0,
+    "rebound": [
+     ".ufo/waves/round-77/l1/scores/prefile-at-filing.json",
+     ".ufo/waves/round-78/l1/scores/prefile-at-filing.json"
+    ]
+   },
+   "fixture": "b3-one-key-gate",
+   "id": "gate-receipt-schema",
+   "instrument": "prefile-receipt",
+   "would_refuse_if": "A3 applied the receipt contract (argv naming the gate, stdout digest, verdict line, four-key env) to each gate receipt, as the round-78 `gate_receipt_schema` rule does"
+  },
+  {
+   "accepted": true,
+   "base_name": "arm:gate-exits",
+   "code_path": "prefile-receipt.py:241-276 arm A3 reads only the `exit` field of each gate receipt; `rev` is never read, so a full receipt whose `rev` is 000...0 is met.",
+   "declared_rule": "gate_receipt_rev",
+   "evidence": {
+    "arm": {
+     "arm": "gate-exits",
+     "detail": {},
+     "met": true,
+     "observed": "round-78: 1 gate receipts, missing []"
+    },
+    "arms_ok": 6,
+    "arms_total": 6,
+    "first_commit": "318ab8f2a0cd0c9db79d7e2a36dcc5e331b1bf98",
+    "fixture_rev": "cc71588fd4b55c13b2542b4372dad363553e7ba1",
+    "instrument_exit": 0,
+    "rebound": [
+     ".ufo/waves/round-77/l1/scores/prefile-at-filing.json",
+     ".ufo/waves/round-78/l1/scores/prefile-at-filing.json"
+    ]
+   },
+   "fixture": "b4-stale-gate-rev",
+   "id": "gate-receipt-stale-rev",
+   "instrument": "prefile-receipt",
+   "would_refuse_if": "A3 required a 40-hex `rev` that is an ancestor of the measured rev (the round-78 `gate_receipt_rev` rule)"
+  }
+ ],
+ "classes_accepted": 10,
+ "classes_total": 10,
+ "cross_checks": {
+  "gate_battery_at_landed_gate": {
+   "base_accepted": 10,
+   "exit": 0,
+   "fixtures_total": 10,
+   "genuine": {
+    "mismatch_count": 0,
+    "record": {
+     "bound_clauses": 12,
+     "groups": 4,
+     "in_scope_cells": 4
+    }
+   },
+   "genuine_defects": 0,
+   "ok": true,
+   "per_fixture_refusals": [
+    {
+     "base": true,
+     "id": "receipt-unauth",
+     "refused": true,
+     "rules": [
+      "receipt_auth"
+     ]
+    },
+    {
+     "base": true,
+     "id": "qualified-atom",
+     "refused": true,
+     "rules": [
+      "qualified_atom"
+     ]
+    },
+    {
+     "base": true,
+     "id": "near-miss-field",
+     "refused": true,
+     "rules": [
+      "near_miss_field"
+     ]
+    },
+    {
+     "base": true,
+     "id": "negated-verdict",
+     "refused": true,
+     "rules": [
+      "negated_verdict"
+     ]
+    },
+    {
+     "base": true,
+     "id": "nested-hidden-mismatch",
+     "refused": true,
+     "rules": [
+      "value_mismatch"
+     ]
+    },
+    {
+     "base": true,
+     "id": "dropped-defect",
+     "refused": true,
+     "rules": [
+      "unbound_verdict"
+     ]
+    },
+    {
+     "base": true,
+     "id": "unclean-clone-run",
+     "refused": true,
+     "rules": [
+      "clean_run"
+     ]
+    },
+    {
+     "base": true,
+     "id": "stale-filing-rev",
+     "refused": true,
+     "rules": [
+      "filing_rev"
+     ]
+    },
+    {
+     "base": true,
+     "id": "gate-receipt-schema",
+     "refused": true,
+     "rules": [
+      "gate_receipt_schema"
+     ]
+    },
+    {
+     "base": true,
+     "id": "gate-receipt-stale-rev",
+     "refused": true,
+     "rules": [
+      "gate_receipt_rev"
+     ]
+    }
+   ],
+   "refused": 10,
+   "validate": {
+    "defects": [],
+    "fixtures": 10
+   }
+  },
+  "limits_probe": {
+   "neither_validates_the_named_receipt": true,
+   "receipt_validate_defects": {
+    "defects": [
+     "cells absent or empty"
+    ],
+    "exit": 1
+   },
+   "round78_scan_record": {
+    "bound_clauses": 2,
+    "findings": [],
+    "mismatch_count": 0
+   }
+  },
+  "populations": {
+   "rev": "9de14dd69bd9770b2c5f73bbd55bec459c04c277",
+   "round78_scan_record": {
+    "bound_clauses": 12,
+    "groups": 4,
+    "in_scope_cells": 4,
+    "mismatch_count": 0
+   },
+   "round78_scan_record_findings": [],
+   "round78_scope": {
+    "min_round": 78,
+    "province_filter": "PROVINCE Core bullets naming tools/round-78/ or .ufo/waves/round-78/"
+   },
+   "verdict_bind": {
+    "defects": [],
+    "exit": 0,
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 37,
+     "capability_rows": 43,
+     "groups": 33,
+     "in_scope_rows": 13,
+     "unbound_clauses": 2
+    }
+   },
+   "verdict_bind_scope": {
+    "min_round": 73,
+    "province_filter": "every `- **Core \u2014 ` bullet"
+   }
+  }
+ },
+ "divergences": [
+  {
+   "id": "frozen-gate-over-refuses-the-defined-validate-token",
+   "measured": {
+    "frozen_bound": 5,
+    "frozen_gate": [
+     {
+      "clause": "refused 10",
+      "detail": {
+       "field": "refused",
+       "paths": [
+        "/fixtures[0]/refused",
+        "/fixtures[1]/refused",
+        "/fixtures[2]/refused",
+        "/fixtures[3]/refused",
+        "/fixtures[4]/refused",
+        "/fixtures[5]/refused"
+       ],
+       "reason": "ambiguous_field"
+      },
+      "group": "fixtures_total 10, base_accepted 10, refused 10, validate defect-free",
+      "receipt": ".ufo/waves/round-78/pre/c1-at-base.json",
+      "rule": "unbound_verdict",
+      "where": "SCORECARD capabilities row '`attack-class refusal`'"
+     },
+     {
+      "clause": "validate defect-free",
+      "group": "fixtures_total 10, base_accepted 10, refused 10, validate defect-free",
+      "reason": "a verdict token in a spelling the grammar does not define",
+      "receipt": ".ufo/waves/round-78/pre/c1-at-base.json",
+      "rule": "near_miss_field",
+      "where": "SCORECARD capabilities row '`attack-class refusal`'"
+     }
+    ],
+    "landed_bound": 12
+   },
+   "statement": "At the freeze the gate's near_miss_field regex `^(?:mismatch|survivor|atom|pristine|validate|match|matches)\\s+\\S+$` is tested before the grammar, so the *defined* clause `validate defect-free` is reported as an undefined spelling; `refused` is also ambiguous because it occurs in every fixture entry. On the record at the measured rev the frozen gate (sha 780089e3) reports 2 findings and binds 5 clauses; the landed gate (sha a86f6d4d, commit 01768ac5) binds 12 and reports 0. The two revisions are disclosed in claims.json instrument_supersessions."
+  },
+  {
+   "code_path": "attack-gate.py judge_receipt_fixture (rule == 'clean_run'), FILING constant",
+   "id": "clean-run-rule-reads-the-filing-receipt-not-the-clone-run-arm",
+   "measured": {
+    "b1_base_arm": "clone-run met True: rc 1, prefile: FAIL, receipt_defects []"
+   },
+   "statement": "The class `unclean-clone-run` declares base arm `clone-run`, but its after-rule `clean_run` loads the round-78 *filing* receipt (judge_receipt_fixture -> load_receipt(root, rev, FILING)) and never reads the clone-run arm the fixture met. The fixture is refused (the filing receipt in b1 is the same failing run), so the battery is green, but the rule does not exercise the arm its class names."
+  },
+  {
+   "id": "freeze-pin-vs-landed-gate",
+   "measured": {
+    "frozen_sha": "780089e3fa5888d3550dde14043f8f83108a972da1e43be5ad1e661b0da6d173",
+    "landed_sha": "a86f6d4d94987ac07a2c68ef18168ea23dc577cfb078dba90485a577cbda7d43"
+   },
+   "statement": "claims.json `instruments` pins the frozen gate 780089e3 while the landed file is a86f6d4d; the difference is disclosed as two `instrument_supersessions` entries, so it is a declared supersession, not silent drift. A reader must compare the file on disk with the supersession list, because the pin map alone names the older blob."
+  }
+ ],
+ "instrument_pins": {
+  "tools/round-77/prefile-receipt.py": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+  "tools/round-77/verdict-bind.py": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
+ },
+ "instrument_worktree_pins": {
+  "tools/round-77/prefile-receipt.py": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+  "tools/round-77/verdict-bind.py": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
+ },
+ "instruments_match_frozen": true,
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "limits": [
+  {
+   "code_path": "verdict-bind.py:118-136 Resolver.receipt; attack-gate.py scan_record -> nearest_receipt/git_show(root, rev, receipt_path) and auth_findings -> git_show(root, r, inst['path'])",
+   "evidence": "c1 demo: the emitted receipt names rev A and mismatch_count 0; re-running the *original* instrument at A exits 1 with mismatch_count 1; the gate's auth returns [] and scan_record finds nothing at rev B.",
+   "id": "no-re-derivation-at-the-named-rev",
+   "measured": {
+    "receipt_rev": "f2bc1451ade584f1c8a7cc3d91a3fafef7cb505a",
+    "rerun_at_that_rev_exit": 1
+   },
+   "statement": "A receipt is read at the measured rev, never at the rev it names. verdict-bind's Resolver.receipt and the gate's scan_record / judge_receipt_fixture both read `git show <measured>:<path>`; auth_findings re-derives only the *instrument* blob at receipt.rev. So a receipt whose rev names an older commit is never compared with the bytes at that commit."
+  },
+  {
+   "code_path": "attack-gate.py auth_findings (sha256_bytes(blob) != inst['sha256'])",
+   "evidence": "c1 demo: emitted_pin_is_blob_at_its_rev true, receipt_auth []",
+   "id": "no-instrument-re-execution",
+   "measured": {
+    "pin_matched": true
+   },
+   "statement": "receipt_auth is a digest chain (40-hex rev + instrument.sha256 that re-derives from the blob at that rev), not a measurement. Nothing re-runs the instrument at the receipt's rev; a receipt produced from a tree that differs from the rev it names is admitted as long as the pin matches the instrument blob at that rev."
+  },
+  {
+   "code_path": "verdict-bind.py:449 (own receipt only); attack-gate.py scan_record/judge_group",
+   "evidence": "limits.json: the named receipt's own --validate exits 1 ('cells absent or empty'); verdict-bind at that rev exits 0 with bound_clauses 2; the gate's scan binds 2 clauses with 0 findings.",
+   "id": "named-receipt-not-validated",
+   "measured": {
+    "defects": [
+     "cells absent or empty"
+    ],
+    "exit": 1
+   },
+   "statement": "Both instruments bind *fields* of the named receipt and never run the receipt contract on it. verdict-bind validates only its own output (audit -> receipt_defects); the gate binds clauses and auth and never calls check_receipt_like on a C1 receipt. A named receipt that its own --validate rejects is still accepted when the cited fields match."
+  },
+  {
+   "code_path": "verdict-bind.py:368-372 (prose); attack-gate.py scan_record `verdict_shaped`",
+   "evidence": "verdict-bind on the record at the measured rev: cells whose only group is prose carry bound 0 and no defect; selftest green-prose relies on it.",
+   "id": "prose-and-no-group-verdicts",
+   "measured": {
+    "note": "see populations.verdict_bind.population.groups vs bound_clauses"
+   },
+   "statement": "A group with no parsable clause is counted as prose and adds no defect; the gate skips any group that is neither receipt-anchored nor parsable. A cell that states its verdict in English is green in both."
+  },
+  {
+   "code_path": "verdict-bind.py:216-222 (receipt[field]); attack-gate.py resolve_field/ambiguous_field",
+   "evidence": "verdict-bind at base: `forged_detected true` and `sole true` are unbound, never defects; gate selftest red-ambiguous; supersession 01768ac5 reason.",
+   "id": "no-array-element-path",
+   "measured": {
+    "bound_clauses": 37,
+    "capability_rows": 43,
+    "groups": 33,
+    "in_scope_rows": 13,
+    "unbound_clauses": 2
+   },
+   "statement": "Neither grammar has path syntax. verdict-bind binds top-level keys only; the gate resolves a key at any depth but only when it occurs exactly once. A claim about one element of an array (fixtures[3].refused true) cannot be expressed, and the gate's post-freeze fix binds the top-level aggregate instead of the per-fixture rows."
+  },
+  {
+   "code_path": "verdict-bind.py:57 SCOPE_MIN_ROUND=73, :312-330 capability_rows, :332-349 province_bullets; attack-gate.py SCOPE_MIN_ROUND=78, in_scope_cells (`ROUND_NUM_RE = ^\\d+$`)",
+   "evidence": "populations block: verdict_bind 37 bound / 13 rows; gate scan 12 bound / 4 cells",
+   "id": "scope-divergence",
+   "measured": {
+    "round78_scan_record": {
+     "bound_clauses": 12,
+     "groups": 4,
+     "in_scope_cells": 4,
+     "mismatch_count": 0
+    },
+    "verdict_bind": {
+     "defects": [],
+     "exit": 0,
+     "mismatch_count": 0,
+     "population": {
+      "bound_clauses": 37,
+      "capability_rows": 43,
+      "groups": 33,
+      "in_scope_rows": 13,
+      "unbound_clauses": 2
+     }
+    }
+   },
+   "statement": "The two instruments disagree about which cells are in scope: verdict-bind takes capability rows whose round cell contains a numeral >= 73 (ROUND_NUM_RE `\\d+`) plus every Core bullet; the gate takes rows whose round cell is a bare numeral >= 78 (`^\\d+$`) plus only Core bullets naming round-78 paths. On the same committed record the binder binds 37 clauses over 13 rows while the gate's genuine scan binds 12 over 4 cells, so the gate's `genuine.mismatch_count 0` speaks for about a third of the clauses the record binds."
+  },
+  {
+   "code_path": "verdict-bind.py:447; attack-gate.py battery `ok` expression",
+   "evidence": "verdict-bind selftest green-vocabulary (4 bound clauses, no population check)",
+   "id": "no-population-floor",
+   "measured": {
+    "gate_ok_requires": "fixtures_total==10, base_accepted==10, refused==10, genuine clean, validate clean"
+   },
+   "statement": "verdict-bind's ok is `not defects and bound > 0`; the gate records the population but thresholds nothing. Removing the cell that carries a false claim is green in both, and one bound clause is enough for a green binder. The population floors live only in the claims' predicates as external constants, not in either instrument."
+  },
+  {
+   "code_path": "attack-gate.py:173-216 materialise (copytree from Path(root, FIXTURE_ROOT, fixture)); :227 run_base script = Path(lane_root, PINNED_INSTRUMENTS[instrument])",
+   "evidence": "instrument_pins == instrument_worktree_pins; fixtures_rev named",
+   "id": "base-arm-reads-the-worktree",
+   "measured": {
+    "fixtures_rev": "3e6b1efc",
+    "instruments_match_frozen": true
+   },
+   "statement": "The gate's base arm runs the instrument by path under the lane root and materialises fixtures from the working tree, while receipts are read at rev; a dirty worktree therefore changes what the base arm measures without changing any receipt. This probe avoids it: fixtures are read with `git show <fixtures-rev>:<path>` and the instrument pins are compared with the worktree (they matched at the run)."
+  },
+  {
+   "code_path": "prefile-receipt.py:75-82 child_env; :114 env_keys sorted non-empty",
+   "evidence": "every receipt in this probe carries env_keys [HOME, LANG, PATH, TMPDIR] and no env values",
+   "id": "env-allowlist-is-a-shape-check",
+   "measured": {
+    "keys_only": [
+     "HOME",
+     "LANG",
+     "PATH",
+     "TMPDIR"
+    ]
+   },
+   "statement": "env_keys is the sorted set of non-empty keys the child received from a four-key allowlist; it proves the child's env had exactly those keys set, not that the gate ran without secrets (a secret placed in HOME or TMPDIR is inside the allowlist)."
+  }
+ ],
+ "measurements": {
+  "base": "6205ec8c575fb070243c0c40e34a2b0daacde46a",
+  "declaration": "3e6b1efcad3a743913baa09f46427e5f8877a62b",
+  "fixtures_rev": "3e6b1efc",
+  "freeze": "ffcb47d13f0340f88397af6c8d2707a9554abab3",
+  "gate_frozen_rev": "ffcb47d1",
+  "gate_landed_rev": "3bb87162",
+  "lane_head_sequence_observed": [
+   "ffcb47d1",
+   "218c5aa8",
+   "59a92fbd",
+   "3bb87162",
+   "713da191",
+   "9de14dd6"
+  ],
+  "record_rev_measured": "9de14dd69bd9770b2c5f73bbd55bec459c04c277"
+ },
+ "schema": "kaidoku-r78-revenger-instruments-v1",
+ "seat": "RevengerInstruments",
+ "security": {
+  "config_values_recorded": false,
+  "env_values_recorded": false,
+  "note": "receipts carry argv, digests, verdict lines and KEY NAMES only; no env block and no token"
+ },
+ "survivors": [
+  {
+   "closed_by_round78": false,
+   "dirty_worktree_at_acceptance": "M PROVINCE.md",
+   "emitted_pin_is_blob_at_its_rev": true,
+   "emitted_receipt": {
+    "defects": [],
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 0,
+     "groups": 1,
+     "in_scope_rows": 0,
+     "unbound_clauses": 0
+    },
+    "rev": "f2bc1451ade584f1c8a7cc3d91a3fafef7cb505a"
+   },
+   "mutation": "verdict-bind.py show() reads the working tree instead of `git show rev:path`",
+   "provenance_contradiction": true,
+   "province_at_rev_a_claimed_clean": true,
+   "receipt_it_audited": {
+    "blob_at_rev_a": {
+     "mismatch_count": 1
+    },
+    "path": ".ufo/waves/round-78/l1/scores/r.json"
+   },
+   "rerun_original_at_receipt_rev": {
+    "exit": 1,
+    "mismatch_count": 1
+   },
+   "round77_selftest_on_mutant": {
+    "exit": 0,
+    "stdout_tail": "{\n \"case_names\": [\n  \"green-pointer-only\",\n  \"green-prose\",\n  \"green-same-cell-true\",\n  \"green-vocabulary\",\n  \"qualifier-strip\",\n  \"receipt-red\",\n  \"red-absent-receipt\",\n  \"red-atom-count\",\n  \"red-false-annotation\",\n  \"red-no-json-pointer\",\n  \"red-of-total\",\n  \"red-type-mismatch\",\n  \"red-validate\",\n  \"scope-floor\",\n  \"unbound-unknown-field\"\n ],\n \"cases\": 15,\n \"failures\": [],\n \"selftest\": \"tools/round-77/verdict-bind.py\"\n}"
+   },
+   "round78_frozen_gate": {
+    "gate_rev": "ffcb47d1",
+    "receipt_auth": [],
+    "scan_record_at_b": {
+     "bound_clauses": 1,
+     "findings": [],
+     "groups": 1,
+     "in_scope_cells": 1,
+     "mismatch_count": 0
+    },
+    "sees_the_mutation": false
+   },
+   "round78_landed_gate": {
+    "gate_rev": "3bb87162",
+    "receipt_auth": [],
+    "scan_record_at_b": {
+     "bound_clauses": 1,
+     "findings": [],
+     "groups": 1,
+     "in_scope_cells": 1,
+     "mismatch_count": 0
+    },
+    "sees_the_mutation": false
+   },
+   "runs": [
+    {
+     "exit": 1,
+     "label": "original, at rev A, worktree clean",
+     "mismatch_count": 1
+    },
+    {
+     "exit": 1,
+     "label": "mutant, at rev A, worktree clean",
+     "mismatch_count": 1
+    },
+    {
+     "exit": 0,
+     "label": "mutant, at rev A, worktree dirty",
+     "mismatch_count": 0
+    },
+    {
+     "exit": 0,
+     "label": "original, at rev B, worktree clean",
+     "mismatch_count": 0
+    }
+   ],
+   "survivor": "c1-rev-show-to-worktree",
+   "why_not": "the gate never re-derives a receipt at receipt.rev: auth_findings hashes the instrument blob at that rev (it matches), and scan_record reads the receipt at the measured rev (it is clean there).  The false provenance is visible only by re-running the instrument at the rev the receipt names, which no rule does."
+  },
+  {
+   "closed_by_round78": "shape only",
+   "frozen_check_receipt": {
+    "bool-false": {
+     "defects": [
+      "exit is not an integer: False"
+     ],
+     "exit": 1
+    },
+    "float-0.0": {
+     "defects": [
+      "exit is not an integer: 0.0"
+     ],
+     "exit": 1
+    },
+    "string-0": {
+     "defects": [
+      "exit is not an integer: '0'"
+     ],
+     "exit": 1
+    }
+   },
+   "mutant_check_receipt": {
+    "bool-false": {
+     "defects": [],
+     "exit": 0
+    },
+    "float-0.0": {
+     "defects": [],
+     "exit": 0
+    },
+    "string-0": {
+     "defects": [
+      "passed True disagrees with exit 0 and verdict 'PASS'"
+     ],
+     "exit": 1
+    }
+   },
+   "mutation": "check_receipt's `isinstance(exit, int) and not bool` guard deleted",
+   "non_surviving_shape": "exit '0' (string) is still refused by the mutant's passed/exit cross-check",
+   "round77_selftest_case_count_still_13": true,
+   "round77_selftest_on_mutant": {
+    "exit": 0,
+    "stdout_tail": "{\n \"case_names\": [\n  \"green-fail-receipt\",\n  \"green-genuine\",\n  \"red-argv\",\n  \"red-battery-arms\",\n  \"red-battery-ok\",\n  \"red-digest\",\n  \"red-empty-stdout\",\n  \"red-env\",\n  \"red-line\",\n  \"red-no-exit\",\n  \"red-rev\",\n  \"red-verdict\",\n  \"verdict-anchored\"\n ],\n \"cases\": 13,\n \"failures\": [],\n \"selftest\": \"tools/round-77/prefile-receipt.py\"\n}"
+   },
+   "round78_check_receipt_like": {
+    "bool-false": [
+     "exit is not an integer: False"
+    ],
+    "float-0.0": [
+     "exit is not an integer: 0.0"
+    ],
+    "string-0": [
+     "exit is not an integer: '0'"
+    ]
+   },
+   "round78_closes_the_shape_at_the_record": true,
+   "round78_gate_receipt_schema_on_string_exit": [
+    {
+     "reason": "exit is not an integer: '0'",
+     "receipt": ".ufo/waves/round-78/l1/scores/gate-bad.json",
+     "rule": "gate_receipt_schema"
+    }
+   ],
+   "surviving_shapes": [
+    "exit 0.0 (float)",
+    "exit false (bool) with passed true"
+   ],
+   "survivor": "c2-nonint-exit-accepted",
+   "why_not_the_mutation": "the gate re-implements the contract (check_receipt_like) and adds a red case for a non-int exit to its own 21-case selftest; it never runs the round-77 selftest, which still has 13 cases and accepts both surviving shapes."
+  }
+ ]
+}

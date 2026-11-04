@@ -1,0 +1,90 @@
+{
+  "seat": "ConnectorSibling",
+  "round": 78,
+  "wave": "w1",
+  "base": "6205ec8c575fb070243c0c40e34a2b0daacde46a",
+  "precedents": [
+    {
+      "lane": "kumitate-shokunin",
+      "path": "scripts/counter-pins.mjs",
+      "line": "34-35",
+      "quote": "the resolved path must exist and be a REGULAR FILE — a symlinked pin is DRIFT (the pin must bind bytes, not a name)."
+    },
+    {
+      "lane": "kumitate-shokunin",
+      "path": "scripts/counter-pins.mjs",
+      "line": "39-41",
+      "quote": "an EMPTY pins[] array is DRIFT `pins-empty`, not CLEAN: a registry that binds nothing is precisely the state this gate exists to catch."
+    },
+    {
+      "lane": "tameshi-shokunin",
+      "path": "tools/receipt-bytes-bind.py",
+      "line": "35",
+      "quote": "bound      sha256(`git cat-file blob <measured_rev>:<tool>`) == tool_sha256"
+    },
+    {
+      "lane": "mado-shokunin",
+      "path": "tools/mado-receipt-citecheck.py",
+      "line": "51-53",
+      "quote": "A bare-directory token (.ufo/waves/round-63) is not a resolvable citation — `git ls-tree -r --name-only` lists blobs, and naming a directory is not naming a committed file."
+    }
+  ],
+  "difference": {
+    "kaidoku_r78_receipt_auth_requires": [
+      "the named receipt resolves at the measured rev (attack-gate.py:462-472)",
+      "receipt.rev is 40 lowercase hex, format only (is_hex, :129-131)",
+      "receipt.instrument carries path:str and sha256:64 lowercase hex (:496-503)",
+      "git show <rev>:<path> succeeds (:504-507)",
+      "sha256(that stdout) == instrument.sha256 (:508-510)"
+    ],
+    "what_a_sibling_adds": {
+      "kumitate_counter_pins": "refuses by object kind: regular file only (symlink = DRIFT), no escaping path, and an empty pin set is DRIFT rather than CLEAN; binds no rev at all",
+      "tameshi_receipt_bytes_bind": "same digest shape over git cat-file blob rev:tool, plus a correction rev that cannot launder a mismatch, and distinct reasons rev-unresolvable / tool-absent / bytes-rev-absent",
+      "mado_citecheck": "resolves citations against one ls-tree name set and refuses a directory token because a directory is not a committed file"
+    },
+    "lane_specific": "authentication fires only for receipts a record cell cites (SCORECARD First-working round >= 78 or a PROVINCE Core bullet naming round-78 paths), a narrower trigger than a registry or a receipt directory",
+    "measured_vacuity_before_filing": "in_scope_cells 0 / groups 0 / receipt_auth findings 0 at 6205ec8c, 3e6b1efc and ffcb47d1 (probe2-out.json)"
+  },
+  "gap": {
+    "attack": "the pinned object need not be an instrument: git show <rev>:<path> prints link text for a mode-120000 symlink and a listing for a mode-040000 tree; auth_findings hashes it and compares to the receipt's own declared digest, so a receipt pinning a directory or a data blob authenticates",
+    "measured": {
+      "pin_symlink": "accepted ([]), mode 120000, blob is the 13-byte link text",
+      "pin_tree": "accepted ([]), git show emits 'tree <oid>:tools/pkg' plus names",
+      "pin_non_instrument_blob": "accepted ([])",
+      "controls_refused": [
+        "wrong sha -> instrument sha256 is not the blob at its own rev",
+        "absent path -> instrument ... absent at <rev>",
+        "non-40-hex rev -> no 40-hex rev"
+      ]
+    },
+    "sibling_that_catches_it": "kumitate counter-pins P1 (pin must bind bytes, not a name) via lstat; the git-tree analogue is the ls-tree mode, which the lane's git_ls discards at attack-gate.py:147-148 with --name-only",
+    "uncovered_by": [
+      "a1-forged-receipt pins nothing (no rev, no instrument)",
+      "a2-a6 pin tools/round-78/fixture-instrument.py, a 100644 blob",
+      "selftest carries only two receipt_auth cases (attack-gate.py:830-835): no rev, no instrument block"
+    ],
+    "not_claimed": "no committed receipt is measured as forged; the frozen kill rule (claims.json:12, 'admitted without re-deriving its own instrument pin') is not violated because the pin does re-derive"
+  },
+  "axes": {
+    "calibration": "improves (one more refusable class; refusal set gains object-type)",
+    "freshness": "untouched",
+    "coverage_depth": "unchanged; proposal adds no fixture id so fixtures_total stays 10"
+  },
+  "proposed_move": "in auth_findings(): resolve the pinned object's mode with git ls-tree <rev> -- <path> and refuse non-regular blobs (120000/040000) with reason pin-not-a-regular-blob; add a selftest green (real file, own rev) and two reds (symlink pin, tree pin); optional same-arm split of rev-unresolvable from instrument-absent",
+  "risks": [
+    "second-order: battery ok (attack-gate.py:727-731) has no in_scope_cells/groups > 0 term, so the genuine arm can judge nothing and still read clean (kumitate pins-empty shape); measured 0 cells at base/declaration/freeze, not at any filing rev",
+    "over-tightening past object type (tools/ containment) would be stricter than every sibling read",
+    "a directory pin renders as path + 64-hex digest and reads like a pin to a reviewer",
+    "rev-unresolvable and instrument-absent stay conflated, so a refusal against a bad rev names the wrong object"
+  ],
+  "verification": {
+    "probes": "probe.py, probe2.py, probe3.py under python3 -I -B with TMPDIR in seat scratch; fixture repo created under scratch with toplevel asserted before its first commit",
+    "raw": "probe1-out.json, probe2-out.json, probe3-out.json",
+    "after_move": "selftest failures=0 with two new reds; battery still fixtures_total 10 / base_accepted 10 / refused 10 / genuine.defects []"
+  },
+  "search_record": {
+    "named_paths_absent": ["kagi-shokunin/tools/", "kumitate-shokunin/tools/"],
+    "searched_instead": ["mado-shokunin/tools/", "tameshi-shokunin/tools/", "kumitate-shokunin/scripts/", "kagi-shokunin/.ufo/ (wave-scoped only, no durable binder)"],
+    "files_written": "none outside .ufo/waves/round-78/w1/ConnectorSibling/ and ConnectorSibling.md; no git write"
+  }
+}

@@ -1,0 +1,221 @@
+{
+ "schema": "kaidoku-r78-scribe-lesson-v1",
+ "seat": "ScribeLesson",
+ "revs": {
+  "base": "6205ec8c575fb070243c0c40e34a2b0daacde46a",
+  "declaration": "3e6b1efcad3a743913baa09f46427e5f8877a62b",
+  "freeze": "ffcb47d13f0340f88397af6c8d2707a9554abab3",
+  "attack_base_receipt_rev": "3e6b1efcad3a743913baa09f46427e5f8877a62b",
+  "surface_base_receipt_rev": "6205ec8c575fb070243c0c40e34a2b0daacde46a"
+ },
+ "inputs": {
+  "critic_claims": ".ufo/waves/round-77/w1/CriticClaims.md (\u00a71 C1-1..C1-3, under-set hunt, selftest clause; \u00a72 C2-1..C2-3)",
+  "spotcheck": "corpus/lessons/round-77-verifier-spotcheck.md (\u00a72, \u00a76 items 1-7, \u00a78 items 8-12)",
+  "plan": "plans/round-78-claims.md (R78-C1 rules and kill rule; R78-C2 predicate; routed-defect disposition)",
+  "attack_gate": "tools/round-78/attack-gate.py (ATTACKS, resolve_field:266-282, bind_clause:301-374, judge_group:377-411, auth_findings:492-511, check_receipt_like:526-560, judge_receipt_fixture:563-609, selftest:760-841)",
+  "verdict_bind": "tools/round-77/verdict-bind.py (bind:190-260, bind_cell:361-404)",
+  "surface_recheck": "tools/round-78/surface-recheck.py (RE_JDK, RE_DISABLE_ABSENT/PRESENT, parse_record, compare, token_grep, validate_receipt)",
+  "fixtures": ".ufo/waves/round-78/attacks/{a1-forged-receipt,a2-repunctuated,a3-near-miss,a4-negated,a5-nested-field,a6-dropped-defect,b1-fail-run,b2-stale-filing,b3-one-key-gate,b4-stale-gate-rev}",
+  "receipts": [
+   ".ufo/waves/round-78/pre/c1-at-base.json",
+   ".ufo/waves/round-78/pre/c1-battery-run.json",
+   ".ufo/waves/round-78/pre/c2-at-base.json",
+   ".ufo/waves/round-78/pre/selftest-c1.json"
+  ]
+ },
+ "measured": {
+  "attack_base": {
+   "receipt": ".ufo/waves/round-78/pre/c1-at-base.json",
+   "rev": "3e6b1efc",
+   "fixtures_total": 10,
+   "base_accepted": 10,
+   "refused": 10,
+   "validate_defects": [],
+   "genuine": {
+    "mismatch_count": 0,
+    "defects": [
+     "clean_run: no filing receipt",
+     "filing_rev: no filing receipt",
+     "gate_receipt_schema: no gate receipt in the round dir",
+     "gate_receipt_rev: no gate receipt in the round dir"
+    ],
+    "exit": 1
+   }
+  },
+  "surface_base": {
+   "receipt": ".ufo/waves/round-78/pre/c2-at-base.json",
+   "rev": "6205ec8c",
+   "checks_total": 8,
+   "matched": 6,
+   "mismatches": 2,
+   "unparsed": 0,
+   "record_jdk_version": "21.0.12.1",
+   "live_jdk_version": "21.0.13",
+   "record_omp_disable_claim": false,
+   "live_omp_disable": true
+  },
+  "selftest": {
+   "receipt": ".ufo/waves/round-78/pre/selftest-c1.json",
+   "exit": 0,
+   "cases": 21,
+   "failures": 0
+  },
+  "record_repair": {
+   "receipt": ".ufo/waves/round-78/l1/scores/c2-at-record.json",
+   "state": "untracked working-tree file at HEAD 93753d88, checked_at 2026-11-04T09:12:14-03:00",
+   "rev": "218c5aa83b8e7fdf03e94d100bf24c23e8377d3f",
+   "checks_total": 8,
+   "matched": 8,
+   "mismatches": 0,
+   "unparsed": 0,
+   "record_jdk_version": "21.0.13",
+   "live_jdk_version": "21.0.13",
+   "record_omp_disable_claim": true,
+   "live_omp_disable": true
+  },
+  "record_repair_sibling": {
+   "receipt": ".ufo/waves/round-78/l1/scores/c1-at-record.json",
+   "state": "untracked working-tree file at HEAD 93753d88",
+   "exit": 1,
+   "first_defect": {
+    "rule": "receipt_auth",
+    "reason": "absent at the measured revision",
+    "receipt": ".ufo/waves/round-78/l1/scores/c1-at-record.json"
+   },
+   "note": "the receipt is cited by the genuine record but is not committed at rev 218c5aa8; another seat's in-flight artifact, not written by this seat"
+  }
+ },
+ "mistakes_rows": [
+  {
+   "row": 1,
+   "class": "unauthenticated receipt",
+   "fixture": "a1-forged-receipt",
+   "rule": "receipt_auth",
+   "base": "record_clean: exit 0, mismatch_count 0",
+   "evidence": "CriticClaims \u00a71 C1-1 (FA 99956ecf); receipt green-forged.json has no rev and no instrument"
+  },
+  {
+   "row": 2,
+   "class": "qualifier-stripped verdict",
+   "fixture": "a2-repunctuated",
+   "rule": "qualified_atom",
+   "base": "record_clean: exit 0, mismatch_count 0",
+   "evidence": "CriticClaims \u00a71 C1-2 (FB 86f1910f, bound_clauses 18)"
+  },
+  {
+   "row": 3,
+   "class": "near-miss field",
+   "fixture": "a3-near-miss",
+   "rule": "near_miss_field",
+   "base": "record_clean: exit 0, mismatch_count 0",
+   "evidence": "CriticClaims \u00a71 C1-2 (mismatch 0 -> FIELD unknown -> unbound)"
+  },
+  {
+   "row": 4,
+   "class": "negated verdict group",
+   "fixture": "a4-negated",
+   "rule": "negated_verdict",
+   "base": "record_clean: exit 0, mismatch_count 0",
+   "evidence": "CriticClaims \u00a71 C1-3 (FC 27201f76)"
+  },
+  {
+   "row": 5,
+   "class": "nested field outside the grammar",
+   "fixture": "a5-nested-field",
+   "rule": "value_mismatch",
+   "base": "record_clean: exit 0, mismatch_count 0",
+   "evidence": "spotcheck \u00a72 (forged_detected/sole unbound); nested.json arms[0].observed.verdict.forged_detected false vs claim true"
+  },
+  {
+   "row": 6,
+   "class": "computed defect dropped from the scored list",
+   "fixture": "a6-dropped-defect",
+   "rule": "unbound_verdict",
+   "base": "record_clean: exit 0, mismatch_count 0",
+   "evidence": "verdict-bind.py:203 no_atoms returns defect; bind_cell:394-403 drops it; dropped.json has no atoms"
+  },
+  {
+   "row": 7,
+   "class": "arm met for a reason other than its expected observation",
+   "fixture": "b1-fail-run",
+   "rule": "clean_run",
+   "base": "arm clone-run met True: rc 1, prefile: FAIL, receipt_defects []",
+   "evidence": "CriticClaims \u00a72 C2-2; spotcheck \u00a78 item 8; prefile-at-filing.json exit 1 passed false"
+  },
+  {
+   "row": 8,
+   "class": "filing revision not enforced",
+   "fixture": "b2-stale-filing",
+   "rule": "filing_rev",
+   "base": "arm record-receipt met True: exit 0, defects []",
+   "evidence": "CriticClaims \u00a72 C2-1 (FD 2959d7e2); spotcheck \u00a78 item 9; receipt rev 000...0"
+  },
+  {
+   "row": 9,
+   "class": "gate receipt satisfied by one key",
+   "fixture": "b3-one-key-gate",
+   "rule": "gate_receipt_schema",
+   "base": "arm gate-exits met True: round-78: 1 gate receipts, missing []",
+   "evidence": "CriticClaims \u00a72 C2-1 bullet 2 and \u00a72 C2-3 (wrong gate argv); spotcheck \u00a76 item 7 survivor c2-nonint-exit-accepted; gate-at-tip.json == {exit: 0}"
+  },
+  {
+   "row": 10,
+   "class": "gate receipt at a foreign revision",
+   "fixture": "b4-stale-gate-rev",
+   "rule": "gate_receipt_rev",
+   "base": "arm gate-exits met True",
+   "evidence": "CriticClaims \u00a72 smallest safe correction (A3 must pass check_receipt or pin digests); rev 000...0 vs measured 4838efc4"
+  }
+ ],
+ "quality_rows": [
+  {
+   "row": 136,
+   "rule": "an instrument that computes a clause status defect collects it into the defect list it scores; a computed-and-dropped status is an over-set",
+   "cites": [
+    "tools/round-77/verdict-bind.py bind at :203",
+    "tools/round-77/verdict-bind.py bind_cell at :389-403",
+    "tools/round-78/attack-gate.py judge_group at :405-407",
+    ".ufo/waves/round-78/attacks/a6-dropped-defect"
+   ],
+   "sharpens": [
+    21,
+    135
+   ]
+  },
+  {
+   "row": 137,
+   "rule": "a record value parsed from prose by a declared pattern states the live object's value, not a historical one; a superseded value in the same file is a trap in both directions",
+   "cites": [
+    "PROVINCE.md:25 at 6205ec8c",
+    "PROVINCE.md:27 and :49 at the working tree",
+    "tools/round-78/surface-recheck.py RE_JDK/parse_record/compare",
+    ".ufo/waves/round-78/pre/c2-at-base.json"
+   ],
+   "sharpens": [
+    21,
+    132
+   ]
+  }
+ ],
+ "checks_not_exercised": [
+  "no instrument was executed: the attack gate and surface recheck verdicts quoted are the committed pre/ receipts",
+  "no build, lint, test or formatter was run",
+  "no lane file outside .ufo/waves/round-78/w1/ScribeLesson/ and .ufo/waves/round-78/w1/ScribeLesson.md was written",
+  "the two l1/scores receipts were read as JSON only; the attack gate and surface recheck were not re-run against them"
+ ],
+ "risks": [
+  "PROVINCE.md:18-19,27,49 cite .ufo/waves/round-78/l1/scores/c2-at-record.json, which at HEAD 93753d88 is present but untracked (rev 218c5aa8, 8/8 matched); the landing must commit it at the measured revision. Its sibling c1-at-record.json currently exits 1 with receipt_auth 'absent at the measured revision' naming itself.",
+  "QUALITY row 136 second half (defects [] beside a status: defect clause is a defect) is stated as a rule; the round-78 gate collects the status but does not re-read a produced receipt's clause list",
+  "no selftest case is named for clean_run, gate_receipt_schema, gate_receipt_rev or value_mismatch; those rules are exercised as fixture refusals only",
+  "mistakes.md rows are single-line table cells; wrapping breaks the paste",
+  "QUALITY rows 136-137 append under the existing round-34 section header; numbering assumes no row is inserted before them"
+ ],
+ "files_written": [
+  ".ufo/waves/round-78/w1/ScribeLesson/mistakes.md",
+  ".ufo/waves/round-78/w1/ScribeLesson/quality.md",
+  ".ufo/waves/round-78/w1/ScribeLesson/report.json",
+  ".ufo/waves/round-78/w1/ScribeLesson.md"
+ ],
+ "observed_at": "2026-11-04T09:15:39-03:00",
+ "head_at_observation": "93753d887ad2f56cbedeefa23e1615f11686b1bf"
+}

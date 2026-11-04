@@ -1,0 +1,119 @@
+{
+ "checked_at": "2026-11-04T09:07:51-03:00",
+ "checks": [
+  {
+   "check": "devin-rea-pin",
+   "live": "6.7.0",
+   "matched": true,
+   "note": "",
+   "record": "6.7.0",
+   "source": "/home/vgpnk/.config/devin/mcp_config.json"
+  },
+  {
+   "check": "omp-rea-pin",
+   "live": "6.7.0",
+   "matched": true,
+   "note": "",
+   "record": "6.7.0",
+   "source": "/home/vgpnk/.omp/agent/mcp.json"
+  },
+  {
+   "check": "kimi-rea-pin",
+   "live": "6.7.0",
+   "matched": true,
+   "note": "",
+   "record": "6.7.0",
+   "source": "/home/vgpnk/.kimi-code/config.toml"
+  },
+  {
+   "check": "omp-rea-disable",
+   "live": true,
+   "matched": false,
+   "note": "the record's claim about whether the live file records the disable",
+   "record": false,
+   "source": "/home/vgpnk/.omp/agent/mcp.json disabledServers"
+  },
+  {
+   "check": "ghidra-version",
+   "live": "12.1.4",
+   "matched": true,
+   "note": "",
+   "record": "12.1.4",
+   "source": "<GHIDRA_INSTALL_DIR>/Ghidra/application.properties"
+  },
+  {
+   "check": "ghidra-dir",
+   "live": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+   "matched": true,
+   "note": "",
+   "record": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+   "source": "/home/vgpnk/.bashrc export GHIDRA_INSTALL_DIR"
+  },
+  {
+   "check": "jdk-version",
+   "live": "21.0.13",
+   "matched": false,
+   "note": "",
+   "record": "21.0.12.1",
+   "source": "java -version (PATH)"
+  },
+  {
+   "check": "java-home",
+   "live": "/usr/lib/jvm/java-21-openjdk",
+   "matched": true,
+   "note": "",
+   "record": "/usr/lib/jvm/java-21-openjdk",
+   "source": "/home/vgpnk/.bashrc export JAVA_HOME"
+  }
+ ],
+ "checks_total": 8,
+ "control": null,
+ "exit": 1,
+ "instrument": {
+  "path": "tools/round-78/surface-recheck.py",
+  "sha256": "e7ea1717176f3dce2660a10197056b359311c25c5f2490bf9bfbd256c6681a13"
+ },
+ "live": {
+  "devin_pin": "6.7.0",
+  "ghidra_dir": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+  "ghidra_version": "12.1.4",
+  "java_home": "/usr/lib/jvm/java-21-openjdk",
+  "jdk_version": "21.0.13",
+  "kimi_pin": "6.7.0",
+  "omp_disable": true,
+  "omp_enabled_key": false,
+  "omp_pin": "6.7.0"
+ },
+ "matched": 6,
+ "mismatches": 2,
+ "ok": false,
+ "predicate": "R78-C2 is verified iff `python3 -I -B tools/round-78/surface-recheck.py --root . --rev <measured> --json-out <receipt>` exits 0 with `checks_total 8`, `matched 8`, `mismatches 0`, `unparsed 0` and a defect-free `validate`, every value re-derived from the live object the record names and compared typed to the record's parsed value, while at base `6205ec8c` the same command exits 1 with `mismatches 2` naming the JDK version (`21.0.12.1` recorded, `21.0.13` live) and the OMP rea disable (the record says the live file no longer records it, the live file carries `disabledServers: [\"rea\"]`), and the control `--control token-grep` accepts a forged record whose value appears in the live text but not in the object the record names.",
+ "record": {
+  "devin_pin": {
+   "pin": "6.7.0",
+   "pointer": "/home/vgpnk/.config/devin/mcp_config.json:7"
+  },
+  "ghidra_dir": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+  "ghidra_version": "12.1.4",
+  "java_home": "/usr/lib/jvm/java-21-openjdk",
+  "jdk_version": "21.0.12.1",
+  "kimi_pin": {
+   "pin": "6.7.0",
+   "pointer": "~/.kimi-code/config.toml:4126"
+  },
+  "omp_disable_claim": false,
+  "omp_pin": {
+   "pin": "6.7.0",
+   "pointer": "/home/vgpnk/.omp/agent/mcp.json:8"
+  }
+ },
+ "rev": "6205ec8c575fb070243c0c40e34a2b0daacde46a",
+ "root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "schema": "kaidoku-r78-surface-recheck-v1",
+ "unparsed": 0,
+ "unparsed_ids": [],
+ "validate": {
+  "checks": 8,
+  "defects": []
+ }
+}

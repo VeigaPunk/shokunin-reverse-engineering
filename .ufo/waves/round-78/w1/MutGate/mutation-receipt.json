@@ -1,0 +1,459 @@
+{
+ "baseline": {
+  "battery": {
+   "base_accepted": 10,
+   "fixtures_total": 10,
+   "genuine": {
+    "defects": [],
+    "mismatch_count": 0,
+    "population_floor": {
+     "cells": 4,
+     "clauses": 8,
+     "met": true
+    }
+   },
+   "ok": true,
+   "per_fixture": [
+    {
+     "base_accepted": true,
+     "id": "receipt-unauth",
+     "refused": true,
+     "rules": [
+      "receipt_auth"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "qualified-atom",
+     "refused": true,
+     "rules": [
+      "qualified_atom"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "near-miss-field",
+     "refused": true,
+     "rules": [
+      "near_miss_field"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "negated-verdict",
+     "refused": true,
+     "rules": [
+      "negated_verdict"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "nested-hidden-mismatch",
+     "refused": true,
+     "rules": [
+      "value_mismatch"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "dropped-defect",
+     "refused": true,
+     "rules": [
+      "unbound_verdict"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "unclean-clone-run",
+     "refused": true,
+     "rules": [
+      "clean_run"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "stale-filing-rev",
+     "refused": true,
+     "rules": [
+      "filing_rev"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "gate-receipt-schema",
+     "refused": true,
+     "rules": [
+      "gate_receipt_schema"
+     ]
+    },
+    {
+     "base_accepted": true,
+     "id": "gate-receipt-stale-rev",
+     "refused": true,
+     "rules": [
+      "gate_receipt_rev"
+     ]
+    }
+   ],
+   "refused": 10,
+   "validate": {
+    "defects": [],
+    "fixtures": 10
+   }
+  },
+  "battery_exit": 0,
+  "pristine_sha256": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+  "selftest_cases": 26,
+  "selftest_exit": 0,
+  "selftest_failed_cases": []
+ },
+ "collateral_check": {
+  "all_clean": true,
+  "method": "per-fixture (refused, reason-rule set, reason count) vs pristine baseline, outside the declared fixture"
+ },
+ "inconclusive": [],
+ "measured_rev": "c9d986eb1531c43a5b95fd0bf327d048c201e6b5",
+ "mutants": [
+  {
+   "base_arm_failures": [],
+   "battery_exit": 1,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:receipt-unauth",
+   "detectors_failed": [
+    "fixture:receipt-unauth",
+    "selftest:red-receipt-auth",
+    "selftest:red-auth-no-instrument"
+   ],
+   "edit": "(a) auth_findings returns [] unconditionally (early return before the body)",
+   "fixtures_lost_refusal": [
+    "receipt-unauth"
+   ],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m01-auth-findings-noop",
+   "killed": true,
+   "killed_by": "fixture:receipt-unauth",
+   "mutant_sha256": "5ff48ce452737cfb6d9bf9e29c0f35133c09e3d89194148c9270c0765a524862",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 1,
+   "selftest_failed_cases": [
+    "red-receipt-auth",
+    "red-auth-no-instrument"
+   ],
+   "sole": false,
+   "sole_rule_family": true,
+   "survivor": false,
+   "task_label": "(a)",
+   "validate_defects": [],
+   "verdict": "killed"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 1,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:qualified-atom",
+   "detectors_failed": [
+    "fixture:qualified-atom",
+    "selftest:red-qualified-atom"
+   ],
+   "edit": "(b) QUALIFIED_ATOM_RE matches nothing (never-matching negative lookahead)",
+   "fixtures_lost_refusal": [
+    "qualified-atom"
+   ],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m02-qualified-atom-re-dead",
+   "killed": true,
+   "killed_by": "fixture:qualified-atom",
+   "mutant_sha256": "5d330dd696b577e0d803c1f14af962c351a299d8076639cb4fab599ae03070d3",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 1,
+   "selftest_failed_cases": [
+    "red-qualified-atom"
+   ],
+   "sole": false,
+   "sole_rule_family": true,
+   "survivor": false,
+   "task_label": "(b)",
+   "validate_defects": [],
+   "verdict": "killed"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 0,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:near-miss-field",
+   "detectors_failed": [],
+   "edit": "(c) NEAR_MISS_RE matches nothing (never-matching negative lookahead)",
+   "fixtures_lost_refusal": [],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m03-near-miss-re-dead",
+   "killed": false,
+   "killed_by": null,
+   "mutant_sha256": "6b65facdc5a06529c45628dbbfe0864ff565bb0bad7d7827e2b504d7c8f402f2",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 0,
+   "selftest_failed_cases": [],
+   "sole": false,
+   "sole_rule_family": false,
+   "survivor": true,
+   "task_label": "(c)",
+   "validate_defects": [],
+   "verdict": "survivor"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 1,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:negated-verdict",
+   "detectors_failed": [
+    "fixture:negated-verdict",
+    "selftest:red-negated"
+   ],
+   "edit": "(d) NEGATION_RE matches nothing (never-matching negative lookahead)",
+   "fixtures_lost_refusal": [
+    "negated-verdict"
+   ],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m04-negation-re-dead",
+   "killed": true,
+   "killed_by": "fixture:negated-verdict",
+   "mutant_sha256": "8f6daf16bdfc35ac87f252cc41b3e21367b94a56e2526cba2c085284494deec4",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 1,
+   "selftest_failed_cases": [
+    "red-negated"
+   ],
+   "sole": false,
+   "sole_rule_family": true,
+   "survivor": false,
+   "task_label": "(d)",
+   "validate_defects": [],
+   "verdict": "killed"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 1,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:dropped-defect",
+   "detectors_failed": [
+    "fixture:dropped-defect"
+   ],
+   "edit": "(e) bind_clause atom-branch defect (no_atoms) returned as (True, 'bound')",
+   "fixtures_lost_refusal": [
+    "dropped-defect"
+   ],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m05-defect-as-bound-pass",
+   "killed": true,
+   "killed_by": "fixture:dropped-defect",
+   "mutant_sha256": "c6d19030037d486b7830fad569509aef361ee36e554628e62da61282654dcef5",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 0,
+   "selftest_failed_cases": [],
+   "sole": true,
+   "sole_rule_family": true,
+   "survivor": false,
+   "task_label": "(e)",
+   "validate_defects": [],
+   "verdict": "killed"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 1,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:unclean-clone-run",
+   "detectors_failed": [
+    "fixture:unclean-clone-run"
+   ],
+   "edit": "(f) judge_receipt_fixture clean_run no longer rejects a failed retained run",
+   "fixtures_lost_refusal": [
+    "unclean-clone-run"
+   ],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m06-clean-run-accepts-fail",
+   "killed": true,
+   "killed_by": "fixture:unclean-clone-run",
+   "mutant_sha256": "634788a263aa9812e8cbbb28b9f3c4252e8759622cecfeb87a4b50c6295be42e",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 0,
+   "selftest_failed_cases": [],
+   "sole": true,
+   "sole_rule_family": true,
+   "survivor": false,
+   "task_label": "(f)",
+   "validate_defects": [],
+   "verdict": "killed"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 1,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": "fixture:stale-filing-rev",
+   "detectors_failed": [
+    "fixture:stale-filing-rev"
+   ],
+   "edit": "(g) filing_rev drops the is_ancestor check (keeps only the 40-hex shape)",
+   "fixtures_lost_refusal": [
+    "stale-filing-rev"
+   ],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m07-filing-rev-no-ancestor",
+   "killed": true,
+   "killed_by": "fixture:stale-filing-rev",
+   "mutant_sha256": "a2bdc444b8ea1eb05ec19302a7ac7b96a0e75d7574a2249918f08124e92a0c38",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 0,
+   "selftest_failed_cases": [],
+   "sole": true,
+   "sole_rule_family": true,
+   "survivor": false,
+   "task_label": "(g)",
+   "validate_defects": [],
+   "verdict": "killed"
+  },
+  {
+   "base_arm_failures": [],
+   "battery_exit": 0,
+   "battery_stderr_tail": "",
+   "collateral_fixture_changes": [],
+   "declared_detector": null,
+   "detectors_failed": [],
+   "edit": "(h) validate_receipt skips the refused-without-reason guard",
+   "fixtures_lost_refusal": [],
+   "fixtures_wrong_rule": [],
+   "genuine_defects": [],
+   "genuine_mismatch_count": 0,
+   "id": "m08-validate-no-refusal-guard",
+   "killed": false,
+   "killed_by": null,
+   "mutant_sha256": "1f6b824a8e6d942518a2a46bdefcef55de940602bdc9a900027912373e9ebc80",
+   "population_floor": {
+    "cells": 4,
+    "clauses": 8,
+    "met": true
+   },
+   "selftest_cases": 26,
+   "selftest_exit": 0,
+   "selftest_failed_cases": [],
+   "sole": false,
+   "sole_rule_family": false,
+   "survivor": true,
+   "task_label": "(h)",
+   "validate_defects": [],
+   "verdict": "survivor"
+  }
+ ],
+ "probes": {
+  "m03_identity": {
+   "differing_top_level_keys": [
+    "instrument"
+   ],
+   "instrument_mutant": "6b65facdc5a06529c45628dbbfe0864ff565bb0bad7d7827e2b504d7c8f402f2",
+   "instrument_pristine": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+   "only_self_digest": true
+  },
+  "m08_refused_without_reason": [
+   {
+    "exit": 1,
+    "run": "pristine",
+    "stdout": "{\"defects\": [\"receipt-unauth: refused without a reason\"], \"fixtures\": 10}"
+   },
+   {
+    "exit": 0,
+    "run": "m08",
+    "stdout": "{\"defects\": [], \"fixtures\": 10}"
+   }
+  ]
+ },
+ "provenance": {
+  "advance_commits": [
+   "8991721a",
+   "d2ab5f3e",
+   "c9d986eb"
+  ],
+  "first_snapshot_sha256": "a86f6d4d94987ac07a2c68ef18168ea23dc577cfb078dba90485a577cbda7d43",
+  "lane_head_at_scoring_finish": "c9d986eb1531c43a5b95fd0bf327d048c201e6b5",
+  "lane_head_at_scoring_start": "713da191640873b7fcd52132c99e641f3b13a698",
+  "measured_rev": "c9d986eb1531c43a5b95fd0bf327d048c201e6b5",
+  "note": "First pass (09:18) scored a86f6d4d; the L1 advanced the instrument mid-run (plural near-miss stems, instrument-mode auth, population floor, selftest 26). Every number here is re-taken against the final committed version 961d5a23 at rev c9d986eb.",
+  "pinned_round77_instruments": {
+   "prefile-receipt": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+   "verdict-bind": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
+  },
+  "scored_sha256": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+  "target_advanced_midrun": true
+ },
+ "restoration": {
+  "identical": true,
+  "lane_file_sha256_at_finish": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+  "lane_file_sha256_at_scoring": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+  "mutants_written_only_under_scratch": true,
+  "scratch_root": "/fast/scratch/hyaku/kaidoku-r78/MutGate/"
+ },
+ "schema": "kaidoku-r78-mutgate-v2",
+ "survivors": [
+  "m03-near-miss-re-dead",
+  "m08-validate-no-refusal-guard"
+ ],
+ "target": "tools/round-78/attack-gate.py",
+ "target_sha256": "961d5a23c1d38116f5b992434fa2295b5a90643b4a52233e205837ac73bf48c0",
+ "tooling": {
+  "installed": [],
+  "reason": "python3/git sufficient; no install or upgrade performed"
+ }
+}

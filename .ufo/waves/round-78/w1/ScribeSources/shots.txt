@@ -1,0 +1,117 @@
+# ScribeSources shots — round 78, observed 2026-11-04T09:10:32-03:00 from /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+
+## 1. Snapshot bytes and digests (committed at HEAD = ffcb47d13f0340f88397af6c8d2707a9554abab3)
+$ wc -c .ufo/waves/round-78/l1/sources/stdtypes.html .ufo/waves/round-78/l1/sources/tomllib.html
+814496 .ufo/waves/round-78/l1/sources/stdtypes.html
+ 34923 .ufo/waves/round-78/l1/sources/tomllib.html
+849419 total
+$ git show HEAD:.ufo/waves/round-78/l1/sources/re.html | wc -c
+257722
+$ sha256sum .ufo/waves/round-78/l1/sources/stdtypes.html .ufo/waves/round-78/l1/sources/tomllib.html
+16f072e19fed1d1ab8ed34468cd6365fad7b7d2013eccd0e298cc6f43797acf1  .ufo/waves/round-78/l1/sources/stdtypes.html
+d98e62f75b3a673e6977b4f1fe48eb6b518f77242f434148177e1679d701d53a  .ufo/waves/round-78/l1/sources/tomllib.html
+$ git show HEAD:.ufo/waves/round-78/l1/sources/re.html | sha256sum
+24ef5ff00f937cee65b83d527638fe1c1fc573578851e296f4bca0c4da3828a6  -
+
+## 2. Located quotes, grep -n on the snapshot line
+$ grep -n "Booleans are a" .ufo/waves/round-78/l1/sources/stdtypes.html
+440:numbers</em>, and <em class="dfn">complex numbers</em>.  In addition, Booleans are a
+$ grep -n "subtype of integers" .ufo/waves/round-78/l1/sources/stdtypes.html
+441:subtype of integers.  Integers have unlimited precision.  Floating-point
+$ grep -n "This module provides an interface for parsing TOML" .ufo/waves/round-78/l1/sources/tomllib.html
+11:<meta property="og:description" content="Source code: Lib/tomllib This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal Language, https://toml.io). This module does not support writing TOML. This module defines t..." />
+15:<meta property="og:image:alt" content="Source code: Lib/tomllib This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal Language, https://toml.io). This module does not support writing TOML. This module defines t..." />
+16:<meta name="description" content="Source code: Lib/tomllib This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal Language, https://toml.io). This module does not support writing TOML. This module defines t..." />
+221:<p>This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal
+$ grep -n "support writing TOML" .ufo/waves/round-78/l1/sources/tomllib.html
+11:<meta property="og:description" content="Source code: Lib/tomllib This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal Language, https://toml.io). This module does not support writing TOML. This module defines t..." />
+15:<meta property="og:image:alt" content="Source code: Lib/tomllib This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal Language, https://toml.io). This module does not support writing TOML. This module defines t..." />
+16:<meta name="description" content="Source code: Lib/tomllib This module provides an interface for parsing TOML 1.1.0 (Tom’s Obvious Minimal Language, https://toml.io). This module does not support writing TOML. This module defines t..." />
+223:support writing TOML.</p>
+$ git show HEAD:.ufo/waves/round-78/l1/sources/re.html | grep -n "A regular expression (or RE) specifies"
+283:<p>A regular expression (or RE) specifies a set of strings that matches it; the
+
+## 3. Id collision scan (the seat-named command, verbatim)
+$ grep -oE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' corpus/SOURCES.md | grep -oE 'S[0-9]+' | sort -u
+S001 S002 S003 S004 S005 S006 S007 S008 S009 S010 S011 S012 S013 S014 S015 S016 S017 S018 S019 S020 S021 S022 S023 S024 S025 S026 S027 S028 S029 S030 S031 S032 S033 S034 S035 S036 S037 S038 S039 S040 S041 S042 S043 S044 S045 S046 S047 S048 S049 S050 S051 S052 S053 S054 S055 S056 S057 S058 S059 S060 S061 S062 S063 S064 S065 S066 S067 S068 S069 S070 S071 S072 S073 S074 S075 S076 S077 S078 S079 S080 S081 S082 S083 S084 S085 S086 S087 S088 S089 S090 S091 S092 S093 S094 S095 S096 S097 S098 S099 S100 S101 S102 S103 S104 S105 S106 S107 S108 S109 S110 S111 S112 S113 S114 S115 S116 S117 S118 S119 S120 S121 S122 S123 S124 S125 S126 S127 S128 S129 S130 S131 S132 S133 S134 S135 S136 S137 S138 S139 S140 S141 S142 S143 S144 S145 S146 S147 S148 S149 S243 S244 S245 S246 S247 S248 S249 S250 S251 S252 S253 S254 S255 S256 S257 S258 S259 S260 S261 S262 S263 S264 S265 S266 S267 S268 S269 S270 S271 S272 S273 S274 S275 S276 S277 S278 S279 S280 S281 S282 S284 S285 S286 S287 S288 S289 S290 S291 S292 S293 S294 
+$ ... | sort -u | wc -l
+200
+$ ... | sort | uniq -d   # duplicate ids: expected empty
+$ git show HEAD:corpus/SOURCES.md | grep -oE '^ {0,3}\|[[:space:]]*S[0-9]{3,}' | grep -oE 'S[0-9]+' | sort -u | wc -l ; ... | tail -1
+197
+S291
+
+## 4. URL collision scan for the three sources
+$ grep -n 'docs.python.org/3/library/stdtypes.html' corpus/SOURCES.md
+209:| S292 | `Numeric Types — int, float, complex`, Python 3 standard library — https://docs.python.org/3/library/stdtypes.html (snapshot `stdtypes.html`, 814 496 B, sha256 `16f072e19fed1d1ab8ed34468cd6365fad7b7d2013
+(grep exit 0)
+$ grep -n 'docs.python.org/3/library/tomllib.html' corpus/SOURCES.md
+210:| S293 | `tomllib — Parse TOML files`, Python 3 standard library — https://docs.python.org/3/library/tomllib.html (snapshot `tomllib.html`, 34 923 B, sha256 `d98e62f75b3a673e6977b4f1fe48eb6b518f77242f434148177e16
+(grep exit 0)
+$ grep -n 'docs.python.org/3/library/re.html' corpus/SOURCES.md
+149:| S143 | Python `re` documentation — https://docs.python.org/3/library/re.html | docs | A | the exact-match primitive, `re.fullmatch`, which is the equality a token clause needs rather than the containment `re.sear
+(grep exit 0)
+
+## 5. Census (read-only), 2026-11-04T09:10:38-03:00
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku
+kaidoku	W04	S033 duplicate url github.com/NationalSecurityAgency/ghidra/pull/9348 across scopes
+kaidoku	W04	S047 duplicate url go.dev/dl/?mode=json&include=all`, across scopes
+kaidoku	W04	S054 duplicate url developer.android.com/ndk/guides/abis across scopes
+kaidoku	W04	S062 duplicate url raw.githubusercontent.com/sigrokproject/sigrok-cli/sigrok-cli-0.7.2/doc/sigrok-cli.1 across scopes
+kaidoku	W04	S069 duplicate url www.wireshark.org/docs/man-pages/tshark.html across scopes
+kaidoku	W04	S083 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S090 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S092 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S102 duplicate url learn.microsoft.com/en-us/windows/win32/debug/pe-format across scopes
+kaidoku	W04	S112 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py across scopes
+kaidoku	W04	S117 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/README.md across scopes
+kaidoku	W04	S119 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S123 duplicate url registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz across scopes
+kaidoku	W04	S138 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes
+kaidoku	W04	S142 duplicate url git-scm.com/docs/git-log across scopes
+kaidoku	W04	S246 duplicate url plato.stanford.edu/entries/popper across scopes
+kaidoku	W04	S247 duplicate url man.freebsd.org/cgi/man.cgi?query=sysexits&sektion=3 across scopes
+kaidoku	W04	S248 duplicate url github.com/onekey-sec/unblob/tree/26.6.4/tests/integration/filesystem/squashfs across scopes
+kaidoku	W04	S245 duplicate url raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py across scopes
+kaidoku	W04	S271 duplicate url raw.githubusercontent.com/upx/upx/v5.2.0/doc/upx-doc.txt across scopes
+kaidoku	W04	S272 duplicate url docs.python.org/3/library/subprocess.html across scopes
+kaidoku	W04	S273 duplicate url github.github.com/gfm across scopes
+kaidoku	W04	S276 duplicate url docs.python.org/3/library/tempfile.html across scopes
+kaidoku	ok	/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md
+exit=0
+$ grep -cE "S292|S293|S294|gnupg|re\\.html" <<< census output
+0
+
+## 6. Live working-tree state observed at 2026-11-04T09:10:38-03:00 (concurrent L1 landing)
+$ sha256sum corpus/SOURCES.md   # the exact file audited
+39940a35b62aa6d2a9fd74d75814017186a9b341c1b0ba566df668454ecbc50e  corpus/SOURCES.md
+$ git status --porcelain -- .ufo/waves/round-78/l1/sources corpus/SOURCES.md PROVINCE.md
+ D .ufo/waves/round-78/l1/sources/re.html
+ M PROVINCE.md
+ M corpus/SOURCES.md
+?? .ufo/waves/round-78/l1/sources/gnupg-manual.html
+$ git ls-tree -r --name-only HEAD -- .ufo/waves/round-78/l1/sources/
+.ufo/waves/round-78/l1/sources/re.html
+.ufo/waves/round-78/l1/sources/stdtypes.html
+.ufo/waves/round-78/l1/sources/tomllib.html
+
+## 7. The row that occupies S294 in the working tree (not the frozen plan's source)
+$ wc -c .ufo/waves/round-78/l1/sources/gnupg-manual.html
+113892 .ufo/waves/round-78/l1/sources/gnupg-manual.html
+$ sha256sum .ufo/waves/round-78/l1/sources/gnupg-manual.html
+6d8e63bd2ece3f6f2f7d222c9bd9c06a166e1de5fdc0b44d8cc1ead109abb8f6  .ufo/waves/round-78/l1/sources/gnupg-manual.html
+$ grep -n "A signature is created using the private key" .ufo/waves/round-78/l1/sources/gnupg-manual.html
+1017:A signature is created using the private key of the signer.
+
+## 8. Frozen plan sentence for the third source
+$ grep -n "S294" plans/round-78-claims.md
+133:  mined; S294 `re.html`, rejected). C1 cites S292 (a boolean is an integer subtype — the guard
+$ grep -n "S143" corpus/SOURCES.md | cut -c1-200
+149:| S143 | Python `re` documentation — https://docs.python.org/3/library/re.html | docs | A | the exact-match primitive, `re.fullmatch`, which is the equality a token clause needs rather than the 
+241:- 2026-11-04 round 75 — Convention: a row's `opened` cell is the date the source was first opened by this lane; a retrospective row names its opening round in this log, so a same-date row is not
+
+## 9. Round-75 precedent for a duplicate-URL withdrawal (S283)
+$ grep -n "S283" corpus/lessons/round-75.md | cut -c1-300
+24:| S143, `re.fullmatch`, reused (opened round 47; not re-registered) | https://docs.python.org/3/library/re.html | 2026-11-04 (re-opened) | "Page fetched 2026-10-28 (HTTP 200, 257,706 bytes, sha256 f169ed06…); anchor `re.fullmatch(pattern, string, flags=0)`" (the row's own anchor cell) | The who
+38:(S284 mined, S285 rejected), one candidate row (S283) is withdrawn as a duplicate of S143, and one
+76:  numbering (S283 cmdline, S284 environ) and its own drift check reports the landed S277/S285, so

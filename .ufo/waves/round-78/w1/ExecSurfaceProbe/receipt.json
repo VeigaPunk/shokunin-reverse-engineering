@@ -1,0 +1,207 @@
+{
+ "schema": "kaidoku-r78-execsurfaceprobe-rederive-v1",
+ "seat": "ExecSurfaceProbe",
+ "base_rev": "6205ec8c575fb070243c0c40e34a2b0daacde46a",
+ "recorded_needles_present": {
+  "devin-rea-pin": true,
+  "omp-rea-pin": true,
+  "kimi-rea-pin": true,
+  "omp-rea-disable": true,
+  "ghidra-version": true,
+  "ghidra-dir": true,
+  "jdk-version": true,
+  "java-home": true
+ },
+ "checks_total": 8,
+ "matched": 5,
+ "mismatches": [
+  {
+   "check": "omp-rea-disable",
+   "recorded": false,
+   "live": true,
+   "command": "python3 -I -B probe.py  # top-level disabledServers of /home/vgpnk/.omp/agent/mcp.json",
+   "output_line": "{\"disabledServers\": [\"rea\"]}"
+  },
+  {
+   "check": "ghidra-dir",
+   "recorded": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+   "live": "$HOME/.local/opt/ghidra_12.1.4_PUBLIC",
+   "command": "grep -nE '^[[:space:]]*(export[[:space:]]+)?(JAVA_HOME|GHIDRA_INSTALL_DIR)=' /home/vgpnk/.bashrc",
+   "output_line": "28:export GHIDRA_INSTALL_DIR=\"$HOME/.local/opt/ghidra_12.1.4_PUBLIC\"\n29:export JAVA_HOME=/usr/lib/jvm/java-21-openjdk"
+  },
+  {
+   "check": "jdk-version",
+   "recorded": "21.0.12.1",
+   "live": "21.0.13",
+   "command": "java -version 2>&1 (first line)",
+   "output_line": "openjdk version \"21.0.13\" 2026-10-20"
+  }
+ ],
+ "checks": [
+  {
+   "check": "devin-rea-pin",
+   "recorded": "6.7.0",
+   "live": "6.7.0",
+   "matched": true,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 16",
+   "live_source": "python3 -I -B probe.py  # json.load /home/vgpnk/.config/devin/mcp_config.json, rea entry args",
+   "command": "python3 -I -B probe.py  # json.load /home/vgpnk/.config/devin/mcp_config.json, rea entry args",
+   "output_line": "{\"pin\": \"6.7.0\", \"pin_from\": \"args\", \"rea_at\": \"$.mcpServers.rea\", \"sha256\": \"9159ca91487a34daf86d203f04bf747143e750f3508d0f912179e00d8a5f1c39\"}"
+  },
+  {
+   "check": "omp-rea-pin",
+   "recorded": "6.7.0",
+   "live": "6.7.0",
+   "matched": true,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 17",
+   "live_source": "python3 -I -B probe.py  # json.load /home/vgpnk/.omp/agent/mcp.json, rea entry args",
+   "command": "python3 -I -B probe.py  # json.load /home/vgpnk/.omp/agent/mcp.json, rea entry args",
+   "output_line": "{\"pin\": \"6.7.0\", \"pin_from\": \"args\", \"rea_at\": \"$.mcpServers.rea\", \"enabled_key_present\": false, \"sha256\": \"fa3517758a5ae4596ac53dfb679b3236b49c88570ab3e099e2ef862251057ab6\"}"
+  },
+  {
+   "check": "kimi-rea-pin",
+   "recorded": "6.7.0",
+   "live": "6.7.0",
+   "matched": true,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 18",
+   "live_source": "python3 -I -B probe.py  # tomllib.load /home/vgpnk/.kimi-code/config.toml, rea entry args",
+   "command": "python3 -I -B probe.py  # tomllib.load /home/vgpnk/.kimi-code/config.toml, rea entry args",
+   "output_line": "{\"pin\": \"6.7.0\", \"pin_from\": \"args\", \"rea_at\": \"$.mcp_servers.rea\", \"sha256\": \"f4c98c23269c07ed25bb2f8247c52f9c6466af4782712e083305ec2bed237be4\"}"
+  },
+  {
+   "check": "omp-rea-disable",
+   "recorded": false,
+   "live": true,
+   "matched": false,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 18",
+   "live_source": "python3 -I -B probe.py  # top-level disabledServers of /home/vgpnk/.omp/agent/mcp.json",
+   "command": "python3 -I -B probe.py  # top-level disabledServers of /home/vgpnk/.omp/agent/mcp.json",
+   "output_line": "{\"disabledServers\": [\"rea\"]}"
+  },
+  {
+   "check": "ghidra-version",
+   "recorded": "12.1.4",
+   "live": "12.1.4",
+   "matched": true,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 25",
+   "live_source": "grep -nE '^application\\.(version|build)=' /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties",
+   "command": "grep -nE '^application\\.(version|build)=' /home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties",
+   "output_line": "17:application.version=12.1.4"
+  },
+  {
+   "check": "ghidra-dir",
+   "recorded": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+   "live": "$HOME/.local/opt/ghidra_12.1.4_PUBLIC",
+   "matched": false,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 25",
+   "live_source": "grep -nE '^[[:space:]]*(export[[:space:]]+)?(JAVA_HOME|GHIDRA_INSTALL_DIR)=' /home/vgpnk/.bashrc",
+   "command": "grep -nE '^[[:space:]]*(export[[:space:]]+)?(JAVA_HOME|GHIDRA_INSTALL_DIR)=' /home/vgpnk/.bashrc",
+   "output_line": "28:export GHIDRA_INSTALL_DIR=\"$HOME/.local/opt/ghidra_12.1.4_PUBLIC\"\n29:export JAVA_HOME=/usr/lib/jvm/java-21-openjdk"
+  },
+  {
+   "check": "jdk-version",
+   "recorded": "21.0.12.1",
+   "live": "21.0.13",
+   "matched": false,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 25",
+   "live_source": "java -version 2>&1 (first line)",
+   "command": "java -version 2>&1 (first line)",
+   "output_line": "openjdk version \"21.0.13\" 2026-10-20"
+  },
+  {
+   "check": "java-home",
+   "recorded": "/usr/lib/jvm/java-21-openjdk",
+   "live": "/usr/lib/jvm/java-21-openjdk",
+   "matched": true,
+   "record_source": "git show 6205ec8c:PROVINCE.md line 25",
+   "live_source": "grep -nE '^[[:space:]]*(export[[:space:]]+)?(JAVA_HOME|GHIDRA_INSTALL_DIR)=' /home/vgpnk/.bashrc",
+   "command": "grep -nE '^[[:space:]]*(export[[:space:]]+)?(JAVA_HOME|GHIDRA_INSTALL_DIR)=' /home/vgpnk/.bashrc",
+   "output_line": "28:export GHIDRA_INSTALL_DIR=\"$HOME/.local/opt/ghidra_12.1.4_PUBLIC\"\n29:export JAVA_HOME=/usr/lib/jvm/java-21-openjdk"
+  }
+ ],
+ "agreement_with_instrument": {
+  "instrument_receipt": ".ufo/waves/round-78/pre/c2-at-base.json",
+  "instrument_mismatches": [
+   "jdk-version",
+   "omp-rea-disable"
+  ],
+  "my_mismatches": [
+   "ghidra-dir",
+   "jdk-version",
+   "omp-rea-disable"
+  ],
+  "same_mismatch_set": false,
+  "per_check": [
+   {
+    "check": "devin-rea-pin",
+    "verdict": "agree",
+    "instrument_record": "6.7.0",
+    "instrument_live": "6.7.0",
+    "instrument_matched": true
+   },
+   {
+    "check": "omp-rea-pin",
+    "verdict": "agree",
+    "instrument_record": "6.7.0",
+    "instrument_live": "6.7.0",
+    "instrument_matched": true
+   },
+   {
+    "check": "kimi-rea-pin",
+    "verdict": "agree",
+    "instrument_record": "6.7.0",
+    "instrument_live": "6.7.0",
+    "instrument_matched": true
+   },
+   {
+    "check": "omp-rea-disable",
+    "verdict": "agree",
+    "instrument_record": false,
+    "instrument_live": true,
+    "instrument_matched": false
+   },
+   {
+    "check": "ghidra-version",
+    "verdict": "agree",
+    "instrument_record": "12.1.4",
+    "instrument_live": "12.1.4",
+    "instrument_matched": true
+   },
+   {
+    "check": "ghidra-dir",
+    "verdict": "DISAGREE",
+    "instrument_record": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+    "instrument_live": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+    "instrument_matched": true
+   },
+   {
+    "check": "jdk-version",
+    "verdict": "agree",
+    "instrument_record": "21.0.12.1",
+    "instrument_live": "21.0.13",
+    "instrument_matched": false
+   },
+   {
+    "check": "java-home",
+    "verdict": "agree",
+    "instrument_record": "/usr/lib/jvm/java-21-openjdk",
+    "instrument_live": "/usr/lib/jvm/java-21-openjdk",
+    "instrument_matched": true
+   }
+  ],
+  "instrument_checks_i_do_not_have": [],
+  "my_checks_the_instrument_lacks": [],
+  "instrument_live_block": {
+   "devin_pin": "6.7.0",
+   "ghidra_dir": "/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC",
+   "ghidra_version": "12.1.4",
+   "java_home": "/usr/lib/jvm/java-21-openjdk",
+   "jdk_version": "21.0.13",
+   "kimi_pin": "6.7.0",
+   "omp_disable": true,
+   "omp_enabled_key": false,
+   "omp_pin": "6.7.0"
+  }
+ },
+ "security": "no env block, token or secret value captured; only rea pins, disabledServers, enabled-key presence and file digests"
+}
