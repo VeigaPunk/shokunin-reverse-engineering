@@ -19,6 +19,35 @@ Every page below was opened this round with one GET each; snapshots, byte counts
 | S287, `argparse`, admit (mined) | https://docs.python.org/3/library/argparse.html | 2026-11-04 (HTTP 200, 334 994 B, sha256 `14d33eea…`) | "terminates the program with a status code of 2." (9 words; `ArgumentParser.error`, snapshot line 2418) | Grounds the before-arm: the round-75 printed command's missing `--work` is a parser error, so rc 2 is the documented outcome rather than an instrument quirk. |
 | S288, `bash(1)`, reject | https://man7.org/linux/man-pages/man1/bash.1.html (the plan named `sh(1)`, which returned HTTP 404, 196 B, on this host; the substitution is recorded in the search log) | 2026-11-04 (HTTP 200, 497 852 B, sha256 `e35fa296…`) | "word splitting and pathname expansion.  The shell" (7 words; EXPANSION, snapshot line 477) | REJECTED: the claim needs the shell the gate refuses to invoke, so the page cannot support the row's scope. Flip: the gate gains a shell path, or a claim is made about shell word-splitting semantics. Consumer search (QUALITY row 36): `grep -c 'shell=True' tools/round-76/plan-command.py` → 0. |
 
+**Same-round source corrections (old → new, in place).** The round-76 scout seat (`ScoutSource.md` §1-§3) found
+three defects in the rows this round wrote, all in wording/attribution rather than provenance (the digests and the
+located quotes reproduce against an independent GET). They were corrected in place before the round's record,
+because the alternative — three `supersedes` rows — would duplicate the same URLs and leave the wrong cells as the
+registry's first reading; the deviation from `CORPUS.md` rule 2's append-only clause is recorded here and in the
+report, and each change is logged old → new:
+
+- **S286 `scope`** old "…performs no expansion, substitution or execution" → new "A shell-LIKE tokeniser, not a
+  shell grammar: POSIX mode and comment suppression are the documented defaults, and the page's own Warning
+  recommends passing an argument list to `subprocess.run()` with `shell=False`". The old cell asserted three
+  negatives the page never states (`substitut` 0 hits, `glob` 0 hits on the snapshot).
+- **S286 `teaches`** old "…so no shell metacharacter is ever interpreted" → new "…the gate's metacharacter refusal
+  is its own `static_defects`, never a claim of this page". The old cell credited the page with the instrument's
+  property; the page never uses "metacharacter".
+- **S286 `anchor`** old "`<var>` tag" → new "`<em>` tag"; the served byte at line 229 is `<em>s</em>`.
+- **S287 `scope`** old "…— the exit the round-75 printed command produced" → new "`ArgumentParser.error()` prints
+  usage and terminates with status 2 by default (overridable, and `exit()` defaults to 0): the status-2 contract a
+  usage error takes". **S287 `teaches`** old "…so rc 2 is the documented outcome, not an instrument quirk" → new
+  "…it does NOT ground the round-75 probe's rc 2, which is the probe's own `return 2` at its preflight". The
+  observed rc 2 is the instrument's preflight, not argparse's exit; **S287 `anchor`** gains the doc version
+  (Python 3.15.2) and the quote becomes the full sentence across lines 2417-2418 (21 words, composite-labelled).
+- **S288 `anchor`** old "EXPANSION, snapshot line 477; located quote: \"word splitting and pathname expansion.  The
+  shell\"" → new "EXPANSION lines 1931-1936; located quote at line 1932: \"Expansion is performed on the command
+  line after it has been split into words.\"" The old quote was a fragment of a sentence whose subject and
+  negation it dropped ("The words between the [[ and ]] do **not** undergo …"), so it asserted the opposite.
+
+The `corpus/knowledge/2026-11-04-r76-plan-command-executability.md` section "Why rc 2 is the right before-arm"
+was rewritten to "What the observed rc 2 is, and is not" for the same reason.
+
 **Census.** `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` at round start: exit 0,
 191 rows, 24 W04 warnings (`.ufo/waves/round-76/l1/census-start.txt`). At round end: exit 0, 194 rows
 (`l1/census-end.txt`). Three rows enter (S286 mined, S287 mined, S288 rejected); no existing row's

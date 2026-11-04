@@ -38,13 +38,18 @@ a committed plan, and makes that block the command it executes:
    integer in the counter field: whether the number is right is the other claim's business, so two claims can be
    scored without reading each other.
 
-## Why rc 2 is the right before-arm
+## What the observed rc 2 is, and is not
 
-S287 documents the parser's error path: an invalid invocation "terminates the program with a status code of 2".
-The round-75 command's missing `--work` is exactly that case, so the observed rc 2 is the documented outcome of
-the printed command, not an instrument quirk. The gate's `r75-argv` arm binds the digest (so the static grammar
-passes) and still observes rc 2 with the missing-argument message: the two failure modes are separable and each
-is named.
+The round-75 command's rc 2 is **the probe's own preflight refusal**, not argparse's exit:
+`probe-mutation.py` checks its required options and answers `{"unevaluable": "missing required arguments: work"}`
+with `return 2`. S287 grounds a different thing — the general contract that a usage error's documented status is
+2 (`ArgumentParser.error()` terminates with status 2 by default) — and this entry does not claim that the probe's
+rc 2 is argparse's. The distinction was caught by the round-76 scout seat (`ScoutSource.md` §2) and the row's
+`teaches` was corrected to say so; a reader who conflates the two would cite the wrong authority for a
+measured exit.
+
+The gate's `r75-argv` arm binds the digest (so the static grammar passes) and still observes rc 2 with the
+missing-argument message: the two failure modes are separable and each is named.
 
 ## Limits
 
