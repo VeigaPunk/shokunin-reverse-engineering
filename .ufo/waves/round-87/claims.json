@@ -1,0 +1,38 @@
+{
+ "schema": "kaidoku-r87-claims-v1",
+ "round": 87,
+ "base": "99f8b6a8979978fe02dc3c8f674ce4fdee3ab44b",
+ "claims": [
+  {
+   "id": "R87-C1",
+   "axis": "coverage",
+   "type": "capability acquisition (frontier to core)",
+   "predicate": "tools/round-87/upx-tamper-battery.py --repair-cmd tools/round-87/upx-magic-repair.py reports recovered 8 of 8 with controls_ok all true and exit 0, where a case is recovered only when the repair exits 0, changes bytes only inside windows that now read UPX!, upx -t passes, upx -d restores the carrier's pinned sha256, and REA 6.5.0 analyze of the restored bytes reports the carrier's declared original procedure count",
+   "label": "recovered 8 of 8",
+   "kill_rule": "recovered < 8; any control false; a case recovered through a change outside a UPX! window; a repair that names, reads or hashes any carrier source path or pin; a counter, population, tamper value, arm or control changed after this declaration; REA package pin drift",
+   "counter": "tools/round-87/upx-tamper-battery.py",
+   "repair": "tools/round-87/upx-magic-repair.py",
+   "target": {
+    "recovered": 8,
+    "total": 8,
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 0
+   },
+   "before": {
+    "control_identity": ".ufo/waves/round-87/pre/c1-control-identity-at-base.json",
+    "control_naive_global": ".ufo/waves/round-87/pre/c1-control-naive-global-at-base.json"
+   }
+  }
+ ],
+ "instruments": {
+  "tools/round-87/upx-tamper-battery.py": "0f2d2bd80108ded5282dbb8cbf79044357538458143c97ee591cc78e8e5384b0"
+ },
+ "pins": {
+  "upx_sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+  "rea_pkgjson_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c"
+ }
+}
