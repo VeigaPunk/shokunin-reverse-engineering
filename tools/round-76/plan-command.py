@@ -251,7 +251,7 @@ def battery(root: str, rev: str, work: str) -> dict:
 CONTROLS = {
     "prose-plan": "the plan block replaced by the round-75 report's printed "
                   "command: PLACEHOLDER_UNBOUND, no execution",
-    "missing-required-arg": "a runnable argv with --work removed: "
+    "missing-required-arg": "a runnable argv with its required --rev removed: "
                             "EXECUTION_FAILED rc 2",
     "ellipsis-rev": "a $REV replaced by an abbreviated hash: "
                     "PLACEHOLDER_UNBOUND",
@@ -273,7 +273,7 @@ def control(root: str, rev: str, work: str, name: str) -> dict:
     elif name == "missing-required-arg":
         command = ("python3 -I -B tools/round-76/record-audit.py --root . "
                    "--rev $REV --json-out $OUT")
-        broken = command.replace("--root . ", "")
+        broken = command.replace("--rev $REV ", "")
         row = run_block(root, rev, broken, work,
                         os.path.join(work, "out.json"), "mismatch_count", "0")
         met = (row["executed"] and row["rc"] == 2
