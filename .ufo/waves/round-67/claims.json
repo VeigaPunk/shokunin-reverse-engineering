@@ -4,9 +4,9 @@
  "base": "a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92",
  "declaration_pointer": "plans/round-67-claims.md (no amendments). Both instruments were committed BEFORE this claims file - the QUALITY #33 order - with their do-nothing controls and pre-freeze receipts in .ufo/waves/round-67/l1/pre/; the carry-in LOG entry is an ancestor of this freeze (QUALITY #34, the M65-3 order check). The operative freeze is the commit that first adds this file: git log --diff-filter=A --format=%H -- .ufo/waves/round-67/claims.json. No amendment series.",
  "instruments": {
-  "tools/round-67/avm-le-counter.py": "e44cacf5dd38f40ec6db87a0fae35cd53f16d719531ad610223a4699fa32dc5f",
-  "tools/round-67/mutation-battery.py": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab",
-  "tools/round-67/gap-rule-v2.json": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
+  "tools/round-67/avm-le-counter.py": "5d6cc82a3cd0b2dafc575bc67610b387a321da07f2de043db4d0c5b11c0f871b",
+  "tools/round-67/mutation-battery.py": "ecf5598775edc33d359de152154f0dff00702b78d0bbd58d9fa5f4def8f5d766",
+  "tools/round-67/gap-rule-v2.json": "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0",
   "tools/round-67/c1-run.sh": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
   "tools/round-50/c1-counter.py": "9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813",
   "tools/round-66/closure-boundary.py": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
@@ -42,7 +42,8 @@
   "A8": "sourced claim: the C1 knowledge entry corpus/knowledge/2026-11-03-r67-avm-le-squashfs-core.md cites the SOURCES row opened this round (the Linux kernel SquashFS device-node inode text); the row's Gate block carries this round's access date and a located quote of at most 25 words",
   "A9": "no-harm: the r50 and r66 instruments are unchanged (pins checked); the round-50 rule file unchanged; LOG additions only; the owned-axes coverage row's head sentence is re-derived at the landing; no filed round-66 byte rewritten",
   "A10": "instrument supersession: tools/round-67/avm-le-counter.py changed at 1e7fe7b7 after the freeze (absolute -> lane-relative gap-rule name; the engine's git-object lookup); the re-taken before record is l1/pre/control-dryrun.json with counter sha256 55decb51, gaps_ok_round50 2 / round67 4; no after-arm existed before the change",
-  "A11": "instrument supersession 2: tools/round-67/avm-le-counter.py changed at ecc4de0e (the REA package re-pin); the r42 lock d42d56f0 is not reproducible (fresh npx cache -> 815c18f1, package.json a5003023 unchanged); the receipt's patches.rea_pkg records the re-pin and evidence_id_ok stays a required clause; before record re-taken"
+  "A11": "instrument supersession 2: tools/round-67/avm-le-counter.py changed at ecc4de0e (the REA package re-pin); the r42 lock d42d56f0 is not reproducible (fresh npx cache -> 815c18f1, package.json a5003023 unchanged); the receipt's patches.rea_pkg records the re-pin and evidence_id_ok stays a required clause; before record re-taken",
+  "A12": "instrument repairs at 7cfe83e4 (wave-1 findings): the clause set is unchanged (no dropped clause), the rule is pinned by RULE_V2_PIN b55d5e87 and a non-pinned rule is refused, score() binds the control receipt (control_ok true, gaps_ok_round50 2) and records its sha256, any unexpected error is exit 2; the battery's kill test requires the exact failed-case set and its selftest asserts the 9-name inventory; the rule's round-50 `removed.silent` block is restored. Before records re-taken at the same commit."
  },
  "instrument_supersessions": [
   {
@@ -54,6 +55,21 @@
    "path": "tools/round-67/avm-le-counter.py",
    "commit": "ecc4de0ea319647af5c2573523e1b4d6f3965299",
    "reason": "the round-42 rea-pkg pin's package_lock_sha256 d42d56f0 is no longer reproducible on this host: a fresh npx cache resolves the same rea-agents 6.5.0 artifact (package.json sha256 a5003023, unchanged) with lock 815c18f1, so the engine's evidence-id recompute refused as unevaluable. The wrapper now binds the package by version, package.json sha256 and the lock this host resolves (REA_PKG_R67), records the substitution in every receipt, and keeps evidence_id_ok as a required clause. The before record was re-taken with the corrected bytes."
+  },
+  {
+   "path": "tools/round-67/avm-le-counter.py",
+   "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+   "reason": "wave-1 findings: (a) the clause set is used UNCHANGED (the carrier_fresh_ok drop was a no-op: the engine's prior-pin sources do not list the four pins, so the clause is true 4/4 -- MutCounter M1); (b) the rule is pinned by RULE_V2_PIN and a non-pinned rule is refused, the --gap-rule knob is gone (SentinelScope F2); (c) score() binds the predicate's second conjunct by reading the committed control receipt at --rev and requiring control_ok true / gaps_ok_round50 2 (F3); (d) any unexpected error is exit 2 (F6.1). Before records re-taken."
+  },
+  {
+   "path": "tools/round-67/gap-rule-v2.json",
+   "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+   "reason": "SentinelScope F1: the round-50 `removed.silent` block was dropped while the docstring and atom A5 said `removed` was unchanged. It is restored verbatim (inert under required.char-device=false), so the statement is true; gaps_ok is unchanged (2/4 vs 4/4, control re-taken)."
+  },
+  {
+   "path": "tools/round-67/mutation-battery.py",
+   "commit": "7cfe83e437d6fc835fc37f1cf494e3c9bf3958b6",
+   "reason": "MutBattery N1-N5: the kill test now requires the EXACT failed-case set per mutant (containment let a wrong-defect pair certify green), the selftest asserts the registered case inventory (a dropped case now fails), control() checks both pins and computes control_ok from the printed fields, a missing selftest receipt is unevaluable, and fixture git failures are exit 2. Receipts re-taken: selftest 10 cases, control 0/2, score 2/2."
   }
  ]
 }
