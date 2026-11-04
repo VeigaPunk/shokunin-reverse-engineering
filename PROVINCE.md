@@ -455,6 +455,14 @@ Round-50 frontier note, 2026-10-29: the LE-AVM clause of the round-40/41/42/44/4
 
 Round-67 frontier note, 2026-11-03: LE AVM members (`hsqs`) move from Frontier to Core for these four pinned carriers under the class rule (`2026-11-03-r67-avm-le-squashfs-core`), superseding the round-50 `measured, not promoted` status and the LE-AVM clause of the round-50 frontier note above for this carrier set and nothing else. Still Frontier: LE AVM kernel images, LE AVM rootfs of ~13k files under REA's 120 s limit, nested sub-images below depth 1, vendor-mangled bodies, `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard`, gzip v3, v4 Broadcom.
 
+## Round-68 additions to Core
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| UPX-packed ELF triage — detect (packer listing plus the absence of a section-header table), unpack with sha256 identity against the carrier pin, recover the original's REA inventory, and keep the packed-bytes stub as the before-arm | `/usr/bin/upx` 5.2.0 (sha256 `cf2f6e7c…`); rea-agents 6.5.0 invoked as `node <pkg>/scripts/rea.mjs` (never `npx -y`, which rewrites the npx cache lock) | `tools/round-68/packed-elf.py --score` on two pinned carriers (`jq` `e8156675…`, `xxd` `7b1e5d0c…`) | carriers_matched 2 of 2, control_ok true, packed stub 3 procedures vs originals 167/30/190 and 99/29/103, unpacked sha256 equal to the pins (`2026-11-03-r68-packed-elf-route`, `.ufo/waves/round-68/l1/pre/c2-dryrun-at-base.json`) |
+
+Round-68 frontier note, 2026-11-03: packed-ELF triage is **Core** for the two pinned x86-64 carriers under UPX 5.2.0 (`2026-11-03-r68-packed-elf-route`; S269). Still Frontier: any packer other than UPX, an anti-UPX stub whose magic or entry is altered (no such carrier measured), packed PE/Mach-O, packed libraries and packed static binaries, and semantic equality of a recovered inventory (the route measures count equality only).
+
 ## Host migration — 2026-10-31 (Windows host, recorded under the round-53 absent-surface rule)
 
 The Linux host every Core row above names (the `/home/vgpnk/...` trees) is gone from

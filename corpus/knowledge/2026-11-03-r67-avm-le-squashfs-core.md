@@ -45,3 +45,27 @@ recheck: on-refetch — `curl -fsSL https://raw.githubusercontent.com/AgentD/squ
 ## Host and pins
 
 [observation] rea-agents 6.5.0, unblob 26.6.4, `sasquatch` 4.5.1 and `unsquashfs` 4.7.5; scratch `/fast/scratch/hyaku/kaidoku-r67/`; the data-run harness is `tools/round-67/c1-run.sh` (a fork of `tools/round-50/c1-run.sh` whose delta is exactly the round segment and claim name).
+
+## Correction — 2026-11-03, round 68 (appended, never an in-place rewrite; QUALITY #65 and #100)
+
+The round-67 non-author closure (`corpus/lessons/round-67-verifier-spotcheck.md` §5) ruled the quality
+trend **harmed** by this entry, and this block records the correction.
+
+- **Superseded sentence.** The section "The class rule, and why it is the honest repair" states: "The
+  round-67 rule (`tools/round-67/gap-rule-v2.json`, sha256 `b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0`)
+  keeps the round-50 `allowed`, `removed` (including `removed.silent.char-device = ["247:0"]`) and
+  `structural` blocks". Both halves are stale.
+- **The rule's identity at every revision named by this entry.** `b55d5e87…` existed only between the
+  wave-1 repair `7cfe83e4` and the revert `3e7b59db`; the rule's bytes at the record `7a3c21d4`, at the
+  tip, and at the round-67 landing are `e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e`
+  (`git show <rev>:tools/round-67/gap-rule-v2.json | sha256sum`).
+- **The dropped row.** The rule's `removed` block at the pin is
+  `{"diagnostic":"MaliciousSymlinkRemoved","kinds":["symlink"],"disposition":"exclusive"}` — it carries
+  **no** `silent` key, so the sentence's `removed.silent.char-device = ["247:0"]` names a row the rule no
+  longer holds. The row was dropped when `required.char-device` became false: under the class rule no
+  char-device row consults it, so the drop is inert and narrows nothing (the round-67 atom A5 and
+  `M67-4`/`M67-5` record the same fact).
+- **What is unchanged.** Everything else in the entry re-derives: the four carrier pins, the 4-of-4
+  after-arm at `83239917`, the 2-of-4 before-arm under the round-50 rule, and the 13 char-device rows per
+  FRITZ!Box carrier (`136:0`-`136:7`, `230:0`, `247:0`, `3:0`-`3:2`). A re-run of the entry's own digest
+  check (`corpus/lessons/round-68.md` Gate) reports the pin at `e66ba022…` with `silent` absent.

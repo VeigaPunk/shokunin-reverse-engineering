@@ -268,6 +268,8 @@ A row is written when its file exists, never before.
 | `round-40` | 40 | genuine AVM-layout BE SquashFS v4 measured on two vendor members and two lane-built images but not promoted (R40-C1 honest stop, 3/4 on a counter suffix false negative); SKILL triage table v2 with a domain guard and a scored action column (R40-C2, 26/26 held-out); QUALITY 83 |
 | `round-51` | 51 | provider-recovery honest stop after 36 settled build seats; source law corrected, registry-only census landed, two claim targets unverified, no Core promotion or v6 |
 
+| `knowledge/2026-11-03-r68-packed-elf-route` | UPX-packed ELF triage: detect (packer listing plus the absence of a section-header table), unpack with sha256 identity against the carrier pin, recover the original's REA inventory; packed stub 3 procedures against originals 167/30/190 and 99/29/103, unpacked sha256 equal to the pins, the pinned address refused on packed bytes and recovered after unpack; limits: UPX 5.2.0 only, count equality not semantic equality | `tools/round-68/packed-elf.py` (13-case selftest) and `.ufo/waves/round-68/l1/scores/` |
+
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
 - RISC-V deep analysis — `target_unavailable` bypassed via e_machine patch + language override (r5-01); full EXEC already runs direct analyzeHeadless (10,766 functions @900 s cap).
@@ -290,6 +292,8 @@ A row is written when its file exists, never before.
 - sasquatch — 2026-10-28 round 49: SquashFS v1/v2 (`squashfs_v1`, `squashfs_v2`, four standard fixtures) is **Core** (`2026-10-28-r49-squashfs-v1v2-core`), superseding the round-44 line above. Scope: the four standard v1.0/v2.0 fixtures only. Supersedes the round-42 and round-44 lines above for v1/v2. Still frontier: `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard` (and the DD-WRT no-pad/4k-pad v3 images), gzip v3, v4 Broadcom, v2.1 images, LE AVM members (`hsqs`), AVM kernels and nested sub-images below depth 1.
 
 Round-67 frontier note, 2026-11-03: LE AVM members (`hsqs`) are **Core** for the four pinned carriers under the class rule (`2026-11-03-r67-avm-le-squashfs-core`), superseding the round-50 `measured, not promoted` line above for this carrier set and nothing else; still Frontier: LE AVM kernel images, LE AVM rootfs of ~13k files under REA's 120 s limit, nested sub-images below depth 1, vendor-mangled bodies.
+
+Round-68 frontier note, 2026-11-03: packed-ELF triage is **Core** for the two pinned x86-64 carriers under UPX 5.2.0 (`2026-11-03-r68-packed-elf-route`; S269); still Frontier: any other packer, an anti-UPX stub whose magic or entry is altered, packed PE/Mach-O, packed libraries and static binaries, and semantic equality of a recovered inventory.
 
 ## Known gaps
 

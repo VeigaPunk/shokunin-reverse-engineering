@@ -1,0 +1,11 @@
+--- pristine
++++ M3.py
+@@ -128,7 +128,7 @@
+     for row in rows:
+         by_path.setdefault(row["path"], []).append(row)
+     unregistered = sorted(p for p in scope if p not in by_path)
+-    duplicate_rows = sorted(p for p, r in by_path.items() if len(r) > 1)
++    duplicate_rows = []  # M3: duplicate test dropped
+     row_absent = sorted(p for p in by_path if p not in existing)
+     thin = sorted(p for p, r in by_path.items()
+                   if not all(rx.search(r[0]["verdict"]) for rx in VERDICT_RE))

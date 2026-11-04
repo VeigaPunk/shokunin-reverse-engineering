@@ -1,0 +1,113 @@
+# ExecPacked — argv log (round 68, wave w1)
+# S = /fast/scratch/hyaku/kaidoku-r68/ExecPacked
+# P = /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/scripts/rea.mjs
+# All commands run with absolute paths; output captured under $S/logs/ (copied to receipts/).
+
+## environment pins (read-only)
+sha256sum /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-68/packed-elf.py \
+          /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-68/registry-conformance.py \
+          /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-68/controls.py
+upx --version
+sha256sum /usr/bin/upx
+sha256sum /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json
+jq -r .version /home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/package.json
+node --version
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --oneline -- tools/round-68/packed-elf.py
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin cat-file -e fcbe200f6739c38939e0dabf3f251de2cc6bd727:tools/round-68/packed-elf.py
+git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 6020eb60:tools/round-68/packed-elf.py | sha256sum
+jq -r '.rev, .instrument, .packer.version' \
+   /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-68/l1/pre/c2-dryrun-at-base.json
+
+## third carrier: /usr/bin/gzip
+mkdir -p $S/gzip $S/logs
+cp /usr/bin/gzip $S/gzip/orig-gzip
+chmod +x $S/gzip/orig-gzip
+sha256sum $S/gzip/orig-gzip /usr/bin/gzip
+upx -l $S/gzip/orig-gzip                                   # rc 2, NotPackedException
+readelf -SW $S/gzip/orig-gzip > $S/logs/readelf-orig.txt   # 29 sections
+upx --best -q -o $S/gzip/packed-gzip $S/gzip/orig-gzip     # rc 0
+upx -l $S/gzip/packed-gzip                                 # rc 0, lists 109768 -> 62588
+readelf -SW $S/gzip/packed-gzip > $S/logs/readelf-packed.txt   # "There are no sections in this file."
+sha256sum $S/gzip/packed-gzip
+upx -d -q -o $S/gzip/unpacked-gzip $S/gzip/packed-gzip     # rc 0
+sha256sum $S/gzip/unpacked-gzip $S/gzip/orig-gzip
+readelf -SW $S/gzip/unpacked-gzip > $S/logs/readelf-unpacked.txt
+node $P analyze --format json $S/gzip/orig-gzip > $S/logs/analyze-orig-gzip.json
+node $P analyze --format json $S/gzip/packed-gzip > $S/logs/analyze-packed-gzip.json
+node $P analyze --format json $S/gzip/unpacked-gzip > $S/logs/analyze-unpacked-gzip.json
+
+## gzip refusal arm (address discovery, then the pair)
+node $P decompile $S/gzip/unpacked-gzip 0x102040 --format json > $S/logs/decompile-gzip-unpacked.json
+node $P decompile $S/gzip/unpacked-gzip 0x102060 --format json > $S/logs/decompile-gzip-0x102060.json
+node $P decompile $S/gzip/unpacked-gzip 0x103e60 --format json > $S/logs/decompile-gzip-unpacked-entry.json
+node $P decompile $S/gzip/unpacked-gzip 0x104000 --format json > $S/logs/decompile-gzip-0x104000.json
+node $P decompile $S/gzip/unpacked-gzip 0x10c000 --format json > $S/logs/decompile-gzip-0x10c000.json
+node $P decompile $S/gzip/packed-gzip   0x102040 --format json > $S/logs/decompile-gzip-packed.json
+node $P decompile $S/gzip/packed-gzip   0x102060 --format json > $S/logs/decompile-gzip-packed-0x102060.json
+node $P decompile $S/gzip/packed-gzip   0x103e60 --format json > $S/logs/decompile-gzip-packed-entry.json
+upx -l $S/gzip/orig-gzip > $S/logs/ctrl-list-orig.txt 2>&1                 # rc 2
+upx -d -q -o $S/gzip/ctrl-gzip $S/gzip/orig-gzip > $S/logs/ctrl-dec-orig.txt 2>&1  # rc 2
+
+## jq refusal leg (pinned address 0x103fa0, packed vs unpacked)
+cp /usr/bin/jq $S/gzip/jq-orig
+chmod +x $S/gzip/jq-orig
+sha256sum $S/gzip/jq-orig
+upx --best -q -o $S/gzip/jq-packed $S/gzip/jq-orig
+sha256sum $S/gzip/jq-packed
+upx -d -q -o $S/gzip/jq-unpacked $S/gzip/jq-packed
+sha256sum $S/gzip/jq-unpacked
+node $P decompile $S/gzip/jq-packed   0x103fa0 --format json > $S/logs/decompile-jq-packed.json
+node $P decompile $S/gzip/jq-unpacked 0x103fa0 --format json > $S/logs/decompile-jq-unpacked.json
+
+## compression-level invariance (--lzma)
+upx --lzma -q -o $S/gzip/lzma-gzip $S/gzip/orig-gzip
+upx -l $S/gzip/lzma-gzip
+readelf -SW $S/gzip/lzma-gzip > $S/logs/readelf-lzma.txt
+sha256sum $S/gzip/lzma-gzip
+node $P analyze --format json $S/gzip/lzma-gzip > $S/logs/analyze-lzma-gzip.json
+upx -d -q -o $S/gzip/lzma-unpacked-gzip $S/gzip/lzma-gzip
+sha256sum $S/gzip/lzma-unpacked-gzip
+node $P analyze --format json $S/gzip/lzma-unpacked-gzip > $S/logs/analyze-lzma-unpacked-gzip.json
+
+## fourth data point: /usr/bin/ls (stub-count check, not a full arm set)
+cp /usr/bin/ls $S/boundary/ls.orig
+sha256sum $S/boundary/ls.orig
+upx --best -q -o $S/boundary/ls.packed $S/boundary/ls.cand
+upx -l $S/boundary/ls.packed
+readelf -SW $S/boundary/ls.orig > $S/logs/readelf-ls-orig.txt        # 29
+readelf -SW $S/boundary/ls.packed > $S/logs/readelf-ls-packed.txt    # 0
+sha256sum $S/boundary/ls.packed
+node $P analyze --format json $S/boundary/ls.orig   > $S/logs/analyze-ls.orig.json
+node $P analyze --format json $S/boundary/ls.packed > $S/logs/analyze-ls.packed.json
+
+## symbolized carrier (symbol-naming and code-length shape of the refusal arm)
+mkdir -p $S/sym
+# probe.c: static add3(), long helper(long), int main(void) with printf
+gcc -O1 -g -o $S/sym/prog $S/sym/probe.c
+sha256sum $S/sym/prog
+nm $S/sym/prog
+readelf -SW $S/sym/prog                                   # 39 sections
+upx --best -q -o $S/sym/packed-prog $S/sym/prog
+upx -l $S/sym/packed-prog
+readelf -SW $S/sym/packed-prog                            # 0 sections
+upx -d -q -o $S/sym/unpacked-prog $S/sym/packed-prog
+sha256sum $S/sym/packed-prog $S/sym/unpacked-prog $S/sym/prog
+node $P analyze --format json $S/sym/orig-prog   > $S/logs/sym-analyze-orig.json
+node $P analyze --format json $S/sym/packed-prog > $S/logs/sym-analyze-packed.json
+node $P decompile $S/sym/unpacked-prog 0x101177 --format json > $S/logs/sym-decompile-unpacked-0x101177.json
+node $P decompile $S/sym/unpacked-prog 0x101140 --format json > $S/logs/sym-decompile-unpacked-0x101140.json
+node $P decompile $S/sym/packed-prog   0x101177 --format json > $S/logs/sym-decompile-packed-main.json
+
+## detector fail-open probe (readelf failure text through the frozen helper)
+readelf -SW $S/nope.bin > $S/logs/readelf-missing.txt 2>&1   # rc 1
+python3 -I -B - $S <<'PY'
+import importlib.util
+spec = importlib.util.spec_from_file_location(
+    'pe', '/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-68/packed-elf.py')
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+print(m.section_count(open('/fast/scratch/hyaku/kaidoku-r68/ExecPacked/logs/readelf-missing.txt').read()))
+PY
+
+## route-equivalent scoring of the receipts with the frozen helpers
+# python3 -I -B, imports tools/round-68/packed-elf.py, applies counts_from()/section_count()
+# over the saved receipts -> .ufo/waves/round-68/w1/ExecPacked/probe.json (full script in report)

@@ -1,0 +1,25 @@
+--- pristine
++++ M6.py
+@@ -226,12 +226,7 @@
+     cases.append(("duplicate-rows", r["duplicate_rows"] == ["tools/round-67/a.py"]
+                   and r["mismatches"] == 1))
+ 
+-    r = census(clean_plans, skill([row("tools/round-67/a.py"),
+-                                   row("tools/round-50/a.py"),
+-                                   row("tools/round-99/gone.py")]),
+-               execs | {"tools/round-99/other.py"})
+-    cases.append(("row-absent", r["row_absent"] == ["tools/round-99/gone.py"]
+-                  and r["mismatches"] == 1))
++    # M6: row-absent case dropped
+ 
+     r = census(clean_plans, skill([row("tools/round-67/a.py", "0=met; 1=not met"),
+                                    row("tools/round-50/a.py")]), execs)
+@@ -267,7 +262,7 @@
+     cases.append(("case-inventory", executed == REGISTERED_CASES))
+ 
+     failed = [name for name, ok in cases if not ok]
+-    print(json.dumps({"selftest": TOOL, "cases": len(cases), "failed": failed,
++    print(json.dumps({"selftest": TOOL, "cases": len(REGISTERED_CASES), "failed": failed,
+                       "ok": not failed}, indent=1))
+     return 0 if not failed else 1
+ 

@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>upx(1) — upx-ucl — Debian unstable — Debian Manpages</title>
+<style type="text/css">
+@font-face {
+  font-family: 'Inconsolata';
+  src: local('Inconsolata'), url(/Inconsolata.woff2) format('woff2'), url(/Inconsolata.woff) format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto Regular'), local('Roboto-Regular'), url(/Roboto-Regular.woff2) format('woff2'), url(/Roboto-Regular.woff) format('woff');
+  font-display: swap;
+}
+
+body {
+	color: #000;
+	background-color: white;
+	background-image: linear-gradient(to bottom, #d7d9e2, #fff 70px);
+	background-position: 0 0;
+	background-repeat: repeat-x;
+	font-family: sans-serif;
+	font-size: 100%;
+	line-height: 1.2;
+	letter-spacing: 0.15px;
+	margin: 0;
+	padding: 0;
+}
+
+body > div#header {
+	padding: 0 10px 0 52px;
+}
+
+#logo {
+	position: absolute;
+	top: 0;
+	left: 0;
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	width: 50px;
+	height: 5.07em;
+	min-height: 65px;
+}
+
+#logo a {
+	display: block;
+	height: 100%;
+}
+
+#logo img {
+	margin-top: 5px;
+	position: absolute;
+	bottom: 0.3em;
+	overflow: auto;
+	border: 0;
+}
+
+p.section {
+	margin: 0;
+	padding: 0 5px 0 5px;
+	font-size: 13px;
+	line-height: 16px;
+	color: white;
+	letter-spacing: 0.08em;
+	position: absolute;
+	top: 0px;
+	left: 52px;
+	background-color: #c70036;
+}
+
+p.section a {
+	color: white;
+	text-decoration: none;
+}
+
+.hidecss {
+	display: none;
+}
+
+#searchbox {
+	text-align:left;
+	line-height: 1;
+	margin: 0 10px 0 0.5em;
+	padding: 1px 0 1px 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: .75em;
+}
+
+#navbar {
+	border-bottom: 1px solid #c70036;
+}
+
+#navbar ul {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#navbar li {
+	list-style: none;
+	float: left;
+}
+
+#navbar a {
+	display: block;
+	padding: 1.75em .5em .25em .5em;
+	color: #0035c7;
+	text-decoration: none;
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+}
+
+#navbar a:hover
+, #navbar a:visited:hover {
+	background-color: #f5f6f7;
+	border-left: 1px solid  #d2d3d7;
+	border-right: 1px solid #d2d3d7;
+	text-decoration: underline;
+}
+
+a:link {
+	color: #0035c7;
+}
+
+a:visited {
+	color: #54638c;
+}
+
+#breadcrumbs {
+	line-height: 2;
+	min-height: 20px;
+	margin: 0;
+	padding: 0;
+	font-size: 0.75em;
+	background-color: #f5f6f7;
+	border-bottom: 1px solid #d2d3d7;
+}
+
+#breadcrumbs:before {
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+
+#content {
+    margin: 0 10px 0 52px;
+    display: flex;
+    flex-direction: row;
+    word-wrap: break-word;
+}
+
+.paneljump {
+    background-color: #d70751;
+    padding: 0.5em;
+    border-radius: 3px;
+    margin-right: .5em;
+    display: none;
+}
+
+.paneljump a,
+.paneljump a:visited,
+.paneljump a:hover,
+.paneljump a:focus {
+    color: white;
+}
+
+@media all and (max-width: 800px) {
+    #content {
+	flex-direction: column;
+	margin: 0.5em;
+    }
+    .paneljump {
+	display: block;
+    }
+}
+
+.panels {
+    display: block;
+    order: 2;
+}
+
+.maincontent {
+    width: 100%;
+    max-width: 80ch;
+    order: 1;
+}
+
+.mandoc {
+    font-family: monospace;
+    font-size: 1.04rem;
+}
+
+.mandoc pre {
+    white-space: pre-wrap;
+}
+
+body > div#footer {
+	border: 1px solid #dfdfe0;
+	border-left: 0;
+	border-right: 0;
+	background-color: #f5f6f7;
+	padding: 1em;
+	margin: 1em 10px 0 52px;
+	font-size: 0.75em;
+	line-height: 1.5em;
+}
+
+hr {
+	border-top: 1px solid #d2d3d7;
+	border-bottom: 1px solid white;
+	border-left: 0;
+	border-right: 0;
+	margin: 1.4375em 0 1.5em 0;
+	height: 0;
+	background-color: #bbb;
+}
+
+#content p {
+    padding-left: 1em;
+}
+
+ 
+
+a, a:hover, a:focus, a:visited {
+    color: #0530D7;
+    text-decoration: none;
+}
+
+ 
+.panel {
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.panel-heading, .panel details {
+  margin: -15px -15px 0px;
+  background-color: #d70751;
+  border-bottom: 1px solid #dddddd;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.panel-heading, .panel summary {
+  padding: 5px 5px;
+  font-size: 17.5px;
+  font-weight: 500;
+  color: #ffffff;
+  outline-style: none;
+}
+
+.panel summary {
+    padding-left: 7px;
+}
+
+summary, details {
+    display: block;
+}
+
+.panel details ul {
+  margin: 0;
+}
+
+.panel-footer {
+  padding: 5px 5px;
+  margin: 15px -15px -15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #dddddd;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.panel-info {
+  border-color: #bce8f1;
+}
+
+.panel-info .panel-heading {
+  color: #3a87ad;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+
+
+.list-group {
+  padding-left: 0;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+}
+
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 5px 5px 5px 5px;
+  margin-bottom: -1px;
+  border: 1px solid #dddddd;
+}
+
+.list-group-item > .list-item-key {
+  min-width: 27%;
+  display: inline-block;
+}
+.list-group-item > .list-item-key.versions-repository {
+  min-width: 40%;
+}
+.list-group-item > .list-item-key.versioned-links-version {
+  min-width: 40%
+}
+
+
+.versioned-links-icon {
+  margin-right: 2px;
+}
+.versioned-links-icon a {
+  color: black;
+}
+.versioned-links-icon a:hover {
+  color: blue;
+}
+.versioned-links-icon-inactive {
+  opacity: 0.5;
+}
+
+.list-group-item:first-child {
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+}
+
+.list-group-item:last-child {
+  margin-bottom: 0;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.list-group-item-heading {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.list-group-item-text {
+  margin-bottom: 0;
+  line-height: 1.3;
+}
+
+.list-group-item:hover {
+  background-color: #f5f5f5;
+}
+
+.list-group-item.active a {
+  z-index: 2;
+}
+
+.list-group-item.active {
+  background-color: #efefef;
+}
+
+.list-group-flush {
+  margin: 15px -15px -15px;
+}
+.panel .list-group-flush {
+  margin-top: -1px;
+}
+
+.list-group-flush .list-group-item {
+  border-width: 1px 0;
+}
+
+.list-group-flush .list-group-item:first-child {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.list-group-flush .list-group-item:last-child {
+  border-bottom: 0;
+}
+
+ 
+
+.panel {
+float: right;
+clear: right;
+min-width: 200px;
+}
+
+.toc {
+     
+    width: 200px;
+}
+
+.toc li {
+    font-size: 98%;
+    letter-spacing: 0.02em;
+    display: flex;
+}
+
+.otherversions {
+     
+    width: 200px;
+}
+
+.otherversions li,
+.otherlangs li {
+    display: flex;
+}
+
+.otherversions a,
+.otherlangs a {
+    flex-shrink: 0;
+}
+
+.pkgversion,
+.pkgname,
+.toc a {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.pkgversion,
+.pkgname {
+    margin-left: auto;
+    padding-left: 1em;
+}
+
+ 
+
+.mandoc {
+     
+    overflow: hidden;
+    margin-top: .5em;
+    margin-right: 45px;
+}
+table.head, table.foot {
+    width: 100%;
+}
+.head-vol {
+    text-align: center;
+}
+.head-rtitle {
+    text-align: right;
+}
+
+ 
+.spacer, .Pp {
+    min-height: 1em;
+}
+
+pre {
+    margin-left: 2em;
+}
+
+.anchor {
+    margin-left: .25em;
+    visibility: hidden;
+}
+
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+    visibility: visible;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: .07em;
+    margin-top: 1.5em;
+    margin-bottom: .35em;
+}
+
+h1 {
+    font-size: 150%;
+}
+
+h2 {
+    font-size: 125%;
+}
+
+@media print {
+    #header, #footer, .panel, .anchor, .paneljump {
+	display: none;
+    }
+    #content {
+	margin: 0;
+    }
+    .mandoc {
+	margin: 0;
+    }
+}
+
+ 
+ 
+
+.Bd { }
+.Bd-indent {	margin-left: 3.8em; }
+
+.Bl-bullet {	list-style-type: disc;
+		padding-left: 1em; }
+.Bl-bullet > li { }
+.Bl-dash {	list-style-type: none;
+		padding-left: 0em; }
+.Bl-dash > li:before {
+		content: "\2014  "; }
+.Bl-item {	list-style-type: none;
+		padding-left: 0em; }
+.Bl-item > li { }
+.Bl-compact > li {
+		margin-top: 0em; }
+
+.Bl-enum {	padding-left: 2em; }
+.Bl-enum > li { }
+.Bl-compact > li {
+		margin-top: 0em; }
+
+.Bl-diag { }
+.Bl-diag > dt {
+		font-style: normal;
+		font-weight: bold; }
+.Bl-diag > dd {
+		margin-left: 0em; }
+.Bl-hang { }
+.Bl-hang > dt { }
+.Bl-hang > dd {
+		margin-left: 5.5em; }
+.Bl-inset { }
+.Bl-inset > dt { }
+.Bl-inset > dd {
+		margin-left: 0em; }
+.Bl-ohang { }
+.Bl-ohang > dt { }
+.Bl-ohang > dd {
+		margin-left: 0em; }
+.Bl-tag {	margin-left: 5.5em; }
+.Bl-tag > dt {
+		float: left;
+		margin-top: 0em;
+		margin-left: -5.5em;
+		padding-right: 1.2em;
+		vertical-align: top; }
+.Bl-tag > dd {
+		clear: both;
+		width: 100%;
+		margin-top: 0em;
+		margin-left: 0em;
+		vertical-align: top;
+		overflow: auto; }
+.Bl-compact > dt {
+		margin-top: 0em; }
+
+.Bl-column { }
+.Bl-column > tbody > tr { }
+.Bl-column > tbody > tr > td {
+		margin-top: 1em; }
+.Bl-compact > tbody > tr > td {
+		margin-top: 0em; }
+
+.Rs {		font-style: normal;
+		font-weight: normal; }
+.RsA { }
+.RsB {		font-style: italic;
+		font-weight: normal; }
+.RsC { }
+.RsD { }
+.RsI {		font-style: italic;
+		font-weight: normal; }
+.RsJ {		font-style: italic;
+		font-weight: normal; }
+.RsN { }
+.RsO { }
+.RsP { }
+.RsQ { }
+.RsR { }
+.RsT {		text-decoration: underline; }
+.RsU { }
+.RsV { }
+
+.eqn { }
+.tbl { }
+
+.HP {		margin-left: 3.8em;
+		text-indent: -3.8em; }
+
+ 
+
+table.Nm { }
+code.Nm {	font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Fl {		font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Cm {		font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Ar {		font-style: italic;
+		font-weight: normal; }
+.Op {		display: inline; }
+.Ic {		font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Ev {		font-style: normal;
+		font-weight: normal;
+		font-family: monospace; }
+.Pa {		font-style: italic;
+		font-weight: normal; }
+
+ 
+
+.Lb { }
+code.In {	font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+a.In { }
+.Fd {		font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Ft {		font-style: italic;
+		font-weight: normal; }
+.Fn {		font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Fa {		font-style: italic;
+		font-weight: normal; }
+.Vt {		font-style: italic;
+		font-weight: normal; }
+.Va {		font-style: italic;
+		font-weight: normal; }
+.Dv {		font-style: normal;
+		font-weight: normal;
+		font-family: monospace; }
+.Er {		font-style: normal;
+		font-weight: normal;
+		font-family: monospace; }
+
+ 
+
+.An { }
+.Lk { }
+.Mt { }
+.Cd {		font-style: normal;
+		font-weight: bold;
+		font-family: inherit; }
+.Ad {		font-style: italic;
+		font-weight: normal; }
+.Ms {		font-style: normal;
+		font-weight: bold; }
+.St { }
+.Ux { }
+
+ 
+
+.Bf {		display: inline; }
+.No {		font-style: normal;
+		font-weight: normal; }
+.Em {		font-style: italic;
+		font-weight: normal; }
+.Sy {		font-style: normal;
+		font-weight: bold; }
+.Li {		font-style: normal;
+		font-weight: normal;
+		font-family: monospace; }
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.mandoc, .mandoc pre, .mandoc code, p.section {
+  font-family: 'Inconsolata', monospace;
+}
+
+</style>
+<link rel="search" title="Debian manpages" type="application/opensearchdescription+xml" href="/opensearch.xml">
+</head>
+<body>
+<div id="header">
+   <div id="upperheader">
+   <div id="logo">
+  <a href="https://www.debian.org/" title="Debian Home"><img src="/openlogo-50.svg" alt="Debian" width="50" height="61"></a>
+  </div>
+  <p class="section"><a href="/">MANPAGES</a></p>
+  <div id="searchbox">
+    <form action="https://dyn.manpages.debian.org/jump" method="get">
+      <input type="hidden" name="suite" value="unstable">
+      <input type="hidden" name="binarypkg" value="upx-ucl">
+      <input type="hidden" name="section" value="1">
+      <input type="hidden" name="language" value="en">
+      <input type="text" name="q" placeholder="manpage name" required>
+      <input type="submit" value="Jump">
+    </form>
+  </div>
+ </div>
+<div id="navbar">
+<p class="hidecss"><a href="#content">Skip Quicknav</a></p>
+<ul>
+   <li><a href="/">Index</a></li>
+   <li><a href="/about.html">About Manpages</a></li>
+   <li><a href="/faq.html">FAQ</a></li>
+   <li><a href="https://wiki.debian.org/manpages.debian.org">Service Information</a></li>
+</ul>
+</div>
+   <p id="breadcrumbs">&nbsp;
+     
+     &#x2F; <a href="/contents-unstable.html">unstable</a>
+     
+     
+     
+     &#x2F; <a href="/unstable/upx-ucl/index.html">upx-ucl</a>
+     
+     
+     
+     &#x2F; upx(1)
+     
+     </p>
+</div>
+<div id="content">
+
+
+<div class="panels" id="panels">
+<div class="panel" role="complementary">
+<div class="panel-heading" role="heading">
+links
+</div>
+<div class="panel-body">
+<ul class="list-group list-group-flush">
+<li class="list-group-item">
+<a href="/unstable/upx-ucl/upx.1">language-indep link</a>
+</li>
+<li class="list-group-item">
+<a href="https://tracker.debian.org/pkg/upx-ucl">package tracker</a>
+</li>
+<li class="list-group-item">
+<a href="/unstable/upx-ucl/upx.1.en.gz">raw man page</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="panel toc" role="complementary" style="padding-bottom: 0">
+<details>
+<summary>
+table of contents
+</summary>
+<div class="panel-body">
+<ul class="list-group list-group-flush">
+
+<li class="list-group-item">
+  <a class="toclink" href="#NAME" title="NAME">NAME</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#SYNOPSIS" title="SYNOPSIS">SYNOPSIS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#ABSTRACT" title="ABSTRACT">ABSTRACT</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#DISCLAIMER" title="DISCLAIMER">DISCLAIMER</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#SECURITY_CONTEXT" title="SECURITY CONTEXT">SECURITY CONTEXT</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#DESCRIPTION" title="DESCRIPTION">DESCRIPTION</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#COMMANDS" title="COMMANDS">COMMANDS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#OPTIONS" title="OPTIONS">OPTIONS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#COMPRESSION_LEVELS_&amp;amp;_TUNING" title="COMPRESSION LEVELS &amp;amp; TUNING">COMPRESSION LEVELS &amp;amp; TUNING</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#OVERLAY_HANDLING_OPTIONS" title="OVERLAY HANDLING OPTIONS">OVERLAY HANDLING OPTIONS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#ENVIRONMENT_VARIABLE" title="ENVIRONMENT VARIABLE">ENVIRONMENT VARIABLE</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#NOTES_FOR_THE_SUPPORTED_EXECUTABLE_FORMATS" title="NOTES FOR THE SUPPORTED EXECUTABLE FORMATS">NOTES FOR THE SUPPORTED EXECUTABLE FORMATS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#DIAGNOSTICS" title="DIAGNOSTICS">DIAGNOSTICS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#BUGS" title="BUGS">BUGS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#AUTHORS" title="AUTHORS">AUTHORS</a>
+</li>
+
+<li class="list-group-item">
+  <a class="toclink" href="#COPYRIGHT" title="COPYRIGHT">COPYRIGHT</a>
+</li>
+
+</ul>
+</div>
+</details>
+</div>
+
+<div class="panel otherversions" role="complementary">
+<div class="panel-heading" role="heading">
+other versions
+</div>
+<div class="panel-body">
+<ul class="list-group list-group-flush">
+
+<li class="list-group-item">
+<a href="/trixie/upx-ucl/upx.1.en.html">trixie</a> <span class="pkgversion" title="4.2.4-1.1">4.2.4-1.1</span>
+</li>
+
+<li class="list-group-item">
+<a href="/testing/upx-ucl/upx.1.en.html">testing</a> <span class="pkgversion" title="4.2.4-2">4.2.4-2</span>
+</li>
+
+<li class="list-group-item active">
+<a href="/unstable/upx-ucl/upx.1.en.html">unstable</a> <span class="pkgversion" title="4.2.4-2">4.2.4-2</span>
+</li>
+
+</ul>
+</div>
+</div>
+
+
+
+
+
+
+</div>
+
+<div class="maincontent">
+<p class="paneljump"><a href="#panels">Scroll to navigation</a></p>
+<div class="mandoc">
+<table class="head">
+  <tbody><tr>
+    <td class="head-ltitle">UPX(1)</td>
+    <td class="head-vol"> </td>
+    <td class="head-rtitle">UPX(1)</td>
+  </tr>
+</tbody></table>
+<div class="manual-text">
+<br/>
+<section class="Sh">
+<h1 class="Sh" id="NAME">NAME<a class="anchor" href="#NAME">¶</a></h1>
+<p class="Pp">upx - compress or expand executable files</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SYNOPSIS">SYNOPSIS<a class="anchor" href="#SYNOPSIS">¶</a></h1>
+<p class="Pp"><b>upx</b> [ <i>command</i> ]
+    [ <i>options</i> ] <i>filename</i>...</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="ABSTRACT">ABSTRACT<a class="anchor" href="#ABSTRACT">¶</a></h1>
+<pre>                    The Ultimate Packer for eXecutables
+   Copyright (c) 1996-2024 Markus Oberhumer, Laszlo Molnar &amp; John Reiser
+                           <a href="https://upx.github.io">https://upx.github.io</a>
+</pre>
+<p class="Pp"><b>UPX</b> is a portable, extendable, high-performance executable
+    packer for several different executable formats. It achieves an excellent
+    compression ratio and offers <i>*very*</i> fast decompression. Your
+    executables suffer no memory overhead or other drawbacks for most of the
+    formats supported, because of in-place decompression.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="DISCLAIMER">DISCLAIMER<a class="anchor" href="#DISCLAIMER">¶</a></h1>
+<p class="Pp"><b>UPX</b> comes with ABSOLUTELY NO WARRANTY; for details see the
+    file COPYING.</p>
+<p class="Pp">Please report all problems or suggestions to the authors.
+  Thanks.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SECURITY_CONTEXT">SECURITY CONTEXT<a class="anchor" href="#SECURITY_CONTEXT">¶</a></h1>
+<p class="Pp">IMPORTANT NOTE: <b>UPX</b> inherits the security context of any
+    files it handles.</p>
+<p class="Pp">This means that packing, unpacking, or even testing or listing a
+    file requires the same security considerations as actually executing the
+    file.</p>
+<p class="Pp">Use <b>UPX</b> on trusted files only!</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="DESCRIPTION">DESCRIPTION<a class="anchor" href="#DESCRIPTION">¶</a></h1>
+<p class="Pp"><b>UPX</b> is a versatile executable packer with the following
+    features:</p>
+<p class="Pp"></p>
+<pre>  - secure: as UPX is documented Open Source since many years any relevant
+      Security/Antivirus software is able to peek inside UPX compressed
+      apps to verify them
+  - excellent compression ratio: typically compresses better than Zip,
+      use UPX to decrease the size of your distribution !
+  - very fast decompression: more than 500 MB/sec on any reasonably modern
+      machine
+  - no memory overhead for your compressed executables for most of the
+      supported formats because of in-place decompression
+  - safe: you can list, test and unpack your executables.
+      Also, a checksum of both the compressed and uncompressed file is
+      maintained internally.
+  - universal: UPX can pack a number of executable formats, including
+      Windows programs and DLLs, macOS apps and Linux executables
+  - portable: UPX is written in portable endian-neutral C++
+  - extendable: because of the class layout it&#39;s very easy to support
+      new executable formats or add new compression algorithms
+  - free: UPX is distributed with full source code under the GNU General
+      Public License v2+, with special exceptions granting the free usage
+      for commercial programs
+</pre>
+<p class="Pp">You probably understand now why we call <b>UPX</b> the
+    &#34;<i>ultimate</i>&#34; executable packer.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="COMMANDS">COMMANDS<a class="anchor" href="#COMMANDS">¶</a></h1>
+<section class="Ss">
+<h2 class="Ss" id="Compress">Compress<a class="anchor" href="#Compress">¶</a></h2>
+<p class="Pp">This is the default operation, eg. <b>upx yourfile.exe</b> will
+    compress the file specified on the command line.</p>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="Decompress">Decompress<a class="anchor" href="#Decompress">¶</a></h2>
+<p class="Pp">All <b>UPX</b> supported file formats can be unpacked using the
+    <b>-d</b> switch, eg. <b>upx -d yourfile.exe</b> will uncompress the file
+    you&#39;ve just compressed.</p>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="Test">Test<a class="anchor" href="#Test">¶</a></h2>
+<p class="Pp">The <b>-t</b> command tests the integrity of the compressed and
+    uncompressed data, eg. <b>upx -t yourfile.exe</b> check whether your file
+    can be safely decompressed. Note, that this command doesn&#39;t check the whole
+    file, only the part that will be uncompressed during program execution. This
+    means that you should not use this command instead of a virus checker.</p>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="List">List<a class="anchor" href="#List">¶</a></h2>
+<p class="Pp">The <b>-l</b> command prints out some information about the
+    compressed files specified on the command line as parameters, eg <b>upx -l
+    yourfile.exe</b> shows the compressed / uncompressed size and the
+    compression ratio of <i>yourfile.exe</i>.</p>
+</section>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="OPTIONS">OPTIONS<a class="anchor" href="#OPTIONS">¶</a></h1>
+<p class="Pp"><b>-q</b>: be quiet, suppress warnings</p>
+<p class="Pp"><b>-q -q</b> (or <b>-qq</b>): be very quiet, suppress errors</p>
+<p class="Pp"><b>-q -q -q</b> (or <b>-qqq</b>): produce no output at all</p>
+<p class="Pp"><b>--help</b>: prints the help</p>
+<p class="Pp"><b>--version</b>: print the version of <b>UPX</b></p>
+<p class="Pp"><b>--exact</b>: when compressing, require to be able to get a
+    byte-identical file after decompression with option <b>-d</b>. [NOTE: this
+    is work in progress and is not supported for all formats yet. If you do
+    care, as a workaround you can compress and then decompress your program a
+    first time - any further compress-decompress steps should then yield
+    byte-identical results as compared to the first decompressed version.]</p>
+<p class="Pp"><b>-k</b>: keep backup files</p>
+<p class="Pp"><b>-o file</b>: write output to file</p>
+<p class="Pp">[ ...more docs need to be written... - type `<b>upx --help</b>&#39;
+    for now ]</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="COMPRESSION_LEVELS_&amp;_TUNING">COMPRESSION LEVELS &amp; TUNING<a class="anchor" href="#COMPRESSION_LEVELS_&amp;_TUNING">¶</a></h1>
+<p class="Pp"><b>UPX</b> offers ten different compression levels from <b>-1</b>
+    to <b>-9</b>, and <b>--best</b>. The default compression level is <b>-8</b>
+    for files smaller than 512 KiB, and <b>-7</b> otherwise.</p>
+<ul class="Bl-bullet">
+  <li>Compression levels 1, 2 and 3 are pretty fast.</li>
+  <li>Compression levels 4, 5 and 6 achieve a good time/ratio performance.</li>
+  <li>Compression levels 7, 8 and 9 favor compression ratio over speed.</li>
+  <li>Compression level <b>--best</b> may take a long time.</li>
+</ul>
+<p class="Pp">Note that compression level <b>--best</b> can be somewhat slow for
+    large files, but you definitely should use it when releasing a final version
+    of your program.</p>
+<p class="Pp">Quick info for achieving the best compression ratio:</p>
+<ul class="Bl-bullet">
+  <li>Try <b>upx --brute --no-lzma myfile.exe</b> or even <b>upx --ultra-brute
+      --no-lzma myfile.exe</b>.</li>
+  <li>The option <b>--lzma</b> enables LZMA compression, which compresses better
+      but is *significantly slower* at decompression. You probably do not want
+      to use it for large files.
+    <p class="Pp">(Note that <b>--lzma</b> is automatically enabled by
+        <b>--all-methods</b> and <b>--brute</b>, use <b>--no-lzma</b> to
+        override.)</p>
+  </li>
+  <li>Try if <b>--overlay=strip</b> works.</li>
+  <li>For win32/pe programs there&#39;s <b>--strip-relocs=0</b>. See notes
+    below.</li>
+</ul>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="OVERLAY_HANDLING_OPTIONS">OVERLAY HANDLING OPTIONS<a class="anchor" href="#OVERLAY_HANDLING_OPTIONS">¶</a></h1>
+<p class="Pp">Info: An &#34;overlay&#34; means auxiliary data attached after
+    the logical end of an executable, and it often contains application specific
+    data (this is a common practice to avoid an extra data file, though it would
+    be better to use resource sections).</p>
+<p class="Pp"><b>UPX</b> handles overlays like many other executable packers do:
+    it simply copies the overlay after the compressed image. This works with
+    some files, but doesn&#39;t work with others, depending on how an application
+    actually accesses this overlaid data.</p>
+<p class="Pp"></p>
+<pre>  --overlay=copy    Copy any extra data attached to the file. [DEFAULT]
+  --overlay=strip   Strip any overlay from the program instead of
+                    copying it. Be warned, this may make the compressed
+                    program crash or otherwise unusable.
+  --overlay=skip    Refuse to compress any program which has an overlay.
+</pre>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="ENVIRONMENT_VARIABLE">ENVIRONMENT VARIABLE<a class="anchor" href="#ENVIRONMENT_VARIABLE">¶</a></h1>
+<p class="Pp">The environment variable <b>UPX</b> can hold a set of default
+    options for <b>UPX</b>. These options are interpreted first and can be
+    overwritten by explicit command line parameters. For example:</p>
+<p class="Pp"></p>
+<pre>    for DOS/Windows:   set UPX=-9 --compress-icons#0
+    for sh/ksh/zsh:    UPX=&#34;-9 --compress-icons=0&#34;; export UPX
+    for csh/tcsh:      setenv UPX &#34;-9 --compress-icons=0&#34;
+</pre>
+<p class="Pp">Under DOS/Windows you must use &#39;#&#39; instead of &#39;=&#39; when setting the
+    environment variable because of a COMMAND.COM limitation.</p>
+<p class="Pp">Not all of the options are valid in the environment variable -
+    <b>UPX</b> will tell you.</p>
+<p class="Pp">You can explicitly use the <b>--no-env</b> option to ignore the
+    environment variable.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="NOTES_FOR_THE_SUPPORTED_EXECUTABLE_FORMATS">NOTES FOR THE SUPPORTED EXECUTABLE FORMATS<a class="anchor" href="#NOTES_FOR_THE_SUPPORTED_EXECUTABLE_FORMATS">¶</a></h1>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_ATARI/TOS">NOTES FOR ATARI/TOS<a class="anchor" href="#NOTES_FOR_ATARI/TOS">¶</a></h2>
+<p class="Pp">This is the executable format used by the Atari ST/TT, a Motorola
+    68000 based personal computer which was popular in the late &#39;80s. Support of
+    this format is only because of nostalgic feelings of one of the authors and
+    serves no practical purpose :-). See <a href="https://freemint.github.io">https://freemint.github.io</a> for more
+    info.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression. All debug information will be stripped, though.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_BVMLINUZ/I386">NOTES FOR BVMLINUZ/I386<a class="anchor" href="#NOTES_FOR_BVMLINUZ/I386">¶</a></h2>
+<p class="Pp">Same as vmlinuz/i386.</p>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_DOS/COM">NOTES FOR DOS/COM<a class="anchor" href="#NOTES_FOR_DOS/COM">¶</a></h2>
+<p class="Pp">Obviously <b>UPX</b> won&#39;t work with executables that want to read
+    data from themselves (like some commandline utilities that ship with
+    Win95/98/ME).</p>
+<p class="Pp">Compressed programs only work on a 286+.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression.</p>
+<p class="Pp">Maximum uncompressed size: ~65100 bytes.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --8086              Create an executable that works on any 8086 CPU.
+  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --all-filters       Compress the program several times, using all
+                      available preprocessing filters. This may improve
+                      the compression ratio in some cases, but usually
+                      the default filter gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_DOS/EXE">NOTES FOR DOS/EXE<a class="anchor" href="#NOTES_FOR_DOS/EXE">¶</a></h2>
+<p class="Pp">dos/exe stands for all &#34;normal&#34; 16-bit DOS
+  executables.</p>
+<p class="Pp">Obviously <b>UPX</b> won&#39;t work with executables that want to read
+    data from themselves (like some command line utilities that ship with
+    Win95/98/ME).</p>
+<p class="Pp">Compressed programs only work on a 286+.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --8086              Create an executable that works on any 8086 CPU.
+  --no-reloc          Use no relocation records in the exe header.
+  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_DOS/SYS">NOTES FOR DOS/SYS<a class="anchor" href="#NOTES_FOR_DOS/SYS">¶</a></h2>
+<p class="Pp">Compressed programs only work on a 286+.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression.</p>
+<p class="Pp">Maximum uncompressed size: ~65350 bytes.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --8086              Create an executable that works on any 8086 CPU.
+  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --all-filters       Compress the program several times, using all
+                      available preprocessing filters. This may improve
+                      the compression ratio in some cases, but usually
+                      the default filter gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_DJGPP2/COFF">NOTES FOR DJGPP2/COFF<a class="anchor" href="#NOTES_FOR_DJGPP2/COFF">¶</a></h2>
+<p class="Pp">First of all, it is recommended to use <b>UPX</b> *instead* of
+    <b>strip</b>. strip has the very bad habit of replacing your stub with its
+    own (outdated) version. Additionally <b>UPX</b> corrects a bug/feature in
+    strip v2.8.x: it will fix the 4 KiB alignment of the stub.</p>
+<p class="Pp"><b>UPX</b> includes the full functionality of stubify. This means
+    it will automatically stubify your COFF files. Use the option <b>--coff</b>
+    to disable this functionality (see below).</p>
+<p class="Pp"><b>UPX</b> automatically handles Allegro packfiles.</p>
+<p class="Pp">The DLM format (a rather exotic shared library extension) is not
+    supported.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression. All debug information and trailing garbage will be stripped,
+    though.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --coff              Produce COFF output instead of EXE. By default
+                      UPX keeps your current stub.
+  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --all-filters       Compress the program several times, using all
+                      available preprocessing filters. This may improve
+                      the compression ratio in some cases, but usually
+                      the default filter gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_LINUX_[general]">NOTES FOR LINUX [general]<a class="anchor" href="#NOTES_FOR_LINUX_%5Bgeneral%5D">¶</a></h2>
+<p class="Pp">Introduction</p>
+<p class="Pp"></p>
+<pre>  Linux/386 support in UPX consists of 3 different executable formats,
+  one optimized for ELF executables (&#34;linux/elf386&#34;), one optimized
+  for shell scripts (&#34;linux/sh386&#34;), and one generic format
+  (&#34;linux/386&#34;).
+  We will start with a general discussion first, but please
+  also read the relevant docs for each of the individual formats.
+  Also, there is special support for bootable kernels - see the
+  description of the vmlinuz/386 format.
+</pre>
+<p class="Pp">General user&#39;s overview</p>
+<p class="Pp"></p>
+<pre>  Running a compressed executable program trades less space on a
+  ``permanent&#39;&#39; storage medium (such as a hard disk, floppy disk,
+  CD-ROM, flash memory, EPROM, etc.) for more space in one or more
+  ``temporary&#39;&#39; storage media (such as RAM, swap space, /tmp, etc.).
+  Running a compressed executable also requires some additional CPU
+  cycles to generate the compressed executable in the first place,
+  and to decompress it at each invocation.
+  How much space is traded?  It depends on the executable, but many
+  programs save 30% to 50% of permanent disk space.  How much CPU
+  overhead is there?  Again, it depends on the executable, but
+  decompression speed generally is at least many megabytes per second,
+  and frequently is limited by the speed of the underlying disk
+  or network I/O.
+  Depending on the statistics of usage and access, and the relative
+  speeds of CPU, RAM, swap space, /tmp, and file system storage, then
+  invoking and running a compressed executable can be faster than
+  directly running the corresponding uncompressed program.
+  The operating system might perform fewer expensive I/O operations
+  to invoke the compressed program.  Paging to or from swap space
+  or /tmp might be faster than paging from the general file system.
+  ``Medium-sized&#39;&#39; programs which access about 1/3 to 1/2 of their
+  stored program bytes can do particularly well with compression.
+  Small programs tend not to benefit as much because the absolute
+  savings is less.  Big programs tend not to benefit proportionally
+  because each invocation may use only a small fraction of the program,
+  yet UPX decompresses the entire program before invoking it.
+  But in environments where disk or flash memory storage is limited,
+  then compression may win anyway.
+  Currently, executables compressed by UPX do not share RAM at runtime
+  in the way that executables mapped from a file system do.  As a
+  result, if the same program is run simultaneously by more than one
+  process, then using the compressed version will require more RAM and/or
+  swap space.  So, shell programs (bash, csh, etc.)  and ``make&#39;&#39;
+  might not be good candidates for compression.
+  UPX recognizes three executable formats for Linux: Linux/elf386,
+  Linux/sh386, and Linux/386.  Linux/386 is the most generic format;
+  it accommodates any file that can be executed.  At runtime, the UPX
+  decompression stub re-creates in /tmp a copy of the original file,
+  and then the copy is (re-)executed with the same arguments.
+  ELF binary executables prefer the Linux/elf386 format by default,
+  because UPX decompresses them directly into RAM, uses only one
+  exec, does not use space in /tmp, and does not use /proc.
+  Shell scripts where the underlying shell accepts a ``-c&#39;&#39; argument
+  can use the Linux/sh386 format.  UPX decompresses the shell script
+  into low memory, then maps the shell and passes the entire text of the
+  script as an argument with a leading ``-c&#39;&#39;.
+</pre>
+<p class="Pp">General benefits:</p>
+<p class="Pp"></p>
+<pre>  - UPX can compress all executables, be it AOUT, ELF, libc4, libc5,
+    libc6, Shell/Perl/Python/... scripts, standalone Java .class
+    binaries, or whatever...
+    All scripts and programs will work just as before.
+  - Compressed programs are completely self-contained. No need for
+    any external program.
+  - UPX keeps your original program untouched. This means that
+    after decompression you will have a byte-identical version,
+    and you can use UPX as a file compressor just like gzip.
+    [ Note that UPX maintains a checksum of the file internally,
+      so it is indeed a reliable alternative. ]
+  - As the stub only uses syscalls and isn&#39;t linked against libc it
+    should run under any Linux configuration that can run ELF
+    binaries.
+  - For the same reason compressed executables should run under
+    FreeBSD and other systems which can run Linux binaries.
+    [ Please send feedback on this topic ]
+</pre>
+<p class="Pp">General drawbacks:</p>
+<p class="Pp"></p>
+<pre>  - It is not advisable to compress programs which usually have many
+    instances running (like `sh&#39; or `make&#39;) because the common segments of
+    compressed programs won&#39;t be shared any longer between different
+    processes.
+  - `ldd&#39; and `size&#39; won&#39;t show anything useful because all they
+    see is the statically linked stub.  Since version 0.82 the section
+    headers are stripped from the UPX stub and `size&#39; doesn&#39;t even
+    recognize the file format.  The file patches/patch-elfcode.h has a
+    patch to fix this bug in `size&#39; and other programs which use GNU BFD.
+</pre>
+<p class="Pp">General notes:</p>
+<p class="Pp"></p>
+<pre>  - As UPX leaves your original program untouched it is advantageous
+    to strip it before compression.
+  - If you compress a script you will lose platform independence -
+    this could be a problem if you are using NFS mounted disks.
+  - Compression of suid, guid and sticky-bit programs is rejected
+    because of possible security implications.
+  - For the same reason there is no sense in making any compressed
+    program suid.
+  - Obviously UPX won&#39;t work with executables that want to read data
+    from themselves. E.g., this might be a problem for Perl scripts
+    which access their __DATA__ lines.
+  - In case of internal errors the stub will abort with exitcode 127.
+    Typical reasons for this to happen are that the program has somehow
+    been modified after compression.
+    Running `strace -o strace.log compressed_file&#39; will tell you more.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_LINUX/ELF386">NOTES FOR LINUX/ELF386<a class="anchor" href="#NOTES_FOR_LINUX/ELF386">¶</a></h2>
+<p class="Pp">Please read the general Linux description first.</p>
+<p class="Pp">The linux/elf386 format decompresses directly into RAM, uses only
+    one exec, does not use space in /tmp, and does not use /proc.</p>
+<p class="Pp">Linux/elf386 is automatically selected for Linux ELF
+  executables.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression.</p>
+<p class="Pp">How it works:</p>
+<p class="Pp"></p>
+<pre>  For ELF executables, UPX decompresses directly to memory, simulating
+  the mapping that the operating system kernel uses during exec(),
+  including the PT_INTERP program interpreter (if any).
+  The brk() is set by a special PT_LOAD segment in the compressed
+  executable itself.  UPX then wipes the stack clean except for
+  arguments, environment variables, and Elf_auxv entries (this is
+  required by bugs in the startup code of /lib/ld-linux.so as of
+  May 2000), and transfers control to the program interpreter or
+  the e_entry address of the original executable.
+  The UPX stub is about 1700 bytes long, partly written in assembler
+  and only uses kernel syscalls. It is not linked against any libc.
+</pre>
+<p class="Pp">Specific drawbacks:</p>
+<p class="Pp"></p>
+<pre>  - For linux/elf386 and linux/sh386 formats, you will be relying on
+    RAM and swap space to hold all of the decompressed program during
+    the lifetime of the process.  If you already use most of your swap
+    space, then you may run out.  A system that is &#34;out of memory&#34;
+    can become fragile.  Many programs do not react gracefully when
+    malloc() returns 0.  With newer Linux kernels, the kernel
+    may decide to kill some processes to regain memory, and you
+    may not like the kernel&#39;s choice of which to kill.  Running
+    /usr/bin/top is one way to check on the usage of swap space.
+</pre>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  (none)
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_LINUX/SH386">NOTES FOR LINUX/SH386<a class="anchor" href="#NOTES_FOR_LINUX/SH386">¶</a></h2>
+<p class="Pp">Please read the general Linux description first.</p>
+<p class="Pp">Shell scripts where the underling shell accepts a ``-c&#39;&#39; argument
+    can use the Linux/sh386 format. <b>UPX</b> decompresses the shell script
+    into low memory, then maps the shell and passes the entire text of the
+    script as an argument with a leading ``-c&#39;&#39;. It does not use space in /tmp,
+    and does not use /proc.</p>
+<p class="Pp">Linux/sh386 is automatically selected for shell scripts that use a
+    known shell.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression.</p>
+<p class="Pp">How it works:</p>
+<p class="Pp"></p>
+<pre>  For shell script executables (files beginning with &#34;#!/&#34; or &#34;#! /&#34;)
+  where the shell is known to accept &#34;-c &lt;command&gt;&#34;, UPX decompresses
+  the file into low memory, then maps the shell (and its PT_INTERP),
+  and passes control to the shell with the entire decompressed file
+  as the argument after &#34;-c&#34;.  Known shells are sh, ash, bash, bsh, csh,
+  ksh, tcsh, pdksh.  Restriction: UPX cannot use this method
+  for shell scripts which use the one optional string argument after
+  the shell name in the script (example: &#34;#! /bin/sh option3\n&#34;.)
+  The UPX stub is about 1700 bytes long, partly written in assembler
+  and only uses kernel syscalls. It is not linked against any libc.
+</pre>
+<p class="Pp">Specific drawbacks:</p>
+<p class="Pp"></p>
+<pre>  - For linux/elf386 and linux/sh386 formats, you will be relying on
+    RAM and swap space to hold all of the decompressed program during
+    the lifetime of the process.  If you already use most of your swap
+    space, then you may run out.  A system that is &#34;out of memory&#34;
+    can become fragile.  Many programs do not react gracefully when
+    malloc() returns 0.  With newer Linux kernels, the kernel
+    may decide to kill some processes to regain memory, and you
+    may not like the kernel&#39;s choice of which to kill.  Running
+    /usr/bin/top is one way to check on the usage of swap space.
+</pre>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  (none)
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_LINUX/386">NOTES FOR LINUX/386<a class="anchor" href="#NOTES_FOR_LINUX/386">¶</a></h2>
+<p class="Pp">Please read the general Linux description first.</p>
+<p class="Pp">The generic linux/386 format decompresses to /tmp and needs /proc
+    file system support. It starts the decompressed program via the
+    <b>execve()</b> syscall.</p>
+<p class="Pp">Linux/386 is only selected if the specialized linux/elf386 and
+    linux/sh386 won&#39;t recognize a file.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression.</p>
+<p class="Pp">How it works:</p>
+<p class="Pp"></p>
+<pre>  For files which are not ELF and not a script for a known &#34;-c&#34; shell,
+  UPX uses kernel execve(), which first requires decompressing to a
+  temporary file in the file system.  Interestingly -
+  because of the good memory management of the Linux kernel - this
+  often does not introduce a noticeable delay, and in fact there
+  will be no disk access at all if you have enough free memory as
+  the entire process takes places within the file system buffers.
+  A compressed executable consists of the UPX stub and an overlay
+  which contains the original program in a compressed form.
+  The UPX stub is a statically linked ELF executable and does
+  the following at program startup:
+    1) decompress the overlay to a temporary location in /tmp
+    2) open the temporary file for reading
+    3) try to delete the temporary file and start (execve)
+       the uncompressed program in /tmp using /proc/&lt;pid&gt;/fd/X as
+       attained by step 2)
+    4) if that fails, fork off a subprocess to clean up and
+       start the program in /tmp in the meantime
+  The UPX stub is about 1700 bytes long, partly written in assembler
+  and only uses kernel syscalls. It is not linked against any libc.
+</pre>
+<p class="Pp">Specific drawbacks:</p>
+<p class="Pp"></p>
+<pre>  - You need additional free disk space for the uncompressed program
+    in your /tmp directory. This program is deleted immediately after
+    decompression, but you still need it for the full execution time
+    of the program.
+  - You must have /proc file system support as the stub wants to open
+    /proc/&lt;pid&gt;/exe and needs /proc/&lt;pid&gt;/fd/X. This also means that you
+    cannot compress programs that are used during the boot sequence
+    before /proc is mounted.
+  - Utilities like `top&#39; will display numerical values in the process
+    name field. This is because Linux computes the process name from
+    the first argument of the last execve syscall (which is typically
+    something like /proc/&lt;pid&gt;/fd/3).
+  - Because of temporary decompression to disk the decompression speed
+    is not as fast as with the other executable formats. Still, I can see
+    no noticeable delay when starting programs like my ~3 MiB emacs (which
+    is less than 1 MiB when compressed :-).
+</pre>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --force-execve      Force the use of the generic linux/386 &#34;execve&#34;
+                      format, i.e. do not try the linux/elf386 and
+                      linux/sh386 formats.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_PS1/EXE">NOTES FOR PS1/EXE<a class="anchor" href="#NOTES_FOR_PS1/EXE">¶</a></h2>
+<p class="Pp">This is the executable format used by the Sony PlayStation
+    (PSone), a MIPS R3000 based gaming console which is popular since the late
+    &#39;90s. Support of this format is very similar to the Atari one, because of
+    nostalgic feelings of one of the authors.</p>
+<p class="Pp">Packed programs will be byte-identical to the original after
+    uncompression, until further notice.</p>
+<p class="Pp">Maximum uncompressed size: ~1.89 / ~7.60 MiB.</p>
+<p class="Pp">Notes:</p>
+<p class="Pp"></p>
+<pre>  - UPX creates as default a suitable executable for CD-Mastering
+    and console transfer. For a CD-Master main executable you could also try
+    the special option &#34;--boot-only&#34; as described below.
+    It has been reported that upx packed executables are fully compatible with
+    the Sony PlayStation 2 (PS2, PStwo) and Sony PlayStation Portable (PSP) in
+    Sony PlayStation (PSone) emulation mode.
+  - Normally the packed files use the same memory areas like the uncompressed
+    versions, so they will not override other memory areas while unpacking.
+    If this isn&#39;t possible UPX will abort showing a &#39;packed data overlap&#39;
+    error. With the &#34;--force&#34; option UPX will relocate the loading address
+    for the packed file, but this isn&#39;t a real problem if it is a single or
+    the main executable.
+</pre>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --8-bit             Uses 8 bit size compression [default: 32 bit]
+  --8mib-ram          PSone has 8 MiB ram available [default: 2 MiB]
+  --boot-only         This format is for main exes and CD-Mastering only !
+                      It may slightly improve the compression ratio,
+                      decompression routines are faster than default ones.
+                      But it cannot be used for console transfer !
+  --no-align          This option disables CD mode 2 data sector format
+                      alignment. May slightly improves the compression ratio,
+                      but the compressed executable will not boot from a CD.
+                      Use it for console transfer only !
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_RTM32/PE_and_ARM/PE">NOTES FOR RTM32/PE and ARM/PE<a class="anchor" href="#NOTES_FOR_RTM32/PE_and_ARM/PE">¶</a></h2>
+<p class="Pp">Same as win32/pe.</p>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_TMT/ADAM">NOTES FOR TMT/ADAM<a class="anchor" href="#NOTES_FOR_TMT/ADAM">¶</a></h2>
+<p class="Pp">This format is used by the TMT Pascal compiler - see
+    <a href="http://www.tmt.com/">http://www.tmt.com/</a> .</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --all-filters       Compress the program several times, using all
+                      available preprocessing filters. This may improve
+                      the compression ratio in some cases, but usually
+                      the default filter gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_VMLINUZ/386">NOTES FOR VMLINUZ/386<a class="anchor" href="#NOTES_FOR_VMLINUZ/386">¶</a></h2>
+<p class="Pp">The vmlinuz/386 and bvmlinuz/386 formats take a gzip-compressed
+    bootable Linux kernel image (&#34;vmlinuz&#34;, &#34;zImage&#34;,
+    &#34;bzImage&#34;), gzip-decompress it and re-compress it with the
+    <b>UPX</b> compression method.</p>
+<p class="Pp">vmlinuz/386 is completely unrelated to the other Linux executable
+    formats, and it does not share any of their drawbacks.</p>
+<p class="Pp">Notes:</p>
+<p class="Pp"></p>
+<pre>  - Be sure that &#34;vmlinuz/386&#34; or &#34;bvmlinuz/386&#34; is displayed
+  during compression - otherwise a wrong executable format
+  may have been used, and the kernel won&#39;t boot.
+</pre>
+<p class="Pp">Benefits:</p>
+<p class="Pp"></p>
+<pre>  - Better compression (but note that the kernel was already compressed,
+  so the improvement is not as large as with other formats).
+  Still, the bytes saved may be essential for special needs like
+  boot disks.
+     For example, this is what I get for my 2.2.16 kernel:
+        1589708  vmlinux
+         641073  bzImage        [original]
+         560755  bzImage.upx    [compressed by &#34;upx -9&#34;]
+  - Much faster decompression at kernel boot time (but kernel
+    decompression speed is not really an issue these days).
+</pre>
+<p class="Pp">Drawbacks:</p>
+<p class="Pp"></p>
+<pre>  (none)
+</pre>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --all-filters       Compress the program several times, using all
+                      available preprocessing filters. This may improve
+                      the compression ratio in some cases, but usually
+                      the default filter gives the best results anyway.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_WATCOM/LE">NOTES FOR WATCOM/LE<a class="anchor" href="#NOTES_FOR_WATCOM/LE">¶</a></h2>
+<p class="Pp"><b>UPX</b> has been successfully tested with the following
+    extenders:
+  <br/>
+   DOS4G, DOS4GW, PMODE/W, DOS32a, CauseWay.
+  <br/>
+   The WDOS/X extender is partly supported (for details
+  <br/>
+   see the file bugs BUGS).</p>
+<p class="Pp">DLLs and the LX format are not supported.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre>  --le                Produce an unbound LE output instead of
+                      keeping the current stub.
+</pre>
+</section>
+<section class="Ss">
+<h2 class="Ss" id="NOTES_FOR_WIN32/PE">NOTES FOR WIN32/PE<a class="anchor" href="#NOTES_FOR_WIN32/PE">¶</a></h2>
+<p class="Pp">The PE support in <b>UPX</b> is quite stable now, but probably
+    there are still some incompatibilities with some files.</p>
+<p class="Pp">Because of the way <b>UPX</b> (and other packers for this format)
+    works, you can see increased memory usage of your compressed files because
+    the whole program is loaded into memory at startup. If you start several
+    instances of huge compressed programs you&#39;re wasting memory because the
+    common segments of the program won&#39;t get shared across the instances. On the
+    other hand if you&#39;re compressing only smaller programs, or running only one
+    instance of larger programs, then this penalty is smaller, but it&#39;s still
+    there.</p>
+<p class="Pp">If you&#39;re running executables from network, then compressed
+    programs will load faster, and require less bandwidth during execution.</p>
+<p class="Pp">DLLs are supported. But UPX compressed DLLs can not share common
+    data and code when they got used by multiple applications. So compressing
+    msvcrt.dll is a waste of memory, but compressing the dll plugins of a
+    particular application may be a better idea.</p>
+<p class="Pp">Screensavers are supported, with the restriction that the filename
+    must end with &#34;.scr&#34; (as screensavers are handled slightly
+    different than normal exe files).</p>
+<p class="Pp">UPX compressed PE files have some minor memory overhead (usually
+    in the 10 - 30 KiB range) which can be seen by specifying the &#34;-i&#34;
+    command line switch during compression.</p>
+<p class="Pp">Extra options available for this executable format:</p>
+<p class="Pp"></p>
+<pre> --compress-exports=0 Don&#39;t compress the export section.
+                      Use this if you plan to run the compressed
+                      program under Wine.
+ --compress-exports=1 Compress the export section. [DEFAULT]
+                      Compression of the export section can improve the
+                      compression ratio quite a bit but may not work
+                      with all programs (like winword.exe).
+                      UPX never compresses the export section of a DLL
+                      regardless of this option.
+  --compress-icons=0  Don&#39;t compress any icons.
+  --compress-icons=1  Compress all but the first icon.
+  --compress-icons=2  Compress all icons which are not in the
+                      first icon directory. [DEFAULT]
+  --compress-icons=3  Compress all icons.
+  --compress-resources=0  Don&#39;t compress any resources at all.
+  --keep-resource=list Don&#39;t compress resources specified by the list.
+                      The members of the list are separated by commas.
+                      A list member has the following format: I&lt;type[/name]&gt;.
+                      I&lt;Type&gt; is the type of the resource. Standard types
+                      must be specified as decimal numbers, user types can be
+                      specified by decimal IDs or strings. I&lt;Name&gt; is the
+                      identifier of the resource. It can be a decimal number
+                      or a string. For example:
+                      --keep-resource=2/MYBITMAP,5,6/12345
+                      UPX won&#39;t compress the named bitmap resource &#34;MYBITMAP&#34;,
+                      it leaves every dialog (5) resource uncompressed, and
+                      it won&#39;t touch the string table resource with identifier
+                      12345.
+  --force             Force compression even when there is an
+                      unexpected value in a header field.
+                      Use with care.
+  --strip-relocs=0    Don&#39;t strip relocation records.
+  --strip-relocs=1    Strip relocation records. [DEFAULT]
+                      This option only works on executables with base
+                      address greater or equal to 0x400000. Usually the
+                      compressed files becomes smaller, but some files
+                      may become larger. Note that the resulting file will
+                      not work under Windows 3.x (Win32s).
+                      UPX never strips relocations from a DLL
+                      regardless of this option.
+  --all-methods       Compress the program several times, using all
+                      available compression methods. This may improve
+                      the compression ratio in some cases, but usually
+                      the default method gives the best results anyway.
+  --all-filters       Compress the program several times, using all
+                      available preprocessing filters. This may improve
+                      the compression ratio in some cases, but usually
+                      the default filter gives the best results anyway.
+</pre>
+</section>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="DIAGNOSTICS">DIAGNOSTICS<a class="anchor" href="#DIAGNOSTICS">¶</a></h1>
+<p class="Pp">Exit status is normally 0; if an error occurs, exit status is 1.
+    If a warning occurs, exit status is 2.</p>
+<p class="Pp"><b>UPX</b>&#39;s diagnostics are intended to be self-explanatory.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="BUGS">BUGS<a class="anchor" href="#BUGS">¶</a></h1>
+<p class="Pp">Please report all bugs immediately to the authors.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="AUTHORS">AUTHORS<a class="anchor" href="#AUTHORS">¶</a></h1>
+<pre> Markus F.X.J. Oberhumer &lt;markus@oberhumer.com&gt;
+ <a href="http://www.oberhumer.com">http://www.oberhumer.com</a>
+ Laszlo Molnar &lt;ezerotven+github@gmail.com&gt;
+ John F. Reiser &lt;jreiser@BitWagon.com&gt;
+</pre>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="COPYRIGHT">COPYRIGHT<a class="anchor" href="#COPYRIGHT">¶</a></h1>
+<p class="Pp">Copyright (C) 1996-2024 Markus Franz Xaver Johannes Oberhumer</p>
+<p class="Pp">Copyright (C) 1996-2024 Laszlo Molnar</p>
+<p class="Pp">Copyright (C) 2000-2024 John F. Reiser</p>
+<p class="Pp"><b>UPX</b> is distributed with full source code under the terms of
+    the GNU General Public License v2+; either under the pure GPLv2+ (see the
+    file COPYING), or (at your option) under the GPLv+2 with special exceptions
+    and restrictions granting the free usage for all binaries including
+    commercial programs (see the file /usr/share/doc/upx-ucl/copyright).</p>
+<p class="Pp">This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>
+<p class="Pp">You should have received a copy of the UPX License Agreements
+    along with this program; see the file /usr/share/doc/upx-ucl/copyright. If
+    not, visit the UPX home page.</p>
+</section>
+</div>
+<table class="foot">
+  <tbody><tr>
+    <td class="foot-date">2024-05-09</td>
+    <td class="foot-os">upx 4.2.4</td>
+  </tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<div id="footer">
+
+<p><table>
+<tr>
+<td>
+Source file:
+</td>
+<td>
+upx.1.en.gz (from <a href="http://snapshot.debian.org/package/upx-ucl/4.2.4-2/">upx-ucl 4.2.4-2</a>)
+</td>
+</tr>
+
+<tr>
+<td>
+Source last updated:
+</td>
+<td>
+2017-09-02T03:51:12Z
+</td>
+</tr>
+
+<tr>
+<td>
+Converted to HTML:
+</td>
+<td>
+2026-10-13T21:26:14Z
+</td>
+</tr>
+</table></p>
+
+<hr>
+<div id="fineprint">
+<p>debiman HEAD, see <a
+href="https://github.com/Debian/debiman/">github.com/Debian/debiman</a>.
+Found a problem? See the <a href="/faq.html">FAQ</a>.</p>
+</div>
+</div>
+
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"Thing","@id":"/contents-unstable.html","name":"unstable"}},{"@type":"ListItem","position":2,"item":{"@type":"Thing","@id":"/unstable/upx-ucl/index.html","name":"upx-ucl"}},{"@type":"ListItem","position":3,"item":{"@type":"Thing","@id":"","name":"upx(1)"}}]}
+</script>

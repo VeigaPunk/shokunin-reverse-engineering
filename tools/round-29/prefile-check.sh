@@ -4,9 +4,11 @@
 # write, and GIT_OPTIONAL_LOCKS=0 keeps `git status` from refreshing the index (LOG.md round 27).
 #
 #   1. tree     `git status --porcelain` is empty (no modified, staged or untracked path);
-#   2. ledger   the round-24 freeze gate (.ufo/waves/round-24/tools/freeze-gate.py in the target
-#               tree) with --disclosures corpus/claim-freezes.tsv exits 0 at HEAD;
-#   3. ledger2  when the target tree holds corpus/claim-freezes-v2.tsv, the round-29 gate (the
+#   2. ledger   retired at round 68 (erratum r68-1): the legacy corpus/claim-freezes.tsv is frozen
+#               evidence and must stay byte-identical to its retirement pin (sha256 in the step);
+#               the live ledger check is step 3 (ledger2) below;
+#   3. ledger2  the live ledger: when the target tree holds corpus/claim-freezes-v2.tsv, the round-29
+#               gate (the
 #               freeze-gate.py next to this script) with --disclosures on it exits 0 at HEAD.
 #
 # It cannot see whether a dispatched seat is still running: that is checked in the session (the
@@ -26,14 +28,18 @@ else
     echo "prefile: tree clean"
 fi
 rev=$(git -C "$root" rev-parse HEAD) || exit 2
-old="$root/.ufo/waves/round-24/tools/freeze-gate.py"
-if [ -f "$old" ]; then
-    python3 -I -B "$old" --root "$root" --rev "$rev" --disclosures corpus/claim-freezes.tsv > /dev/null
-    rc=$?
-    echo "prefile: round-24 gate --disclosures corpus/claim-freezes.tsv at $rev exit=$rc"
-    [ "$rc" -eq 0 ] || fail=1
+# ledger1 (round-68 erratum r68-1): corpus/claim-freezes.tsv is RETIRED as a gate input. It stops at
+# round-52 while rounds 53-68 live in the v2 ledger, and it carries a stray round-35 row whose
+# container is claims-frozen.json, which the round-24 gate's expected set (claims.json files only)
+# cannot match; the gate reported 20 exact of 36 on every round from 53 on, so this step failed by
+# construction and the prefile gate never passed. The file is kept as frozen evidence: this step
+# asserts its bytes are identical to its retirement pin, and the live check is ledger2 below.
+legacy_sha=2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81
+got=$(git -C "$root" show "$rev:corpus/claim-freezes.tsv" 2>/dev/null | sha256sum | cut -d' ' -f1)
+if [ "$got" = "$legacy_sha" ]; then
+    echo "prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin"
 else
-    echo "prefile: round-24 gate absent in the target tree"
+    echo "prefile: ledger1 legacy ledger changed (want $legacy_sha, got ${got:-absent})"
     fail=1
 fi
 if git -C "$root" cat-file -e "$rev:corpus/claim-freezes-v2.tsv" 2>/dev/null; then
