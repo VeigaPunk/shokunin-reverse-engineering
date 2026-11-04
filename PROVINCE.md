@@ -553,3 +553,13 @@ Round-72 frontier note, 2026-11-04: **checker-mode child environments** and **th
 
 Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier → Core for the measured probe (`plans/round-73-claims.md`, R73-C1); the round-72 entry's "a wrapper that forges both A11 witnesses" class boundary is now a measured class for the sampled descendant, and remains Frontier for a wrapper that never runs a sampled process, for a process that relocates its environment region with `PR_SET_MM_ENV_START` (privileged), and for every non-Linux substrate. Also still Frontier: signed receipts, REA-internal child processes, other packers/carriers, anti-UPX stubs, packed PE/Mach-O, semantic inventory equality.
 
+## Round-74 additions to Core
+
+- **Core — kernel-witness selftest case closure:** `tools/round-74/seam-probe.py`
+  binds the A12 verdict, kernel-sample parsing and arm wiring to declared cases;
+  `tools/round-74/probe-mutation.py` scores ten defect classes, including the six
+  round-73 survivors. Retained evidence:
+  `.ufo/waves/round-74/pre/c1-post-at-declaration.json` (r74probe: 0 survivors,
+  pristine 20 cases, target pinned).
+- **Still Frontier:** a wrapper that never runs a sampled process,
+  `PR_SET_MM_ENV_START` relocation, non-Linux substrates, and signed receipts.

@@ -1,0 +1,113 @@
+{
+ "acceptance": {
+  "defects": [
+   {
+    "detail": "mutation m4 fails its declared case a12-kernel-canary-field AND a12-kernel-multiple-samples (which belongs to m3's conjunct)",
+    "exact_failures": [
+     "a12-kernel-multiple-samples",
+     "a12-kernel-canary-field"
+    ],
+    "id": "D1-cross-binding",
+    "variant": "m4-sample-dict-canary-field-deleted"
+   }
+  ],
+  "no_cross_binding": false,
+  "per_mutation_rc1_and_declared_case_in_failures": true,
+  "pristine_rc0_cases20": true
+ },
+ "assignment": "independent re-derivation that each of the six round-74 A12 selftest cases binds its conjunct",
+ "date": "2026-11-04",
+ "method": "six hand mutations on byte-identical scratch copies; probe-mutation.py NOT used; each variant run as `python3 -I -B <variant>.py --selftest` with cwd=lane root and TMPDIR=<scratch>/tmp (scratch deleted after the run)",
+ "pristine": {
+  "cases": 20,
+  "failures": [],
+  "ok": true,
+  "rc": 0
+ },
+ "probe_sha256": "81d6a43223c5504eb4ad7312563d7a9b1bd3f6288e39c196ee1d542a4c617039",
+ "rows": [
+  {
+   "cases": 20,
+   "cross_binding": [],
+   "declared_case": "a12-genuine-canary-only",
+   "failures": [
+    "a12-genuine-canary-only"
+   ],
+   "mutation": "deleted `and not s.get(\"canary_present\")` from a12_verdict.genuine_ok",
+   "rc": 1,
+   "stderr_empty": true,
+   "variant": "m1-delete-genuine-canary-conjunct",
+   "verdict": "binds"
+  },
+  {
+   "cases": 20,
+   "cross_binding": [],
+   "declared_case": "a12-proc-environ-unreadable",
+   "failures": [
+    "a12-proc-environ-unreadable"
+   ],
+   "mutation": "`_proc_env` except OSError branch returns {} instead of None",
+   "rc": 1,
+   "stderr_empty": true,
+   "variant": "m2-proc-env-oserror-returns-empty-dict",
+   "verdict": "binds"
+  },
+  {
+   "cases": 20,
+   "cross_binding": [],
+   "declared_case": "a12-kernel-multiple-samples",
+   "failures": [
+    "a12-kernel-multiple-samples"
+   ],
+   "mutation": "`kernel_witness` returns list(seen.values())[:1]",
+   "rc": 1,
+   "stderr_empty": true,
+   "variant": "m3-kernel-witness-first-sample-only",
+   "verdict": "binds"
+  },
+  {
+   "cases": 20,
+   "cross_binding": [
+    "a12-kernel-multiple-samples"
+   ],
+   "declared_case": "a12-kernel-canary-field",
+   "failures": [
+    "a12-kernel-multiple-samples",
+    "a12-kernel-canary-field"
+   ],
+   "mutation": "deleted the `\"canary_present\": ...` entry from the kernel_witness sample dict",
+   "rc": 1,
+   "stderr_empty": true,
+   "variant": "m4-sample-dict-canary-field-deleted",
+   "verdict": "binds-with-cross-binding"
+  },
+  {
+   "cases": 20,
+   "cross_binding": [],
+   "declared_case": "a12-arm-wiring",
+   "failures": [
+    "a12-arm-wiring"
+   ],
+   "mutation": "swapped the two witness arguments in assemble_arm's verdict call",
+   "rc": 1,
+   "stderr_empty": true,
+   "variant": "m5-verdict-witness-args-swapped",
+   "verdict": "binds"
+  },
+  {
+   "cases": 20,
+   "cross_binding": [],
+   "declared_case": "a12-arm-forged-executed",
+   "failures": [
+    "a12-arm-forged-executed"
+   ],
+   "mutation": "`forged_subrun` returns {\"rc\": [], \"shims\": {}, \"kernel\": {}} before its first statement",
+   "rc": 1,
+   "stderr_empty": true,
+   "variant": "m6-forged-subrun-early-empty-return",
+   "verdict": "binds"
+  }
+ ],
+ "seat": "ExecProbeCases",
+ "target": "tools/round-74/seam-probe.py"
+}

@@ -1,0 +1,76 @@
+fetch-receipt — ScoutSource (r73/w1), 2026-11-04
+================================================
+
+Scope: the assignment's two named URLs (proc_pid_cmdline(5) and the section-5 index),
+plus three disambiguation pages fetched to test the proc(5)-split premise.  One body GET
+per URL; one HEAD each for the two assignment URLs.  No second body fetch was made, so
+byte stability across fetches is NOT measured here and is not claimed.
+
+Host clock: local 2026-11-04 03:5x -03 (-0300), i.e. UTC 06:5x.  GET times below are the
+snapshot mtimes converted from local (-03) to UTC; server Date is from the HEAD responses.
+
+1) GET https://man7.org/linux/man-pages/man5/proc_pid_cmdline.5.html
+   2026-11-04T06:49:23Z  HTTP/1.1 200 OK  Content-Length 7918  (size_download 7918)
+   sha256 1fc6816805fa28c1fe015700e7c40efc21d9bbc032e02c35a447004075a91f15
+   HEAD 2026-11-04T06:50:29Z  Date: Wed, 04 Nov 2026 06:50:30 GMT
+   Server: Apache/2.4.58 (Ubuntu)
+   Last-Modified: Mon, 02 Nov 2026 20:20:30 GMT
+   ETag: "1eee-65f50e092bf80"
+   Content-Type: text/html; Vary: Accept-Encoding; Accept-Ranges: bytes
+   snapshot: proc_pid_cmdline.5.html (7918 B)
+
+2) GET https://man7.org/linux/man-pages/dir_section_5.html
+   2026-11-04T06:49:25Z  HTTP/1.1 200 OK  Content-Length 39543  (size_download 39543)
+   sha256 1caa9e6d9b3700e20292bcee6a41b9f393af21d617af012ee06de96896fc1e74
+   HEAD 2026-11-04T06:50:29Z  Date: Wed, 04 Nov 2026 06:50:31 GMT
+   Last-Modified: Mon, 02 Nov 2026 20:20:30 GMT
+   ETag: "9a77-65f50e092bf80"
+   Content-Type: text/html; Vary: Accept-Encoding; Accept-Ranges: bytes
+   snapshot: dir_section_5.html (39543 B)
+
+3) Split-premise pages (GET only; no HEAD)
+   https://man7.org/linux/man-pages/man5/proc.5.html
+     200 OK  31125 B  sha256 b197c5fa64577269f992d50f60acfd5e0cc3df756644ddd8bd19a02591272a97
+   https://man7.org/linux/man-pages/man5/proc_pid.5.html
+     200 OK  12878 B  sha256 1fd8ab068f62dcd0567216b6b56dd60d78214db0e19446ec9c69ef7ee4ee0de1
+   https://man7.org/linux/man-pages/man5/proc_cmdline.5.html
+     200 OK  6794 B   sha256 3f7f31a728fb358ffad603c697674433344151ba76b60c1c3aa7a573533aebdd
+
+Located quote (the ONE quote for this grounding; 17 whitespace-separated words)
+------------------------------------------------------------------------------
+"This read-only file holds the complete command line for the process, unless the process
+is a zombie."
+
+Location in snapshot proc_pid_cmdline.5.html:
+  - DESCRIPTION, `/proc/pid/cmdline` paragraph.
+  - raw byte offset 2504 (0-based); ends at 2618 exclusive; 114 raw bytes.
+  - raw lines 73-75 (1-based); page footer line: "Linux man-pages 6.19  2026-02-08".
+  - no HTML tag occurs inside the span; the raw span wraps once: after "the" the bytes are
+    \n + 14 spaces, then "process, unless ... zombie."  The rendered sentence is therefore
+    contiguous only after whitespace normalization; a byte-substring grep of the
+    space-normalized sentence in the raw snapshot finds nothing.
+
+Supporting location (paraphrase, not a second quote): the same DESCRIPTION paragraph
+continues at raw byte 2986 with the argv layout (strings separated by null bytes, a further
+null byte after the last string) and closes near raw lines 95-96 by describing the file as
+the command line the process wants the reader to see.
+
+Split check (does man-pages 6.19 split proc(5)?)
+-----------------------------------------------
+Yes.  The served proc(5) is a 31125-byte stub (sha256 identical to the round-72 retained
+copy) with ZERO occurrences of "complete command line"; its only cmdline mentions are a
+cross-reference ("files such as /proc/pid/cmdline and /proc/pid/status") and SEE ALSO links
+to proc_cmdline(5) and proc_pid_cmdline(5).  The paragraph is on proc_pid_cmdline(5):
+  https://man7.org/linux/man-pages/man5/proc_pid_cmdline.5.html
+A DIFFERENT page, proc_cmdline(5) (https://man7.org/linux/man-pages/man5/proc_cmdline.5.html),
+documents `/proc/cmdline - kernel boot arguments` and must not be cited for this surface.
+The index lists proc(5), proc_cmdline(5) and proc_pid_cmdline(5) as separate rows; the
+proc_pid(5) page links proc_pid_cmdline(5), and the cmdline page's own footer says
+"Pages that refer to this page: proc_pid(5)".
+
+Snapshots retained in this directory (sha256 above):
+  proc_pid_cmdline.5.html  7918 B
+  dir_section_5.html      39543 B
+  proc.5.html             31125 B
+  proc_pid.5.html         12878 B
+  proc_cmdline.5.html      6794 B

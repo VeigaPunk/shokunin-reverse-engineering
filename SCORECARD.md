@@ -646,6 +646,11 @@ Retired: none.
 | checker-mode child environments under the four-key allowlist (`--check-receipt --child-env-log`) | every checker-mode `git`/`readelf` child runs under `build_child_env()`, is recorded into the child-env log, and the checker JSON carries `checker_child_env`; A11 verifies it from independent perl shims (exact `/proc/self/environ` bytes) and the checker's own log, gating containment on the checker's run root | `.ufo/waves/round-72/l1/scores/c1-at-landing.json` (11/11; A11 true), base `.ufo/waves/round-72/l1/pre/c1-at-base.json` (9/11) | round 72 |
 | a checker-emitted binding verdict with an exact-case mutation kill | A10 reads `clauses.run_nonce`/`clauses.run_binding` and requires `met`/`clauses.met` agreement; the frozen `binding_ok = True` mutant that survived round 71 is killed by `a10-binding-from-checker` in the r72 patch set | `.ufo/waves/round-72/l1/scores/c2-at-landing.json` (killed, named case), base `.ufo/waves/round-72/l1/pre/c2-at-base.json` (survivor 1) | round 72 |
 | a receipt-bound raw-witness capsule audit | `capsule-audit.py`/`capsule_audit.py` re-derive seven clauses from the capsule bytes (digest when claimed, count, exact keys, canary, HOME/TMPDIR containment, child census), the checker audits a resolvable capsule and fails closed on a filed-but-absent one, and receipt-derived capsule paths never read outside the lane | `.ufo/waves/round-72/l1/scores/c3-at-landing.json` (46-record genuine accepted, 7/7 shapes rejected), `c3-lying-check.json` (clause false), base `.ufo/waves/round-72/l1/pre/c3-at-base.json` (the round-71 checker accepts the lying receipt) | round 72 |
+| kernel-side environment witness bound by ancestry | reads the kernel environment of a sampled descendant and detects clean child dumps contradicted by dirty kernel samples, with a forged control in A12 | `.ufo/waves/round-73/l1/scores/c1-at-landing.json` (12/12 arms, forged_detected true) | round 73 |
+| record-vs-receipt audit | re-derives seven self-assessment atoms against cited receipts over the previous round's outside routed-defect population | `.ufo/waves/round-73/l1/scores/c2-at-landing.json` (0 mismatches, seven atoms) | round 73 |
+| reader-seam selftest closure | binds each of the three round-72 reader-seam mutation survivors to a declared killing case on the pinned target | `.ufo/waves/round-73/l1/scores/c3-at-landing.json` (r73: 0 survivors, pristine 38 cases) | round 73 |
+| kernel-witness probe-mutation closure | scores ten defect classes against declared cases with `tools/round-74/probe-mutation.py`, closing the six round-73 A12 selftest survivors | `.ufo/waves/round-74/pre/c1-post-at-declaration.json` (r74probe: 0 survivors, pristine 20 cases, target pinned) | round 74 |
+| record-audit v2 | re-derives sixteen atoms over the round-73 routed set and planned items with `tools/round-74/record-audit.py`, retaining D1-D7 and adding D7b plus D8-D15 | `tools/round-74/record-audit.py`; `.ufo/waves/round-74/pre/c2-at-base.json` (11 mismatches at base; not a landing result) | round 74 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -5764,3 +5769,66 @@ binds the *call site* as well as the seam body; (d) the round-73 freeze's pin fi
 pin producers from the blobs at the freeze, verified before the freeze commit; (e) standing
 duties every round that lands receipts; the r63 record-section sweep and the r58/r60/r64 items
 stay named debt.
+
+**Before-arm selection (round 74 correction)**
+R73-C1's before-arm is `.ufo/waves/round-73/pre/c1-at-base-r72probe.json`
+(`pre/c1-at-base-r72probe.json` in the filed row): the round-72 probe reports
+11 arms, 11 passed, and no A12. The other before run,
+`.ufo/waves/round-73/pre/c1-at-base.json` (`pre/c1-at-base.json`, 8 of 12),
+is the route differential using the round-73 probe against the round-72 route,
+not R73-C1's before-arm. This selection supplements, rather than rewrites,
+the filed claim row.
+
+## 2026-11-04 — round 74: the selftest's six survivors close, and the record binds its routed set
+
+Base `04fdc2c4dbedbe5ee50a069af14310068393233e`; declaration `b3a7e280` (five round-74
+instruments, `plans/round-74-claims.md`, the census-start receipt); pre-freeze instrument
+revision `b3a7e280`; freeze `021914c0e638454e507087accfe41af1ab69f185` — the round-29 gate
+audits it **CLEAN** with no findings, which is planned item (d) demonstrated (the round-73
+freeze's permanent `INSTRUMENT_PIN_MISMATCH` stays as its own record). Two claims on two
+distinct axes, both capability acquisitions.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different
+proxies; R74-C2 works a tied-lowest axis). No nudge waiver is claimed.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R74-C1 | operability | capability acquisition (probe-mutation closure) | the frozen battery reports patch set `r74probe` `survivor_count 0`, each mutant killed with its declared case in `failed`, pristine 20 cases green, target pinned — while `r73probe` on the landed round-73 probe names exactly the six MutProbe survivors | base `pre/c1-base-arm.json`: 6 survivors (the six MutProbe names), 4 killed; landing `l1/scores/c1-at-landing.json`: 0 survivors, 10 killed by declared case | |
+| R74-C2 | calibration | capability acquisition (record audit v2) | the frozen audit at the measured revision exits 0 with `mismatch_count 0` over 16 atoms — while at base it exits 1 with 11 mismatches naming D3, D6, D7b, D8–D15 | base `pre/c2-at-base.json`: 11 mismatches; landing `l1/scores/c2-at-landing.json`: 0 | |
+
+**Capabilities entered.** (1) a probe-mutation closure that scores each selftest conjunct
+against a declared case and refuses a wrong-case kill, first working round 74; (2) a record
+audit that binds the previous round's routed-defect list, its own before-arm selection, the
+capability table, the registry's rejected rows, the runner binding and the freeze pins, first
+working round 74.
+
+**Name by surface.** R74-C1's surface is the selftest's acquisition and wiring seams
+(`kernel_witness`'s injected readers, `forged_subrun`, `assemble_arm`), not the runtime arm.
+R74-C2's surface is the record's own evidence pointers and the freeze container it pins, not
+the instruments' runtime behaviour.
+
+**census erratum (round-73 report).** The round-73 report states the end census prints 24 W04
+lines; the committed receipt prints 23 (`grep -c W04 .ufo/waves/round-73/l1/census-end.txt` →
+23, its 24th line being the `ok` row). The filed report is never rewritten; both values are
+recorded here (routed defect 5).
+
+**Wave.** One v1 wave `r74-w1`: 15 seats (5 executor, 3 scribe, 2 reviewer, 1 critic, 1
+mutation-tester, 1 sentinel, 1 scout, 1 connector); attack roles 4/15 = 27%; one connector; L1
+held the planner seat; no residual call. Findings that bound the claims: ExecProbeCases
+independently reproduced five one-case bindings and one cross-binding
+(`a12-kernel-multiple-samples` also fails under the `canary_present`-field mutant);
+CriticClaims found three further A12 survivors outside the frozen ten classes
+(`home_under` truthiness, `_name_samples` last-wins, `lie_clean`'s key conjunct) and four
+cosmetic-passes for D9–D12; ExecAuditRun found D14 binds the round-74 receipt rather than the
+routed defect-6 receipt and D15 does not restate the round-73 standing debt; SentinelScope
+routed path-containment (`freeze-pins.py`), pin-before-execution (`probe-mutation.py`), child
+cleanup and A11 source interpolation items.
+
+**planned (next steered round only):** (a) the A12 case-independence fix and cases for the three
+new conjunct mutants; (b) D9 exact path-list grammar, D10 required fields/counts, D11 reason+flip
+content, D12 reported/measured fields bound to the census receipt; (c) `c1_no_declared_cases`
+must require `pristine_ok`, the exact mutant identities and the renamed failure names; (d)
+SentinelScope SS74-1/4/5/6 fixes at the next freeze, with SS74-3's shim `values` serialization
+recorded as carried r73 debt; (e) ExecArm's A2 recipe (`--expect-upx` must be the route
+receipt's own recorded argv0 path); standing duties every round that lands receipts.
+

@@ -1,0 +1,11 @@
+--- declared/seam-probe.py
++++ lie-clean-keys-unchecked/seam-probe.py
+@@ -559,7 +559,7 @@
+                           and s.get("tmpdir_under") is True
+                           for s in genuine_kernel.values()))
+     lie_clean = bool(forged_shims) and all(
+-        sorted(s.get("keys") or []) == allow and not s.get("canary_present")
++        not s.get("canary_present")
+         for s in forged_shims.values())
+     forged_detected = bool(forged_kernel) and any(
+         sorted(s.get("keys") or []) != allow or s.get("canary_present")

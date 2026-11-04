@@ -1,0 +1,177 @@
+{
+  "declaration": "b3a7e28089582ce5fb002a1b88e5295caf696b9f",
+  "probe_sha256": "81d6a43223c5504eb4ad7312563d7a9b1bd3f6288e39c196ee1d542a4c617039",
+  "independent_runs": [
+    {
+      "name": "pristine",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/fast/scratch/hyaku/kaidoku-r74/CriticClaims/pristine.py",
+        "--selftest"
+      ],
+      "rc": 0,
+      "payload": {
+        "cases": 20,
+        "failures": [],
+        "selftest": "tools/round-74/seam-probe.py"
+      },
+      "stderr": "",
+      "verdict": "survived"
+    },
+    {
+      "name": "home-truthy-not-boolean",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/fast/scratch/hyaku/kaidoku-r74/CriticClaims/home-truthy-not-boolean.py",
+        "--selftest"
+      ],
+      "rc": 0,
+      "payload": {
+        "cases": 20,
+        "failures": [],
+        "selftest": "tools/round-74/seam-probe.py"
+      },
+      "stderr": "",
+      "verdict": "survived"
+    },
+    {
+      "name": "last-named-sample",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/fast/scratch/hyaku/kaidoku-r74/CriticClaims/last-named-sample.py",
+        "--selftest"
+      ],
+      "rc": 0,
+      "payload": {
+        "cases": 20,
+        "failures": [],
+        "selftest": "tools/round-74/seam-probe.py"
+      },
+      "stderr": "",
+      "verdict": "survived"
+    },
+    {
+      "name": "double-forged-producer",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/fast/scratch/hyaku/kaidoku-r74/CriticClaims/double-forged-producer.py",
+        "--selftest"
+      ],
+      "rc": 1,
+      "payload": {
+        "cases": 20,
+        "failures": [
+          "a12-arm-wiring"
+        ],
+        "selftest": "tools/round-74/seam-probe.py"
+      },
+      "stderr": "",
+      "verdict": "killed"
+    },
+    {
+      "name": "lie-clean-keys-unchecked",
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/fast/scratch/hyaku/kaidoku-r74/CriticClaims/lie-clean-keys-unchecked.py",
+        "--selftest"
+      ],
+      "rc": 0,
+      "payload": {
+        "cases": 20,
+        "failures": [],
+        "selftest": "tools/round-74/seam-probe.py"
+      },
+      "stderr": "",
+      "verdict": "survived"
+    }
+  ],
+  "cosmetic_atom_counterexamples": [
+    {
+      "name": "D10",
+      "fixture": "## Search log\nround 73 round 74 Identified\n",
+      "result": {
+        "id": "D10_search_log",
+        "ok": true,
+        "detail": "the search log carries a round-73 and a round-74 note with the identified/screened/included counts",
+        "evidence": {
+          "round_73_note": true,
+          "round_74_note": true
+        }
+      }
+    },
+    {
+      "name": "D12",
+      "fixture": "## 2026-11-04 \u2014 round 74:\ncensus erratum W04: 24 is correct; 23 is incorrect.\n",
+      "result": {
+        "id": "D12_census_erratum",
+        "ok": true,
+        "detail": "the round-74 record carries a census erratum naming the reported 24 W04 lines and the measured 23",
+        "evidence": {
+          "round_74_section": true,
+          "erratum": true
+        }
+      }
+    },
+    {
+      "name": "D9",
+      "fixture": "## Registry\n| S275 | url | a | b | c | d | e | f | g | h | NOT used by corpus/knowledge/2026-11-04-r73-kernel-witness-record.md |\n",
+      "result": {
+        "id": "D9_s275_used_by",
+        "ok": true,
+        "detail": "the S275 row's used-by cell lists the round-73 entry that cites it",
+        "evidence": {
+          "row_present": true,
+          "used_by": "NOT used by corpus/knowledge/2026-11-04-r73-kernel-witness-record.md",
+          "expects": "corpus/knowledge/2026-11-04-r73-kernel-witness-record.md"
+        }
+      }
+    },
+    {
+      "name": "D11",
+      "fixture": "## Registry\n| x | proc.5.html | a | b | c | d | e | rejected | | | |\n| x | proc_cmdline.5.html | a | b | c | d | e | rejected | | | |\n| x | proc_pid.5.html | a | b | c | d | e | rejected | | | |\n| x | index.html#_section_5 | a | b | c | d | e | rejected | | | |\n",
+      "result": {
+        "id": "D11_rejected_rows",
+        "ok": true,
+        "detail": "each round-73 opened-and-rejected page has a rejected registry row with a reason and a flip condition",
+        "evidence": {
+          "rejected_rows": 4,
+          "per_page": {
+            "proc.5.html": 1,
+            "proc_cmdline.5.html": 1,
+            "proc_pid.5.html": 1,
+            "index.html#_section_5": 1
+          }
+        }
+      }
+    }
+  ],
+  "control_adverse_input": {
+    "pristine_ok": false,
+    "wrong": [
+      "a-drop-genuine-canary",
+      "b-unreadable-empty",
+      "b-first-sample-only",
+      "b-drop-canary-field",
+      "c-swap-verdict-inputs",
+      "c-skip-forged-subrun"
+    ],
+    "killed": [
+      "x1",
+      "x2",
+      "x3",
+      "x4"
+    ],
+    "actual_frozen_met_expression": "sorted(wrong) == sorted(expect) and len(killed) == 4",
+    "met": true
+  }
+}
