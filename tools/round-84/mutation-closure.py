@@ -5,7 +5,7 @@ Reads a mutant table (`.ufo/waves/round-84/mutants.json`) and, for every entry, 
 declared single-behavior text change to the target tool's bytes at --rev in a private scratch
 copy, runs that tool's own `--selftest`, and scores the mutant killed only when the *declared*
 case appears in the selftest's failing-case list (QUALITY 138: a mutant is killed by a detector
-present in the target's own output; an absent declared case is inconclusive, never a pass).
+present in the target's own output; an absent declared case scores survived, never a pass).
 
 Per mutant status:
   killed        the declared case failed in the mutant run and passed in the pristine run

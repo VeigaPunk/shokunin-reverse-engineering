@@ -124,6 +124,7 @@ A row is written when its file exists, never before.
 | Instrument and record layer, round 83 | `2026-11-04-r83-positive-source-attribution` | bounded apparatus knowledge — positive source attribution versus lexical presence; no new artifact surface (map row added in round 84, repairing the round-83 omission) |
 | Nested container chain, round 84 | `2026-11-04-r84-nested-container-chain` | held — a reproducible three-level LE SquashFS v4 gzip chain through REA 6.5.0: 8/8 oracle members at `--max-depth 3` and `4`, depth-3 `coverage partial` with one `depth-limited` path and level-3 `analysis_depth null`, depth-4 `complete` with level-3 `analysis_depth 3`; publication is not analysis |
 | Mutant-kill binding, round 85 | `2026-11-04-r85-mutant-kill-binding` | bounded apparatus knowledge — a kill is an observed outcome change under a declared case, bound by name; no artifact class or frontier promotion (sourced by S304) |
+| Record agreement, round 86 | `2026-11-04-r86-record-agreement` | bounded apparatus knowledge — a record cell that names a value about a committed object is re-derived from the bytes at the revision it names; three declared record atoms and one registry row re-derived by running its gate; named false greens and one misspecified atom are in the round-86 lesson; no artifact class or frontier promotion (sourced by S255) |
 
 ## Knowledge
 | entry | topic | source | verified-at |
@@ -260,6 +261,7 @@ A row is written when its file exists, never before.
 
 | `2026-11-04-r84-nested-container-chain` | nested container-chain depth semantics: publication is not analysis — 8/8 oracle members at `--max-depth 3` and `4`, but depth 3 reports `coverage partial` with one `depth-limited` path at the deepest extract root and level-3 `analysis_depth null`, while depth 4 reports `complete` with level-3 `analysis_depth 3`; bounded to a lane-built three-level standard LE v4 gzip chain | S301, S302; `tools/round-84/nested-sqfs.py`; receipts `.ufo/waves/round-84/` | 2026-11-04 |
 | `2026-11-04-r85-mutant-kill-binding` | a mutant is killed only by an observed outcome change under the mutant; the frozen r84 counter binds the kill to a declared case name, not to the case's semantics | S304; `tools/round-84/mutation-closure.py`; `.ufo/waves/round-85/mutants.json` | 2026-11-04 |
+| `2026-11-04-r86-record-agreement` | a record that carries the right word can still state the wrong value; the record atoms are re-derived by command at the revision they describe, and an atom whose frozen rule cannot be met by a record edit is reported as a miss, not relaxed | S255; `tools/round-86/record-agreement.py`; `tools/round-86/gate-registry.py`; `.ufo/waves/round-86/` | 2026-11-04 |
 ## Lessons
 | entry | round | gist |
 |---|---|---|
