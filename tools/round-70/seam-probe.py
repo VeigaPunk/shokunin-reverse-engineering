@@ -88,7 +88,7 @@ def blob_to(root: str, rev: str, tool: str, scratch: str) -> tuple[str, str]:
 
 def parse_unevaluable(stdout: str, stderr: str) -> dict | None:
     for text in (stdout, stderr):
-        for chunk in [text] + text.splitlines()[::-1]:
+        for chunk in [text.strip()] + text.splitlines()[::-1]:
             chunk = chunk.strip()
             if not chunk.startswith("{"):
                 continue
@@ -102,6 +102,14 @@ def parse_unevaluable(stdout: str, stderr: str) -> dict | None:
 
 
 def parse_json_out(stdout: str) -> dict | None:
+    stripped = stdout.strip()
+    if stripped.startswith("{"):
+        try:
+            payload = json.loads(stripped)
+            if isinstance(payload, dict):
+                return payload
+        except json.JSONDecodeError:
+            pass
     for chunk in stdout.splitlines()[::-1]:
         chunk = chunk.strip()
         if not chunk.startswith("{"):
@@ -128,7 +136,7 @@ def invoke(instrument: str, root: str, rev: str, pkg: str, work: str,
                           capture_output=True, text=True, timeout=1800, env=env)
     return {"rc": proc.returncode, "env_keys": sorted(env),
             "unevaluable": (parse_unevaluable(proc.stdout, proc.stderr) or {}).get("unevaluable"),
-            "stdout_tail": proc.stdout[-300:], "stderr_tail": proc.stderr[-2000:],
+            "stdout": proc.stdout[-60000:], "stderr_tail": proc.stderr[-2000:],
             "traceback": "Traceback" in proc.stderr}
 
 
@@ -217,7 +225,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     # A3 - the child-env cases exist in the committed case inventory and the
     # blob's own selftest is green at that case count.
     selftest = invoke(instrument, root, rev, pkg, work, ["--selftest"])
-    st = parse_json_out(selftest["stdout_tail"]) or {}
+    st = parse_json_out(selftest["stdout"]) or {}
     names_in_registry = all(n in getattr(mod, "REGISTERED_CASES", []) for n in CHILD_ENV_CASES)
     a3_ok = (selftest["rc"] == 0 and st.get("ok") is True and st.get("failed") == []
              and names_in_registry
@@ -250,8 +258,8 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     # A5 - an exec-format-less packer is a typed refusal, never a traceback.
     a5_dir = tempfile.mkdtemp(prefix="a5-", dir=work)
     notelf = os.path.join(a5_dir, "not-an-elf")
-    with open(notelf, "w", encoding="utf-8") as fh:
-        fh.write("#!/bin/sh\necho text\n")
+    with open(notelf, "wb") as fh:
+        fh.write(b"DEFINITELY-NOT-AN-ELF-OR-SCRIPT\x00\x01\x02\x03garbage")
     os.chmod(notelf, 0o755)
     a5 = invoke(instrument, root, rev, pkg, a5_dir, ["--upx", notelf])
     arms.append(arm("A5_packer_exec_format",
@@ -262,7 +270,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     # A6 - with HOME unset the child env still never falls back to /tmp.
     a6_dir = tempfile.mkdtemp(prefix="a6-", dir=work)
     a6 = invoke(instrument, root, rev, pkg, a6_dir, ["--skip-run"], keep_home=False)
-    payload = parse_json_out(a6["stdout_tail"]) or {}
+    payload = parse_json_out(a6["stdout"]) or {}
     cenv = payload.get("child_env") or {}
     home_ok = bool(cenv) and str(cenv.get("home", "")).startswith(os.path.abspath(a6_dir)) \
         and str(cenv.get("home", "")) != "/tmp"
@@ -280,8 +288,8 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     run_b = invoke(battery, root, rev, pkg, work,
                    ["--patch-set", "r70", "--tool", tool,
                     "--min-pristine-cases", "0"])
-    ra = parse_json_out(run_a["stdout_tail"]) or {}
-    rb = parse_json_out(run_b["stdout_tail"]) or {}
+    ra = parse_json_out(run_a["stdout"]) or {}
+    rb = parse_json_out(run_b["stdout"]) or {}
     wa, wb = ra.get("work_dir"), rb.get("work_dir")
     a7_ok = (run_a["rc"] == 0 and run_b["rc"] == 0
              and isinstance(wa, str) and isinstance(wb, str)

@@ -69,11 +69,19 @@ def blob_to(root: str, rev: str, tool: str, scratch: str, name: str) -> str:
 
 def run(argv: list[str], timeout: int = 900) -> dict:
     proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
-    return {"rc": proc.returncode, "stdout": proc.stdout[-4000:],
-            "stderr": proc.stderr[-2000:]}
+    return {"rc": proc.returncode, "stdout": proc.stdout[-100000:],
+            "stderr": proc.stderr[-4000:]}
 
 
 def json_out(text: str) -> dict | None:
+    stripped = text.strip()
+    if stripped.startswith("{"):
+        try:
+            payload = json.loads(stripped)
+            if isinstance(payload, dict):
+                return payload
+        except json.JSONDecodeError:
+            pass
     for chunk in text.splitlines()[::-1]:
         chunk = chunk.strip()
         if not chunk.startswith("{"):
@@ -140,8 +148,8 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
     # c2 - the base instrument turns an exec-format-less --upx into a traceback.
     c2dir = tempfile.mkdtemp(prefix="c2-exec-", dir=work)
     notelf = os.path.join(c2dir, "not-an-elf")
-    with open(notelf, "w", encoding="utf-8") as fh:
-        fh.write("#!/bin/sh\necho text\n")
+    with open(notelf, "wb") as fh:
+        fh.write(b"DEFINITELY-NOT-AN-ELF-OR-SCRIPT\x00\x01\x02\x03garbage")
     os.chmod(notelf, 0o755)
     e = run([sys.executable, "-I", "-B", base_reader, "--root", root, "--rev",
              base_rev, "--pkg", pkg, "--work", c2dir, "--upx", notelf])

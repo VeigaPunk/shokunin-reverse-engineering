@@ -73,11 +73,19 @@ def blob_to(root: str, rev: str, tool: str, scratch: str, name: str) -> str:
 
 def run(argv: list[str], timeout: int = 900) -> dict:
     proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
-    return {"rc": proc.returncode, "stdout": proc.stdout[-4000:],
+    return {"rc": proc.returncode, "stdout": proc.stdout[-100000:],
             "stderr": proc.stderr[-2000:]}
 
 
 def json_out(text: str) -> dict | None:
+    stripped = text.strip()
+    if stripped.startswith("{"):
+        try:
+            payload = json.loads(stripped)
+            if isinstance(payload, dict):
+                return payload
+        except json.JSONDecodeError:
+            pass
     for chunk in text.splitlines()[::-1]:
         chunk = chunk.strip()
         if not chunk.startswith("{"):

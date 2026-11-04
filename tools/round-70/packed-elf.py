@@ -415,7 +415,7 @@ def check_receipt(path: str, root: str, rev: str) -> int:
     if receipt.get("failing") != []:
         failing.append(f"failing not empty: {receipt.get('failing')}")
     seen_ids = []
-    kinds = sorted({c.get("kind") for c in carriers})
+    kinds = sorted(c.get("kind") for c in carriers)
     if kinds != sorted(c["kind"] for c in CARRIERS):
         failing.append(f"carrier kinds {kinds} != "
                        f"{sorted(c['kind'] for c in CARRIERS)}")
