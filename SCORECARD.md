@@ -667,6 +667,9 @@ Retired: none.
 | `clause-to-case binding with isolation proof` | each `validate_receipt()` refusal clause is bound to one SKILL decision-table row and one declared selftest case, and the case must be present and failing when the clause is deleted in a copy; an absent case is a survivor and a summary-less copy is inconclusive | `python3 -I -B tools/round-80/guard-battery.py --root . --rev <40-hex> --work <scratch>` → base rows 0/survivors 9, landing rows 9/bound 9/survivors 0; `.ufo/waves/round-80/l1/scores/c3-at-base.json`, `c3-at-landing.json` | 80 |
 | `committed-record fixture integration` | runs the real pointer binder on clean and duplicate committed PROVINCE fixtures while their working files disagree, and detects omission of the fixture commit by the named clean case; redirects only live-input content, not parser or git-reader logic | `.ufo/waves/round-81/l1/scores/c2-at-landing.json` (killed 1, survivors 0); `.ufo/waves/round-81/l1/scores/full-obligations.json` — original-case and binder-pin review | 81 |
 | `full-conjunction receipt enforcement` | refuses three retained forged receipt states that the old detector rule accepts while accepting the genuine record, requiring a typed clean pristine population, original cases and frozen binder digest | `.ufo/waves/round-82/l1/scores/c1-at-landing.json`, `.ufo/waves/round-82/l1/scores/outer-cli.json`; measured 96ac0ae41b12d9f8a4f02ba1a86f9013592d4772 | 82 |
+| `prefreeze claim-metadata refusal` | refuses a claims container whose claim object names no lane-relative counter path, names a path that is not a blob at the revision, or pins it wrong, and accepts a container whose predicates name and pin their counters; the `instruments-only` control proves the target failable | `.ufo/waves/round-84/l1/scores/c1-at-landing.json` (refused 1, accepted 1, control_fired true, exit 0); base `.ufo/waves/round-84/pre/c1-maintained-gate-base.json` | 84 |
+| `declared-case mutation closure` | applies a frozen 13-row single-behavior table to committed tool bytes, runs each target's own selftest in a private copy, kills only when the declared case fails, and fails the run when the table's bytes differ from the container's `fixtures.sha256` | `.ufo/waves/round-84/l1/scores/c2-at-landing.json` (killed 13/13, survivors none, table matches, exit 0); base `pre/c2-base.json` (4/9) | 84 |
+| `nested container-chain depth measurement` | builds a reproducible three-level LE SquashFS v4 gzip chain, derives an independent `unsquashfs` oracle, runs REA at two max-depths and scores path/byte equality, the depth-limited signature, `analysis_depth` presence and engine identity, with a file-count control | `.ufo/waves/round-84/l1/scores/c3-at-landing.json` (A1-A9 true, control fires, exit 0); independent `w1/ExecNested.md`, `w1/ReviewerC3.md` | 84 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -6368,3 +6371,52 @@ Standing freeze audit is **FLAGGED / INSTRUMENT_NONE** for this first container:
 One v1 wave9settled (3executor,1scribe,1scout,1reviewer,1critic,1mutation-tester,1connector), attack3/9; L1 planner. WAVE-DONE before verification; no replacements/residual/dead-seat errors supplied. All nine have substantive reports. Expansion unchanged (existing apparatus, no capability or carrier promotion); quality improved (finite attribution repair and marked limits); discernment unchanged pending this round's outside admit/reject check. No whole-domain no-harm proof or promotion asserted.
 
 **planned (next steered round only):** include a full counter path as claim metadata before first freeze; independently pin fixture identity and add boundary/foreign-id cases before the next predicate; existing seven round82 mutation survivors, old round81 outer-selftest, receipt-auth/gate-exits/r63 debt and concurrent replacement race remain unclosed.
+
+## 2026-11-04 — round 84: claim metadata, mutation closure and the nested container chain
+
+Base `043b89a25241710a68b45526c3287fb3c8d907c3`; declaration
+`e0de2088a7bddc16305357f90ac7e889fa0a0d11`; first container
+`a5663ddedd157bb9113928f5fe80509d6f3fc7a1`; measured committed work
+`4a8362be24f1f6bd2843f2971207afc9ca76c15e` (integration `b15d8083baf4f6de420fb452bcec13a87f4bb22a`,
+re-pin `4a8362be`). Calibration is tied-lowest; no stagnation waiver. Three distinct-axis claims,
+causally separable, each with its own counter and a disclosed pre-freeze pilot where one exists.
+
+| claim / axis | before → after | counting command / measured evidence | verdict |
+|---|---|---|---|
+| R84-C1 / calibration | refusals 0/1 (the maintained audit audits 58 containers, flags `round-83`, exits 0 on the disclosed ledger) → round-83 refused with exactly `CLAIM_NO_COUNTER_PATH:R83-C1`, round-84 CLEAN, refused 1, accepted 1, `instruments-only` control accepting the defective container | `python3 -I -B tools/round-84/freeze-precheck.py --root . --rev 4a8362be24f1f6bd2843f2971207afc9ca76c15e --container .ufo/waves/round-83/claims.json --expect .ufo/waves/round-83/claims.json=FLAGGED --container .ufo/waves/round-84/claims.json --expect .ufo/waves/round-84/claims.json=CLEAN --control instruments-only --json-out <receipt>` — `l1/scores/c1-at-landing.json`, exit 0; before arm `pre/c1-maintained-gate-base.json` | verified finite predicate; **not** the general property (see limits) |
+| R84-C2 / depth | 4 killed / 9 survivors of 13 at BASE and at HEAD (`pre/c2-base.json`; independent seat reproduction `w1/ExecMutantBase.md`) → 13 killed, 0 survivors, 0 inconclusive, pristine green, frozen table digest equal to the container's `fixtures.sha256` | `python3 -I -B tools/round-84/mutation-closure.py --root . --rev 4a8362be24f1f6bd2843f2971207afc9ca76c15e --mutants .ufo/waves/round-84/mutants.json --work <scratch> --json-out <receipt>` — `l1/scores/c2-at-landing.json`, exit 0 | verified finite predicate; kill binding is name-level (limits) |
+| R84-C3 / coverage | nested sub-images below depth 1 was an unmeasured Frontier bullet; the counter does not exist at BASE → 9/9 arms on a reproducible three-level LE v4 gzip chain, file-count control firing, engine identity equal | `python3 -I -B tools/round-84/nested-sqfs.py --rev 4a8362be24f1f6bd2843f2971207afc9ca76c15e --work <scratch> --json-out <receipt>` — `l1/scores/c3-at-landing.json`, exit 0; independent reps `w1/ExecNested.md`, `w1/ReviewerC3.md` (byte-identical receipt digest `f45f018c…` on the frozen bytes) | verified measured class; the before is unmeasured, not a measured zero |
+
+**Capabilities rows appended** (table above): `prefreeze claim-metadata refusal`, `declared-case
+mutation closure`, `nested container-chain depth measurement`, each from the landing run named in
+the claim row.
+
+**Name by surface.** C1's surface is the claim container's *metadata* (a named and pinned counter),
+not the maintained audit's verdict table. C2's surface is the *declared detector set* of the three
+tools, not their production batteries. C3's surface is the *depth-limit boundary* of nested
+container extraction, not the file count.
+
+**Limits and harm review.** No owned axis is harmed: the three counters and the two target tools
+changed only additively or by disclosed revision; the maintained gate reports round-84 CLEAN and
+round-82 CLEAN with the new supersession; the round-83 FLAGGED row is retained as filed. Named
+limits: C1's gate is a naming/pinning lint (a path in `kill_rule` or a negated sentence satisfies
+it; pins compare at the measured revision), C2's kill binds a case name to a failing run rather
+than certifying the case's semantics (a fabricated case scores a kill; an independent 24-mutant
+probe leaves 15 genuine gaps at HEAD), and C3's `met` records but does not pin the fixture digests,
+A3's root check is a suffix match and A9 does not pin the `sasquatch` child. These are recorded in
+`corpus/lessons/round-84.md` and `corpus/QUALITY.md` 144-147.
+
+**Wave.** `r84-w1`: 14 seats in one v1 wave (5 executor, 2 scribe, 1 scout, 2 reviewer, 1 critic,
+1 mutation-tester, 1 sentinel, 1 connector); attack roles 4/14 = 28.6 %; one connector; the L1 held
+the planner seat. Two attack findings were repaired before landing (sentinel id containment,
+reviewer absent-key arm) and two more (control attribution, deepest-level vacuity) were repaired or
+answered with a disclosed instrument revision.
+
+**planned (next steered round only):** (a) make C2's kill binding semantic — require each declared
+case to assert a typed defect token from the production path, and add the 15 independent survivors
+from `w1/MutationTester.md` as table rows where they indicate a real detector gap; (b) tighten C1
+to the predicate field and record the pin's own revision so H1/H2 stop being limits; (c) enforce
+C3's fixture pins against a frozen constant and widen A3/A9 to the `sasquatch` child; (d) carry the
+round-81 old-counter outer-selftest, the receipt-auth/gate-exits and r63 record-section sweeps and
+the concurrent-replacement race as named debt; (e) one shokuknow `merge/kaidoku/` theme when a
+round's claim budget allows (this round: `Assimilation: none`).

@@ -37,3 +37,16 @@ Measured `730ddc650df2825937192fd4306192194c87820c` after WAVE-DONE: C1 exit0, c
 Final subject CLI selftest six cases twice each, counter outer two expected results and isolated committed-source CLI four cases all pass. The late-duplicate detector has a real negative invocation, unlike the frozen cases' known duplicate/position omissions. Evidence `l1/scores/*` and `l1/verification.json`. Registry0, disclosure agreement0 (actual r83 INSTRUMENT_NONE retained), source census0; provenance51/flagged1declared/unexpected0; knowledge166/missing0. Source counts remain205,A187/B10/C8,mined184/rejected21.
 
 Real REA task: inspect jq via pinned6.5.0 CLI, exit0 with independently matched SHA256 and inspect_artifact operation; `l1/domain-trial/inspect-artifact.json`. No execution of the inspected artifact. Expansion unchanged, quality improved within finite attribution, discernment unchanged pending actual non-author Gate sampling. No SHONEN promotion.
+
+## Correction appended by round 84 (2026-11-04)
+
+The round-83 outside spot-check (`corpus/lessons/round-83-verifier-spotcheck.md` §Discernment,
+routed defect 3) recounted the rejected git-diff quote and found **12** whitespace words, not the
+**13** this lesson states at line 17. Old value 13, re-derived value 12: “This form is to compare
+the given two paths on the filesystem.” is This(1) form(2) is(3) to(4) compare(5) the(6) given(7)
+two(8) paths(9) on(10) the(11) filesystem(12). The scope judgment (reject its use as committed
+custody evidence; flip for a filesystem-difference claim) is unchanged, and the original sentence
+above is retained rather than rewritten. The same correction applies to the worker Gate
+`.ufo/waves/round-83/w1/ScribeSources/Gate.md` row "Reject usage, not the documentation" and to
+`.ufo/waves/round-83/w1/ScribeSources/lesson.md`, whose "(13 words)" cell is superseded by this
+12-word count; those files are retained byte-unchanged and this note is the correction of record.

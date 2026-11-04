@@ -641,3 +641,24 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier â
   blob, not the author), REA-internal and packer-internal child processes, other packers/carriers,
   anti-UPX stubs, packed PE/Mach-O and semantic inventory equality, and a record value whose live
   object changes without a recheck.
+
+## Round-84 additions to Core (verified 2026-11-04)
+
+- **Core â€” nested container-chain depth semantics (`squashfs_v4_le`, three-level chain):**
+  `tools/round-84/nested-sqfs.py` measures a lane-built, reproducible three-level standard
+  little-endian SquashFS v4 gzip chain (mksquashfs 4.7.5, `-repro-time`, S301) through
+  rea-agents 6.5.0 `extract-firmware` (unblob 26.6.4): at `--max-depth 3` all eight oracle
+  members are published at exact paths with matching sha256, the envelope reports
+  `coverage partial`, one `depth-limited` gap whose input path is the deepest extract root, and
+  the level-3 files carry `analysis_depth null`; at `--max-depth 4` the same eight members are
+  published, `coverage complete`, no gap, level-3 `analysis_depth 3`, and engine identity is
+  equal across both runs. The provider's own remedy text (S302) names the fix.
+  Capability: publication is not analysis; `coverage`/`depth_limited_paths` is the completeness
+  signal, not the published file count (the counter's control fires on the file-count reading).
+  Receipts: `.ufo/waves/round-84/l1/scores/c3-at-landing.json`,
+  `.ufo/waves/round-84/pre/c3-pilot.json`.
+- **Round-84 frontier note, 2026-11-04:** the "nested sub-images below depth 1" clause of the
+  round-50/67/68 notes moves to Core for three-level standard LE v4 gzip chains only. Still
+  Frontier: vendor or externally supplied nested images, other compressors, other block sizes,
+  AVM/BE nested layouts, any chain other than the measured three-level fixture (two- and four-level chains unmeasured), chains with several containers per level,
+  providers other than unblob 26.6.4, and images exceeding the provider's file/byte budgets.
