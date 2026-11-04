@@ -586,8 +586,10 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   round section that claims capability rows entered against the SCORECARD `## Capabilities` table: the named row
   must exist with a description of at least eight words, an evidence pointer that resolves at the measured
   revision and a first-working-round cell naming the claiming round; six red fixtures in its selftest. Retained
-  evidence: `.ufo/waves/round-76/l1/scores/c1-at-landing.json` (D24 true, mismatch_count 0) and
-  `.ufo/waves/round-76/pre/c1-at-base.json` (mismatch 1, both absent rows named).
+  evidence: `.ufo/waves/round-76/l1/scores/c1-at-tip.json` (D24 true, mismatch_count 0) and
+  `.ufo/waves/round-76/pre/c1-at-base.json` (mismatch_count 1, both absent rows named); the
+  landing receipt `c1-at-landing.json` records 1 by construction (its two evidence paths first
+  appear in the commit it measures).
 - **Core — executable printed counting command:** `tools/round-76/plan-command.py` extracts a plan's
   `counting-command` block, refuses every unbound placeholder and shell metacharacter before any execution,
   tokenises with `shlex.split`, runs the argv with no shell under a four-key child environment with `$WORK`/`$OUT`
@@ -595,6 +597,19 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   `.ufo/waves/round-76/l1/scores/c2-at-landing.json` (arms_ok 3 of 3) and
   `.ufo/waves/round-76/pre/r75-printed-exec.txt` (the round-75 printed command: rc 2, missing required
   arguments: work).
+- **Core — evidence-cell verdict binding:** `tools/round-77/verdict-bind.py` re-derives every parenthesised
+  verdict written beside an evidence path in the record's annotation surface — the SCORECARD `## Capabilities`
+  rows whose first-working-round numeral is at least 73, plus these `- **Core — ` bullets — with a closed
+  eight-form grammar (typed `field literal`, atom shorthand, `field N of M`, `N mismatches`, `N survivors`,
+  `N|word atoms`, `pristine N`, `validate defect-free`) binding each clause to the JSON receipt the cell names
+  at the measured revision; unparsable clauses and absent fields are unbound, never guessed, and a bound clause
+  with no JSON pointer is a defect. Retained evidence: `.ufo/waves/round-77/pre/c1-at-base.json`
+  (mismatch_count 4) and `.ufo/waves/round-77/pre/selftest-c1.json`.
+- **Core — prefile receipt:** `tools/round-77/prefile-receipt.py` runs `tools/round-29/prefile-check.sh` as a
+  child under a four-key environment inside a private work root and writes a receipt binding argv, revision,
+  exit, the verdict line, the stdout digest and the child's key set; `--check-receipt` re-derives every clause
+  from the receipt bytes alone, so a retained verdict is re-checkable by the next reader. Retained evidence:
+  `.ufo/waves/round-77/pre/c2-at-base.json` (arms_ok 4 of 6) and `.ufo/waves/round-77/pre/selftest-c2.json`.
 - **Still Frontier:** registries outside the SKILL block, a complete GFM parser, cryptographic receipt
   authenticity or signed receipts, REA-internal and packer-internal child processes, other packers/carriers,
   anti-UPX stubs, packed PE/Mach-O and semantic inventory equality.
