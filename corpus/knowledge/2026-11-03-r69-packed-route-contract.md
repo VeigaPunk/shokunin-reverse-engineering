@@ -89,3 +89,12 @@ UPX, an anti-UPX stub whose magic or entry is altered, packed PE/Mach-O, packed 
 semantic equality of a recovered inventory stay Frontier (`PROVINCE.md` round-69 note). A receipt is
 evidence for the revision it names: the carrier pins and the packer pin are host facts, and the
 before/after arms are re-derived with the frozen battery, never from this table.
+
+## Final round-69 correction — measured, not promoted
+
+The genuine runs above are retained as observations, not admission of C2/C3.
+Both frozen receipt counters accept fabricated evidence (CriticClaims.md); the
+later provenance gate does not repair their frozen admission rule. Shared-object
+promotion is withdrawn: this carrier remains **measured Frontier** pending a new
+freeze. Do not pass untrusted `--upx` paths: preflight executes them before checking
+the sha256 pin (SentinelScope S-1). Hash-before-execution is outstanding.

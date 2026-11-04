@@ -1,0 +1,71 @@
+=== sh -n syntax check ===
+orig:    sh -n OK
+patched: sh -n OK
+
+================ fixture=pinmatch HEAD=745d5a8a0cfcbdddcc3686778d38d1819daf8cf5 ================
+---- ORIG ----
+prefile: tree clean
+prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin
+prefile: PASS
+exit=0
+---- PATCHED ----
+prefile: tree clean
+prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin
+prefile: PASS
+exit=0
+
+================ fixture=changed HEAD=35332d61bcf1f33976487e699add9e9b0dd53654 ================
+---- ORIG ----
+prefile: tree clean
+prefile: ledger1 legacy ledger changed (want 2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81, got f062ae34a8466821a5baeabed5ab2f7d64c1c65abda9ff62b6721430ad6d8c10)
+prefile: FAIL
+exit=1
+---- PATCHED ----
+prefile: tree clean
+prefile: ledger1 legacy ledger changed (want 2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81, got f062ae34a8466821a5baeabed5ab2f7d64c1c65abda9ff62b6721430ad6d8c10)
+prefile: FAIL
+exit=1
+
+================ fixture=absent HEAD=34e73a7e7c704d856d0903c596d6839f5e1abecc ================
+---- ORIG ----
+prefile: tree clean
+prefile: ledger1 legacy ledger changed (want 2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81, got e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855)
+prefile: FAIL
+exit=1
+---- PATCHED ----
+prefile: tree clean
+prefile: ledger1 legacy ledger changed (want 2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81, got absent)
+prefile: FAIL
+exit=1
+
+================ real lane root (read-only), /home/vgpnk/Projects/shokunin/kaidoku-shokunin ================
+---- ORIG ----
+ M PROVINCE.md
+ M corpus/README.md
+ M corpus/SOURCES.md
+ M corpus/knowledge/2026-11-03-r68-packed-elf-route.md
+?? .ufo/waves/round-69/r69-w1.ready
+?? .ufo/waves/round-69/r69-w1.ready.dispatched
+?? .ufo/waves/round-69/w1/
+?? corpus/knowledge/2026-11-03-r69-packed-route-contract.md
+?? corpus/lessons/round-69.md
+prefile: tree NOT CLEAN (9 paths)
+prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin
+prefile: round-29 gate --disclosures corpus/claim-freezes-v2.tsv at 3f3d20fc065b5be62f676028b9a38d316ddfe8fd exit=1
+prefile: FAIL
+exit=1
+---- PATCHED ----
+ M PROVINCE.md
+ M corpus/README.md
+ M corpus/SOURCES.md
+ M corpus/knowledge/2026-11-03-r68-packed-elf-route.md
+?? .ufo/waves/round-69/r69-w1.ready
+?? .ufo/waves/round-69/r69-w1.ready.dispatched
+?? .ufo/waves/round-69/w1/
+?? corpus/knowledge/2026-11-03-r69-packed-route-contract.md
+?? corpus/lessons/round-69.md
+prefile: tree NOT CLEAN (9 paths)
+prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin
+prefile: round-29 gate --disclosures corpus/claim-freezes-v2.tsv at 3f3d20fc065b5be62f676028b9a38d316ddfe8fd exit=1
+prefile: FAIL
+exit=1

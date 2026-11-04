@@ -5465,3 +5465,20 @@ unreadable `--upx`) and remove the `/tmp` HOME fallback and the fixed-name scrat
 make `--work` per-run (M69-8); (e) the r63 planned record-section sweep stays open; (f) the standing
 duties re-run every round that lands receipts; the r58/r60 bare-name findings and the r64
 placeholder-token disposition stay named debt.
+
+### Round-69 final admission correction — honest stop
+
+This final decision supersedes the earlier round-69 “verified” labels for C2/C3 and its
+“no-harm”/quality-improved assessment. The frozen counters are shortcut-reachable:
+`w1/CriticClaims.md` reproduces C2 6/6 and C3 met=true from fabricated receipts.
+The post-freeze provenance gate is corroboration, NOT a repair of either frozen counter.
+Accordingly C1 is verified (five survivors → zero); C2 and C3 are **not verified under
+the frozen admission/control rule**, despite genuine measured runs and independent reproduction.
+The round is **not admitted**. Quality is **harmed** by the introduced execute-before-hash
+`--upx` seam (SentinelScope S-1); operational use remained on the pinned default binary.
+No score increase or C2/C3 capability admission is claimed by this final correction.
+The next freeze must repair the counter binding and hash before execution.
+
+R68-V5 final disposition: S271 now supersedes S269 with the correct 10-word quote;
+the earlier reason-only disposition above is superseded. SOURCES final population is
+178, not the intermediate 177. R68-V2 also repairs the four-column table delimiter.

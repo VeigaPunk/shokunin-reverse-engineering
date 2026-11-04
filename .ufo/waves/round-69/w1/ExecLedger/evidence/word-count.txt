@@ -1,0 +1,20 @@
+$ printf '%s' 'Packed programs will be byte-identical to the original after uncompression' | wc -w
+10
+$ printf '%s' 'Packed programs will be byte-identical to the original after uncompression.' | wc -w   # with the sentence's trailing period
+10
+$ printf '%s' 'Packed programs will be byte-identical to the original after uncompression' | tr '-' ' ' | wc -w   # hyphen split produces the wrong label 11
+11
+
+$ curl -fsSL --max-time 60 -o upx-doc.txt https://raw.githubusercontent.com/upx/upx/v5.2.0/doc/upx-doc.txt; echo exit=$?; wc -c < upx-doc.txt; sha256sum upx-doc.txt
+curl_exit=0
+37208
+4dc547edc7201f205ce904f373518b6fcaef608d5aafd8a4a7564d42993b8c42  upx-doc.txt
+
+$ awk 'NR==433 || NR==441 || NR==442' upx-doc.txt
+433|  NOTES FOR LINUX/ELF386
+441|    Packed programs will be byte-identical to the original after
+442|    uncompression.
+
+composed quote (lines 441-442 joined): 'Packed programs will be byte-identical to the original after uncompression.' -> 10 whitespace words
+section bounds: heading line 433 'NOTES FOR LINUX/ELF386'; next NOTES heading line 475 'NOTES FOR LINUX/SH386'
+occurrences of 'byte-identical' in lines 433-474: 1

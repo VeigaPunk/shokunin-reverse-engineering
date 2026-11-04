@@ -4176,3 +4176,20 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - **Census.** Start `l1/census-start.txt` exit 0, 176 rows, 19 standing W04; end `l1/census-end.txt` exit 0, 177 rows after S270, malformed 0, mined 168 / rejected 9, tiers A 163 / B 9 / C 5, the same 19 W04.
 - **No tool installed or upgraded this round** (`upx` 5.2.0 and `node` v24.21.0 were already on the host); no pacman transaction ran.
 - Files touched by this entry: `SKILL.md`, `PROVINCE.md`, `corpus/README.md`, `corpus/SOURCES.md`, `corpus/QUALITY.md`, `corpus/knowledge/2026-11-03-r68-packed-elf-route.md` (append), `corpus/knowledge/2026-11-03-r69-packed-route-contract.md` (new), `corpus/lessons/round-69.md` (new), `corpus/claim-freezes-v2.tsv`, `tools/round-29/prefile-check.sh`, `tools/round-69/**`, `.ufo/waves/round-69/**`, this LOG — append-only.
+
+## 2026-11-03 — round 69, KaidokuR69 — final honest-stop correction
+
+- Supersedes the intermediate C2/C3 verified labels and quality-improved/no-harm
+  assessment: C1 verified, C2/C3 not verified under the frozen shortcut-control rule.
+  CriticClaims fabricated receipts meet both targets; a post-freeze provenance gate
+  cannot retroactively repair those counters. Quality harmed by the new
+  execute-before-hash `--upx` seam. Round not admitted; no C2/C3 capability promotion.
+- R68-V4 explicit correction to LOG.md:4137: the retired ledger contains 21 rows,
+  ends at round-35 (not round-52), and its recorded comparison was 20-of-21, not
+  universally 20-of-36. Filed text stays unchanged.
+- R68-V5 final disposition: S271 supersedes S269 with the 10-word count; the
+  earlier reason-only disposition is superseded. Final source count 178.
+- R68-V2 delimiter repaired to four cells. R68-V1 red/green receipt uses
+  unanchored field occurrences because correction fields are list items.
+- WAVE-DONE received from Main: all 15 seats settled; results at
+  `.ufo/waves/round-69/r69-w1-results.json`. No residual dispatch.

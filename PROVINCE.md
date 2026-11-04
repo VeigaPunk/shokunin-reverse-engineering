@@ -504,3 +504,10 @@ this lane's working environment. Measured on the new Windows host, 2026-10-31:
   `kaidoku-shokunin` directory that does not exist here; the lane checkout is named
   `shokunin-reverse-engineering`, so the validate run passes the explicit lane
   directory (exit 0 with the 19 standing W04 warnings, round-53 census receipts).
+
+## Round-69 final disposition correction
+
+The round-69 Core/promotion wording above is superseded: the shared-object route is
+**measured Frontier, not promoted**, because the frozen C2/C3 counters admit fabricated
+receipts. C1's arm-false selftest is verified. The `--upx` seam executes before checking
+its hash; never supply an untrusted path. A new freeze must repair this ordering.

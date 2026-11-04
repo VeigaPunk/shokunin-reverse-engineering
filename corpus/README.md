@@ -116,7 +116,7 @@ A row is written when its file exists, never before.
 
 ## Knowledge
 | entry | topic | source | verified-at |
-|---|---|---|
+|---|---|---|---|
 | `2026-11-03-r69-packed-route-contract` | the packed route's arm seam (one arm-false selftest case per arm) and its typed contract (exit-2 classes, the ENFORCED UPX version/sha256 pin, per-carrier format and packing-mode records), plus a packed shared-object carrier — three pinned carriers, every arm true, ratios 0.0599/0.1010/0.6522; limits UPX 5.2.0 / linux/amd64 / default packing / one libz build | S270; `tools/round-69/packed-elf.py`, `tools/round-69/mutation-check.py`, `tools/round-69/contract-probe.py`; receipts `.ufo/waves/round-69/l1/` | 2026-11-03 |
 | `2026-11-03-r68-packed-elf-route` | UPX-packed ELF through a detect → unpack → identity → recover route: the packed stub's parsed inventory (3 procedures), byte restoration against the carrier pin, the REA inventory recovered from the unpacked copy, and the address-level refusal that separates the two states; limits UPX 5.2.0 / `linux/elf386` / default packing | `tools/round-68/packed-elf.py` + `.ufo/waves/round-68/l1/scores/` | 2026-11-03 |
 | `2026-11-03-r67-avm-le-squashfs-core` | LE AVM-marker SquashFS v4 through REA under a class-level gap rule — Frontier → Core on four pinned carriers | S268, S250, S245, S244, S249; counter `tools/round-67/avm-le-counter.py`; receipts `corpus/evidence/round-67/c1/` | 2026-11-03 |
@@ -317,3 +317,9 @@ Round-68 frontier note, 2026-11-03: packed-ELF triage is **Core** for the two pi
 Correction (R29-C1 carrier provenance, round 30): only carrier n04 rests on an opened source (S088); the other 15 lists were written from the L1's knowledge of the standards and are author-selected names, not opened published interfaces (the round-29 coverage-map row and the round-29 knowledge-index row above).
 
 Round-50 frontier note, 2026-10-29: LE AVM members (`hsqs`) were measured on four chain-pinned vendor carriers (`2026-10-28-r50-avm-le-squashfs-core`; REA published every oracle regular file on all four) and **stay Frontier** — R50-C1 measured 2 of 4 under the frozen gap-accounting rule (twelve `char-device` entries per FRITZ!Box carrier with no disposition; the rule was generalised from the Cable-carrier class). Still Frontier: LE AVM members (`hsqs`), LE AVM rootfs of ~13k files under REA's 120 s limit, AVM kernels, nested sub-images below depth 1, `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`, `squashfs_v3_nonstandard`, gzip v3 bodies, v4 Broadcom. This note adds the round-50 measurement to the LE-AVM clause of the round-49 note and supersedes nothing else.
+
+Round-69 final disposition: the new shared-object carrier is **measured Frontier,
+not promoted**. This supersedes the round-69 Core wording in the map/index: the
+frozen receipt counters accept fabricated inputs (CriticClaims.md). C1's five
+arm-false selftest kills are verified. The later provenance gate is corroboration,
+not a retroactive repair of C2/C3.

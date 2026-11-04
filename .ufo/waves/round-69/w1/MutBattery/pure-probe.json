@@ -1,0 +1,175 @@
+{
+ "probes": [
+  {
+   "mutant": "MB01_control_default",
+   "mutant_value": {
+    "ok": true,
+    "value": {
+     "before_ok": true,
+     "control_ok": false,
+     "detected": true,
+     "identity_ok": true,
+     "recovery_ok": true
+    }
+   },
+   "pristine": {
+    "ok": true,
+    "value": {
+     "before_ok": true,
+     "control_ok": true,
+     "detected": true,
+     "identity_ok": true,
+     "recovery_ok": true
+    }
+   },
+   "probe": "carrier_arms(...) without control_ok"
+  },
+  {
+   "mutant": "MB02_fold_empty_control",
+   "mutant_value": {
+    "ok": true,
+    "value": {
+     "carriers_matched": 0,
+     "control_ok": true,
+     "met_target": true,
+     "target": 0
+    }
+   },
+   "pristine": {
+    "ok": true,
+    "value": {
+     "carriers_matched": 0,
+     "control_ok": false,
+     "met_target": false,
+     "target": 0
+    }
+   },
+   "probe": "fold([], 0)"
+  },
+  {
+   "mutant": "MB03_fold_missing_control_arm",
+   "mutant_value": {
+    "ok": true,
+    "value": {
+     "carriers_matched": 1,
+     "control_ok": true,
+     "met_target": true,
+     "target": 1
+    }
+   },
+   "pristine": {
+    "exception": "KeyError: 'control_ok'",
+    "ok": false
+   },
+   "probe": "fold(one carrier with no control arm)"
+  },
+  {
+   "mutant": "MB04_fold_matched_ge",
+   "mutant_value": {
+    "ok": true,
+    "value": {
+     "carriers_matched": 4,
+     "control_ok": true,
+     "met_target": true,
+     "target": 3
+    }
+   },
+   "pristine": {
+    "ok": true,
+    "value": {
+     "carriers_matched": 4,
+     "control_ok": true,
+     "met_target": false,
+     "target": 3
+    }
+   },
+   "probe": "fold(4 ok carriers, target 3)"
+  },
+  {
+   "mutant": "MB07_elf_format_len",
+   "mutant_value": {
+    "ok": true,
+    "value": {
+     "class": "ELF64",
+     "data": "2's complement, little endian",
+     "machine": "Advanced Micro Devices X86-64"
+    }
+   },
+   "pristine": {
+    "ok": true,
+    "value": null
+   },
+   "probe": "elf_format(3-of-4 header)"
+  },
+  {
+   "mutant": "MB07_elf_format_len",
+   "mutant_value": {
+    "ok": true,
+    "value": {
+     "class": "ELF64",
+     "data": "2's complement, little endian",
+     "machine": "Advanced Micro Devices X86-64",
+     "type": "DYN (Shared object file)"
+    }
+   },
+   "pristine": {
+    "ok": true,
+    "value": {
+     "class": "ELF64",
+     "data": "2's complement, little endian",
+     "machine": "Advanced Micro Devices X86-64",
+     "type": "DYN (Shared object file)"
+    }
+   },
+   "probe": "elf_format(4-of-4 header)"
+  },
+  {
+   "mutant": "MB10_section_branch_sentinel",
+   "mutant_value": {
+    "ok": true,
+    "value": 0
+   },
+   "pristine": {
+    "ok": true,
+    "value": 0
+   },
+   "probe": "section_count(sentinel only)"
+  },
+  {
+   "mutant": "MB10_section_branch_sentinel",
+   "mutant_value": {
+    "ok": true,
+    "value": 1
+   },
+   "pristine": {
+    "ok": true,
+    "value": 0
+   },
+   "probe": "section_count(sentinel + section rows)"
+  },
+  {
+   "mutant": "MB12_refusal_code_floor",
+   "mutant_value": {
+    "ok": true,
+    "value": true
+   },
+   "pristine": {
+    "ok": true,
+    "value": false
+   },
+   "probe": "refusal_ok with 50-byte decompilation"
+  },
+  {
+   "mutant": "MB13_refusal_unpacked_rc",
+   "mutant_value": {
+    "ok": true,
+    "value": true
+   },
+   "pristine": {
+    "ok": true,
+    "value": false
+   },
+   "probe": "refusal_ok with unpacked decompile rc=7"
+  }
+ ]
+}

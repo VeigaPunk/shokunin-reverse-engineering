@@ -1,0 +1,138 @@
+{
+ "applier": "ExecC1/mutapply.py",
+ "blob": "/fast/scratch/hyaku/kaidoku-r69/ExecC1/bin/r69-packed-elf.py",
+ "blob_sha256": "4ac0d83baee352e42f63b9ced91df01c2ee01f508a35798e400f13478f8aebcc",
+ "family": "extra",
+ "killed_named": [
+  "X1_ok_hardwired",
+  "X2_fold_all_matched",
+  "X3_sections_zero",
+  "X5_arm_case_deleted",
+  "X6_control_unwired"
+ ],
+ "mutants": [
+  {
+   "cases": 20,
+   "differs_from_pristine": true,
+   "expect_case": "arm-pack-identity-false",
+   "failed": [
+    "arm-pack-identity-false",
+    "arm-pack-recovery-false",
+    "arm-pack-detected-false",
+    "arm-pack-before-false",
+    "arm-pack-control-false"
+   ],
+   "id": "X1_ok_hardwired",
+   "new": "return {\"arms\": arms, \"ok\": True}",
+   "ok": false,
+   "old": "return {\"arms\": arms, \"ok\": all(arms.values())}",
+   "path": "extra-X1_ok_hardwired-r69-packed-elf.py",
+   "rc": 1,
+   "sha256": "5ba0523a56002af2f233048783f1c83c11081c4ab0dd61ad47ba0a956cb5e133",
+   "site_matches": 1,
+   "stderr_tail": "",
+   "verdict": "killed_named"
+  },
+  {
+   "cases": 20,
+   "differs_from_pristine": true,
+   "expect_case": "fold-not-met",
+   "failed": [
+    "fold-not-met"
+   ],
+   "id": "X2_fold_all_matched",
+   "new": "matched = len(carriers)",
+   "ok": false,
+   "old": "matched = sum(1 for c in carriers if c[\"ok\"])",
+   "path": "extra-X2_fold_all_matched-r69-packed-elf.py",
+   "rc": 1,
+   "sha256": "d79da3ff41b7f4f09ac98c22087c9747bcbea904aa45e162b259c1d2a6c77920",
+   "site_matches": 1,
+   "stderr_tail": "",
+   "verdict": "killed_named"
+  },
+  {
+   "cases": 20,
+   "differs_from_pristine": true,
+   "expect_case": "sections-some",
+   "failed": [
+    "sections-some"
+   ],
+   "id": "X3_sections_zero",
+   "new": "    return 0",
+   "ok": false,
+   "old": "    if \"There are no sections in this file\" in readelf_text:\n        return 0\n    return len(re.findall(r\"(?m)^\\s*\\[\\s*\\d+\\]\\s\", readelf_text))",
+   "path": "extra-X3_sections_zero-r69-packed-elf.py",
+   "rc": 1,
+   "sha256": "7ad4f2e28be955e29b66def607edafe78829d0ad6c17c9527162b34936d9f173",
+   "site_matches": 1,
+   "stderr_tail": "",
+   "verdict": "killed_named"
+  },
+  {
+   "cases": null,
+   "differs_from_pristine": true,
+   "expect_case": "arm-pack-refusal",
+   "failed": null,
+   "id": "X4_refusal_dropped",
+   "new": "    refusal_ok = None\n    if False and model.get(\"address\"):",
+   "ok": null,
+   "old": "    refusal_ok = None\n    if model.get(\"address\"):",
+   "path": "extra-X4_refusal_dropped-r69-packed-elf.py",
+   "rc": 1,
+   "sha256": "8049502e343bc1b28b8844c06a8dcb46ce1ab61f678f3f06b71487d166052284",
+   "site_matches": 1,
+   "stderr_tail": "selftest()\n  File \"/fast/scratch/hyaku/kaidoku-r69/ExecC1/mut/extra/extra-X4_refusal_dropped-r69-packed-elf.py\", line 537, in selftest\n    cases.append((\"arm-pack-refusal\", ref_ok[\"arms\"][\"refusal_ok\"] is True\n                                      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^\nKeyError: 'refusal_ok'\n",
+   "verdict": "unevaluable_no_payload"
+  },
+  {
+   "cases": 19,
+   "differs_from_pristine": true,
+   "expect_case": "case-inventory",
+   "failed": [
+    "case-inventory"
+   ],
+   "id": "X5_arm_case_deleted",
+   "new": "    ident = evaluate_carrier(_model(unpacked_sha256=\"bb\" * 32))\n    _ = ident  # case deleted by mutant",
+   "ok": false,
+   "old": "    ident = evaluate_carrier(_model(unpacked_sha256=\"bb\" * 32))\n    cases.append((\"arm-pack-identity-false\",\n                  ident[\"arms\"][\"identity_ok\"] is False and ident[\"ok\"] is False))",
+   "path": "extra-X5_arm_case_deleted-r69-packed-elf.py",
+   "rc": 1,
+   "sha256": "b38c4c273ca0122b0661ff8f0a6e537c076fabb0fc6458195248ef940e8c22a9",
+   "site_matches": 1,
+   "stderr_tail": "",
+   "verdict": "killed_named"
+  },
+  {
+   "cases": 20,
+   "differs_from_pristine": true,
+   "expect_case": "arm-pack-control-false",
+   "failed": [
+    "arm-pack-control-false"
+   ],
+   "id": "X6_control_unwired",
+   "new": "    arms = carrier_arms(detected, before_ok, identity_ok, recovery_ok, refusal_ok, True)",
+   "ok": false,
+   "old": "    arms = carrier_arms(detected, before_ok, identity_ok, recovery_ok, refusal_ok, control_ok)",
+   "path": "extra-X6_control_unwired-r69-packed-elf.py",
+   "rc": 1,
+   "sha256": "8553be0548eb7fba44c14e3afd1c0f2af118ee14185f9a78b024b0f221814bdd",
+   "site_matches": 1,
+   "stderr_tail": "",
+   "verdict": "killed_named"
+  }
+ ],
+ "pristine": {
+  "cases": 20,
+  "failed": [],
+  "ok": true,
+  "parsed": true,
+  "rc": 0,
+  "stderr_tail": ""
+ },
+ "survivors": [],
+ "target": "r69",
+ "wrong_or_unevaluable": [
+  "X4_refusal_dropped"
+ ]
+}

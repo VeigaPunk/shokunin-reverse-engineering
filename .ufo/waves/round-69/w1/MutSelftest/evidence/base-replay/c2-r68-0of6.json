@@ -1,0 +1,94 @@
+{
+ "arms": [
+  {
+   "id": "A1_missing_node",
+   "observed": {
+    "rc": 1,
+    "stderr_tail": "       start_new_session, process_group)\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.14/subprocess.py\", line 1990, in _execute_child\n    raise child_exception_type(errno_num, err_msg, err_filename)\nFileNotFoundError: [Errno 2] No such file or directory: 'node'\n",
+    "stdout_tail": "",
+    "unevaluable": null
+   },
+   "ok": false
+  },
+  {
+   "id": "A2_work_unusable",
+   "observed": {
+    "rc": 1,
+    "stderr_tail": "empfile.mkdtemp(prefix=\"packed-\", dir=work)\n  File \"/usr/lib/python3.14/tempfile.py\", line 381, in mkdtemp\n    _os.mkdir(file, 0o700)\n    ~~~~~~~~~^^^^^^^^^^^^^\nPermissionError: [Errno 13] Permission denied: '/fast/scratch/hyaku/kaidoku-r69/MutSelftest/work/c2base/contract-probe/ro/packed-5wgyy51n'\n",
+    "stdout_tail": "",
+    "unevaluable": null
+   },
+   "ok": false
+  },
+  {
+   "id": "A3_packer_version",
+   "observed": {
+    "rc": 2,
+    "stderr_tail": "usage: packed-elf.py [-h] [--root ROOT] [--rev REV] [--pkg PKG] [--work WORK]\n                     [--json-out JSON_OUT] [--skip-run] [--selftest]\npacked-elf.py: error: unrecognized arguments: --upx /fast/scratch/hyaku/kaidoku-r69/MutSelftest/work/c2base/contract-probe/upx-5.1.0\n",
+    "stdout_tail": "",
+    "unevaluable": null
+   },
+   "ok": false
+  },
+  {
+   "id": "A4_packer_sha256",
+   "observed": {
+    "rc": 2,
+    "stderr_tail": "usage: packed-elf.py [-h] [--root ROOT] [--rev REV] [--pkg PKG] [--work WORK]\n                     [--json-out JSON_OUT] [--skip-run] [--selftest]\npacked-elf.py: error: unrecognized arguments: --upx /fast/scratch/hyaku/kaidoku-r69/MutSelftest/work/c2base/contract-probe/upx-bumped\n",
+    "stdout_tail": "",
+    "unevaluable": null
+   },
+   "ok": false
+  },
+  {
+   "id": "A5_carrier_record",
+   "observed": {
+    "carriers": [],
+    "failures": [
+     "jq: missing ['name', 'format', 'packing_mode']",
+     "xxd: missing ['name', 'format', 'packing_mode']"
+    ]
+   },
+   "ok": false
+  },
+  {
+   "id": "A6_packer_pin",
+   "observed": {
+    "failures": [
+     "packer.version_pin absent",
+     "packer.sha256_pin absent",
+     "packer.pin_enforced absent",
+     "packer.pin_enforced not true",
+     "packer sha256 cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969 / pin None != host cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+     "packer version upx 5.2.0 / pin None != host 'upx 5.2.0'"
+    ],
+    "host_sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+    "host_version": "upx 5.2.0",
+    "packer": {
+     "pin_enforced": null,
+     "sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+     "sha256_pin": null,
+     "upx": "/usr/bin/upx",
+     "version": "upx 5.2.0",
+     "version_pin": null
+    }
+   },
+   "ok": false
+  }
+ ],
+ "arms_passed": 0,
+ "failed": [
+  "A1_missing_node",
+  "A2_work_unusable",
+  "A3_packer_version",
+  "A4_packer_sha256",
+  "A5_carrier_record",
+  "A6_packer_pin"
+ ],
+ "instrument": "tools/round-68/packed-elf.py",
+ "instrument_sha256": "48ef4c688a14faf381abbd2cc2b29061035f38c97815e2365957843433e5276e",
+ "ok": false,
+ "receipt": ".ufo/waves/round-68/l1/scores/c2-at-landing.json",
+ "rev": "d7d9a62cc70935304e600ed0dee864fc4f1751f7",
+ "target": 6
+}

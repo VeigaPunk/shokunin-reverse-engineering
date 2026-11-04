@@ -89,3 +89,21 @@ computed before the row is written.
   176 rows, 19 standing W04, malformed 0 (`.ufo/waves/round-69/l1/census-start.txt`).
 - End: exit 0, **177 rows** after S270, malformed 0, mined 168 / rejected 9, tiers A 163 / B 9 / C 5,
   the same 19 W04 (`.ufo/waves/round-69/l1/census-end.txt`).
+
+## Final decision — supersedes the intermediate Outcome
+
+C1 verified; C2/C3 **not verified under the frozen shortcut-control rule**.
+The critic's fabricated receipts meet both frozen targets; post-freeze corroboration
+cannot repair those counters. Round admission: **honest stop, not admitted**.
+Quality: **harmed** by the introduced execute-before-hash seam; no safety property
+is inferred from the packer pin. The instruments remain frozen for reproducibility.
+
+R68-V5 final disposition supersedes the reason-only paragraph above: **S271**
+is admitted as the append-only correction required by QUALITY #93. Source opened
+2026-11-03: https://raw.githubusercontent.com/upx/upx/v5.2.0/doc/upx-doc.txt,
+HTTP 200, 37208 bytes, sha256 4dc547edc7201f205ce904f373518b6fcaef608d5aafd8a4a7564d42993b8c42.
+Located quote at lines 441-442 under NOTES FOR LINUX/ELF386 (heading 433):
+"Packed programs will be byte-identical to the original after uncompression"
+(10 words, `printf '%s' '<quote>' | wc -w`). Final registry: 178 rows.
+No existing status/recheck/used-by cell was changed; S270 and S271 are new mined rows.
+The admit/reject decisions remain author assessments pending outside closure.

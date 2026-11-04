@@ -1,0 +1,31 @@
+R68-V1 red/green — provenance-trio checks. Revisions are explicit, not symbolic.
+
+DISPATCH 3f3d20fc bytes (filed entry, before any repair)
+  backticked list items   grep -cE '^[-* ]*`(source|verified-at|recheck):`' = 0
+  bare list items         grep -cE '^[-* ]*(source|verified-at|recheck) *:'    = 0
+  filed line-start fields grep -cE '^(source|verified-at|recheck):'           = 0
+  unanchored occurrence   grep -c 'recheck:'                                 = 0
+  wc -l 80 ; sha256 00f1a03a7074b3507cbd1f40e31e9ed2a10b8bf07bb388f87d066c04943c5696
+
+DISPATCH bytes + this seat's drafted block
+  backticked list items   grep -cE '^[-* ]*`(source|verified-at|recheck):`' = 3
+  bare list items         grep -cE '^[-* ]*(source|verified-at|recheck) *:'    = 0
+  filed line-start fields grep -cE '^(source|verified-at|recheck):'           = 0
+  unanchored occurrence   grep -c 'recheck:'                                 = 2
+  wc -l 114 ; sha256 02ff813e70ac1ac3b710a24d14b8421aba945763f8c69f070c2979fa34ae2725
+
+HEAD 5ee94c56 (landed block, committed)
+  backticked list items   grep -cE '^[-* ]*`(source|verified-at|recheck):`' = 3
+  bare list items         grep -cE '^[-* ]*(source|verified-at|recheck) *:'    = 0
+  filed line-start fields grep -cE '^(source|verified-at|recheck):'           = 0
+  unanchored occurrence   grep -c 'recheck:'                                 = 2
+  wc -l 101 ; sha256 6fe62359de3361ee3c9a2b0491667cf67df355181da7bf638847c2a6460d9612
+
+Interpretation (observation):
+- DISPATCH bytes: 0 backticked list items and 0 line-start fields — the R68-V1 defect.
+- DISPATCH + drafted block: 3 backticked items — the drafted repair satisfies #101/#112's shape.
+- HEAD (landed and committed at 5ee94c56): 3 backticked items — the lane's own block satisfies it.
+- The bare list-item grep and the line-start grep are 0 everywhere by design: #101/#112 put the field
+  name in backticks, and a correction block never adds filed line-start fields.
+- The unanchored `recheck:` count is occurrence-based, not a field check (QUALITY #101 says a receipt
+  that checks such a field must say so).

@@ -1,0 +1,31 @@
+--- a/tools/round-29/prefile-check.sh
++++ b/tools/round-29/prefile-check.sh
+@@ -28,14 +28,21 @@
+     echo "prefile: tree clean"
+ fi
+ rev=$(git -C "$root" rev-parse HEAD) || exit 2
+-# ledger1 (round-68 erratum r68-1): corpus/claim-freezes.tsv is RETIRED as a gate input. It stops at
+-# round-52 while rounds 53-68 live in the v2 ledger, and it carries a stray round-35 row whose
+-# container is claims-frozen.json, which the round-24 gate's expected set (claims.json files only)
+-# cannot match; the gate reported 20 exact of 36 on every round from 53 on, so this step failed by
+-# construction and the prefile gate never passed. The file is kept as frozen evidence: this step
+-# asserts its bytes are identical to its retirement pin, and the live check is ledger2 below.
++# ledger1 (round-68 erratum r68-1): corpus/claim-freezes.tsv is RETIRED as a gate input. It carries
++# 21 rows (rounds 14-32, 34, 35), nothing after round-35; its stray round-35 row can never match
++# because round-35's container is claims-frozen.json (its claims.json was removed at 13d7a815) and
++# the round-24 gate's expected set is .ufo/waves/round-N/claims.json only. The gate's denominator
++# follows the lane's claims.json population, so the "of" grows while the exact count held at 20:
++# 20 of 21 at f78fc766 (round 53), 20 of 36 at 6ffa9ce1 (round 68), 20 of 37 at 3f3d20fc (round 69),
++# stray ["round-35"] and exit 1 at each, so the step failed by construction at every revision. The
++# file is kept as frozen evidence: this step asserts its bytes are identical to its retirement pin,
++# and the live check is ledger2 below.
+ legacy_sha=2a840d72acfd71e55fc16aa614dcefee7afd0cf67e276b799ac9d41e773dda81
+-got=$(git -C "$root" show "$rev:corpus/claim-freezes.tsv" 2>/dev/null | sha256sum | cut -d' ' -f1)
++if git -C "$root" cat-file -e "$rev:corpus/claim-freezes.tsv" 2>/dev/null; then
++    got=$(git -C "$root" show "$rev:corpus/claim-freezes.tsv" 2>/dev/null | sha256sum | cut -d' ' -f1)
++else
++    got=
++fi
+ if [ "$got" = "$legacy_sha" ]; then
+     echo "prefile: ledger1 retired (erratum r68-1) — legacy ledger byte-identical to its retirement pin"
+ else

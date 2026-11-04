@@ -1,0 +1,92 @@
+{
+ "controls": [
+  {
+   "counter": "mutation-check r68 patch set at base",
+   "expected": "the five r68 survivors remain; 0 survivors is NOT reachable",
+   "id": "c1-do-nothing",
+   "observed": {
+    "rc": 0,
+    "survivor_count": 0,
+    "survivors": []
+   },
+   "ok": false
+  },
+  {
+   "counter": "mutation-check --validate",
+   "expected": "a battery receipt with no mutant rows is rejected",
+   "id": "c1-constant-battery",
+   "observed": {
+    "defects": [
+     "mutants absent or empty"
+    ],
+    "rc": 1
+   },
+   "ok": true
+  },
+  {
+   "counter": "contract-probe on the base instrument + receipt",
+   "expected": "the six base defects remain; 6 of 6 is NOT reachable",
+   "id": "c2-do-nothing",
+   "observed": {
+    "arms_passed": 0,
+    "failed": [
+     "A1_missing_node",
+     "A2_work_unusable",
+     "A3_packer_version",
+     "A4_packer_sha256",
+     "A5_carrier_record",
+     "A6_packer_pin"
+    ],
+    "rc": 1
+   },
+   "ok": true
+  },
+  {
+   "counter": "contract-probe --validate",
+   "expected": "a probe receipt with no arm rows is rejected",
+   "id": "c2-constant-probe",
+   "observed": {
+    "defects": [
+     "arms absent or empty"
+    ],
+    "rc": 1
+   },
+   "ok": true
+  },
+  {
+   "counter": "packed-elf --check-receipt on the r68 receipt",
+   "expected": "target 2 and no shared-object carrier -> not met",
+   "id": "c3-do-nothing",
+   "observed": {
+    "failing": null,
+    "rc": 1
+   },
+   "ok": true
+  },
+  {
+   "counter": "packed-elf --check-receipt on a synthetic receipt",
+   "expected": "met",
+   "id": "c3-synthetic-met",
+   "observed": {
+    "failing": [],
+    "rc": 0
+   },
+   "ok": true
+  },
+  {
+   "counter": "packed-elf --check-receipt on a synthetic receipt",
+   "expected": "not met on the loose ceiling",
+   "id": "c3-loose-ceiling",
+   "observed": {
+    "failing": [
+     "libz: before_ceiling_ratio > 0.75"
+    ],
+    "rc": 1
+   },
+   "ok": true
+  }
+ ],
+ "ok": false,
+ "rev": "HEAD",
+ "root": "/fast/scratch/hyaku/kaidoku-r69/MutSelftest/fixtures/root-C3"
+}

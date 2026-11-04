@@ -1,0 +1,60 @@
+README table-parse evidence, STRICT: GFM needs a header row, then a delimiter row with the SAME cell count, then body rows.
+Parser: markdown-it-py 4.2.0, MarkdownIt('gfm-like', {'linkify': False}).
+
+DISPATCH = 3f3d20fc065b5be62f676028b9a38d316ddfe8fd (the commit this seat first measured; R68-V2 defect present).
+HEAD = 5ee94c56 (landing commit; claim: 'the six r68 repairs').
+MIRROR = DISPATCH bytes + only the round-68 knowledge row moved below the 4-cell delimiter (this seat's draft).
+WORKTREE-FIXED = HEAD bytes + only line 119 restored to four delimiter cells.
+
+===== DISPATCH 3f3d20fc (before any repair) =====
+sha256 9033cb388aa4e8ca2fd1429fd1c6d278a2e172e82f594992790bbf746f6c03ba  lines 319
+  block 13-88: header 3 cells, delimiter 3 cells, body widths [3], rows 74 -> ok
+  block 90-111: FAIL — line 91 is not a delimiter (a row sits above the header)
+  block 113-113: SINGLE ROW (no delimiter above)
+  block 115-115: SINGLE ROW (no delimiter above)
+  block 118-240: FAIL — line 119 is not a delimiter (a row sits above the header)
+  block 243-272: header 3 cells, delimiter 3 cells, body widths [3, 4], rows 28 -> CELL-COUNT MISMATCH
+  knowledge-row window renders: <table> 0, <th> 0, <td> 0
+
+LINE MAP (DISPATCH): 117 '## Knowledge'; 118 = the r68 index row ABOVE the header; 119 = header (4 cells);
+120 = '|---|---|---|---|' (4 cells); 121-240 = 120 body rows. The r68 entry is not in a parsed table.
+
+===== MIRROR e865a0dd (row moved, 4-cell delimiter) =====
+sha256 e865a0ddfd44047057ec0002774d65cc33d935ef0ca9590bce7d61ea2fe9e289  lines 319
+  block 13-88: header 3 cells, delimiter 3 cells, body widths [3], rows 74 -> ok
+  block 90-111: FAIL — line 91 is not a delimiter (a row sits above the header)
+  block 113-113: SINGLE ROW (no delimiter above)
+  block 115-115: SINGLE ROW (no delimiter above)
+  block 118-240: header 4 cells, delimiter 4 cells, body widths [4], rows 121 -> ok
+  block 243-272: header 3 cells, delimiter 3 cells, body widths [3, 4], rows 28 -> CELL-COUNT MISMATCH
+  knowledge-row window renders: <table> 1, <th> 4, <td> 8
+
+LINE MAP (MIRROR): 117 '## Knowledge'; 118 = header; 119 = delimiter (4 cells); 120 = the moved r68 row;
+121-240 = the same 120 body rows, unchanged numbers; 121 body rows total. The row line is byte-identical to DISPATCH:118.
+
+===== HEAD 5ee94c56 (landed; delimiter has 3 cells) =====
+sha256 43d01520bda813bc059e1556483433a3e3b7a942bd22556d360066616cf1801f  lines 320
+  block 13-88: header 3 cells, delimiter 3 cells, body widths [3], rows 74 -> ok
+  block 90-111: FAIL — line 91 is not a delimiter (a row sits above the header)
+  block 113-113: SINGLE ROW (no delimiter above)
+  block 115-115: SINGLE ROW (no delimiter above)
+  block 118-241: header 4 cells, delimiter 3 cells, body widths [4], rows 122 -> CELL-COUNT MISMATCH
+  block 244-273: header 3 cells, delimiter 3 cells, body widths [3, 4], rows 28 -> CELL-COUNT MISMATCH
+  knowledge-row window renders: <table> 0, <th> 0, <td> 0
+
+HEAD CEILING: block 118-241 has header 4 cells and delimiter 3 cells, so the knowledge table still renders as a
+paragraph. The row movement landed; the parse did not. THIS IS THE REMAINING R68-V2 DEFECT.
+
+===== WORKTREE-FIXED eb459258 (line 119 = 4 cells) =====
+sha256 eb459258a1305b9fbe20d9618ea604562407cb49e0cbaab8247180869a16fa62  lines 320
+  block 13-88: header 3 cells, delimiter 3 cells, body widths [3], rows 74 -> ok
+  block 90-111: FAIL — line 91 is not a delimiter (a row sits above the header)
+  block 113-113: SINGLE ROW (no delimiter above)
+  block 115-115: SINGLE ROW (no delimiter above)
+  block 118-241: header 4 cells, delimiter 4 cells, body widths [4], rows 122 -> ok
+  block 244-273: header 3 cells, delimiter 3 cells, body widths [3, 4], rows 28 -> CELL-COUNT MISMATCH
+  knowledge-row window renders: <table> 1, <th> 4, <td> 12
+
+PRE-EXISTING (identical at DISPATCH and HEAD; out of scope, not touched by this ticket): coverage-map block 90-111
+has no header/delimiter above it; single pipe lines at 113 and 115; Lessons block 244-273 has body widths [3, 4]
+against a 3-cell header. Scoped claim: 'every row has the delimiter above it' is asserted for the Knowledge table only.

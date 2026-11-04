@@ -1,0 +1,66 @@
+Reading instant: 2026-11-03T23:46:39-03:00
+
+$ git log -3 --format='%H %ci %s'
+5ee94c56ce7490938ee38c2e5c10930a1fd1330a 2026-11-03 23:44:58 -0300 round-69 landing: the packed route's gate, contract and shared-object carrier; the six r68 repairs; S270; QUALITY 112-114; the provenance gate
+3f3d20fc065b5be62f676028b9a38d316ddfe8fd 2026-11-03 23:33:16 -0300 round-69 wave r69-w1: the 15-seat v1 build+attack spec and its validated dispatch (band 8-16, attack share 5/15)
+f15998102f1ce3569e61faa2ac6f286bc414538e 2026-11-03 23:30:14 -0300 round-69 freeze: the claims container (three claims, pins, atoms A0-A9) — operative freeze
+
+$ git rev-parse HEAD
+5ee94c56ce7490938ee38c2e5c10930a1fd1330a
+
+# committed bytes at HEAD
+$ git show HEAD:corpus/README.md | sha256sum
+43d01520bda813bc059e1556483433a3e3b7a942bd22556d360066616cf1801f  corpus/README.md
+$ git show HEAD:corpus/SOURCES.md | sha256sum
+f0420431eb8a85877e66c5eb431619abe1645178fb0ec25f257e916214fd561d  corpus/SOURCES.md
+$ git show HEAD:corpus/knowledge/2026-11-03-r68-packed-elf-route.md | sha256sum
+6fe62359de3361ee3c9a2b0491667cf67df355181da7bf638847c2a6460d9612  corpus/knowledge/2026-11-03-r68-packed-elf-route.md
+$ git show HEAD:corpus/lessons/round-69.md | sha256sum
+0a2de53df41281f3e0f6b1a9dd7a20c981811841c258b151a6a163a70df6bae9  corpus/lessons/round-69.md
+$ git show HEAD:corpus/knowledge/2026-11-03-r69-packed-route-contract.md | sha256sum
+2b5e945313c43c779cca73a53b6ac49f6a6822092ea9f28fbf4daf69d63a42e6  corpus/knowledge/2026-11-03-r69-packed-route-contract.md
+$ git show HEAD:corpus/QUALITY.md | sha256sum
+8e270da678f24309973cd85896292b709774bf28424d5133bd2e2bc02fe12419  corpus/QUALITY.md
+$ git show HEAD:tools/round-29/prefile-check.sh | sha256sum
+9a403dc11594a78a23629034bced6b6e0b33160f08a30d00a53d4bd860c1390d  tools/round-29/prefile-check.sh
+$ git show HEAD:tools/round-69/provenance-check.py | sha256sum
+dff47b9206aa2bedc16ad229281ae8e2b20edb12f6f0ae4374407219795b77cb  tools/round-69/provenance-check.py
+
+# dispatch bytes (the revision this seat first measured; pre-landing)
+$ git show 3f3d20fc065b5be62f676028b9a38d316ddfe8fd:corpus/README.md | sha256sum
+9033cb388aa4e8ca2fd1429fd1c6d278a2e172e82f594992790bbf746f6c03ba  corpus/README.md
+$ git show 3f3d20fc065b5be62f676028b9a38d316ddfe8fd:corpus/SOURCES.md | sha256sum
+abb44aa4fc3d7f194de2b384bbc2d969d8a2328e0c467cf1cf56e9008092c0e0  corpus/SOURCES.md
+$ git show 3f3d20fc065b5be62f676028b9a38d316ddfe8fd:corpus/knowledge/2026-11-03-r68-packed-elf-route.md | sha256sum
+00f1a03a7074b3507cbd1f40e31e9ed2a10b8bf07bb388f87d066c04943c5696  corpus/knowledge/2026-11-03-r68-packed-elf-route.md
+
+$ git status --porcelain   # untracked w1/ is this wave's own seat dirs; no tracked modification
+?? .ufo/waves/round-69/l1/census-end.txt
+?? .ufo/waves/round-69/l1/scores/
+?? .ufo/waves/round-69/r69-w1.ready
+?? .ufo/waves/round-69/r69-w1.ready.dispatched
+?? .ufo/waves/round-69/w1/
+
+$ git show HEAD:corpus/SOURCES.md | grep -cE '^\| S[0-9]{3} ' ; git show HEAD:corpus/SOURCES.md | grep -o '^| S[0-9]*' | tail -2 ; git show HEAD:corpus/SOURCES.md | grep -c '^| S271 '
+177
+| S269
+| S270
+0
+
+$ git show HEAD:corpus/SOURCES.md | grep -o 'uncompression" (1[0-9] words)'
+uncompression" (11 words)
+
+$ git show HEAD:corpus/README.md | awk 'NR==118 || NR==119'
+118|| entry | topic | source | verified-at |
+119||---|---|---|
+
+$ git show HEAD:corpus/knowledge/2026-11-03-r68-packed-elf-route.md | grep -cE '^- `(source|verified-at|recheck):`' ; ... | wc -l
+3
+101
+
+Values this seat recorded earlier, at their instants (kept as the seat log, not re-run):
+  23:36:55 local  corpus/README.md mtime; bytes then 43d01520… (row moved, 3-cell delimiter)
+  23:39:42 local  HEAD was 3f3d20fc065b5be62f676028b9a38d316ddfe8fd; SOURCES.md then d62272a7… (S270 as the doc/upx.1 row);
+                  r69 entry then de27f3d8…; round-69.md not yet present at first check
+  23:42:09 local  SOURCES.md rewritten to f0420431… (S270 as the src/help.cpp + src/main.cpp row)
+  23:44:58 local  landing commit 5ee94c56 (all six r68 repairs, S270, QUALITY 112-114, provenance gate)
