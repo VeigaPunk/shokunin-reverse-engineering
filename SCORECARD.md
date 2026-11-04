@@ -5832,3 +5832,38 @@ SentinelScope SS74-1/4/5/6 fixes at the next freeze, with SS74-3's shim `values`
 recorded as carried r73 debt; (e) ExecArm's A2 recipe (`--expect-upx` must be the route
 receipt's own recorded argv0 path); standing duties every round that lands receipts.
 
+
+## 2026-11-04 — round 75: the A12 case set becomes independent, and the record audit's atom grammar becomes exact
+
+Base `3c15a156239af06114e1ece8d1044a0d8205379b`; declaration `8dff07b9ac7dfc3f099c97d98ee97cc5f69efb3a`;
+freeze `ec149dc497b4de53ccb3e7a125baa226a66daaa7` — the round-29 gate audits it **CLEAN** with no
+findings and four instrument paths (`l1/scores/gate-at-freeze.txt`), with one disclosed instrument
+revision (`ad53c1e1`, the runner binding; `instrument_supersessions` in the container). Two claims
+on two distinct axes, both capability acquisitions, causally separable.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies;
+R75-C2 works a tied-lowest axis). No nudge waiver is claimed.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R75-C1 | operability | capability acquisition (case-independence closure) | the frozen battery at the measured revision reports patch set `r75probe` `survivor_count 0`, every mutant killed with its declared case, `sole_detector["b-drop-canary-field"]` true with `failed == ["a12-kernel-canary-field"]`, pristine 25 cases, target pinned before execution — while `r75base` on the landed round-74 probe names exactly the four survivors `d-home-under-truthy, d-tmpdir-under-truthy, d-name-samples-last-wins, d-lie-clean-superset` and the canary field is not sole | base `pre/c1-base-arm.json`: 4 survivors, canary fails two cases → landing `l1/scores/c1-at-landing.json`: 0 survivors, sole true, 15 killed | improved |
+| R75-C2 | calibration | capability acquisition (exact-grammar record audit) | the frozen audit at the measured revision exits 0 with `mismatch_count 0` over its eight atoms `D16`–`D23` and a defect-free `validate` block — while at base `3c15a156` it exits 1 with `mismatch_count 8` naming those atoms, and a committed `--validate` receipt names the landing receipt with `defects []` | base `pre/c2-at-base.json`: 8 mismatches → landing `l1/scores/c2-at-landing.json` at the landing receipt and `l1/scores/c2-at-tip.json` at the measured revision: 0 | improved |
+
+**Capabilities entered.** (1) a case-independence mutation closure that scores a fifteen-class patch
+set with a per-mutant `sole_detector` field and a pin compared before any generated copy executes,
+first working round 75; (2) an exact-grammar record audit whose eight atoms parse the cells they
+check (used-by path lists, search-note fields and counts, rejected-row reason+flip, erratum values
+bound to a measured receipt) and carry one committed red fixture per grammar, first working round 75.
+
+**Capabilities rows appended** in the table above (`## Capabilities`): `A12 case-independence
+closure` and `exact-grammar record audit`, each with its `l1/scores` receipt.
+
+**Name by surface.** R75-C1's surface is the A12 selftest cases and the witness-naming seam
+(`_name_samples`, `_samples`, `a12_verdict`), not the runtime arm. R75-C2's surface is the record
+cells and receipts the atoms parse, not the instruments' runtime behaviour.
+
+**census erratum.** The round-75 census closed at 191 rows (`l1/census-end.txt`, exit 0), up from
+189 at round start; two rows enter (S284 `os.path.commonpath`, mined; S285 `environ(7)`, rejected),
+one candidate row S283 (`re.fullmatch`) was written and withdrawn the same round as a duplicate of
+S143 (ids are not reused, so S283 is a gap), and S277's `used-by` gained the round-75 entry. 23 W04
+duplicate-URL warnings at both ends; no new warning class.

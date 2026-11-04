@@ -21,7 +21,7 @@ excerpts with their snapshot line. Rows are written after the open, never before
 
 | source / decision | URL | accessed | located quote (≤25 words) | digestion |
 |---|---|---|---|---|
-| S283, `re.fullmatch`, admit (mined) | https://docs.python.org/3/library/re.html#re.fullmatch | 2026-11-04 | "If the whole string matches the regular expression pattern, return a corresponding Match." (15 words; `re.fullmatch` entry, snapshot line 1152) | Whole-string matching is the difference between a value that contains a matching substring and a value that *is* the shape. The atom grammars parse the whole cell (`^…$`-anchored patterns over stripped cells); the round-74 cosmetic passes were values that contained the token. |
+| S143, `re.fullmatch`, reused (opened round 47; not re-registered) | https://docs.python.org/3/library/re.html | 2026-11-04 (re-opened) | "Page fetched 2026-10-28 (HTTP 200, 257,706 bytes, sha256 f169ed06…); anchor `re.fullmatch(pattern, string, flags=0)`" (the row's own anchor cell) | The whole-string criterion the atom grammars use. **S283 was written for this page and withdrawn the same round: S143 already mines the same page for the same exact-match scope.** Ids are not reused, so S283 stays a gap. |
 | S284, `os.path.commonpath`, admit (mined) | https://docs.python.org/3/library/os.path.html#os.path.commonpath | 2026-11-04 | "Return the longest common sub-path of each pathname in the iterable paths." (13 words; `os.path.commonpath` entry, snapshot line 291) | A valid common sub-path, not a string prefix; the containment predicates compose it with `realpath`. This is the round-74 SentinelScope SS74-1 escape class: the lexical version admitted `..`, absolute keys and symlink escapes. |
 | S285, `environ(7)`, reject | https://man7.org/linux/man-pages/man7/environ.7.html | 2026-11-04 | "The variable environ points to an array of pointers to strings called the environment." (14 words; DESCRIPTION, snapshot line 75) | The page defines the C-level `environ` array, its `execve(2)` origin and `PR_SET_MM_ENV_START` relocation. It says nothing about `/proc/<pid>/cmdline`: `grep -c cmdline` on the snapshot prints 0. Flip: the page states the cmdline layout or mutability the argv claim needs. |
 | S277, `proc_pid_cmdline(5)`, retrospective row (opened round 73, written this round) | https://man7.org/linux/man-pages/man5/proc_pid_cmdline.5.html | 2026-11-04 (re-opened; first opened round 73) | "Think of this file as the command line that the process wants you to see." (16 words; DESCRIPTION, snapshot line 96) | Row `opened` is the FIRST opening date (round 73); this round only re-opened it and added a consumer. It grounds the argv-as-claim half of the entry; round 74 rejected S279–S282 because they were the umbrella, the boot-cmdline page, the directory overview and the index, not this leaf. |
@@ -34,8 +34,9 @@ not evidence of a fresh open.
 
 Census: `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` exits 0 at the
 round start (189 rows, 23 W04 warnings; `.ufo/waves/round-75/l1/census-start.txt`) and at the
-round end (191 rows; `.ufo/waves/round-75/l1/census-end.txt`). Three rows enter (S283 and S284
-mined, S285 rejected) and one existing row's `used-by` changes.
+round end (191 rows, 23 W04 warnings; `.ufo/waves/round-75/l1/census-end.txt`). Two rows enter
+(S284 mined, S285 rejected), one candidate row (S283) is withdrawn as a duplicate of S143, and one
+existing row's `used-by` changes (S277).
 
 ## What the wave found
 

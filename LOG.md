@@ -4470,3 +4470,42 @@ fractions — and requires zero mismatches with at least two corrections that ea
   `corpus/lessons/round-74.md`.
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r74` removed after the close; no pacman transaction
   and no tool install ran this round.
+
+## 2026-11-04 — round 75: the A12 case set becomes independent, and the record audit's grammar becomes exact
+
+- **Claims.** Two, one per axis, both capability acquisitions, causally separable and scored by
+  their own instrument (`plans/round-75-claims.md`; frozen container
+  `.ufo/waves/round-75/claims.json`, freeze `ec149dc4`, audited **CLEAN** by the round-29 gate with
+  no findings and one disclosed instrument revision `ad53c1e1`). `lowest-axis: calibration` — a
+  tied-lowest axis, no nudge waiver claimed.
+- **R75-C1 (operability; case-independence closure).** The round-74 wave's findings (three further
+  A12 survivors and one cross-binding) become a fifteen-class patch set: `r75base` on the landed
+  round-74 probe reports four survivors and `b-drop-canary-field` failing two cases
+  (`pre/c1-base-arm.json`); `r75probe` on `tools/round-75/seam-probe.py` reports 0 survivors, 15
+  killed by their declared cases, the canary field sole (`failed == ["a12-kernel-canary-field"]`),
+  pristine 25 cases and the target pinned before execution (`l1/scores/c1-at-landing.json`,
+  `l1/scores/c1-at-tip.json`). The probe now flattens a name's samples (`_samples`,
+  `_name_samples` accumulating) so neither first-wins nor last-wins can hide a dirty launch;
+  `a12-genuine-field-identity`, `a12-sample-name-merge` and `a12-lie-clean-keys-exact` bind the
+  three classes, and `a12-kernel-multiple-samples` no longer reads `canary_present`.
+- **R75-C2 (calibration; exact-grammar record audit).** Eight atoms D16-D23 re-derive the round-74
+  spot-check's routed defects 1-8 from committed bytes; the four grammars that passed cosmetically
+  in round 74 (used-by path list, search-note fields and counts, rejected-row reason+flip, erratum
+  values) now parse the cell and carry one committed red fixture each; the audit's own receipt
+  carries a defect-free `validate` block. Base `pre/c2-at-base.json`: `mismatch_count 8`;
+  landing `l1/scores/c2-at-landing.json` and the tip re-run: 0.
+- **Gate.** Freeze `ec149dc4` CLEAN, findings [], four instrument paths, at the landing revision
+  (`l1/scores/gate-at-freeze.txt`, re-run after the disclosure). The round-74 row is `CLEAN -`.
+- **Sources.** 189 → 191 rows: S284 (`os.path.commonpath`, mined, snapshot 90 223 B, sha256
+  `c3353873…`, 13-word located quote) and S285 (`environ(7)`, rejected, 21 810 B, sha256
+  `f209ca23…`, 14-word quote, `grep -c cmdline` = 0), plus S277's `used-by` extended. S283
+  (`re.fullmatch`) was written and withdrawn the same round as a duplicate of S143; the id stays a
+  gap. Census start `l1/census-start.txt` (exit 0, 189 rows, 23 W04) and end
+  `l1/census-end.txt` (exit 0, 191 rows, 23 W04).
+- **Record.** The round-75 section and two capability rows in `SCORECARD.md`; `QUALITY.md` rows 133
+  and 134 from the mined mistake; the entry
+  `corpus/knowledge/2026-11-04-r75-a12-case-independence.md`; the lesson
+  `corpus/lessons/round-75.md` (Gate, Mistakes, the S275 old→new re-log and the row-`opened`
+  convention).
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r75` is removed after the close; no pacman transaction
+  and no tool install ran this round.
