@@ -13,9 +13,9 @@ Every source below was opened this round with one GET each; snapshots, byte coun
 
 | source / decision | URL | accessed | located quote (≤25 words) | digestion |
 |---|---|---|---|---|
-| S289, RFC 8259 section 3 Values, admit (mined) | https://www.rfc-editor.org/rfc/rfc8259.txt | 2026-11-04 (HTTP 200, 28 360 B, sha256 `61a5378f4255c720…`) | "A JSON value MUST be an object, array, number, or string, or one of" (16 words; section 3 Values, line 298) | JSON's three literal names (`false`, `null`, `true`) are not numbers, so a claimed `true` cannot satisfy a field holding `1`: the typed comparison in `verdict-bind.py` rests on this value taxonomy, not on Python's `True == 1`. The row does not claim schema conformance or REA Evidence authority. |
-| S290, GNU Bash Reference Manual, admit (mined) | https://www.gnu.org/software/bash/manual/bash.html | 2026-11-04 (HTTP 200, 1 040 954 B, sha256 `78d0eefbe60cfe73…`) | "Bash itself returns the exit status of the last command" (11 words; section 3.7.5 Exit Status, line 4435) | A shell returns the last command's exit status, so a wrapper that runs the gate and records the shell's exit records the gate's own verdict. The row grounds the field, never the gate's correctness. |
-| S291, `ast.literal_eval`, reject | https://docs.python.org/3/library/ast.html | 2026-11-04 (HTTP 200, 362 493 B, sha256 `8cacd731a2e0af73…`) | "Evaluate an expression node or a string containing only a Python literal or" (15 words; `ast.literal_eval`, line 2760) | REJECTED: the annotation grammar is not a Python literal grammar; `literal_eval` accepts Python-only spellings (`True`, `None`) the records never use and would widen the grammar past the JSON literals the receipts hold. Flip: the annotation grammar becomes a Python literal grammar. Consumer search (QUALITY row 36): `grep -c 'literal_eval' tools/round-77/verdict-bind.py` → 0. |
+| S289, RFC 8259 section 3 Values, admit (mined) | https://www.rfc-editor.org/rfc/rfc8259.txt | 2026-11-04 (HTTP 200, 28 360 B, sha256 `61a5378f4255c720…`) | "A JSON value MUST be an object, array, number, or string, or one of" (14 words; section 3 Values, `grep -n` line 298 — the text file carries 16 form feeds, so `str.splitlines()` would count 303) | JSON's three literal names (`false`, `null`, `true`) are not numbers, so a claimed `true` cannot satisfy a field holding `1`: the typed comparison in `verdict-bind.py` rests on this value taxonomy, not on Python's `True == 1`. The row does not claim schema conformance or REA Evidence authority. |
+| S290, GNU Bash Reference Manual, admit (mined) | https://www.gnu.org/software/bash/manual/bash.html | 2026-11-04 (HTTP 200, 1 040 954 B, sha256 `78d0eefbe60cfe73…`) | "Bash itself returns the exit status of the last command" (10 words; section 3.7.5 Exit Status, line 4435) | A shell returns the last command's exit status, so a wrapper that runs the gate and records the shell's exit records the gate's own verdict. The row grounds the field, never the gate's correctness. |
+| S291, `ast.literal_eval`, reject | https://docs.python.org/3/library/ast.html | 2026-11-04 (HTTP 200, 362 493 B, sha256 `8cacd731a2e0af73…`) | "Evaluate an expression node or a string containing only a Python literal or" (13 words; `ast.literal_eval`, line 2760) | REJECTED: the annotation grammar is not a Python literal grammar; `literal_eval` accepts Python-only spellings (`True`, `None`) the records never use and would widen the grammar past the JSON literals the receipts hold. Flip: the annotation grammar becomes a Python literal grammar. Consumer search (QUALITY row 36): `grep -c 'literal_eval' tools/round-77/verdict-bind.py` → 0. |
 
 **Census.** `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` at round start: exit 0,
 194 rows, 23 W04 warnings (`.ufo/waves/round-77/l1/census-start.txt`). At round end: exit 0, 197 rows
@@ -32,11 +32,30 @@ round-77 non-author spot-check re-opens the sample this lesson records; its verd
 |---|---|---|---|
 | **record-vs-receipt** — a verdict written beside a resolving pointer was never read by the atom built to police the record. Three files said `c1-at-landing.json (D24 true, mismatch_count 0)` while the receipt records `exit 1`, `mismatch_count 1`, `D24 false`; `D24_capability_rows` was green because it checked that the path resolves, never what the cell claims. | `corpus/lessons/round-76-verifier-spotcheck.md` §6 items 1 and 5; `.ufo/waves/round-77/pre/c1-at-base.json` (4 defects, 21 bound clauses, 9 in-scope rows); `pre/controls-c1.json` (`ctl-pointer-only`: round-76 audit 0 mismatches on the same record) | `none` at write time — the atom's grammar had no notion of a claimed value, so the defect class could re-enter through the atom built to catch it | `tools/round-77/verdict-bind.py` with a closed 8-form grammar, 15 selftest cases and two red fixtures naming the exact false annotation; the fix is shown able to fail by `red-false-annotation` (2 defects on the same bytes that round 76 passed) and by the two do-nothing controls, neither of which reaches the target |
 
-A second, smaller mistake was found **inside this round, before the freeze**: the first `red-of-total` selftest
-case called `make_receipt(arms_total=2)` and the binder looked for `arms_ok_total`, so the case failed for the
-wrong reason (the clause was unbound rather than mismatched). The fix maps `*_ok` fields to `*_total`, and the
-case now fails for its declared reason. Class: **fixture for the wrong reason** — a red case that is red because
-the code cannot see the field proves nothing about the comparison; captured by the selftest itself.
+A second mistake was found **inside this round, before the freeze**: the first `red-of-total` selftest case
+called `make_receipt(arms_total=2)` and the binder looked for `arms_ok_total`, so the case failed for the wrong
+reason (the clause was unbound rather than mismatched). The fix maps `*_ok` fields to `*_total`, and the case now
+fails for its declared reason. Class: **fixture for the wrong reason** — a red case that is red because the code
+cannot see the field proves nothing about the comparison; captured by the selftest itself.
+
+A third mistake was caught **by the wave, after the freeze**: `tools/round-77/gen-controls.py`'s first cut
+appended each control override AFTER the module's `if __name__ == "__main__":` guard, so the derived control ran
+`main()` before the override bound and both "controls" were byte-identical to the pristine instrument
+(`ExecControls-8/controls-at-base.json` reproduced the pristine base receipt). The generator's apply-check grepped
+for the marker text and reported the controls as derived; `meets_target: false` then came out true for the wrong
+reason. Class: **a control that cannot fail** (QUALITY row 71's class, appearing in a control *deriver* rather than
+in a gate). Fix: the override is inserted before the guard, the generator refuses a control whose override lands
+after it, and each control records a behavioural `diverges` field (`no-binding`: `bound_clauses 0`,
+`mismatch_count 0`; `all-false`: `mismatch_count 24`). The repair is disclosed in `claims.json`
+`instrument_supersessions` (`63dc9c6f`), and the controls and their before receipt are re-taken
+(`pre/controls-c1.json`).
+
+**Erratum (round-77 before-prose).** The frozen predicates describe the base C2 state as "the filing receipt
+absent and three round-76 gate receipts without exit". The `gate-exits` arm measures the set and finds **five**
+round-76 gate receipts without `exit` (`gate-at-freeze.txt`, `gate-at-record.txt`, `gate-at-tip.txt`,
+`gate-disclosures.txt`, `gate-selftest-at-tip.json`). The counter conditions (`arms_ok 4`, `arms_total 6`) and the
+arm's observation reproduce; only the prose count in the predicate is wrong. The frozen predicate file stays
+byte-identical; this erratum is the record.
 
 ## Routed-defect disposition (round-76 spot-check §6)
 
