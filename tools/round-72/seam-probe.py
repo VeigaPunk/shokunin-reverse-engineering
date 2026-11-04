@@ -302,7 +302,11 @@ def checker_env_arm(instrument: str, root: str, rev: str, pkg: str,
     canary = "KAIDOKU_ENV_CANARY"
     records = {}
     for name in ("git", "readelf"):
-        real = shutil.which(name)
+        # Trusted absolute host tool first; a PATH-resolved tool is the
+        # fallback only (round-72 SentinelScope SS72-1: PATH is a trust
+        # boundary, and the environment allowlist does not sanitize it).
+        trusted = os.path.join("/usr/bin", name)
+        real = trusted if os.path.exists(trusted) else shutil.which(name)
         if not real:
             return {"ok": False, "missing": f"host tool {name}"}
         record = os.path.join(log_dir, name + ".environ")

@@ -115,9 +115,16 @@ def normalize_summary(summary: dict) -> dict:
 
 def audit(log_path: str, summary: dict, run_root: str | None = None) -> dict:
     """Adjudicate one capsule against its summary; every failure names a clause."""
+    MAX_BYTES = 64 * 1024 * 1024
+    if not os.path.isfile(log_path):
+        return {"ok": False, "unevaluable": "capsule is not a regular file",
+                "path": log_path, "failures": ["not_a_regular_file"], "clauses": {}}
+    if os.path.getsize(log_path) > MAX_BYTES:
+        return {"ok": False, "unevaluable": f"capsule exceeds {MAX_BYTES} bytes",
+                "path": log_path, "failures": ["oversize"], "clauses": {}}
     try:
         with open(log_path, "rb") as fh:
-            data = fh.read()
+            data = fh.read(MAX_BYTES + 1)
     except OSError as exc:
         return {"ok": False, "unevaluable": f"capsule unreadable: {exc.__class__.__name__}",
                 "path": log_path, "failures": ["unreadable"], "clauses": {}}

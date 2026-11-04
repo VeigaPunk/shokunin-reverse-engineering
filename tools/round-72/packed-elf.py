@@ -823,24 +823,47 @@ def check_receipt(path: str, root: str, rev: str,
     capsule_path = capsule
     capsule_out = None
     capsule_absent = None
-    if capsule_path is None and isinstance(observed, dict) \
-            and isinstance(observed.get("log"), str):
+    capsule_skipped = None
+    if capsule is not None:
+        # An explicit --capsule is the caller's own input (trusted operator
+        # path); it still must be a regular bounded file (checked by the audit).
+        capsule_path = os.path.realpath(capsule)
+        if not os.path.isfile(capsule_path):
+            failing.append(f"receipt_capsule: --capsule is not a regular file "
+                           f"({capsule})")
+            capsule_absent = capsule_path
+            capsule_path = None
+    elif isinstance(observed, dict) and isinstance(observed.get("log"), str):
         cand = observed["log"]
-        if not os.path.isabs(cand):
-            # A lane-relative capsule is filed evidence: its absence is a
-            # named failure, never a silent pass (round-72 ReviewerGates).
-            cand = os.path.join(os.path.abspath(root), cand)
-            if os.path.exists(cand):
-                capsule_path = cand
+        root_abs = os.path.abspath(root)
+        if os.path.isabs(cand):
+            # A receipt never grants a read outside the lane (QUALITY #120 in
+            # the read direction; round-72 SentinelScope SS72-2).  An external
+            # absolute pointer is a dead run pointer, recorded and not read.
+            resolved = os.path.realpath(cand)
+            if under(root_abs, resolved):
+                capsule_path = resolved
             else:
-                capsule_absent = cand
-        elif os.path.exists(cand):
-            capsule_path = cand
-        # An absolute pointer outside the lane is a run pointer (dead scratch),
-        # recorded as not evaluated - it makes no committed-evidence claim.
+                capsule_skipped = resolved
+        else:
+            resolved = os.path.realpath(os.path.join(root_abs, cand))
+            if not under(root_abs, resolved):
+                failing.append(f"receipt_capsule: named capsule escapes the lane "
+                               f"({cand})")
+                capsule_absent = resolved
+            elif not os.path.exists(resolved):
+                failing.append(f"receipt_capsule: named capsule absent ({cand})")
+                capsule_absent = resolved
+            elif not os.path.isfile(resolved):
+                failing.append(f"receipt_capsule: named capsule is not a regular "
+                               f"file ({cand})")
+                capsule_absent = resolved
+            else:
+                capsule_path = resolved
     if capsule_absent is not None:
-        failing.append(f"receipt_capsule: named capsule absent ({capsule_absent})")
-    capsule_verdict = False if capsule_absent is not None else None
+        capsule_verdict = False
+    else:
+        capsule_verdict = None
     if capsule_path is not None:
         capsule_out = capsule_audit.audit(capsule_path, observed or {},
                                           run_root=None)
@@ -861,8 +884,10 @@ def check_receipt(path: str, root: str, rev: str,
            "clauses": clauses,
            "checker_child_env": observed_env(capture, check_root),
            "capsule": ({"path": capsule_path, "ok": capsule_verdict,
-                        "failures": (capsule_out or {}).get("failures", [])}
-                       if capsule_path is not None else None),
+                        "failures": (capsule_out or {}).get("failures", []),
+                        "skipped_external": capsule_skipped}
+                       if capsule_path is not None or capsule_skipped is not None
+                       else None),
            "before_ceilings": receipt.get("before_ceilings")}
     print(json.dumps(out, indent=1, sort_keys=True))
     if work is None:
