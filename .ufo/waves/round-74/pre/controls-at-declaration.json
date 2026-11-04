@@ -1,0 +1,123 @@
+{
+ "arms": [
+  {
+   "arm": "c1_base_world",
+   "expects": [
+    "a-drop-genuine-canary",
+    "b-unreadable-empty",
+    "b-first-sample-only",
+    "b-drop-canary-field",
+    "c-swap-verdict-inputs",
+    "c-skip-forged-subrun"
+   ],
+   "met": true,
+   "observed": {
+    "pristine_ok": true,
+    "survivors": [
+     "a-drop-genuine-canary",
+     "b-unreadable-empty",
+     "b-first-sample-only",
+     "b-drop-canary-field",
+     "c-swap-verdict-inputs",
+     "c-skip-forged-subrun"
+    ]
+   }
+  },
+  {
+   "arm": "c1_no_declared_cases",
+   "expects": {
+    "killed": 4,
+    "killed_wrong_case": [
+     "a-drop-genuine-canary",
+     "b-unreadable-empty",
+     "b-first-sample-only",
+     "b-drop-canary-field",
+     "c-swap-verdict-inputs",
+     "c-skip-forged-subrun"
+    ]
+   },
+   "met": true,
+   "observed": {
+    "killed": [
+     "a-drop-forged-detected",
+     "a-drop-lie-clean",
+     "a-drop-genuine-rc",
+     "a-any-forged-sample"
+    ],
+    "killed_wrong_case": [
+     "a-drop-genuine-canary",
+     "b-unreadable-empty",
+     "b-first-sample-only",
+     "b-drop-canary-field",
+     "c-swap-verdict-inputs",
+     "c-skip-forged-subrun"
+    ],
+    "pristine_ok": true
+   }
+  },
+  {
+   "arm": "c2_do_nothing",
+   "expects": {
+    "every_new_atom_false": [
+     "D7b_before_selection",
+     "D8_capability_rows",
+     "D9_s275_used_by",
+     "D10_search_log",
+     "D11_rejected_rows",
+     "D12_census_erratum",
+     "D13_readme_newline",
+     "D14_runner_binding",
+     "D15_freeze_pins"
+    ]
+   },
+   "met": true,
+   "observed": {
+    "mismatch_count": 11,
+    "mismatches": [
+     "D3_record_gate_disclosures",
+     "D6_nudge_rationale",
+     "D7b_before_selection",
+     "D8_capability_rows",
+     "D9_s275_used_by",
+     "D10_search_log",
+     "D11_rejected_rows",
+     "D12_census_erratum",
+     "D13_readme_newline",
+     "D14_runner_binding",
+     "D15_freeze_pins"
+    ]
+   }
+  },
+  {
+   "arm": "c2_selftest_reds",
+   "expects": [
+    "selection-two-arms-red",
+    "used-by-wrong-entry-red"
+   ],
+   "met": true,
+   "observed": {
+    "case_names": [
+     "first-lines",
+     "newline-check",
+     "row-for",
+     "row-split",
+     "section-absent",
+     "section-bounds",
+     "selection-single-arm",
+     "selection-two-arms-green",
+     "selection-two-arms-red",
+     "table-rows",
+     "used-by-named-entry-green",
+     "used-by-wrong-entry-red"
+    ],
+    "rc": 0,
+    "stdout_tail": "{\n \"case_names\": [\n  \"first-lines\",\n  \"newline-check\",\n  \"row-for\",\n  \"row-split\",\n  \"section-absent\",\n  \"section-bounds\",\n  \"selection-single-arm\",\n  \"selection-two-arms-green\",\n  \"selection-two-arms-red\",\n  \"table-rows\",\n  \"used-by-named-entry-green\",\n  \"used-by-wrong-entry-red\"\n ],\n \"cases\": 12,\n \"failures\": [],\n \"selftest\": \"tools/round-74/record-audit.py\"\n}\n"
+   }
+  }
+ ],
+ "base_rev": "b3a7e28089582ce5fb002a1b88e5295caf696b9f",
+ "met": 4,
+ "ok": true,
+ "schema": "kaidoku-r74-controls-v1",
+ "work": "/fast/scratch/hyaku/kaidoku-r74/l1/ctl-cg_qnjtn"
+}
