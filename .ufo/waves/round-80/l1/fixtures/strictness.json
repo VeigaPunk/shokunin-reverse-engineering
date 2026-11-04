@@ -1,0 +1,59 @@
+{
+  "schema": "kaidoku-r80-strictness-fixtures-v1",
+  "round": 80,
+  "base": "16dfa009bf143080dfcdfc5f9ec34bd359536d90",
+  "comment": "Frozen before any round-80 data. Red cases are inputs the round-79 binder accepts and a strict binder must refuse; green cases are inputs both must bind, so an implementation that refuses everything fails.",
+  "red_cases": [
+    {
+      "id": "rb01-substring-longer-line",
+      "kind": "bind",
+      "why": "the declared pin `rea-agents@6.7.0` occurs only as a prefix of the live token `rea-agents@6.7.05`; round 79's bare `token in line` test binds it",
+      "pointer": "live.txt:1",
+      "tokens": ["rea-agents@6.7.0"],
+      "lines": ["  \"rea-agents@6.7.05\",\n"]
+    },
+    {
+      "id": "rb02-substring-longer-token",
+      "kind": "bind",
+      "why": "the declared pin occurs only as a prefix of a longer argv token; round 79 binds it",
+      "pointer": "live.txt:1",
+      "tokens": ["rea-agents@6.7.0"],
+      "lines": ["args = [ \"-y\", \"rea-agents@6.7.00\", \"mcp\" ]\n"]
+    },
+    {
+      "id": "rb03-duplicate-omp-cell",
+      "kind": "record",
+      "why": "the record declares the OMP client twice; round 79's dict comprehension keeps the last cell and reports checks_total 5 with no duplicate signal",
+      "append_cell": "OMP `rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:12`)",
+      "client": "OMP",
+      "cell_id": "omp-pin"
+    },
+    {
+      "id": "rb04-duplicate-devin-cell",
+      "kind": "record",
+      "why": "same collapse on a second client, so the rule cannot be a one-off for OMP",
+      "append_cell": "Devin `rea-agents@6.7.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`)",
+      "client": "Devin",
+      "cell_id": "devin-pin"
+    }
+  ],
+  "green_cases": [
+    {
+      "id": "gr01-exact-pin-line",
+      "kind": "bind",
+      "why": "the live pin stands as a whole token between quotes: a correct exact-token rule binds it",
+      "pointer": "live.txt:1",
+      "tokens": ["rea-agents@6.7.0"],
+      "lines": ["  \"rea-agents@6.7.0\",\n"]
+    },
+    {
+      "id": "gr02-exact-range-second-line",
+      "kind": "bind",
+      "why": "a two-line range whose second line carries the export as a whole token",
+      "pointer": "live.sh:1-2",
+      "tokens": ["GHIDRA_INSTALL_DIR="],
+      "lines": ["#!/bin/bash\n", "export GHIDRA_INSTALL_DIR=/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC\n"]
+    }
+  ],
+  "record_template": "The clients pin `rea-agents@6.7.0` today: Devin `rea-agents@6.7.0` (`/home/vgpnk/.config/devin/mcp_config.json:7`), OMP `rea-agents@6.7.0` (`/home/vgpnk/.omp/agent/mcp.json:12`), and Kimi `rea-agents@6.7.0` (`~/.kimi-code/config.toml:4722`).\nGhidra: `application.version=12.1.4` (`/home/vgpnk/.local/opt/ghidra_12.1.4_PUBLIC/Ghidra/application.properties:17`, `/home/vgpnk/.bashrc:28-29`).\n"
+}
