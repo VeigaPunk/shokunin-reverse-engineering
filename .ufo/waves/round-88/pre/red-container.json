@@ -1,0 +1,64 @@
+{
+ "schema": "kaidoku-r88-claims-v1-red-fixture",
+ "round": 88,
+ "base": "0cf8e3243059e0bc510b90c880d13d191e78d732",
+ "claims": [
+  {
+   "id": "R88-C1",
+   "axis": "coverage",
+   "type": "capability acquisition (frontier to core)",
+   "predicate": "tools/round-88/no-such-counter.py --repair-cmd tools/round-88/upx-chain-repair.py reports recovered 4 of 4 with controls_ok all true (N1-refuse-plain, N2-corrupt-payload, N3-intact-idempotent), the round-87 regression arm met (recovered 8 of 8 with its controls true) and exit 0, where a case is recovered only when the repair exits 0, the output's only changed bytes lie inside block 0's 4-byte sz_cpr window, upx -t on the output exits 0, upx -d restores the carrier's pinned sha256, and REA 6.5.0 analyze of the restored bytes reports the carrier's declared round-70 procedure count",
+   "label": "recovered 4 of 4",
+   "kill_rule": "recovered < 4; any control false; the regression arm unmet; a case recovered through a change outside the sz_cpr window; a repair that names, reads or hashes a carrier source path or pin; a counter, population, tamper, arm, control or carrier changed after this declaration; REA or packer pin drift",
+   "counter": "tools/round-88/no-such-counter.py",
+   "repair": "tools/round-88/upx-chain-repair.py",
+   "target": {
+    "recovered": 4,
+    "total": 4,
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "regression_recovered": 8,
+    "exit": 0
+   },
+   "before": {
+    "control_identity": ".ufo/waves/round-88/pre/c1-control-identity-at-base.json",
+    "control_naive_global": ".ufo/waves/round-88/pre/c1-control-naive-global-at-base.json",
+    "control_r87_anchor": ".ufo/waves/round-88/pre/c1-control-r87-anchor-at-base.json"
+   }
+  },
+  {
+   "id": "R88-C2",
+   "axis": "depth",
+   "type": "rule block (decision table)",
+   "predicate": "tools/round-88/depth-blocks.py --root . --rev <measured> reports blocks 28, resolved 28, unresolved [] and exit 0, where a block resolves only when every corpus/knowledge/<name>.md[:line[-line]] citation it carries exists at that revision and its range is inside the file",
+   "label": "blocks 28, resolved 28",
+   "kill_rule": "resolved < 28; any unresolved block; a block that carries no citation; a revision that does not contain the new block; the block text changed after this declaration",
+   "counter": "tools/round-88/depth-blocks.py",
+   "evidence": "tools/round-88/field-tamper-matrix.py",
+   "target": {
+    "blocks": 28,
+    "resolved": 28,
+    "unresolved": 0,
+    "exit": 0
+   },
+   "before": {
+    "base": ".ufo/waves/round-88/pre/c2-depth-at-base.json",
+    "control_junk": ".ufo/waves/round-88/pre/c2-control-junk-blocks.json"
+   }
+  }
+ ],
+ "instruments": {
+  "tools/round-88/upx-chain-repair.py": "59ee51b0e63d3e089c23cee066b637841133412cee50748d84d717d61f8a0b46",
+  "tools/round-88/field-tamper-matrix.py": "0e0554866106c3e6b2bea1f7c58722d10218bc9c89ff61a56bd3e64b4adacd1a",
+  "tools/round-88/depth-blocks.py": "458eeabdfd6209031e12b9081cbbe48d94d18763686db51f0d48f721507c7d5b"
+ },
+ "pins": {
+  "upx_sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+  "rea_pkgjson_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c",
+  "r87_module_sha256": "96da7d8e981b04f5a598dc7eb8ec3f05eeae4b1498f769c83e72c67f6babec24",
+  "r87_counter_sha256": "0f2d2bd80108ded5282dbb8cbf79044357538458143c97ee591cc78e8e5384b0"
+ }
+}
