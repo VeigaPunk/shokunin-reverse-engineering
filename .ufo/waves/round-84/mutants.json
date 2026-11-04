@@ -1,0 +1,119 @@
+{
+ "schema": "kaidoku-r84-mutants-v1",
+ "declared": "2026-11-04",
+ "note": "one declared single-behavior change per mutant; killed only by its declared selftest case",
+ "mutants": [
+  {
+   "id": "floor",
+   "target": "tools/round-82/conjunction-gate.py",
+   "declared_case": "floor-refused",
+   "edits": [
+    {
+     "find": "len(cases) < PRISTINE_FLOOR",
+     "replace": "False and len(cases) < PRISTINE_FLOOR"
+    },
+    {
+     "find": "summary[0] < PRISTINE_FLOOR",
+     "replace": "False and summary[0] < PRISTINE_FLOOR"
+    }
+   ],
+   "note": "the floor is guarded twice in this revision; disabling either guard alone is verdict-neutral, so this one behavior is the pair"
+  },
+  {
+   "id": "failure",
+   "target": "tools/round-82/conjunction-gate.py",
+   "find": "elif summary[1] != 0:",
+   "replace": "elif False and summary[1] != 0:",
+   "declared_case": "failures-refused",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "binder",
+   "target": "tools/round-82/conjunction-gate.py",
+   "find": "if receipt.get(\"binder_sha256\") != BINDER_SHA256:",
+   "replace": "if False and receipt.get(\"binder_sha256\") != BINDER_SHA256:",
+   "declared_case": "binder-refused",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "membership",
+   "target": "tools/round-82/printed-command.py",
+   "find": "if script not in pins:",
+   "replace": "if False and script not in pins:",
+   "declared_case": "bare-name-refused",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "pin-call",
+   "target": "tools/round-82/printed-command.py",
+   "find": "        pin_matches(root, rev, script, pins[script])",
+   "replace": "        pass  # runtime pin recheck omitted",
+   "declared_case": "runtime-pin-mismatch-refused",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "static-refusal",
+   "target": "tools/round-82/printed-command.py",
+   "find": "    if result[\"static_defects\"]:",
+   "replace": "    if False and result[\"static_defects\"]:",
+   "declared_case": "static-defect-no-execution",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-mined",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[8] == \"mined\"",
+   "replace": "True",
+   "declared_case": "sourced-row-rejected-status",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-date",
+   "target": "tools/round-82/printed-command.py",
+   "find": "cells[9] == \"2026-11-04\"",
+   "replace": "True",
+   "declared_case": "sourced-row-wrong-date",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-base",
+   "target": "tools/round-82/printed-command.py",
+   "find": "base_absent = sources_row(base_text, SOURCED_ROW) is None",
+   "replace": "base_absent = True",
+   "declared_case": "sourced-row-at-base",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-plan",
+   "target": "tools/round-82/printed-command.py",
+   "find": "plan_names = SOURCED_ROW in re.findall(r\"\\bS[0-9]+\\b\", read_text(root, rev, PLAN))",
+   "replace": "plan_names = True",
+   "declared_case": "sourced-plan-missing",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "source-entry",
+   "target": "tools/round-82/printed-command.py",
+   "find": "entry_ok = entry_cites(entry_text, SOURCED_ROW)",
+   "replace": "entry_ok = True",
+   "declared_case": "sourced-entry-uncited",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "sb-header-position",
+   "target": "tools/round-83/source-bind.py",
+   "find": "if len(fields) != 1 or fields[0][0] >= 12:",
+   "replace": "if len(fields) != 1:",
+   "declared_case": "late-single-header",
+   "anchor_occurrences": 1
+  },
+  {
+   "id": "sb-duplicate-last",
+   "target": "tools/round-83/source-bind.py",
+   "find": "if line.startswith(\"source:\")]",
+   "replace": "if line.startswith(\"source:\")][-1:]",
+   "declared_case": "duplicate-target-second",
+   "anchor_occurrences": 1
+  }
+ ]
+}
