@@ -223,6 +223,8 @@ def validate(path: str) -> int:
             defects.append(f"{m.get('id')}: applied not true")
         if not isinstance(m.get("verdict"), str):
             defects.append(f"{m.get('id')}: verdict absent")
+        if m.get("verdict") == "killed" and m.get("rc") == 0:
+            defects.append(f"{m.get('id')}: killed with a green rc")
     derived = sorted(str(m.get("id")) for m in mutants
                      if m.get("verdict") == "survived")
     if sorted(str(x) for x in receipt.get("survivors") or []) != derived:

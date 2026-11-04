@@ -243,6 +243,9 @@ def validate(path: str) -> int:
             defects.append(f"{a.get('id')}: malformed arm row")
     if receipt.get("ok") is not True and not (receipt.get("failures") or []):
         defects.append("ok false with no named failure")
+    if receipt.get("ok") is True and any(a.get("ok") is not True
+                                         for a in arms or []):
+        defects.append("ok true over a false arm row")
     out = {"validate": "controls-receipt", "path": path, "ok": not defects,
            "defects": defects, "arms": len(arms) if isinstance(arms, list) else 0}
     print(json.dumps(out, indent=1, sort_keys=True))

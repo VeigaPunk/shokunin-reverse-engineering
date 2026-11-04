@@ -331,6 +331,8 @@ def validate(path: str) -> int:
     derived = [a.get("id") for a in arms if a.get("ok") is True]
     if receipt.get("arms_passed") != len(derived):
         defects.append("arms_passed disagrees with the arm rows")
+    if receipt.get("target") != len(arms):
+        defects.append(f"target {receipt.get('target')} != arm rows {len(arms)}")
     if sorted(receipt.get("failed") or []) != sorted(
             a.get("id") for a in arms if a.get("ok") is not True):
         defects.append("failed disagrees with the arm rows")

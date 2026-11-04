@@ -125,14 +125,17 @@ def parse_json_out(stdout: str) -> dict | None:
 
 def invoke(instrument: str, root: str, rev: str, pkg: str, work: str,
            extra: list[str], path: str | None = None,
-           keep_home: bool = True) -> dict:
+           keep_home: bool = True, with_pkg: bool = True) -> dict:
     env = {"PATH": path or os.environ.get("PATH", "/usr/bin"),
            "LANG": os.environ.get("LANG", "C")}
     if keep_home and os.environ.get("HOME"):
         env["HOME"] = os.environ["HOME"]
-    proc = subprocess.run([sys.executable, "-I", "-B", instrument,
-                           "--root", root, "--rev", rev, "--pkg", pkg,
-                           "--work", work, *extra],
+    argv = [sys.executable, "-I", "-B", instrument,
+            "--root", root, "--rev", rev]
+    if with_pkg:
+        argv += ["--pkg", pkg]
+    argv += ["--work", work, *extra]
+    proc = subprocess.run(argv,
                           capture_output=True, text=True, timeout=1800, env=env)
     return {"rc": proc.returncode, "env_keys": sorted(env),
             "unevaluable": (parse_unevaluable(proc.stdout, proc.stderr) or {}).get("unevaluable"),
@@ -250,9 +253,10 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
         fh.write("#!/bin/sh\nexit 7\n")
     os.chmod(broken_node, 0o755)
     a4 = invoke(instrument, root, rev, pkg, a4_dir, [], path=bin4)
+    a4_clause = str(a4["unevaluable"] or "")
     arms.append(arm("A4_broken_node_typed",
-                    a4["rc"] == 2 and "node" in str(a4["unevaluable"] or "")
-                    and not a4["traceback"],
+                    a4["rc"] == 2 and "broken_tool" in a4_clause
+                    and "node" in a4_clause and not a4["traceback"],
                     {**a4, "stderr_tail": a4["stderr_tail"][-400:]}))
 
     # A5 - an exec-format-less packer is a typed refusal, never a traceback.
@@ -284,10 +288,10 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     # A7 - per-run work: two battery runs sharing --work record distinct dirs.
     run_a = invoke(battery, root, rev, pkg, work,
                    ["--patch-set", "r70", "--tool", tool,
-                    "--min-pristine-cases", "0"])
+                    "--min-pristine-cases", "0"], with_pkg=False)
     run_b = invoke(battery, root, rev, pkg, work,
                    ["--patch-set", "r70", "--tool", tool,
-                    "--min-pristine-cases", "0"])
+                    "--min-pristine-cases", "0"], with_pkg=False)
     ra = parse_json_out(run_a["stdout"]) or {}
     rb = parse_json_out(run_b["stdout"]) or {}
     wa, wb = ra.get("work_dir"), rb.get("work_dir")
@@ -331,6 +335,8 @@ def validate(path: str) -> int:
     derived = [a.get("id") for a in arms if a.get("ok") is True]
     if receipt.get("arms_passed") != len(derived):
         defects.append("arms_passed disagrees with the arm rows")
+    if receipt.get("target") != len(arms):
+        defects.append(f"target {receipt.get('target')} != arm rows {len(arms)}")
     if sorted(receipt.get("failed") or []) != sorted(
             a.get("id") for a in arms if a.get("ok") is not True):
         defects.append("failed disagrees with the arm rows")

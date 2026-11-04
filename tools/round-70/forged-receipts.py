@@ -133,6 +133,13 @@ def forge(material: dict, shape: str, base_rev: str) -> dict:
         r["carriers"][1]["id"] = "nope"
     elif shape == "F10_absent-instrument":
         del r["instrument"]
+    elif shape == "F3L_relabelled-landing":
+        pin = sha256_bytes(open("/bin/ls", "rb").read()) if os.path.exists("/bin/ls") \
+            else "e" * 64
+        r["carriers"][0]["source"] = "/bin/ls"
+        r["carriers"][0]["pin"] = pin
+    elif shape == "F9L_unknown-landing":
+        r["carriers"][1]["id"] = "nope"
     else:
         raise Unevaluable(f"unknown shape: {shape}")
     return r
@@ -152,6 +159,17 @@ SHAPES = [
 ]
 PROBE_SHAPES = {"F1_wrong-rev", "F2_wrong-instrument", "F3_relabelled-source",
                 "F9_unknown-carrier", "F10_absent-instrument"}
+# Landing-world identity shapes: cut from the landing receipt, so their
+# producer fields are valid for the landing pair and only the frozen-table
+# binding can reject them (removes the producer mismatch masking).
+LANDING_PROBE_SHAPES = {"F3L_relabelled-landing": "source",
+                        "F9L_unknown-landing": "unknown carrier id"}
+PROBE_ARM_BY_SHAPE = {"F1_wrong-rev": "A6_packer_pin", "F2_wrong-instrument": "A6_packer_pin",
+                      "F10_absent-instrument": "A6_packer_pin",
+                      "F3_relabelled-source": "A5_carrier_record",
+                      "F9_unknown-carrier": "A5_carrier_record",
+                      "F3L_relabelled-landing": "A5_carrier_record",
+                      "F9L_unknown-landing": "A5_carrier_record"}
 
 
 def write_shape(shape_dir: str, shape: str, material: dict, base_rev: str) -> str:
@@ -200,12 +218,16 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
                      "--rev", rev, "--tool", tool, "--pkg", pkg, "--work", shape_dir,
                      "--receipt", path])
             pjson = json_out(p["stdout"]) or {}
-            a5a6 = [a for a in (pjson.get("arms") or [])
-                    if a.get("id") in ("A5_carrier_record", "A6_packer_pin")]
+            armmap = {a.get("id"): a.get("ok") for a in (pjson.get("arms") or [])
+                      if a.get("id") in ("A5_carrier_record", "A6_packer_pin")}
+            declared_arm = PROBE_ARM_BY_SHAPE[shape]
             row["probe_landing_rc"] = p["rc"]
-            row["probe_a5a6_false"] = bool(a5a6) and all(a.get("ok") is False for a in a5a6)
-            if not row["probe_a5a6_false"] or p["rc"] != 1:
-                failures.append(f"{shape}: frozen probe did not reject it")
+            row["probe_declared_arm"] = declared_arm
+            row["probe_arms"] = armmap
+            rejected = (p["rc"] == 1 and armmap.get(declared_arm) is False)
+            if not rejected:
+                failures.append(f"{shape}: frozen probe did not reject it on "
+                                f"{declared_arm} (rc {p['rc']}, arms {armmap})")
             pb = run([sys.executable, "-I", "-B", base_probe_blob, "--root", root,
                       "--rev", base_probe_rev, "--tool", base_tool, "--pkg", pkg,
                       "--work", shape_dir, "--receipt", path])
@@ -220,6 +242,28 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
                             f"'{clause}' (rc {l['rc']}, failing "
                             f"{(ljson.get('failing') or [])[:3]})")
         shapes_out.append(row)
+    landing_probe_rows = []
+    for shape, clause in LANDING_PROBE_SHAPES.items():
+        shape_dir = os.path.join(scratch, shape)
+        lmat = load_material(landing_material_path)
+        if not isinstance(lmat, dict) or not lmat.get("carriers"):
+            raise Unevaluable("landing material unusable for landing-world shapes")
+        path = write_shape(shape_dir, shape, lmat, base_rev)
+        p = run([sys.executable, "-I", "-B", probe_blob, "--root", root,
+                 "--rev", rev, "--tool", tool, "--pkg", pkg, "--work", shape_dir,
+                 "--receipt", path])
+        pjson = json_out(p["stdout"]) or {}
+        armmap = {a.get("id"): a.get("ok") for a in (pjson.get("arms") or [])
+                  if a.get("id") in ("A5_carrier_record", "A6_packer_pin")}
+        declared_arm = PROBE_ARM_BY_SHAPE[shape]
+        ok = p["rc"] == 1 and armmap.get(declared_arm) is False \
+            and armmap.get("A6_packer_pin") is True
+        landing_probe_rows.append({"shape": shape, "declared_clause": clause,
+                                   "declared_arm": declared_arm, "receipt": path,
+                                   "probe_rc": p["rc"], "probe_arms": armmap, "ok": ok})
+        if not ok:
+            failures.append(f"{shape}: frozen probe did not reject it on {declared_arm} "
+                            f"with A6 true (rc {p['rc']}, arms {armmap})")
     # the genuine receipts still pass the frozen readers
     g = run([sys.executable, "-I", "-B", reader, "--check-receipt",
              landing_material_path, "--root", root, "--rev", rev])
@@ -259,10 +303,15 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
         json.dump({"survivors": [], "killed": [], "mutants": [], "pristine_ok": True,
                    "ok": True, "work_dir": scratch, "target_sha256": "f" * 64}, fh)
     val = run([sys.executable, "-I", "-B", battery_blob, "--validate", constant])
+    work_arm_ok = (bool(wa) and bool(wb) and wa != wb
+                   and w1["rc"] == 0 and w2["rc"] == 0
+                   and (json_out(w1["stdout"]) or {}).get("ok") is True
+                   and (json_out(w2["stdout"]) or {}).get("ok") is True)
     battery_arms = {
         "wrong_pin_rc": wrong_pin["rc"], "wrong_pin_named": wrong_pin_named,
         "floor_rc": floor["rc"], "floor_named": floor_named,
-        "work_dir_distinct": bool(wa) and bool(wb) and wa != wb,
+        "work_dir_distinct": work_arm_ok,
+        "work_run_rcs": [w1["rc"], w2["rc"]],
         "constant_validate_rc": val["rc"],
     }
     if wrong_pin["rc"] != 1 or not wrong_pin_named:
@@ -281,7 +330,8 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
            "instrument": tool, "base_instrument": base_tool,
            "base_material": base_material_path,
            "landing_material": landing_material_path,
-           "shapes": shapes_out, "genuine": genuine,
+           "shapes": shapes_out, "landing_probe_shapes": landing_probe_rows,
+           "genuine": genuine,
            "battery_arms": battery_arms,
            "ok": not failures, "failures": failures}
     return out
@@ -324,9 +374,13 @@ def selftest(root: str, base_rev: str, base_tool: str, work: str | None) -> int:
         reader = blob_to(root, base_rev, base_tool, work_dir, "reader.py")
         b = run([sys.executable, "-I", "-B", reader, "--check-receipt", path])
         cases.append(("wrong-world-control-fails-base-arm", b["rc"] != 0))
+        registered_cases = ("forge-f1-rev-swapped", "forge-f2-instrument-zeroed",
+                            "forge-f10-instrument-absent", "forge-f8-arm-missing",
+                            "forge-f4-ratio-set",
+                            "wrong-world-control-fails-base-arm")
         names = [n for n, _ in cases] + ["case-inventory"]
-        registered = [n for n, _ in cases] + ["case-inventory"]
-        cases.append(("case-inventory", names == registered))
+        cases.append(("case-inventory", names == list(registered_cases)
+                      + ["case-inventory"]))
         failed = [name for name, ok in cases if not ok]
         print(json.dumps({"selftest": TOOL, "cases": len(cases), "failed": failed,
                           "ok": not failed}, indent=1))
@@ -381,9 +435,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.validate:
         return validate(args.validate)
     if args.selftest:
-        if not (args.root and args.base_rev and args.base_tool):
-            print("forged-receipts: --selftest requires --root, --base-rev and "
-                  "--base-tool", file=sys.stderr)
+        if not (args.root and args.base_rev and args.base_tool and args.work):
+            print("forged-receipts: --selftest requires --root, --base-rev, "
+                  "--base-tool and --work (the fixture root must be a caller-owned "
+                  "scratch directory, never a platform temp default)", file=sys.stderr)
             return 2
         return selftest(args.root, args.base_rev, args.base_tool, args.work)
     need = ("--root, --rev, --base-rev, --tool, --base-tool, --probe, --base-probe, "

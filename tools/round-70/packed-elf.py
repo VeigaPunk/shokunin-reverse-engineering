@@ -115,6 +115,17 @@ CARRIERS = [
 # table, never taken from the receipt's word).
 DECLARED_ORIG = {"jq": 167, "xxd": 99, "libz": 184, "dinit": 1268}
 
+# UPX 5.2.0 --best packing is deterministic (same input bytes, same output:
+# verified twice per carrier on 2026-11-04), so the packed stub's sha256 is a
+# declared constant the receipt reader binds (supersession clause, round-70
+# wave finding: a zeroed or fabricated packed_sha256 must fail).
+DECLARED_PACKED = {
+    "jq": "e8b6c9e76b542435a476a584bbe0fdff813c4b05b6d6e9a8e8405b7c7975268a",
+    "xxd": "1727faf91c38130249156aa1cdecc0845d67d49add0d89cc363ed3ad24eb89ff",
+    "libz": "a9c544e6da4f93418f15b768873f9ce5177d490e8de7f2e0c30a3f8e0065da5b",
+    "dinit": "b67ce1bdda27880a3448e25d519bcc7af2ffb073bf2ea2867a1d16dbb9f14bc7",
+}
+
 # The packer's children get exactly these keys, built by the pure
 # build_child_env(); HOME and TMPDIR live inside the run's scratch root and
 # never fall back to /tmp (round-69 M69-11).
@@ -383,6 +394,13 @@ def check_receipt(path: str, root: str, rev: str) -> int:
         print(json.dumps({"check": "R70-C3", "unevaluable": str(exc)}), file=sys.stderr)
         return 2
     failing = []
+    if not isinstance(receipt, dict):
+        failing.append("receipt root is not an object")
+        out = {"check": "R70-C3", "met": False, "failing": failing,
+               "target": None, "carriers_matched": None, "kinds": [],
+               "receipt": path, "rev": rev}
+        print(json.dumps(out, indent=1, sort_keys=True))
+        return 1
     blob_sha = git_blob_sha256(root, rev, TOOL)
     if blob_sha is None:
         print(json.dumps({"check": "R70-C3",
@@ -399,6 +417,15 @@ def check_receipt(path: str, root: str, rev: str) -> int:
                            f"blob at {rev} ({blob_sha})")
     if receipt.get("rev") != rev:
         failing.append(f"rev {receipt.get('rev')} != {rev}")
+    packer = receipt.get("packer") or {}
+    if packer.get("sha256") != UPX_SHA256_PIN or packer.get("sha256_pin") != UPX_SHA256_PIN:
+        failing.append(f"packer sha256 {packer.get('sha256')} / pin "
+                       f"{packer.get('sha256_pin')} != {UPX_SHA256_PIN}")
+    if packer.get("version") != UPX_VERSION_PIN or packer.get("version_pin") != UPX_VERSION_PIN:
+        failing.append(f"packer version {packer.get('version')} / pin "
+                       f"{packer.get('version_pin')} != {UPX_VERSION_PIN}")
+    if packer.get("pin_enforced") is not True:
+        failing.append("packer.pin_enforced not true")
     registry = {c["id"]: c for c in CARRIERS}
     target = receipt.get("target")
     if target != len(CARRIERS):
@@ -475,6 +502,86 @@ def check_receipt(path: str, root: str, rev: str) -> int:
                                f"ceiling/orig {want}")
             if ratio > 0.75:
                 failing.append(f"{cid}: before_ceiling_ratio {ratio} > 0.75")
+        # Evidence fields the receipt must carry truthfully (round-70 wave
+        # findings: the frozen first cut ignored these six and a lying receipt
+        # passed).  Each is re-derived from the frozen table or the pinned
+        # source bytes, never trusted from the receipt's word.
+        if c.get("unpacked_counts") != c.get("orig_counts"):
+            failing.append(f"{cid}: unpacked_counts {c.get('unpacked_counts')} "
+                           f"!= orig_counts (the recovery arm is recover==orig)")
+        if c.get("packed_sha256") != DECLARED_PACKED[cid]:
+            failing.append(f"{cid}: packed_sha256 {c.get('packed_sha256')} != "
+                           f"declared {DECLARED_PACKED[cid]}")
+        if c.get("section_count") != 0:
+            failing.append(f"{cid}: section_count {c.get('section_count')} != 0")
+        if c.get("upx_list_rc") != 0:
+            failing.append(f"{cid}: upx_list_rc {c.get('upx_list_rc')} != 0")
+        control = c.get("control") or {}
+        if control.get("list_rc", 1) == 0 or control.get("decompress_rc", 1) == 0:
+            failing.append(f"{cid}: control rcs {control} not both nonzero")
+        runs = c.get("runs")
+        if not isinstance(runs, dict) or not runs:
+            failing.append(f"{cid}: runs absent")
+        else:
+            for step, flag in (("pack", "--best"), ("unpack", "-d")):
+                step_rec = runs.get(step) or {}
+                argv = step_rec.get("argv")
+                if not isinstance(argv, list) or not argv:
+                    failing.append(f"{cid}: runs.{step}.argv absent")
+                elif flag not in argv:
+                    failing.append(f"{cid}: runs.{step}.argv {argv} lacks {flag}")
+                if step_rec.get("rc") != 0:
+                    failing.append(f"{cid}: runs.{step}.rc {step_rec.get('rc')} != 0")
+        refusal = c.get("refusal")
+        if row.get("address"):
+            if not isinstance(refusal, dict):
+                failing.append(f"{cid}: refusal absent for an addressed carrier")
+            else:
+                if refusal.get("packed_rc", 0) == 0:
+                    failing.append(f"{cid}: refusal.packed_rc 0 (packed bytes must refuse)")
+                if refusal.get("unpacked_rc") != 0:
+                    failing.append(f"{cid}: refusal.unpacked_rc "
+                                   f"{refusal.get('unpacked_rc')} != 0")
+                if refusal.get("symbol_present") is not True:
+                    failing.append(f"{cid}: refusal.symbol_present not true")
+                if not isinstance(refusal.get("unpacked_code_bytes"), int) \
+                        or refusal["unpacked_code_bytes"] <= 200:
+                    failing.append(f"{cid}: refusal.unpacked_code_bytes "
+                                   f"{refusal.get('unpacked_code_bytes')} <= 200")
+        elif refusal is not None:
+            failing.append(f"{cid}: refusal {refusal} present for an addressless carrier")
+        derived_format = None
+        if os.path.exists(row["source"]):
+            rh = run(["readelf", "-h", row["source"]])
+            derived_format = elf_format(rh["stdout"] + rh["stderr"])
+        if c.get("format") != derived_format:
+            failing.append(f"{cid}: format {c.get('format')} != readelf of the "
+                           f"pinned source {derived_format}")
+    ceilings = receipt.get("before_ceilings")
+    if not isinstance(ceilings, list) or len(ceilings) != len(CARRIERS):
+        failing.append(f"before_ceilings {type(ceilings).__name__}x"
+                       f"{len(ceilings) if isinstance(ceilings, list) else 0} != "
+                       f"{len(CARRIERS)} entries")
+    else:
+        for entry in ceilings:
+            eid = entry.get("id")
+            row = registry.get(eid)
+            if row is None:
+                failing.append(f"before_ceilings: unknown id {eid}")
+                continue
+            if entry.get("ceiling") != row["before_max_procedures"]:
+                failing.append(f"before_ceilings {eid}: ceiling "
+                               f"{entry.get('ceiling')} != registry")
+            if entry.get("orig_procedures") != DECLARED_ORIG[eid]:
+                failing.append(f"before_ceilings {eid}: orig_procedures "
+                               f"{entry.get('orig_procedures')} != declared "
+                               f"{DECLARED_ORIG[eid]}")
+            if isinstance(entry.get("orig_procedures"), int) \
+                    and entry["orig_procedures"] > 0 \
+                    and entry.get("ceiling_ratio") != round(
+                        row["before_max_procedures"] / entry["orig_procedures"], 4):
+                failing.append(f"before_ceilings {eid}: ceiling_ratio "
+                               f"{entry.get('ceiling_ratio')} != ceiling/orig")
     if sorted(x for x in seen_ids if x is not None) != sorted(registry):
         failing.append(f"carrier ids {seen_ids} != registry {sorted(registry)}")
     out = {"check": "R70-C3", "met": not failing, "failing": failing,
