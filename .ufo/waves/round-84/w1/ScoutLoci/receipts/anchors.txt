@@ -1,0 +1,90 @@
+== target blob sha256 (rev e0de2088a7bddc16305357f90ac7e889fa0a0d11) ==
+tools/round-82/conjunction-gate.py
+  sha256_rev  = f009009993160ca40dd55d771f8c05ce1e32799c22450f5430cae2c6e0bf163a
+  sha256_base = f009009993160ca40dd55d771f8c05ce1e32799c22450f5430cae2c6e0bf163a
+  identical   = True
+  bytes       = 20464
+tools/round-82/printed-command.py
+  sha256_rev  = 88b1dff2385547e1bdb2ecf802d667c38eabe929747075c27ae88f0c5c061487
+  sha256_base = 88b1dff2385547e1bdb2ecf802d667c38eabe929747075c27ae88f0c5c061487
+  identical   = True
+  bytes       = 28440
+tools/round-83/source-bind.py
+  sha256_rev  = 800a759e20096859a145cfbe3f95e199502f7aa38b8ca796575d00af5963db3c
+  sha256_base = 800a759e20096859a145cfbe3f95e199502f7aa38b8ca796575d00af5963db3c
+  identical   = True
+  bytes       = 7031
+
+== anchor census ==
+floor                edit[0] target=tools/round-82/conjunction-gate.py
+    find        : 'len(cases) < PRISTINE_FLOOR'
+    occurrences : 1 (declared anchor_occurrences=None)
+    offsets     : [4788]
+    declared_case: floor-refused
+floor                edit[1] target=tools/round-82/conjunction-gate.py
+    find        : 'summary[0] < PRISTINE_FLOOR'
+    occurrences : 1 (declared anchor_occurrences=None)
+    offsets     : [4928]
+    declared_case: floor-refused
+failure              edit[0] target=tools/round-82/conjunction-gate.py
+    find        : 'elif summary[1] != 0:'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [4706]
+    declared_case: failures-refused
+binder               edit[0] target=tools/round-82/conjunction-gate.py
+    find        : 'if receipt.get("binder_sha256") != BINDER_SHA256:'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [4275]
+    declared_case: binder-refused
+membership           edit[0] target=tools/round-82/printed-command.py
+    find        : 'if script not in pins:'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [4980]
+    declared_case: bare-name-refused
+pin-call             edit[0] target=tools/round-82/printed-command.py
+    find        : '        pin_matches(root, rev, script, pins[script])'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [7095]
+    declared_case: runtime-pin-mismatch-refused
+static-refusal       edit[0] target=tools/round-82/printed-command.py
+    find        : '    if result["static_defects"]:'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [6884]
+    declared_case: static-defect-no-execution
+source-mined         edit[0] target=tools/round-82/printed-command.py
+    find        : 'cells[8] == "mined"'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [10659]
+    declared_case: sourced-row-rejected-status
+source-date          edit[0] target=tools/round-82/printed-command.py
+    find        : 'cells[9] == "2026-11-04"'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [10701]
+    declared_case: sourced-row-wrong-date
+source-base          edit[0] target=tools/round-82/printed-command.py
+    find        : 'base_absent = sources_row(base_text, SOURCED_ROW) is None'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [10778]
+    declared_case: sourced-row-at-base
+source-plan          edit[0] target=tools/round-82/printed-command.py
+    find        : 'plan_names = SOURCED_ROW in re.findall(r"\\bS[0-9]+\\b", read_text(root, rev, PLAN))'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [10840]
+    declared_case: sourced-plan-missing
+source-entry         edit[0] target=tools/round-82/printed-command.py
+    find        : 'entry_ok = entry_cites(entry_text, SOURCED_ROW)'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [10989]
+    declared_case: sourced-entry-uncited
+sb-header-position   edit[0] target=tools/round-83/source-bind.py
+    find        : 'if len(fields) != 1 or fields[0][0] >= 12:'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [1454]
+    declared_case: late-single-header
+sb-duplicate-last    edit[0] target=tools/round-83/source-bind.py
+    find        : 'if line.startswith("source:")]'
+    occurrences : 1 (declared anchor_occurrences=1)
+    offsets     : [1419]
+    declared_case: duplicate-target-second
+
+ANCHORS NOT EXACTLY ONCE: 0
