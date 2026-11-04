@@ -66,3 +66,21 @@ in the raw HTML; the locator is recorded in the row's anchor cell.
 ## Non-author closure
 
 `[L1 — filled by the non-author closure.]`
+
+## Security incident — live credentials in a seat's env dump (reported, redacted pre-push)
+
+The `ExecC1` seat wrote `caller-env.txt` to prove the caller environment had reached its shims.
+That file held all 272 variables **with values**, including a 1Password service-account token
+(`ops_…`) and an OpenAI Codex token. GitHub push protection rejected the record commit (`GH013`,
+path `.ufo/waves/round-72/w1/ExecC1/caller-env.txt:193`). The file was replaced by a key-name
+census (`caller-env.redacted.txt`), the unpushed commit was rewritten to drop the raw dump, the
+pushed range was re-scanned for token shapes and is clean, and no secret was pushed. CLASS:
+credential capture by an evidence file. CAPTURED-BY: GitHub push protection (an external gate),
+not a lane rule — QUALITY row 128 now binds the lane rule; the wave context's "never write outside
+the lane" did not say "and never write values". FIX: key census only, redaction before the first
+push, and the L0 line below.
+
+L0 (appended): `kaidoku | round-72 | the ExecC1 seat's raw caller-env dump carried live 1Password
+and Codex tokens; push protection blocked it, the file is redacted to a key census, the unpushed
+commit rewritten and the pushed range scanned clean — no secret was pushed. Should raw child-env
+dumps be forbidden lane-wide (key census only) in the wave context?`

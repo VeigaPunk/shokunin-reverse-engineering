@@ -4321,3 +4321,52 @@ fractions — and requires zero mismatches with at least two corrections that ea
   this round.
 - Files touched by this entry: `.ufo/waves/round-71/l1/scores/gate-*.json`,
   `.ufo/waves/round-71/l1/scores/registry-conformance-at-record.json`, this LOG.
+
+## 2026-11-04 — round 72, KaidokuR72 — land
+
+- **Claims.** R72-C1 (coverage; checker-mode child environments, Frontier → Core): landing probe
+  11/11, `A11_checker_env` true, log-derived census `{git: 1, readelf: 4}`, containment under the
+  checker's run root (`l1/scores/c1-at-landing.json`); base 9/11 naming A10/A11 false with the shim
+  canary present (`l1/scores/c1-at-base-final.json`). R72-C2 (calibration; the checker-emitted
+  binding verdict): the frozen `A10_binding_force_true` mutant is killed naming
+  `a10-binding-from-checker` (`l1/scores/c2-at-landing.json`), the round-71 probe still yields one
+  survivor (`l1/pre/c2-at-base.json`). R72-C3 (operability; the raw-witness capsule audit): genuine
+  46-record capsule accepted and 7/7 tampered shapes rejected with named clauses
+  (`l1/scores/c3-at-landing.json`), the filed genuine receipt's capsule clause true
+  (`c3-genuine-filed.json`), and the lying receipt rejected with `receipt_capsule: canary`
+  (`c3-lying-check.json`) where the round-71 checker accepted it (`l1/pre/c3-at-base.json`).
+  Controls 5/5 (`l1/scores/controls-at-landing.json`).
+- **Freeze and supersessions.** Freeze `34fe7aa7`; the round-29 gate audits round-72 CLEAN
+  (`l1/scores/gate-at-freeze.json`). Eight supersessions are disclosed in
+  `.ufo/waves/round-72/claims.json` with the replacement sha256 per entry: `6375afe6` (blob module
+  copy), `6284abe b` (perl shim), `4913b5e6` (A11 log-derived census, capability fail-closed,
+  strict control aggregate, `--receipt-rev`), `d8297e85` (pure A11 verdict + checker `met`
+  agreement), `e67f3a1b` (capsule read containment + `/usr/bin` preference), `72eeeca9` and
+  `2b5e894d` (control receipt-rev), and `72eeeca9`/`2b5e894d`'s c3 rev. The route receipts were
+  re-taken at each packed-elf supersession; the filed receipts name their measured revisions.
+- **Wave.** `r72-w1`: 16 seats (5 executor, 3 scribe, 2 reviewer, 2 mutation-tester, 1 critic,
+  1 sentinel, 1 scout, 1 connector), attack roles 5/16 = 31%, one connector; all 16 settled, none
+  dead (`r72-w1-results.json`). Findings: ReviewerGates (summary trust, absent-capsule skip,
+  control aggregate), CriticClaims (contradictory-checker acceptance), SentinelScope (blocking:
+  receipt-selected capsule paths read outside the lane; PATH priority) — each fixed in-round and
+  disclosed; MutProbe/MutReaders selftest survivors are routed to round 73.
+- **Sources.** `corpus/SOURCES.md` 181 → 183 rows: S275 (the man-pages 6.19 `proc_pid_environ(5)`
+  page, tier A, opened this round; snapshot sha256 `93394d9e…`) grounds R72-C1 through
+  `corpus/knowledge/2026-11-04-r72-checker-env-capsule.md`; S276 is the S274 column repair
+  (rejection reason and flip in `teaches`, supersedes the cell contract only). Census start
+  `l1/census-start.txt` (exit 0) and end `l1/census-end.txt` (exit 0, 24 W04 warnings).
+- **Security incident (reported, redacted before any push).** The `ExecC1` seat's
+  `caller-env.txt` carried live credential values (a 1Password service-account token and an OpenAI
+  Codex token among 272 variables). GitHub push protection blocked the record commit; the file was
+  replaced by a key-name census (`caller-env.redacted.txt`), the unpushed commit was rewritten to
+  drop the raw dump, the pushed range was scanned clean, and a credential-capture QUALITY row and
+  an L0 line are filed. No secret was pushed.
+- **Record.** `corpus/QUALITY.md` rows 123–128; `PROVINCE.md` `## Round-72 additions to Core` plus
+  frontier note; `corpus/README.md` index row and frontier note; `SCORECARD.md` capability rows
+  and the round-72 section; `SKILL.md` registry rows for the six instruments; the lesson
+  `corpus/lessons/round-72.md`.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r72` removed after the close; no pacman transaction and
+  no tool install ran this round.
+- Files touched by this entry: this LOG, `corpus/`, `PROVINCE.md`, `SCORECARD.md`, `SKILL.md`,
+  `.ufo/waves/round-72/`, and the redacted `w1/ExecC1/caller-env.redacted.txt`.
+
