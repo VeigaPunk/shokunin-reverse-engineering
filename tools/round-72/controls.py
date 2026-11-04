@@ -164,9 +164,10 @@ def main(argv: list[str] | None = None) -> int:
         "met": (res["rc"] == 0 and payload.get("survivor_count") == 1
                 and payload.get("survivors") == ["A10_binding_force_true"])}
 
-    # c3_base_accepts
+    # c3_base_accepts (the round-71 checker at the declaration rev, so the
+    # receipt's producer binding matches its own bytes)
     res = run([sys.executable, "-I", "-B", lane(ROUTE71), "--root", root,
-               "--rev", args.base_rev, "--check-receipt", lying,
+               "--rev", args.decl_rev, "--check-receipt", lying,
                "--nonce-commitment", args.commitment])
     payload = res["json"] or {}
     audit = run([sys.executable, "-I", "-B", lane(AUDIT), "--capsule", polluted,
