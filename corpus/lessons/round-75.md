@@ -55,6 +55,13 @@ existing row's `used-by` changes (S277).
   so the receipt's runner field is honest about what executed but does not match the freeze pin.
   Recorded as a known skew, not repaired (re-generating it with the frozen blob would write a
   `null` runner and lose the binding the atom checks).
+- **ExecAuditBase** re-derived the eight atoms at the base and the declaration and confirmed each
+  fails there for its routed defect (absence of the artifact, never a wrong path or regex), the
+  selftest's ten cases are green, and the base receipt validates. Its one finding (**D1**): the plan
+  frozen at `ec149dc4` named only four of the five pinned instruments — `freeze-pins.py` was added
+  at `ad53c1e1`, after the freeze — so D21 is true only at revisions where the completed plan
+  exists (the measured revision and later). Recorded as an erratum in `claims.json`; the frozen
+  plan is not rewritten.
 - **ExecProbeCases** hand-applied five mutants to a scratch copy of the round-74 blob (never
   running the battery): the four closed classes each leave `--selftest` green at 20 cases
   (survivors reproduced independently), and deleting the `canary_present` line fails exactly
