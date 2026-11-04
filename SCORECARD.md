@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 10.0 | Round-66 self-assessment re-derivation: 147/147 knowledge files mapped at the round-67 record, this round's entry included, and re-derived in the same commit that changes the population, under the repaired stem recipe (`tools/round-66/coverage-selfcheck.py --selfcheck`, receipt `.ufo/waves/round-67/l1/scores/coverage-selfcheck-at-record.json`), with recipe A's five currently unmappable stems emitted as `recipe_a_hidden`; the round-53 and round-51 index measurements stay historical in their own round sections, at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`, and in git history | `corpus/README.md` Coverage map; `tools/round-66/coverage-selfcheck.py --selfcheck` (atoms A1/A2, `recipe_a_equivalent`, `recipe_a_hidden`); the command A transcript re-run by `--equiv` | 66 (self-assessment fraction re-derived; score unchanged) |
+| coverage | 9.72 → 10.0 | Round-68 self-assessment re-derivation: 148/148 knowledge files mapped at the round-68 record, this round's entry included, and re-derived in the same commit that changes the population, under the repaired stem recipe (`tools/round-66/coverage-selfcheck.py --selfcheck`, receipt `.ufo/waves/round-68/l1/scores/coverage-selfcheck-at-record.json`); historical: 147/147 at the round-67 record (`.ufo/waves/round-67/l1/scores/coverage-selfcheck-at-record.json`), with recipe A's five currently unmappable stems emitted as `recipe_a_hidden`; the round-53 and round-51 index measurements stay historical in their own round sections, at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`, and in git history | `corpus/README.md` Coverage map; `tools/round-66/coverage-selfcheck.py --selfcheck` (atoms A1/A2, `recipe_a_equivalent`, `recipe_a_hidden`); the command A transcript re-run by `--equiv` | 66 (self-assessment fraction re-derived; score unchanged) |
 | depth | 10 → 10 | 25/25 queue-drain rule blocks have resolvable file/range citations at the round-48 landing (command A, new block 25 with the verdict-meaning table, `citation_resolved_rules 25`; receipt `.ufo/waves/round-48/l1/scores/`); 20/20 queue-drain rule blocks have resolvable file/range citations at `e1c83313f33a3d97edbd8fef402db2d06172fcdc` (round 41, command A, new block 20 at `SKILL.md:387-449` with table v3; craft section `SKILL.md:81-449`; R41-C2 itself stopped, `## Round 41`); 19/19 queue-drain rule blocks have resolvable file/range citations at `4d62ee5a86b4692a13f682b29ed7975e8d7e5326` (round 40, command A, new block 19 at `SKILL.md:348-375` with table v2; `.ufo/waves/round-40/w2/R40W2DepthCount.md`); 18/18 at `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39, command A, `citation_resolved_rules 18`, new block 18 at `SKILL.md:316-343` with its citations resolving; 17/17 at `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31; also 17/17 at `ebe2cb4a`, round 26). History: 9/9 at `638fb211` (luna-round-3); rule blocks grew from 9 to 17 in eight commits from `58116aa1` to `4072ebb3` (2026-10-18 and 2026-10-19), and the row kept 9/9 until round 25 added a recount at `08c7a7299ed61c3fdc30ddb0adfe4e812d5eac76`. **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | craft section `SKILL.md:81-343` (heading line 81, last non-blank line 343 at `52b0eb29`; the baseline range was `SKILL.md:77-191` at `a79945c4`); command A; measured `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39; prior recount `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31); baseline `a79945c4` | r1 measurement + luna-round-3; rule blocks added 2026-10-18 and 2026-10-19; count refreshed rounds 25, 26, 39 and 40 |
 | calibration | 0 → 10 | 4 → 0 self-assessment mismatches at the round-47 landing: `tools/round-47/record.py` re-derives 42 atoms (last two round sections plus the Owned-axes heads) and reports `mismatches []`, `corrections 2`, `exempted 1 <= 3`, battery `3/0` (`.ufo/waves/round-47/l1/scores/c2-at-A7.json`); 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; count measured at `c265db9bd3c0883fbaf4487f839559c85a736826` (`evidence/round-1-2026-10-15/result.json` `measured_revision`; the row said `75af886a` until round 26, which is the luna-round-2 receipt reconciliation, not command B's revision); luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/` | operator-steered r1 + luna-round-2; later calibration claims are in the round sections (outside closures: round 24 rejected-honest-stop, round 25 admitted) Round 50: the round-48 closure `corpus/lessons/round-48-verifier-spotcheck.md` graded calibration `rejected-harmed`; the round-49 record corrections measured `mismatches 9 → 0` (`.ufo/waves/round-49/l1/scores/c2-final.json`); this row is a finite proxy over the atoms its counters name, not an expertise score. |
 
@@ -633,6 +633,8 @@ Retired: none.
 | base-rev-threading receipt sweep (`tools/round-62/base-binding-sweep.py`) | the multi-receipt sweep threads the frozen r59 annotation gate's `--base-rev` option from each receipt's OWN rev-name bindings — the r61 binding grammar (name exactly `base`, first occurrence wins, 40-hex, sha256-length run-ons rejected), the receipt's committed bytes binding their own base revision so the base half of every `base: N -> record: M` annotation becomes mechanically checkable with no caller context — composing the frozen gate as one argv subprocess per receipt with an `--expect-sha256` pin check; r60-format finding keys keep the standing disposition table valid, and `--no-base-thread` reproduces the r60 semantics exactly (the equivalence arm); first threaded inventory at the r62 base: 241 receipts, 29 threaded from receipt-own bindings, 5 base annotation instances, 4 grammar-matched base probes re-derived for the first time (the r60 semantics checked 0), 0 base-class findings — the corpus's one annotated+bound receipt is internally true at its own bound base — and the standing 5 finding keys unchanged | `python -X utf8 -I -B tools/round-62/base-binding-sweep.py --selftest` → `cases 50, failures []` exit 0; receipts `.ufo/waves/round-62/l1/records/basesweep-selftest.txt`, `basesweep-inventory-red.txt`, `basesweep-green-and-nothread.txt`, `basesweep-pin-mismatch.txt`; SKILL registry row (7 cells) | 62 |
 | corpus-wide numstat-edge claim sweep (`tools/round-63/edge-numstat-sweep.py`) | the multi-receipt sweep audits every enumerated receipt with the FROZEN r61 edge gate (`--expect-sha256` pin check, one argv subprocess per receipt, `--name` NEVER passed fleet-wide — receipt-own bindings only), routes rc 2 on the gate's own reason fail-closed, refuses a body naming another receipt than the one passed, and computes the inventory ONLY from the gate's own JSON bodies (the sweep never reads receipt bytes) — so the answer to "which receipts carry claims in the r61 edge grammar, and do their edges re-derive?" exists for the first time; r60-format finding keys keep disposition tables compatible; first corpus-wide edge inventory at the r63 base: 258 receipts, 3 with edge claims (7 instances), 2 binding all endpoints from receipt-own bytes, 1 with unresolvable quote-prose names, 255 without edge claims, 4 findings — the standing D60-1 EDGE_MISMATCH plus the three fail-closed quote-prose UNRESOLVEDs of the r61 before-arm — 0 invocation errors | `python -X utf8 -I -B tools/round-63/edge-numstat-sweep.py --selftest` → `cases 53, failures []` exit 0; receipts `.ufo/waves/round-63/l1/records/edgesweep-selftest.txt`, `edgesweep-inventory-red.txt`, `edgesweep-green-and-only.txt`, `edgesweep-pin-mismatch.txt`; SKILL registry row (7 cells) | 63 |
 | `.jsc` route closure matrix (`tools/round-65/jsc-closure-matrix.py`) | run the `.jsc` dump, then View8, then node-check matrix (2 artifacts x 3 d8 builds x 3 repetitions) under a complete 30-entry closure: every d8 build with its snapshot_blob.bin and icudtl.dat, the 12-file View8 tree, the venv identity, both artifacts, the resolved node binary and the resolved interpreter pinned; cache-free start enforced, `-B` and PYTHONDONTWRITEBYTECODE on every subprocess, and a toolchain census before and after the run proving no write; 18 of 18 frozen labels reproduced with an equal census at the round-65 dry run | selftest 34 cases (`l1/selftest-c1.txt`); dry-run receipt `l1/probe/dryrun-matrix.json` (exit 0, 18 of 18, census equal); wave receipt `w1/ExecMatrix/matrix-run.json`; registry row in SKILL (instrument-registry v2) | 65 |
+| registry-conformance census over the lane's instrument inventory (`tools/round-68/registry-conformance.py`) | compares every own-round instrument a `plans/round-N-claims.md` names (N >= 41) against the SKILL.md registry and reports unregistered, duplicate, absent-at-rev and thin rows, with legacy rounds out of regime — the check the round-67 closure found missing | `.ufo/waves/round-68/l1/scores/c1-at-landing.json` (mismatches 0, scope 71, rows 77) and the base arm `.ufo/waves/round-68/l1/pre/c1-at-base.json` (2) | round 68 |
+| packed-ELF triage route (`tools/round-68/packed-elf.py`) | detects UPX packing, unpacks to bytes whose sha256 equals the carrier pin, and recovers the original's REA inventory (procedure/segment/string counts), with the packed stub's 3-procedure inventory as the before-arm and the non-packed original as the control | `.ufo/waves/round-68/l1/scores/c2-at-landing.json` (2 of 2 carriers, control_ok, failing []) | round 68 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -5257,3 +5259,88 @@ predicate under the freeze-era bytes (`score-dryrun-at-base.json` at `3663e6b2`,
 No axis score changes on this record: the closure rules coverage and depth **improved**, calibration
 **unchanged**; the admission bar is the trend trade, not an axis move. `SHONEN.md` untouched by the
 closure and by this round.
+
+## 2026-11-03 — round 68: the registry census and the packed-ELF route
+
+Base `fcbe200f6739c38939e0dabf3f251de2cc6bd727`; operative freeze `1eaf596e5f241762349fbd102c9e09ec1df18e3f` (the
+first commit adding `.ufo/waves/round-68/claims.json`; the instruments, controls and carry-in at `6020eb60` precede it,
+atom A0). Landing `978436bdc5331ec50d8683eebf55457badfade0a`. Two claims on distinct axes, causally separable, both
+capability acquisitions.
+
+| claim | axis | type | predicate (frozen sentence) | before → after | verdict |
+|---|---|---|---|---|---|
+| R68-C1 | calibration | capability acquisition (registry-conformance census) + the round-67 closure's routed defect 2 | R68-C1 is verified iff the frozen registry-conformance census, run at the measured revision, reports mismatches 0 with scope_size 71 and registry_rows 77, while the same census run at the base revision fcbe200f6739c38939e0dabf3f251de2cc6bd727 reports mismatches 2 and names exactly tools/round-67/avm-le-counter.py and tools/round-67/mutation-battery.py as unregistered. | base `fcbe200f`: `mismatches 2`, `scope_size 69`, `registry_rows 73`, the two round-67 paths; with this round's plan in the tree and before the rows (`1eaf596e`): `mismatches 4`, `scope_size 71`; landing `978436bd`: `mismatches 0`, `scope_size 71`, `registry_rows 77`; the frozen triple does not bind membership (the wave's critic showed a net-zero plan edit can reach it, M68-9), so membership is verified separately by the frozen module's own extractor — `l1/scores/c1-scope-membership.json`: scope = base scope ∪ the two round-68 instruments (69 + 2 = 71), no drops, all four repair rows present | **verified** |
+| R68-C2 | coverage | capability acquisition (packed-ELF triage route) | R68-C2 is verified iff the frozen packed-ELF counter, run at the measured revision over its two pinned carriers, reports carriers_matched 2 of target 2 and control_ok true with every arm true on both carriers (detected, before_ok, identity_ok, recovery_ok, and refusal_ok on the carrier that pins an address), reports the packed bytes of both carriers at exactly 3 procedures, and reports the non-packed original as neither listed nor decompressible by the packer. | base reads: REA on the packed bytes 3 procedures vs 167/30/190 and 99/29/103, the pinned address refused (`invalid_request`, rc 1) and recovered after unpack (4 841 bytes, `FUN_00103fa0`); landing `978436bd`: `carriers_matched 2` of `target 2`, `control_ok true`, `before_procedures [3, 3]`, `failing []`, exit 0 | **verified** |
+
+**R68-C1 receipts.** `python3 -I -B tools/round-68/registry-conformance.py --root . --rev <rev> --json-out <receipt>`
+→ landing `.ufo/waves/round-68/l1/scores/c1-at-landing.json`, exit 0, `mismatches 0`, `scope_size 71`,
+`registry_rows 77`, `legacy_unregistered` 26 and `named_but_absent` 12 reported and excluded by the declared regime;
+`instrument.sha256 a300d831…` (= the container pin), `instrument.rev 6020eb60…`. Before arms:
+`.ufo/waves/round-68/l1/pre/c1-at-base.json` (exit 1, `mismatches 2`, `rev fcbe200f…`) and the strict pre-repair
+reading `w1/ExecRegistry/own-freeze.json` (an independent extractor: `mismatches 4`, `scope_size 71`). Controls:
+`.ufo/waves/round-68/l1/pre/controls-at-base.json`, six arms green — `c1-base` (2), `c1-shortcut-self` (0 at the base,
+a false green: scope = the registry's own rows), `c1-constant-zero` (0, a false green), `c2-packed-only` (not met),
+`c2-no-identity` (not met), `c2-real` (met). The repair: four rows inside the registry markers (r67's two instruments
+and this round's two counters), and the two r67 rows corrected against the wave's advisories (the packer sha/version
+are recorded, not enforced; the exit-1 edge for a missing `node`/`upx` is named). Selftest 11 cases.
+
+**Wave attacks on this record (accepted, none falsifies a predicate).** Critic §1b: `scope_size 71` is a cardinality over plan text and a net-zero edit reaches the triple with one repair row absent — the predicate binds the triple, so membership is carried by `c1-scope-membership.json` and a `c1-scope-shrink` control is routed to the next freeze (M68-9). §1d: the `thin` arm admits a prose-only cell; all 77 live rows also pass a stricter segment-start grammar, so no live row is affected (ADV-4-routed). §2b: `recovery_ok` is entailed by `identity_ok` plus content determinism and is counted as corroboration, never as independent evidence. §2c: the before-arm is not a missing-section-header artifact — an SHT-stripped but *unpacked* `jq` analyzes to 165 procedures against the packed stub's 3, so the stub is the packer's code. §2a: byte identity is a round-trip property of UPX 5.2.0 on these carriers, never identification of shipped artifacts.
+
+**R68-C2 receipts.** `python3 -I -B tools/round-68/packed-elf.py --root . --rev <rev> --pkg <rea 6.5.0 root> --work
+<scratch> --json-out <receipt>` → landing `.ufo/waves/round-68/l1/scores/c2-at-landing.json`, exit 0,
+`instrument.sha256 48ef4c68…` (= the pin), `rev 978436bd…`; per carrier `jq`/`xxd`: `detected` (rc 0 + 0 sections),
+`identity_ok` (unpacked sha256 `e8156675…`/`7b1e5d0c…` = the pins), `recovery_ok` (167/30/190 and 99/29/103 equal to
+the originals), `refusal_ok` on `jq` (`0x103fa0`), `control` (the original is not listed, `upx -d` refuses, rc 2).
+Before record `.ufo/waves/round-68/l1/pre/c2-dryrun-at-base-frozen.json` (frozen bytes, measured `fcbe200f`,
+`before_procedures [3, 3]`); the earlier draft-bytes receipt `.ufo/waves/round-68/l1/pre/c2-dryrun-at-base.json`
+(`instrument.sha256 7ee286c0…`) stays committed and is disclosed as M68-2, never cited as the verifying receipt.
+Selftest 13 cases. Third-carrier generalisation probe: `/usr/bin/gzip` 230/31/235, every arm true
+(`w1/ExecPacked/probe.json`) — reported, not claim input.
+
+**Freeze integrity.** No instrument supersession and no post-freeze instrument edit; the container's three pins are
+byte-identical to the blobs at `6020eb60` and at the landing (reviewer §1). The round-29 gate's own audit of the
+round-68 container reports `FLAGGED` with `INSTRUMENT_UNPINNED` for the two round-67 paths, recorded verbatim in
+`corpus/claim-freezes-v2.tsv`: the frozen R68-C1 predicate names them as the before-arm's unregistered set and the
+detector reads script paths from claim-string values — a true statement about the container, disclosed, not repaired
+post-freeze.
+
+**Repairs carried (not claims).** The round-67 entry's appended correction block (superseded `b55d5e87…`, actual
+`e66ba022…`, the `silent` row absent) closes the round-67 closure's quality harm and its defect 1; the QUALITY #100
+companion row `round-64/correction-1` closes defect 3; the legacy `corpus/claim-freezes.tsv` is retired as a gate input
+(erratum r68-1 in `tools/round-29/prefile-check.sh`: its bytes are pinned at `2a840d72…`, the live check is the round-29
+gate on the v2 ledger) because its stray `round-35` row can never match — `.ufo/waves/round-35/claims.json` was removed
+at `13d7a815` — and clearing it would mean deleting a filed verdict row; the round-67 report's prompt-hash erratum
+(`b8507c60` is the round-66 prompt; `754f9074` is r67's) lands in this round's fleet report.
+
+**Sources and frontier.** `corpus/SOURCES.md` 175 → 176 rows (S269 admitted: UPX 5.2.0 `doc/upx-doc.txt` at tag
+`v5.2.0`, `NOTES FOR LINUX/ELF386`, fetched 2026-11-03, 37 208 B, sha256 `4dc547ed…`, 11-word located quote at lines
+441-442; five candidates rejected with reasons in `corpus/lessons/round-68.md` Gate). Coverage map 148/148 under the
+stem recipe at the record. `PROVINCE.md` gains `## Round-68 additions to Core` and its frontier note; the entry
+`corpus/knowledge/2026-11-03-r68-packed-elf-route.md` is the new knowledge. `corpus/QUALITY.md` row 111 lands.
+
+**Capabilities entered.** (1) registry-conformance census over the lane's own instrument inventory — `tools/round-68/registry-conformance.py`,
+first working round 68; (2) packed-ELF triage route (detect, unpack with byte identity, recover the inventory) —
+`tools/round-68/packed-elf.py`, first working round 68.
+
+**Trends.** expansion **improved** (one admitted entry on ground held only as a fallback-reader name, citing mined S269;
+registry +1). quality **improved** (the round-67 quality harm repaired by an appended correction and re-derived, the
+QUALITY #100 companion row landed, the legacy ledger retired with a named erratum, both gates' claims measured at the
+record; two advisory-derived row corrections). discernment **improved** (the wave's reviewer traced every clause and
+found no blocking defect, two mutation batteries scored eleven mutants — six killed, five survivors named and routed,
+the seat's own gate-strength findings M68-6, and the source gate recorded one admit and five rejects).
+
+**Wave.** One v1 wave `r68-w1`, 13 seats (4 executor, 1 reviewer, 1 critic, 2 mutation-testers, 1 sentinel, 1 scout,
+1 connector, 2 scribes), attack share 4/13 = 31 %. L1 held the planner seat (the validator rejects a planner role).
+No residual call.
+
+**Name by surface.** R68-C1's surface is the lane's instrument inventory and the census that reads it (a registry
+conformance move, not a re-score of any rule the lane holds); R68-C2's surface is a new class of shipped artifact
+(packed executables), named in PROVINCE Core and in the map.
+
+**planned (next steered round only):** (a) a NEW freeze for the five packed-route mutation survivors — arm-false
+selftest cases that feed `identity_ok`, `recovery_ok`, `detected`, `before_ok` and the control arm a false input
+(M68-6); (b) the packer pin enforced, not recorded, and the exit-2 contract repaired for a missing `node`/`upx` and a
+refused `--work` (ADV-2/ADV-3), plus the carrier record naming format and packing mode (M68-4); (c) the census's
+control-driver scope question (M68-7) and the thin-grammar comma edge (ADV-4); (d) the r63 planned record-section
+sweep stays open; (e) the standing duties re-run every round that lands receipts; the r58/r60 bare-name findings and
+the r64 placeholder-token disposition stay named debt.

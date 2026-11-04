@@ -47,7 +47,7 @@ recheck: on-refetch — `curl -fsSL https://raw.githubusercontent.com/upx/upx/v5
 
 ## The two carriers (host binaries, pinned, never committed)
 
-[observation] Both carriers are x86-64 PIE executables from the Arch package set: `/usr/bin/jq` (30 800 B, pin `e8156675…`) and `/usr/bin/xxd` → `/usr/bin/tinyxxd` (38 928 B, pin `7b1e5d0c…`). [observation] At the base both are below their declared floors when packed (3 procedures against 100 and 50), which is what makes the before-arm falsifiable rather than decorative. [observation] The packed copies are rebuilt inside `--work` on every run and are never committed; the receipt records their sha256 (`e8b6c9e7…` for jq, `1727faf9…` for xxd) so the packed bytes themselves are reproducible to the extent UPX 5.2.0 is deterministic.
+[observation] Both carriers are x86-64 PIE executables from the Arch package set: `/usr/bin/jq` (30 800 B, pin `e8156675…`, `pacman -Q jq` = `jq 1.8.2-1`) and `/usr/bin/xxd` → `/usr/bin/tinyxxd` (38 928 B, pin `7b1e5d0c…`, `pacman -Q tinyxxd` = `tinyxxd 1.3.17-1`). [observation] At the base both are below their declared floors when packed (3 procedures against 100 and 50), which is what makes the before-arm falsifiable rather than decorative. [observation] The packed copies are rebuilt inside `--work` on every run and are never committed; the receipt records their sha256 (`e8b6c9e7…` for jq, `1727faf9…` for xxd) so the packed bytes themselves are reproducible to the extent UPX 5.2.0 is deterministic.
 
 ## The controls that keep the route honest
 
@@ -84,7 +84,7 @@ recheck: on-refetch — `curl -fsSL https://raw.githubusercontent.com/upx/upx/v5
 - Route receipt: `.ufo/waves/round-68/l1/pre/c2-dryrun-at-base.json` — `closure {carriers_matched 2, target 2, control_ok true, met_target true}`, `failing []`, `before_procedures [3, 3]`, per-carrier arms and counts as tabled above.
 - Controls: `.ufo/waves/round-68/l1/pre/controls-at-base.json` — six arms, `c2-packed-only` and `c2-no-identity` not met, `c2-real` met; `.ufo/waves/round-68/l1/pre/c2-skiprun.json` — `closure null`.
 - Carrier pins: `jq e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806`, `xxd 7b1e5d0c970afe686c8d6b60fcf0298981e16adf08c3f0f128ee007a0403ae65`; sources `/usr/bin/jq`, `/usr/bin/xxd` (→ `/usr/bin/tinyxxd`).
-- Packer pin: `/usr/bin/upx`, `upx 5.2.0`, sha256 `cf2f6e7c…`.
+- Packer pin: `/usr/bin/upx`, `upx 5.2.0`, sha256 `cf2f6e7c…`, `pacman -Q upx` = `upx 5.2.0-1`.
 - REA pin: rea-agents 6.5.0, `package.json` sha256 `a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c`, invoked as `node <pkg>/scripts/rea.mjs`; node v24.21.0; the npx cache-level lock is recorded (`lock_recorded_not_pinned true`, `lock_sha256 null`) and never pinned (QUALITY #110).
 - Source pins: S269 txt 37 208 B `4dc547ed…` (pod form of the same tag 35 451 B `cc93ccea…`); installed man page 40 077 B (decompressed) `09552b3c…`.
 

@@ -112,7 +112,10 @@ A row is written when its file exists, never before.
 
 | SquashFS LE AVM members (round 67) | `2026-11-03-r67-avm-le-squashfs-core` | **Core** — the same four chain-pinned vendor carriers as round 50, re-scored under the round-67 class rule: `extract-firmware --max-depth 1` publishes every oracle regular file at its exact path with handler `squashfs_v4_le`, no failed chunk, and the gap rule accounts for every non-regular entry (char devices as a not-publishable class, symlinks per-row required) — 4/4 carriers, `met_target true`, against 2/4 under the round-50 rule; the surface is the four carriers only, and LE AVM kernels, nested sub-images and vendor-mangled bodies stay Frontier |
 
+| UPX-packed ELF triage (round 68) | `2026-11-03-r68-packed-elf-route` | **Core** — detect (`upx -l` plus zero section headers), unpack with sha256 identity against the carrier pin, recover the original's REA inventory; packed stub 3 procedures against 167/30/190 and 99/29/103, the pinned address refused on packed bytes and recovered after unpack |
+
 ## Knowledge
+| `2026-11-03-r68-packed-elf-route` | UPX-packed ELF through a detect → unpack → identity → recover route: the packed stub's parsed inventory (3 procedures), byte restoration against the carrier pin, the REA inventory recovered from the unpacked copy, and the address-level refusal that separates the two states; limits UPX 5.2.0 / `linux/elf386` / default packing | `tools/round-68/packed-elf.py` + `.ufo/waves/round-68/l1/scores/` | 2026-11-03 |
 | entry | topic | source | verified-at |
 |---|---|---|---|
 | `2026-11-03-r67-avm-le-squashfs-core` | LE AVM-marker SquashFS v4 through REA under a class-level gap rule — Frontier → Core on four pinned carriers | S268, S250, S245, S244, S249; counter `tools/round-67/avm-le-counter.py`; receipts `corpus/evidence/round-67/c1/` | 2026-11-03 |
@@ -268,7 +271,6 @@ A row is written when its file exists, never before.
 | `round-40` | 40 | genuine AVM-layout BE SquashFS v4 measured on two vendor members and two lane-built images but not promoted (R40-C1 honest stop, 3/4 on a counter suffix false negative); SKILL triage table v2 with a domain guard and a scored action column (R40-C2, 26/26 held-out); QUALITY 83 |
 | `round-51` | 51 | provider-recovery honest stop after 36 settled build seats; source law corrected, registry-only census landed, two claim targets unverified, no Core promotion or v6 |
 
-| `knowledge/2026-11-03-r68-packed-elf-route` | UPX-packed ELF triage: detect (packer listing plus the absence of a section-header table), unpack with sha256 identity against the carrier pin, recover the original's REA inventory; packed stub 3 procedures against originals 167/30/190 and 99/29/103, unpacked sha256 equal to the pins, the pinned address refused on packed bytes and recovered after unpack; limits: UPX 5.2.0 only, count equality not semantic equality | `tools/round-68/packed-elf.py` (13-case selftest) and `.ufo/waves/round-68/l1/scores/` |
 
 ## Frontier
 - `inspect_recorded_crash` on cores >32 MiB — mechanism held, organic coverage blocked by cap (`invalid_request`/`out_of_range` on oversize).
