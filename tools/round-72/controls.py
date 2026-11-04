@@ -172,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
     # c3_base_accepts (the round-71 checker at the declaration rev, so the
     # receipt's producer binding matches its own bytes)
     res = run([sys.executable, "-I", "-B", lane(ROUTE71), "--root", root,
-               "--rev", args.decl_rev, "--check-receipt", lying,
+               "--rev", args.receipt_rev or args.decl_rev, "--check-receipt", lying,
                "--nonce-commitment", args.commitment])
     payload = res["json"] or {}
     audit = run([sys.executable, "-I", "-B", lane(AUDIT), "--capsule", polluted,
