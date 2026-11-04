@@ -40,4 +40,16 @@ existing row's `used-by` changes (S277).
 
 ## What the wave found
 
-(to be completed after the wave settles)
+- **ExecAuditGrammars** built six cosmetic fixtures that a token-presence predicate would accept
+  (a negated path in the used-by list, a bare `x.md`, a search note carrying the field words but no
+  integers, a rejection with no flip, a rejection whose reason and flip are one word, an erratum
+  naming 23/24 while the measured count is 25). The exact grammar rejects all six, each with a
+  defect naming the failed shape, and accepts the two well-formed fixtures — no blocking defect
+  (`.ufo/waves/round-75/w1/ExecAuditGrammars.md`).
+- **ScoutSource** re-opened both pages (fresh GETs, digests identical to the registry snapshots) and
+  located eight passages on `proc_pid_cmdline(5)`: argv mutability, the zombie empty read, NUL
+  separation, and the `PR_SET_MM_ARG_START` relocation. Its conclusion: the pages support the
+  *boundary* halves of R75-C1 (argv is a claim; an unreadable/absent read is not evidence) and none
+  of its predicate halves — the case-independence predicate rests on the lane's own battery, not on
+  a man page. It also confirms the two `proc_pid_*` pages are one split family and that S275's cell
+  already names the split (`.ufo/waves/round-75/w1/ScoutSource.md`).
