@@ -27,7 +27,7 @@
    "fields": [
     "loaded_by_counter (the round-72/71 producer pins)"
    ],
-   "text": "Pre-landing erratum, gate finding INSTRUMENT_PIN_MISMATCH at the freeze: loaded_by_counter named 973d504b for tools/round-72/packed-elf.py and 7f46e3ef for tools/round-72/seam-probe.py. The blobs at the measured revision are 330ecf89... and 602b305d... (the latter is also the value the round-72 C2 receipt records as its target sha, which is what routed defect 1 was about). The pins are corrected to the measured blobs; the freeze gate is re-run and must audit round-73 CLEAN."
+   "text": "Pre-landing erratum, gate finding INSTRUMENT_PIN_MISMATCH at the freeze: two loaded_by_counter rows named digests that are not the blobs at the measured revision (the round-72 route and the round-72 probe). The pins are corrected to the measured blobs; the old->new values are recorded in the round-73 lesson's Mistakes table and in the round report. The freeze gate is re-run at the record revision and must audit round-73 CLEAN."
   }
  ],
  "frontier": {
@@ -53,10 +53,10 @@
  },
  "instruments": {
   "tools/round-73/packed-elf.py": "ed3e26fab2ace12e94956704bab68940443fe093bd10aa2c70c75aa9c3284c1b",
-  "tools/round-73/seam-probe.py": "7264d0c861d5d0f5344a4009dba738579a10952d27a207dd0d8530cf434b48ed",
+  "tools/round-73/seam-probe.py": "9c286fd7187e25a8c6de5d743e21d0402ec6c9862a14aecfaed75b2006710939",
   "tools/round-73/mutation-check.py": "9b25ed2d47780e780f1433f40b6f5dc5bbb55a9c2d825b7ba84e7e24114df3cc",
-  "tools/round-73/record-audit.py": "8f22d62037171ffef15bc9c4b2438285e350f15637bcbae6b7d6dafa5f40139d",
-  "tools/round-73/controls.py": "bffbcf7866fe8a0c6bfdedba6f4e6721405707cddc174ba5af699fcd11b6dfa7",
+  "tools/round-73/record-audit.py": "37831b313b390131925aec4cdad4e568cbec58b16665afa4ca707c50c64c6e24",
+  "tools/round-73/controls.py": "f86e60eb10231f026442fa8a32ac00942ecb00fdb8c27a9add3a2e9d35682b5d",
   "tools/round-73/capsule_audit.py": "b05e70072bd9c58ee172ccf705926f926f8bd6cfbf0940d2903333894aa593de"
  },
  "loaded_by_counter": {
@@ -76,6 +76,24 @@
    "commit": "d36c6ee00122e9c991d7c8efc2e179dc0a10d9ed",
    "reason": "pre-landing fix (no claim data measured): the r73base implicit-capsule patch site named the pre-supersession block (the round-72 freeze bytes) and matched 0 times at the measured revision; it now disables the shipped `elif` derivation. The r73 readelf patch site moved from the call site to the seam body, because a call-site mutation cannot be exercised by a case that calls the seam directly.",
    "replacement_sha256": "9b25ed2d47780e780f1433f40b6f5dc5bbb55a9c2d825b7ba84e7e24114df3cc"
+  },
+  {
+   "path": "tools/round-73/seam-probe.py",
+   "commit": "55cac1d2ea38bf3cf0c96525268471c1f9f715ff",
+   "reason": "wave findings fixed in-round before landing data: the kernel sample must descend from a pid the arm started (SentinelScope S1 / CriticClaims' decoy attack), the shims take their paths from a sidecar cfg instead of interpolated source (SentinelScope S2), the record keeps key names plus containment booleans and no HOME/TMPDIR values (SentinelScope S3, QUALITY 128), and the genuine samples are required to be HOME/TMPDIR-contained. The landing receipt is re-taken at this blob.",
+   "replacement_sha256": "9c286fd7187e25a8c6de5d743e21d0402ec6c9862a14aecfaed75b2006710939"
+  },
+  {
+   "path": "tools/round-73/record-audit.py",
+   "commit": "55cac1d2ea38bf3cf0c96525268471c1f9f715ff",
+   "reason": "CriticClaims' D1 false-green: a correction that repeats only the wrong token used to satisfy the atom; the corrected atom requires the measured digest to appear in the correction block as well.",
+   "replacement_sha256": "37831b313b390131925aec4cdad4e568cbec58b16665afa4ca707c50c64c6e24"
+  },
+  {
+   "path": "tools/round-73/controls.py",
+   "commit": "55cac1d2ea38bf3cf0c96525268471c1f9f715ff",
+   "reason": "wave findings: the c1 fixtures carry the new containment conjuncts, and the c3_no_case arm scores the stripped route's own selftest (`case-inventory`) instead of a battery call on an unreadable path.",
+   "replacement_sha256": "f86e60eb10231f026442fa8a32ac00942ecb00fdb8c27a9add3a2e9d35682b5d"
   }
  ]
 }
