@@ -4232,3 +4232,11 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - **Census.** Start `l1/census-start.txt` exit 0, 178 rows, 20 standing W04; end `l1/census-end.txt` exit 0, 179 rows after S272, malformed 0, the same 20 W04 (the E11 used-by refusal in `census-end-preS272.txt` fired while the knowledge entry was not yet landed — the gate working as designed).
 - **No tool installed or upgraded this round** (`upx` 5.2.0 and `node` v24.21.0 were already on the host); no pacman transaction ran (guard binding; the sentinel verified zero 2026-11-04 entries in `/var/log/pacman.log`).
 - Files touched by this entry: `SKILL.md`, `PROVINCE.md`, `corpus/README.md`, `corpus/SOURCES.md`, `corpus/QUALITY.md`, `corpus/knowledge/2026-11-04-r70-provenance-bound-receipts.md` (new), `corpus/lessons/round-70.md` (new), `corpus/claim-freezes-v2.tsv`, `SCORECARD.md`, `tools/round-70/**` (supersession), `.ufo/waves/round-70/**`, this LOG — append-only.
+
+## 2026-11-04 — round 70, KaidokuR70 — close
+
+- **Gate at the record.** `tools/round-29/freeze-gate.py --root . --rev HEAD --disclosures corpus/claim-freezes-v2.tsv` at the record `3cbd68a2` → exit 0, audited 45, clean 22, disclosures 45 of 45 exact, missing [] stray [] mismatched [] (`l1/scores/gate-at-record.json`); the landing-time run with the row not yet landed is `l1/scores/gate-at-landing.json` (round-70 CLEAN, 44/45, missing [round-70] — the expected pre-row state).
+- **Freeze integrity under supersession.** The freeze pins `4737a542` bytes stay the container's recorded freeze state; the six instruments' supersession at `ca9817cf` is disclosed in the container's `instrument_supersessions` (path + commit + reason per tool), the predicates in `claims` are byte-unchanged, and the gate's audit at the record HEAD reads CLEAN — the INSTRUMENT_REVISED finding is discharged by the disclosure, exactly the round-67 pattern.
+- **Wave.** `r70-w1`: 16 seats, all settled, none dead; dispatch evidence `r70-w1-dispatch.json` + `r70-w1.ready.dispatched`; results `r70-w1-results.json`. No residual dispatch.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r70` removed after the close; no pacman transaction ran this round.
+- Files touched by this entry: `.ufo/waves/round-70/l1/scores/gate-at-record.json`, this LOG — append-only.
