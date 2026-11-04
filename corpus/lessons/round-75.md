@@ -62,3 +62,16 @@ existing row's `used-by` changes (S277).
   of its predicate halves — the case-independence predicate rests on the lane's own battery, not on
   a man page. It also confirms the two `proc_pid_*` pages are one split family and that S275's cell
   already names the split (`.ufo/waves/round-75/w1/ScoutSource.md`).
+
+## Routed-defect disposition (round-74 spot-check §6)
+
+| # | routed defect | disposition |
+|---|---|---|
+| 1 | C2's `--validate` conjunct had no committed landing evidence | closed: the audit receipt carries its own `validate` block and a committed `c2-validate-at-landing.json` names the landing receipt (`D16`) |
+| 2 | S275's used-by old→new was logged outside the lesson | closed: the Gate table above re-logs both values and names `.ufo/waves/round-74/w1/ScribeRows.md` (`D17`) |
+| 3 | `b-drop-canary-field` was not killed by its case alone | closed: the multi-sample case no longer reads `canary_present`; the battery records `sole_detector` and the claim requires it (`D18`) |
+| 4 | three further A12 survivors and four cosmetic atom passes | closed: the three classes are in the fifteen-class patch set (`D19`); the four grammars parse the cell and each carries a red fixture (`D20`) |
+| 5 | D14/D15 coverage limits | closed: the base receipt binds the executed runner and the freeze pins equal the plan's exact tool set (`D21`); the ledger restates the round-73 standing debt beside the round-75 row |
+| 6 | SentinelScope code items SS74-1/3/4/5 | closed in the instruments: containment before open, pin before execution, process-group cleanup, sidecar shims, no raw environment values (`D22`) |
+| 7 | retrospective registry rows read as fresh opens | closed: the search log states the row-`opened` convention and the Gate table follows it (`D23`) |
+| 8 | report rounding 4/15 = 27% | cosmetic, corrected in the round-75 report (28.6%); not atomised, by reason |
