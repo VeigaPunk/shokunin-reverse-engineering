@@ -20,7 +20,7 @@ explicitly marked current; the added lesson-index row shifts later README lines.
 
 | Axis | Baseline → current score, 0–10 | Observable and limitation | Evidence / counting command | Last-change round |
 |---|---|---|---|---|
-| coverage | 9.72 → 10.0 | Round-53 index integrity: 142/142 knowledge files mapped at the landing (command A receipt `.ufo/waves/round-53/l1/scores/integrity-at-landing.json`, measured at `f78fc766b40aae9bae743c2b4642d7412cc0c60c`); the round-51 141/141 head remains historical below and at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. The dated round-50 140/140 head and earlier detailed history remain at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. | `corpus/README.md` Coverage map; command A; round-53 L1 `integrity-at-landing.json` | 53 (index count only; score unchanged) |
+| coverage | 9.72 → 10.0 | Round-66 self-assessment re-derivation: 146/146 knowledge files mapped at the round-66 record, this round's entry included, and re-derived in the same commit that changes the population, under the repaired stem recipe (`tools/round-66/coverage-selfcheck.py --selfcheck`, receipt `.ufo/waves/round-66/l1/scores/c2-after-selfcheck-at-record.json`), with recipe A's three unmappable stems emitted as `recipe_a_hidden` (`2026-11-03-r65-jsc-closure-matrix`, `jsc-mapper-cli-contract`, `jsc-mapper-release-inventory`); the round-53 index integrity 142/142 knowledge files mapped at its landing (command A receipt `.ufo/waves/round-53/l1/scores/integrity-at-landing.json`, measured at `f78fc766b40aae9bae743c2b4642d7412cc0c60c`) and the round-51 141/141 head remain historical below and at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. The dated round-50 140/140 head and earlier detailed history remain at `1aa273694f4409d3432fbcd73e83a33bee0dd8e9:SCORECARD.md:23`. | `corpus/README.md` Coverage map; `tools/round-66/coverage-selfcheck.py --selfcheck` (atoms A1/A2, `recipe_a_equivalent`, `recipe_a_hidden`); command A transcript re-run by `--equiv` | 66 (self-assessment fraction re-derived; score unchanged) |
 | depth | 10 → 10 | 25/25 queue-drain rule blocks have resolvable file/range citations at the round-48 landing (command A, new block 25 with the verdict-meaning table, `citation_resolved_rules 25`; receipt `.ufo/waves/round-48/l1/scores/`); 20/20 queue-drain rule blocks have resolvable file/range citations at `e1c83313f33a3d97edbd8fef402db2d06172fcdc` (round 41, command A, new block 20 at `SKILL.md:387-449` with table v3; craft section `SKILL.md:81-449`; R41-C2 itself stopped, `## Round 41`); 19/19 queue-drain rule blocks have resolvable file/range citations at `4d62ee5a86b4692a13f682b29ed7975e8d7e5326` (round 40, command A, new block 19 at `SKILL.md:348-375` with table v2; `.ufo/waves/round-40/w2/R40W2DepthCount.md`); 18/18 at `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39, command A, `citation_resolved_rules 18`, new block 18 at `SKILL.md:316-343` with its citations resolving; 17/17 at `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31; also 17/17 at `ebe2cb4a`, round 26). History: 9/9 at `638fb211` (luna-round-3); rule blocks grew from 9 to 17 in eight commits from `58116aa1` to `4072ebb3` (2026-10-18 and 2026-10-19), and the row kept 9/9 until round 25 added a recount at `08c7a7299ed61c3fdc30ddb0adfe4e812d5eac76`. **not** semantic correctness, generality, or fresh execution — the r3 semantic contradiction removal is measured by the contradiction census, not this proxy | craft section `SKILL.md:81-343` (heading line 81, last non-blank line 343 at `52b0eb29`; the baseline range was `SKILL.md:77-191` at `a79945c4`); command A; measured `52b0eb2907c704ed5f184c47b14c723208e5cbbc` (round 39; prior recount `c369242fee9f559f895e3f7956b1242076c7b1be`, round 31); baseline `a79945c4` | r1 measurement + luna-round-3; rule blocks added 2026-10-18 and 2026-10-19; count refreshed rounds 25, 26, 39 and 40 |
 | calibration | 0 → 10 | 4 → 0 self-assessment mismatches at the round-47 landing: `tools/round-47/record.py` re-derives 42 atoms (last two round sections plus the Owned-axes heads) and reports `mismatches []`, `corrections 2`, `exempted 1 <= 3`, battery `3/0` (`.ufo/waves/round-47/l1/scores/c2-at-A7.json`); 9/9 preselected reconciliation obligations aligned (2026-10-15); 2026-10-16 per-client REA surface reconciled to live receipts — **failure-selected completeness**, not unbiased accuracy or mastery | Frozen `evidence/round-1-2026-10-15/rubric.json`; command B; count measured at `c265db9bd3c0883fbaf4487f839559c85a736826` (`evidence/round-1-2026-10-15/result.json` `measured_revision`; the row said `75af886a` until round 26, which is the luna-round-2 receipt reconciliation, not command B's revision); luna-round-2 receipts `.ufo/waves/luna-round-2/receipts/` | operator-steered r1 + luna-round-2; later calibration claims are in the round sections (outside closures: round 24 rejected-honest-stop, round 25 admitted) Round 50: the round-48 closure `corpus/lessons/round-48-verifier-spotcheck.md` graded calibration `rejected-harmed`; the round-49 record corrections measured `mismatches 9 → 0` (`.ufo/waves/round-49/l1/scores/c2-final.json`); this row is a finite proxy over the atoms its counters name, not an expertise score. |
 
@@ -5103,3 +5103,89 @@ rewrite of the filed text):
   30-entry count is unaffected. Check:
   `python3 -c "import importlib.util; s=importlib.util.spec_from_file_location('m','tools/round-64/jsc-route-matrix.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); print(len(m.PINS))"` -> `8`.
 - The same correction is appended to `corpus/knowledge/2026-11-03-r65-jsc-closure-matrix.md` as an erratum.
+
+## 2026-11-03 — round 66: the two counter repairs — the closure boundary and the self-assessment atom
+
+Base `311079d869f068bc083a8d180977e49634120fdf`; instruments and do-nothing controls `78fa9666` (ancestor of
+the freeze); operative freeze `7b63dd5d5199ed30bc3f213573d8594434a18eb6`; carry-in `b5b02e1f` (ancestor of the
+freeze, `.ufo/waves/round-66/l1/records/r66-order.txt`). This round executes the two new freezes the round-65
+non-author closure routed (its routed defects 1 and 2) as two claims on distinct axes.
+
+| claim | axis | type | predicate (frozen sentence) | before → after | verdict |
+|---|---|---|---|---|---|
+| R66-C1 | depth | counter repair | R66-C1 is verified iff the repaired closure counter passes all five of its boundary arms: a1 the guarded fixture probe leaves closure.ok true with an empty cache; a2 the same probe without -B or the bytecode env makes closure.ok false and names a .pyc path; a3 the frozen 30-entry toolchain manifest verifies with count_ok true; a4 a manifest one entry short reports entries 29 != 30 and closure.ok false; a5 --skip-run emits no closure object claiming ok. | do-nothing control 1 of 5 arms (the r65 order sees an empty pre-probe cache, `--manifest` exits 0 at `entries 29`, `--skip-run` claims `closure.ok true`) → the frozen counter 5 of 5 arms, exit 0, at the freeze and again at the record | **verified** on `w1/ExecClosure/verify.json` (exit 0) and `l1/scores/c1-after-verify-at-record.json` |
+| R66-C2 | calibration | counter repair | R66-C2 is verified iff the coverage self-check counter at the measured revision reports recipe_a_equivalent true, a non-empty recipe_a_hidden list, and mismatches 0 across its two self-assessment atoms, where at the base revision the same counter reports the cited fraction atom as a mismatch. | the r65 "date" mode is not recipe A (it filters the population and emits `population_dropped: 3` as an integer), no hidden-name list, no atoms, control 0 of 3 → recipe A reproduced field for field (`diffs {}`), `recipe_a_hidden` the three unmappable stems, and the stale `142/142` atom repaired at this record | **verified** on `l1/scores/c2-after-selfcheck-at-record.json` (see the Close block below) |
+
+**R66-C1 receipts.** `--verify` exit 0, 5 of 5 arms (`w1/ExecClosure/verify.json`); `--manifest` exit 0,
+`entries 30`, `count_ok true`, cache empty, probe ok (`w1/ExecClosure/manifest.json`); `--skip-run` emits
+`closure null`, `closure_claimed false` (`w1/ExecClosure/skiprun.json`); the toolchain cache scan is 0 lines and
+the instrument sha256 is unchanged before and after (`3c5cfb03…`). The committed do-nothing control scores 1 of 5
+(`l1/controls/c1-do-nothing.json`), and three arm-mutations each flip their own arm: `COUNT 30 -> 29` flips a3
+and a4, the post-probe scan moved before the probe flips a2, a synthetic skip-run closure flips a5
+(`w1/ExecControls/m{1,2,3}-verify.json`). Selftest 30 cases, 0 failures (`l1/pre/selftest-c1.txt`).
+
+**R66-C2 receipts.** `--selfcheck` at the base and at the freeze: `recipe_a_equivalent true` with `diffs {}`,
+`recipe_a_hidden 3` (`2026-11-03-r65-jsc-closure-matrix`, `jsc-mapper-cli-contract`,
+`jsc-mapper-release-inventory`), stem 145/145 with `mismatches 0`, atoms A1 true and A2 false (claimed
+`[142, 142]` against observed `[145, 145]`), `mismatches 1`, exit 1
+(`l1/pre/dryrun-c2-selfcheck-at-base.json`, `w1/ExecCoverage/selfcheck-at-freeze.json`). Recipe A verbatim at the
+base: `knowledge_files 145`, `mapped 142`, `coverage_score 9.79`, `depth_score 10.0`, `citation_resolved_rules
+27`, `rule_blocks 27`; the committed SCORECARD block re-run as a subprocess agrees on all nine `RECIPE_A_KEYS`
+(`w1/ExecCoverage/equiv-at-base.json`, block sha256 `1d697af1…`). Control 0 of 3
+(`l1/controls/c2-do-nothing.json`). Selftest 26 cases, 0 failures (`l1/pre/selftest-c2.txt`).
+
+**Mutations — two survivors, routed not repaired.** `MutClosure` (5 mutants): M1/M2/M3/M4 killed by both
+detectors; **M5 survives** — `arm()` returning `passed: True` unconditionally is bound by neither `--selftest`
+(which never calls `arm(`) nor a green-host `--verify`; a controlled red (`--python /nonexistent`) separates them
+(pristine 2 of 5, M5 5 of 5). `MutCoverage` (5 mutants): M1/M3/M4/M5 killed; **M2 survives at the base** — an
+equivalence arm that returns true without running the block is indistinguishable when the clause is already true,
+though a doctored block drives pristine `--equiv` to rc 1 with three diff keys and M2 to rc 0. Both survivors are
+selftest-coverage gaps, not false passes of the frozen predicates; they are routed into the next round's new
+freeze (§planned below), never repaired in place.
+
+**Reviewer.** `.ufo/waves/round-66/w1/ReviewerClosure/review.md`: every predicate clause traced to an implementing
+line (QUALITY #87); no arm can pass while its defect is absent; the predicate sentence is byte-identical at plan,
+container, counter constant and counter-emitted receipts (C1 sha256 `f8c8edb4…`, C2 `d5df2ccd…`); no blocking
+finding. Twelve advisory findings, three routed: F1 (the counters echo their constant rather than reading the
+claim file — row 68's mechanism clause), F3 (the C1 docstring claims a census re-host the code lacks), F6 (CLI
+paths leave their scratch dir behind).
+
+**Sentinel.** `.ufo/waves/round-66/w1/SentinelScope/audit.md`: write scope clean (14 paths, all lane-relative),
+no credential material, toolchain closure green with 105 files (delta 0 vs the r65 freeze) and cache empty,
+frozen paths byte-equal at freeze and tip, registry rows 7 cells with no escaped pipe. No finding.
+
+**Connector (adjacency).** `.ufo/waves/round-66/w1/ConnectorCross/overlap.md`: no sibling owns the recipe-A
+reproduction or a closure-count assertion (`count_ok` 0 hits fleet-wide). The self-assessment *class* is owned
+three times over — tsukuroi's `check-self-assessment.py` (needs `## Axes - ` and `SHONEN.md`, exits 2 here),
+souji's `souji-capability-agreement.py` and `souji-declared-evidence.py` — but none computes a knowledge fraction
+or a rounded score, so R66-C2's two atoms have no sibling implementation. The class precedent is cited; the
+atoms are not claimed novel as a class. Reported, not absorbed.
+
+**Sources and frontier.** S267 admitted (CPython `sys.dont_write_bytecode`, the page r65 rejected only as the
+S266 switch anchor; opened under its own scope, 18-word located quote, dt raw line 585, nearest heading the
+module h1). `corpus/knowledge/2026-11-03-r66-closure-boundary.md` lands with the provenance trio citing S267 and
+its coverage-map row. Registry 173 → 174 rows. The r65 entry's group-table erratum lands (venv identity 4 vs the
+5 pinned; the probe counted under both `artifacts` and `harness`), closing the closure's routed defect 3; its
+routed defect 4 (the report/LOG accuracy corrections) lands as the LOG correction entry.
+
+**Wave.** One v1 wave `r66-w1`, 12 seats (policy band 8–16): 3 executor, 1 reviewer, 1 critic, 2
+mutation-testers, 1 sentinel, 1 scout, 1 connector, 2 scribes; attack share 4/12 = 33 %. L1 held the planner
+seat (the validator rejects a planner role). No residual call.
+
+**Trends.** expansion **improved** (one admitted knowledge entry with a new kind of source for this ground — the
+interpreter's own attribute page — citing mined S267; `SOURCES.md` +1). quality **improved** (the r65 closure's
+routed counter defects repaired and demonstrated red/green; no admitted entry found false; the r65 erratum closes
+its count slip). discernment **improved** (two mutation-testers found real selftest gaps and one reviewer traced
+every clause; the lane routed its own survivors instead of repairing them post-freeze; outside closure still
+pending).
+
+**No harm.** `PROVINCE.md` unchanged base → record; the depth and calibration owned-axes rows byte-equal; the
+coverage row's head sentence is the round's claimed calibration repair (the only owned-axes edit); LOG additions
+only; SKILL delta is the two registry rows; no filed round-65 byte rewritten (the erratum is appended).
+
+**planned (next steered round only):** (a) a NEW freeze binding the two mutation survivors: a selftest case that
+calls `arm()` on a false arm condition, and a selftest case running `recipe_a_equivalence` against a doctored
+block; (b) the reviewer's routed F1/F3/F6 (claim-file reading, the C1 docstring's census claim, CLI scratch
+cleanup); (c) the r63 planned record-section sweep stays open; (d) the standing duties re-run every round that
+lands receipts; the r58/r60 bare-name findings and the r64 placeholder-token disposition stay named debt; (e) the
+AVM LE-SquashFS re-freeze stays routed.
