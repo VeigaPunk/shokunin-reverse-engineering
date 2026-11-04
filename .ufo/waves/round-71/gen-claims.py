@@ -19,6 +19,12 @@ TOOLS = ["tools/round-71/packed-elf.py",
          "tools/round-71/forged-receipts.py",
          "tools/round-71/registry-census.py",
          "tools/round-71/controls.py"]
+LOADED = ["tools/round-51/census3.py",
+          "tools/round-69/packed-elf.py",
+          "tools/round-69/contract-probe.py",
+          "tools/round-70/packed-elf.py",
+          "tools/round-70/contract-probe.py",
+          "tools/round-70/mutation-check.py"]
 PLAN = "plans/round-71-claims.md"
 
 
@@ -67,6 +73,8 @@ def main() -> int:
             f"controls-at-declaration.json, nonce-commitment.txt) were measured "
             f"at that declaration state and committed before an…"),
         "instruments": instruments,
+        "loaded_by_counter": {path: hashlib.sha256(
+            blob(args.root, args.declaration, path)).hexdigest() for path in LOADED},
         "claims": claims,
         "frozen_atoms": {
             "A0": ("base 82c8e620c9222fb218aa0260570a3765da2afb44 (the round-70 lane "

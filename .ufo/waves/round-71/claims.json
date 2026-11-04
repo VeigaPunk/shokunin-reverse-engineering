@@ -1,0 +1,53 @@
+{
+ "base": "82c8e620c9222fb218aa0260570a3765da2afb44",
+ "claim_row": "S273",
+ "claims": [
+  "R71-C1 is verified iff the frozen seam probe, run at the measured revision as `python3 -I -B tools/round-71/seam-probe.py --root . --rev <measured> --tool tools/round-71/packed-elf.py --battery tools/round-70/mutation-check.py --pkg <REA 6.5.0 root> --work <scratch> --receipt <landing receipt> --expect-upx <pinned copy> --nonce-commitment <pre-committed nonce hash> --legacy-receipt .ufo/waves/round-70/l1/scores/c3-at-landing.json --json-out <receipt>`, reports `arms_passed 10` of `target 10` \u2014 A1..A10 each true, including A8's observed child environment parsed by the probe from the raw per-child log (key set exactly HOME/LANG/PATH/TMPDIR, the packer, node and readelf children present, HOME and TMPDIR under that run's own run_root, the exported canary absent), A9's three concurrent battery runs and three concurrent route preflights (distinct work_dirs, distinct run_roots, each env log under its own root), and A10's pre-committed binding (sha256(run_nonce) equals the commitment, run_binding re-derives from nonce + instrument + packed pins, the genuine receipt accepted, the transplanted round-70 receipt, a wrong-nonce copy and a broken-binding copy each rejected with their clause) \u2014 while the same probe at the round-70 landing `7c155617bb42dadf1725b88a06fe3f235c364f0a` against `tools/round-70/packed-elf.py` reports `arms_passed 7` of target 10 naming A8_child_env_observed, A9_concurrent_collision and A10_run_binding false.",
+  "R71-C2 is verified iff the frozen forged-receipt battery, run at the measured revision as `python3 -I -B tools/round-71/forged-receipts.py --root . --rev <measured> --base-rev 5cc845ca88c90e3e8ceb816f75fe44ddb6758a6d --tool tools/round-70/packed-elf.py --base-tool tools/round-69/packed-elf.py --probe tools/round-70/contract-probe.py --base-probe tools/round-69/contract-probe.py --base-probe-rev 5ee94c56ce7490938ee38c2e5c10930a1fd1330a --battery tools/round-70/mutation-check.py --base-material .ufo/waves/round-69/l1/scores/c3-at-landing.json --landing-material .ufo/waves/round-70/l1/scores/c3-at-landing.json --first-cut-rev 4737a542ae3b1b910d8fe43efbd572bc578b07c6 --first-cut-tool tools/round-70/packed-elf.py --superseded-rev 7c155617bb42dadf1725b88a06fe3f235c364f0a --pkg <REA 6.5.0 root> --work <scratch> --json-out <receipt>`, exits 0 with the ten base-world shapes accepted by the base reader and rejected by the superseded reader each naming its declared clause, the two landing-world identity shapes rejected by the probe on A5_carrier_record with A6_packer_pin true, the six lying-field shapes L1_unpacked-counts, L2_packed-sha, L3_section-list, L4_runs-argv, L5_refusal and L6_format each `first_cut_rc 0` and `superseded_rc 1` with its declared clause found (unpacked_counts, packed_sha256, section_count, runs.pack.argv, refusal, format), the genuine receipts still accepted by both frozen readers, and the battery's pin/floor/work-dir/constant arms green \u2014 while the round-70 battery's committed landing receipt `.ufo/waves/round-70/l1/scores/c1-at-landing.json` carries `shapes 10`, `landing_probe_shapes 2` and no `lying_shapes` row (the do-nothing control).",
+  "R71-C3 is verified iff the frozen registry census, run at the measured revision as `python3 -I -B tools/round-71/registry-census.py --root . --rev <measured> --generate --out <receipt>`, exits 0 with the registry's data rows all conformant (`nonconformant []`, `duplicates []`, `paths` equal to the row count), the four round-69 eight-cell rows recorded as multicell rows read by the declared join rule, and the six round-70 six-cell rows carrying seven cells after this round's disclosed SKILL.md repair \u2014 while the same instrument at the base revision `82c8e620c9222fb218aa0260570a3765da2afb44` reports six nonconformant rows with defects `['pinned-empty']` and exit 1, `tools/round-51/census3.py --root . --rev <same base> --check` exits 2 with \"registry row must have seven cells\", and the census's 14-case selftest is green."
+ ],
+ "declaration_pointer": "plans/round-71-claims.md (no amendments). The five instruments were committed BEFORE this claims file (QUALITY #33): declaration 46366cc5525f661b97d26a8c70ed3a53d0b4b916 (tools/round-71/*, the plan, the census-start receipt). The pre receipts in .ufo/waves/round-71/l1/pre/ (c1-at-base.json, c2-do-nothing.json, c3-at-base.json, controls-at-declaration.json, nonce-commitment.txt) were measured at that declaration state and committed before an\u2026",
+ "frontier": {
+  "assimilation": "none (the merge/kaidoku/ package does not serve these claims)",
+  "considerthese": "absent in this lane",
+  "mistake": "corpus/lessons/round-71.md ## Mistakes",
+  "sources": "corpus/SOURCES.md: S273 (GFM 4.10 cell-count tolerance, tier A spec, opened this round) and S274 (the tempfile page, REJECTED: it does not ground distinctness); S273 grounds R71-C3's grammar addendum via corpus/knowledge/2026-11-04-r71-registry-grammar.md."
+ },
+ "frozen_atoms": {
+  "A0": "base 82c8e620c9222fb218aa0260570a3765da2afb44 (the round-70 lane tip); declaration 46366cc5525f661b97d26a8c70ed3a53d0b4b916 (the five tools, this plan, the census-start receipt); the order is base, then instruments+plan, then the pre receipts, then this container (QUALITY #33/#38).",
+  "A1": "instrument pins above are the frozen bytes (tools/round-71/*); no post-freeze edit of any pinned path without an appended instrument_supersessions entry and a re-taken before record.",
+  "A10": "repairs carried, not claim input: R71-G1 (round-70 capability rows), R71-G2 (census W04 erratum), R71-G3 (the ca9817cf->ca9817cd erratum), R71-G4 (wave-settlement receipt), R71-G5 (SOURCES search log + tempfile rejection row), and the standing duties re-run this round.",
+  "A2": "R71-C1: the route is tools/round-71/packed-elf.py; every child (packer, REA node, readelf, git) runs under build_child_env(run_root); --child-env-log records each child's observed /proc/self/environ via the launcher (its PYTHONCOERCECLOCALE marker popped before the observation and the exec); --challenge/--nonce-commitment bind run_nonce and run_binding = sha256(nonce:instrument.sha256:packed pins). The landing nonce plaintext lives only in scratch; its sha256 is committed at l1/pre/nonce-commitment.txt BEFORE the landing run.",
+  "A3": "R71-C2: the six lying-field shapes are cut from .ufo/waves/round-70/l1/scores/c3-at-landing.json and relabelled to the round-70 FIRST-CUT world: first-cut-rev 4737a542ae3b1b910d8fe43efbd572bc578b07c6 (the first-cut blob of tools/round-70/packed-elf.py is the instrument.sha256 in every shape), superseded-rev 7c155617bb42dadf1725b88a06fe3f235c364f0a. Declared clauses: unpacked_counts, packed_sha256, section_count, runs.pack.argv, refusal, format. The ten base-world shapes keep the round-70 material (.ufo/waves/round-69/l1/scores/c3-at-landing.json) and readers; the two landing-world identity shapes keep their probe arms.",
+  "A4": "R71-C3: grammar v2 = split on unescaped pipes, unescape '\\|', owner = last cell, write scope = second-last, pinned = the joined middle cells; the four round-69 eight-cell rows are read by the join rule and never rewritten; the six round-70 rows gain the owner cell they omitted, disclosed old->new in LOG.md. Base state: 6 nonconformant rows, defects ['pinned-empty'], exit 1; round-51 census3 exits 2.",
+  "A5": "pins reused from round 70: packer upx 5.2.0 sha256 cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969; REA package 6.5.0 package.json sha256 a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c; the four carriers and DECLARED_ORIG/DECLARED_PACKED are the round-70 tables.",
+  "A6": "pre receipts (before any claim data, at the declaration): l1/pre/c1-at-base.json (the round-71 probe at 7c155617 against the round-70 route: arms_passed 7 of 10, A8/A9/A10 false), c2-do-nothing.json (the round-70 battery receipt: 10 base-world + 2 landing-world rows, 0 lying-field rows), c3-at-base.json (88 rows, 6 nonconformant, exit 1), controls-at-declaration.json (6 of 6), nonce-commitment.txt (the landing nonce's sha256).",
+  "A7": "controls: c1-base-world, c1-constant-probe, c2-do-nothing, c2-constant-battery, c3-base-nonconformant, c3-junk-row - all six show what they must at the declaration (A6's controls-at-declaration.json).",
+  "A8": "the measured revision is the landing commit that carries this round's files; every after-receipt names it; the report cites the jj helper's landed hash.",
+  "A9": "repaired SKILL.md rows: only the six round-70 rows change (the owner cell appended); the four round-69 rows stay byte-identical; the census records the multicell rows by name."
+ },
+ "instruments": {
+  "tools/round-71/controls.py": "a73b9aa0cbac9ab9f82540d15080d6e0c60ef15668810470b9a50b70d449e62a",
+  "tools/round-71/forged-receipts.py": "50bb190b3c0b91870bfcce74c9898167f961102c8381d1a2b0c70fe7df115c7f",
+  "tools/round-71/packed-elf.py": "5cf95aaa0892c4e4f1b82edb60590b57e6667467ed607b15989bb867e7d8efe0",
+  "tools/round-71/registry-census.py": "a7746d2ade8946c112ed097268df7ba905f0632a0af8b9e3375dc6ea7c42d528",
+  "tools/round-71/seam-probe.py": "7c7734af66f571618bb948f90a5d2d7048f245de122f294574939970db1bf157"
+ },
+ "loaded_by_counter": {
+  "tools/round-51/census3.py": "a7538e5f5174b5f69cc7537fc1bcdf97cc2f062747123d0eb6f57e60e9acc7c0",
+  "tools/round-69/contract-probe.py": "e609d85d0fc4604ef582ae886da38b4d335c558a1954c12344df0e468669061d",
+  "tools/round-69/packed-elf.py": "4ac0d83baee352e42f63b9ced91df01c2ee01f508a35798e400f13478f8aebcc",
+  "tools/round-70/contract-probe.py": "56bcbaae2634ccc890429ff1763ef72a47b907ce41ece4349e486f9d3a6f537b",
+  "tools/round-70/mutation-check.py": "4b747a1e96b38c4862b5e04d361f4f0a509d72af4a53cdaf06e752b18e5404ca",
+  "tools/round-70/packed-elf.py": "417b116803fbf78b44220d4a2caeb30d1261030353bc1b1c81d22c3b0146048a"
+ },
+ "repairs": [
+  "R71-G1",
+  "R71-G2",
+  "R71-G3",
+  "R71-G4",
+  "R71-G5"
+ ],
+ "round": "round-71",
+ "schema": 1
+}
