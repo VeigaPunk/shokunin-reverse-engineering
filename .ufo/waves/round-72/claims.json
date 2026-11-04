@@ -64,19 +64,19 @@
    "path": "tools/round-72/seam-probe.py",
    "commit": "6375afe687bc03603eab8387f2defc4fa1248054",
    "reason": "the probe's scratch blob copy now carries the route's sibling module capsule_audit.py; without it every black-box invocation of the round-72 route died at import (the probe itself was never affected), so the wiring the counter measured did not include this file",
-   "replacement_sha256": "39a2193ebc23eedd16e78a2239e881286e8d4589c01cb5ebdb0c3ac11b60a94b"
+   "replacement_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2"
   },
   {
    "path": "tools/round-72/seam-probe.py",
    "commit": "6284abeb9fc8dbbc69ecd0c2de5be21dfba7ff7a",
    "reason": "A11's shims are perl, not /bin/sh: a shell adds PWD, SHLVL and _ to the environment it exports, so a shell shim measured the shell rather than the exec boundary (found by the landing run: shim keys were HOME/LANG/PATH/PWD/SHLVL/TMPDIR/_)",
-   "replacement_sha256": "39a2193ebc23eedd16e78a2239e881286e8d4589c01cb5ebdb0c3ac11b60a94b"
+   "replacement_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2"
   },
   {
    "path": "tools/round-72/seam-probe.py",
    "commit": "4913b5e67cedf9fe3fd4d52ab85e8c21ad9af7c6",
    "reason": "wave finding ReviewerGates: A11 derived its census from the checker's JSON summary and gated containment on --work; it now parses the checker's log bytes itself (a fabricated summary without a log, or a zero-count census, fails), requires git/readelf counts >= 1, gates containment on the checker's own run_root, and --receipt-rev decouples the receipt's producer revision from the measured revision",
-   "replacement_sha256": "39a2193ebc23eedd16e78a2239e881286e8d4589c01cb5ebdb0c3ac11b60a94b"
+   "replacement_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2"
   },
   {
    "path": "tools/round-72/mutation-check.py",
@@ -88,7 +88,7 @@
    "path": "tools/round-72/packed-elf.py",
    "commit": "4913b5e67cedf9fe3fd4d52ab85e8c21ad9af7c6",
    "reason": "wave findings ReviewerGates: the route summary records the capsule's log_sha256 (so the digest clause is evaluable for filed receipts) and a lane-relative named capsule that is absent now fails closed with its clause instead of being skipped",
-   "replacement_sha256": "1bd6f9a0a62c25a2d671dd159fe3c97795dcb6e20088c530c7e3860f9dfb7016"
+   "replacement_sha256": "330ecf89debe550ca2e3799f0a1643728604d24d95924e6d8053433d6e32bab6"
   },
   {
    "path": "tools/round-72/controls.py",
@@ -100,7 +100,19 @@
    "path": "tools/round-72/seam-probe.py",
    "commit": "d8297e8599ed3f127b96f44c91777b9a10398c98",
    "reason": "wave findings MutProbe/CriticClaims: A11's decision is extracted into a pure a11_verdict() with per-conjunct selftest cases (arm-children, arm-keys, arm-canary, arm-rc, arm-containment, arm-absent-summary), and A10 requires the checker's own `met` and its clause block's `met` to be true, closing the self-contradictory-checker acceptance",
-   "replacement_sha256": "39a2193ebc23eedd16e78a2239e881286e8d4589c01cb5ebdb0c3ac11b60a94b"
+   "replacement_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2"
+  },
+  {
+   "path": "tools/round-72/packed-elf.py",
+   "commit": "e67f3a1b1f79bcd5ce56dd4f64edb4ed18f903ff",
+   "reason": "wave finding SentinelScope SS72-2 (blocking): a receipt-named capsule is resolved under the lane root and must stay there, be a regular file and be size-bounded; an external absolute pointer is recorded and never read. The filed route receipt was re-taken at this revision so its producer binding matches.",
+   "replacement_sha256": "330ecf89debe550ca2e3799f0a1643728604d24d95924e6d8053433d6e32bab6"
+  },
+  {
+   "path": "tools/round-72/seam-probe.py",
+   "commit": "e67f3a1b1f79bcd5ce56dd4f64edb4ed18f903ff",
+   "reason": "wave finding SentinelScope SS72-1: A11 resolves its real git/readelf from /usr/bin before PATH (PATH is a trust boundary the environment allowlist does not sanitize).",
+   "replacement_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2"
   }
  ],
  "repairs": [
