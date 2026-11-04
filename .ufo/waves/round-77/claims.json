@@ -1,0 +1,43 @@
+{
+ "base": "188562d43e3cc58b217ad7aa763fb296c5b8a0b7",
+ "claim_row": "plans/round-77-claims.md",
+ "claims": [
+  {
+   "after": "landing: exit 0, mismatch_count 0, bound_clauses >= 18, in_scope_rows >= 11, validate defect-free",
+   "axis": "calibration",
+   "before": "base 188562d4: exit 1, mismatch_count 4, bound_clauses 21, in_scope_rows 9 \u2014 the two D24/mismatch_count clauses of the `capability-row binding` row and of PROVINCE.md line 585 (claimed true/0, receipts record false/1)",
+   "counter": "mismatch_count",
+   "counting_command": "python3 -I -B tools/round-77/verdict-bind.py --root . --rev <measured> --json-out <receipt>",
+   "id": "R77-C1",
+   "kill_rule": "an annotation that passes because the grammar cannot see it (a negated cell, a clause outside the group, a path from another cell); a bound clause whose receipt field is absent and is treated as a pass; a validate defect; a target reached while bound_clauses is met by prose; a mismatch_count that falls only because in-scope rows were removed; an edited cell that keeps the false value; an evidence pointer that does not resolve at the measured revision",
+   "predicate": "R77-C1 is verified iff `python3 -I -B tools/round-77/verdict-bind.py --root . --rev <measured> --json-out <receipt>` exits 0 with `mismatch_count 0`, `population.bound_clauses >= 18`, `population.in_scope_rows >= 11` and a defect-free `validate`, every bound clause re-derived from the JSON receipt its cell names, while the same command at base 188562d4 exits 1 with `mismatch_count 4` naming exactly the `capability-row binding` row and PROVINCE.md line 585 (`D24 true` vs `false`, `mismatch_count 0` vs `1`), and the selftest's 15 cases carry one red fixture per failure shape plus their legitimate look-alikes.",
+   "surface": "the record's annotation cells \u2014 the SCORECARD `## Capabilities` rows with first-working round >= 73 and the PROVINCE `- **Core \u2014 ` bullets \u2014 and the JSON receipt each cell names",
+   "type": "capability acquisition"
+  },
+  {
+   "after": "landing: exit 0, arms_ok 6 of 6, validate defect-free",
+   "axis": "operability",
+   "before": "base 188562d4: exit 1, arms_ok 4 of 6 \u2014 the filing receipt absent and three round-76 gate receipts without exit",
+   "counter": "arms_ok",
+   "counting_command": "python3 -I -B tools/round-77/prefile-receipt.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>",
+   "id": "R77-C2",
+   "kill_rule": "an arm met for a reason other than its expected observation; a receipt accepted whose exit is not an integer or whose digest does not cover its stdout; a passed that does not follow from exit and the verdict line; a gate-exits arm that passes with an empty gate set; a red fixture that is accepted; a filing receipt whose rev is not the filing revision",
+   "predicate": "R77-C2 is verified iff `python3 -I -B tools/round-77/prefile-receipt.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `arms_ok 6`, `arms_total 6`, `ok true` and a defect-free `validate`, each arm carrying its expected observation (clone-run a clean clone run whose receipt passes --check-receipt; record-receipt the filing receipt at exit 0; gate-exits every gate receipt in the newest round dir carrying its exit; red-no-exit, red-verdict and red-rev each refused), while the same command at base 188562d4 exits 1 with `arms_ok 4` (the filing receipt absent and three round-76 gate receipts without exit), and the selftest's 13 cases carry both red fixtures and their legitimate look-alikes.",
+   "surface": "the filing gate invocation (tools/round-29/prefile-check.sh) and the receipts that retain it \u2014 the filing receipt and every gate receipt of the newest round",
+   "type": "capability acquisition"
+  }
+ ],
+ "declaration_pointer": "819cf30e2fc35d91a69df1b2a42a025741c7d0ef",
+ "instrument_supersessions": [],
+ "instruments": {
+  "tools/round-77/prefile-receipt.py": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+  "tools/round-77/verdict-bind.py": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
+ },
+ "loaded_by_counter": {
+  "tools/round-29/prefile-check.sh": "9a403dc11594a78a23629034bced6b6e0b33160f08a30d00a53d4bd860c1390d",
+  "tools/round-76/record-audit.py": "805a8ba5ff6c83a374e88db589ff95b6f70b90fee1b102123b47ada22fe70f0e",
+  "tools/round-77/gen-controls.py": "001fccd6baedb9dbc87c0c8779edbcc40e676355a732ed56f37fdac5cfe4f752"
+ },
+ "round": 77,
+ "schema": "kaidoku-r77-claims-v1"
+}
