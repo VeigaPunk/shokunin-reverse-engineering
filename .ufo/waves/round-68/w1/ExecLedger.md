@@ -56,9 +56,9 @@ round-64 row is in `disclosures.exact`, and `disclosures.mismatched` is empty
 
 ### 1.3 Relation to the row the L1 already staged in the working tree
 
-While this seat ran, the working tree gained an uncommitted 8-column variant of the same correction
-(`git diff HEAD -- corpus/claim-freezes-corrections.tsv`: appended `round-64/correction-1`, utc
-`2026-11-04T01:46:04Z`, receipt `451f3102`, a shorter cause). Audited, it is **compliant**: 8 cells,
+While this seat ran, the working tree gained an 8-column variant of the same correction, and it
+landed at `978436bd` (`git diff 6ffa9ce1 978436bd -- corpus/claim-freezes-corrections.tsv`: appended
+`round-64/correction-1`, utc `2026-11-04T01:46:04Z`, receipt `451f3102`, a shorter cause). Audited, it is **compliant**: 8 cells,
 `was`/`now` byte-equal to §1.2, appended at the end. Either it or the file above satisfies defect 3;
 **only one may land** — two rows with the same `correction-id` would collide. The variant above
 carries the reproduction receipt (the gate's `mismatched []`) that the staged one lacks; the staged
@@ -362,7 +362,16 @@ No tracked lane file, no fleet file, no other lane, no index, no commit, no push
 - **No tool was installed or upgraded** (nothing was needed); no pacman transaction was attempted
   (transactions are paused host-wide); no L0 question arises.
 
-## 6. Risks
+## 6. Harm outside the lane (disclosed)
+
+A stray cleanup command (`rm -f /tmp/x.*`, meant to remove this seat's `/tmp/x.1978295`) also deleted
+three **pre-existing, unrelated** `/tmp` files: `/tmp/x.jsonl` (964 B, 2026-11-02 13:50),
+`/tmp/x.tsv` (29,820 B, 2026-11-03 15:44) and `/tmp/x.out` (109 B, 2026-11-03 22:42). No process
+still held them open (`/proc/*/fd` scan empty), so they are unrecoverable. `/tmp` is not a lane or
+fleet surface and nothing tracked was touched, but the deletion is irreversible and is recorded here
+rather than omitted.
+
+## 7. Risks
 
 - **Stray-row rule is asymmetric**: any future row for a round whose `claims.json` is later deleted
   becomes stray and permanently reds the round-24 gate — the reason retirement, not re-filing, is the
@@ -371,4 +380,7 @@ No tracked lane file, no fleet file, no other lane, no index, no commit, no push
 - **The prefile gate's step 2 remains a hard failure if the retired ledger's bytes ever change** —
   that is the intent of the pin; a legitimate future edit would need a new erratum, not a silent
   edit.
-- **Duplicate correction row** if both §1.1 and the staged row land (§1.3).
+- **The correction row is landed; do not append §1.1 on top of it.** The L1's variant of
+  `round-64/correction-1` is in `corpus/claim-freezes-corrections.tsv` as of `978436bd`; §1.1 is kept
+  as the derivable form with its reproduction receipt, and appending it would duplicate the
+  `correction-id`.
