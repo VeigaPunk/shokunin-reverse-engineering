@@ -107,3 +107,15 @@ Located quote at lines 441-442 under NOTES FOR LINUX/ELF386 (heading 433):
 (10 words, `printf '%s' '<quote>' | wc -w`). Final registry: 178 rows.
 No existing status/recheck/used-by cell was changed; S270 and S271 are new mined rows.
 The admit/reject decisions remain author assessments pending outside closure.
+
+## Erratum — round 70: the spot-check placeholder is filled by the closure record
+
+The `## Gate` line above — `[L1 — filled by the non-author closure.]` — is filled by the
+round-69 non-author closure itself, which wrote its own record file rather than editing this
+lane-authored lesson: `corpus/lessons/round-69-verifier-spotcheck.md` (author
+`hyaku closure (non-author integrator, @m_zfl)`, lane tip `605ce424b41f0ae6f3ddbf9dd629173990419396`,
+fleet report commit `9fa113c9`). It re-opened S270/S271 and both sampled rejects byte-exact
+(all four agree), re-measured C1 from committed receipts (improved), graded C2/C3 unprovable
+under the frozen shortcut-control rule, and routed M69-1/8/9/10/11 to this round. Verdict:
+**rejected-honest-stop**, round not admitted. This erratum is appended, never a rewrite of
+the filed bytes.

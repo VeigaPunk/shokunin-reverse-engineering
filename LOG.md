@@ -4193,3 +4193,28 @@ fractions — and requires zero mismatches with at least two corrections that ea
   unanchored field occurrences because correction fields are list items.
 - WAVE-DONE received from Main: all 15 seats settled; results at
   `.ufo/waves/round-69/r69-w1-results.json`. No residual dispatch.
+
+## 2026-11-04 — round 70, KaidokuR70 — carry-in: the r69 non-author closure recorded (QUALITY #34)
+
+- The round-69 verifier spot-check (`corpus/lessons/round-69-verifier-spotcheck.md`, non-author
+  closure at lane tip `b64333cbe567040019fab2ddd4ae7c00efcd8f73`, fleet report commit `9fa113c9e9f5ce2cda9bc5dbd767417b97686f29`)
+  is recorded: `verdict rejected-honest-stop` — C1 verified (receipts re-measured from committed
+  bytes), C2/C3 not verified under the frozen shortcut-control admission rule, quality **harmed**
+  by the execute-before-hash `--upx` seam (S-1), round **not admitted**, status ok (real committed
+  work). Spot-check table: S270/S271 admits and both rejects agree, byte-exact re-opens. This
+  carry-in entry precedes this round's declaration commit (the M69-7 ordering fix applied).
+- The closure's routed defects, each with its landing target this round: **M69-8** (the frozen
+  C2/C3 counters accept fabricated receipts) → R70-C1, the provenance binding inside the readers;
+  **M69-9 / S-1** (`--upx` executed before hashing, full environment inherited, validated-vs-used
+  path split) → R70-C2, the safe packer seam; **M69-10** (exec-format-less/`--upx` and broken
+  `node` leaks escape as tracebacks) → R70-C2's typed arms; **M69-11** (the `/tmp` HOME fallback
+  in the probe harness and fixed-name scratch dirs) → R70-C2's per-run scratch and the harness
+  repair; **M69-1** (the container shape the round-29 gate reads as INSTRUMENT_NONE) → this
+  round's freeze is encoded as a top-level `instruments` map with the predicates in `claims`,
+  and the gate is run against the container before it is committed.
+- The round-69 lesson's spot-check placeholder is filled by an appended erratum naming the
+  closure record (never a rewrite of the filed bytes).
+- Round base: `b64333cbe567040019fab2ddd4ae7c00efcd8f73` (lane tip; `jj-lane.sh state` →
+  local=remote, ahead=0). Fleet-root sweep at round start: no untracked file naming this lane
+  or round (the fleet root's untracked `after` file names no lane and is not this lane's).
+- Files touched by this entry: `corpus/lessons/round-69.md` (append), this LOG — append-only.
