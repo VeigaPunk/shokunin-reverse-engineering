@@ -99,6 +99,10 @@ whose `validate` block is absent → not verified, reported.
 `3c15a156`: all eight atoms false there) and arm `c2_red_fixtures` (each strengthened grammar
 rejects its red fixture, so the four cosmetic passes are shown detectable).
 
+**Instruments.** The five round-75 instruments the freeze pins are `tools/round-75/seam-probe.py`,
+`tools/round-75/probe-mutation.py`, `tools/round-75/record-audit.py`, `tools/round-75/controls.py`
+and `tools/round-75/freeze-pins.py` (the containment-hardened pin checker, routed defect 6).
+
 ## Frontier step (inside the claim cap, no extra claim)
 
 - **SOURCES.md.** Two pages opened this round on **2026-11-04**: `proc_pid_cmdline(5)` admitted

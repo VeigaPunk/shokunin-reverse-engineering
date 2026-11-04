@@ -309,11 +309,15 @@ def score(root: str, rev: str, tool: str, patch_set: str, work: str,
                        else expect_target_sha256 == target_sha),
            "pinned": expect_target_sha256 is not None,
            "pinned_before_exec": True}
-    runner_blob = subprocess.run(
-        ["git", "-C", root, "show", f"{rev}:{RUNNER}"], capture_output=True)
-    runner = {"path": RUNNER,
-              "sha256": (sha256_bytes(runner_blob.stdout)
-                         if runner_blob.returncode == 0 else None)}
+    # The runner binding is the bytes that actually executed (round-74 routed
+    # defect 5: reading the runner at the target revision made the base arm
+    # bind null, because a round-75 tool does not exist at the round-74 base).
+    try:
+        with open(os.path.abspath(__file__), "rb") as fh:
+            runner_bytes = fh.read()
+        runner = {"path": RUNNER, "sha256": sha256_bytes(runner_bytes)}
+    except OSError:
+        runner = {"path": RUNNER, "sha256": None}
     ok = bool(pristine_ok and not wrong)
     if expect_survivors is not None:
         ok = ok and len(survivors) == expect_survivors
