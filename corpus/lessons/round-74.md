@@ -39,5 +39,30 @@ in the record must not be presented as a fetched URL. The round-73 spot-check §
 
 ## What the wave found
 
-Reserved for the L1's synthesis of settled seat reports and landing receipts.
-No wave-wide result or landing verification is asserted by this scribe section.
+- **ExecProbeCases** independently reproduced five one-case bindings and one cross-binding:
+  deleting the sample's `canary_present` field fails both `a12-kernel-multiple-samples` and
+  `a12-kernel-canary-field` (the multi-sample case reads that field), so the canary-field case is
+  not the sole detector — named as planned item (a).
+- **CriticClaims** found three further A12 survivors outside the frozen ten classes (`home_under`
+  truthiness, `_name_samples` last-wins, `lie_clean`'s key equality) and demonstrated four
+  cosmetic-passes for D9–D12 (a used-by cell that negates the path, a search-log line with the
+  tokens only, an erratum that reverses the values, empty reason/flip cells) — debt for a
+  strengthened atom table, never a reason to edit the frozen one.
+- **MutationTester** mutated five atoms: D9 and D13 are killed by the committed base receipt;
+  D8, D11 and D14 survive both the base receipt and the parser selftest, whose 12 cases never
+  execute an atom — the structural finding that the atoms have no red-arm coverage.
+- **ExecAuditRun** reproduced 11 mismatches at base and 9 at the freeze, and named the coverage
+  limits: D14 binds the round-74 receipt rather than the routed defect-6 receipt, D15 cannot
+  restate the round-73 standing debt, and D11's detail claims reason/flip checks its predicate
+  does not perform.
+- **SentinelScope** routed four code items (path containment in `freeze-pins.py`,
+  pin-before-execution in `probe-mutation.py`, exception-safe child cleanup, A11's Perl source
+  interpolation) and one carried item (A12's `_parse_shims` still serializes shim `values`, the
+  round-72 QUALITY 128 class, inherited from round 73).
+- **ScoutSource** verified S278's quote and digest, confirmed the split-page rejections, and
+  found the D11 token is a round-73 label rather than an opened URL: the row registers
+  `dir_section_5.html` and says so, and the atom's string check is shallow (debt (b)).
+- **ExecArm / the L1 re-run** — the refactor preserves the runtime arms: A1–A12 at the record
+  revision is 12/12 with `A12_kernel_witness` true; the seat's 11/12 was its `--expect-upx` path
+  differing from the route receipt's recorded argv0 path (planned item (e)).
+
