@@ -5688,7 +5688,7 @@ round that lands receipts; the r58/r60 bare-name findings and the r64 placeholde
 stay named debt.
 
 
-## Record corrections — round 72 (appended by round 73; filed bytes not rewritten)
+**Record corrections — round 72 (appended by round 73; filed bytes not rewritten)**
 
 **Correction (round 73, routed defect 1 of the round-72 spot-check).** The R72-C2 row above
 cites the C2 target sha `39a2193e…`; that blob is `tools/round-72/seam-probe.py` at the

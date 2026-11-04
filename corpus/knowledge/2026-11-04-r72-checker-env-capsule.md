@@ -66,3 +66,14 @@ A lane-relative named capsule that is absent is a named failure, never a silent 
 source: S275 — `proc_pid_environ(5)`, Linux man-pages 6.19, https://man7.org/linux/man-pages/man5/proc_pid_environ.5.html (fetched 2026-11-04, HTTP 200, 7 747 bytes, sha256 `93394d9edb801ad44e342e8e8ab057bea619d995803221edaf008226b2062c46`; snapshot `.ufo/waves/round-72/w1/ScoutSource/proc_pid_environ.5.html`)
 verified-at: 2026-11-04 — landing receipts `.ufo/waves/round-72/l1/scores/c1-at-landing.json` (11/11; A10/A11 true), `c2-at-landing.json` (mutant killed by `a10-binding-from-checker`), `c3-at-landing.json` (46-record genuine capsule, 7/7 shapes rejected), `c3-genuine-filed.json` (capsule clause true) and `c3-lying-check.json` (capsule clause false)
 recheck: re-run the frozen C1 probe, C2 mutation battery and C3 tamper battery/checker pairing exactly as declared in `plans/round-72-claims.md`, with lane-owned receipt outputs and `$HYAKU_SCRATCH` scratch; verify the instrument pins in `.ufo/waves/round-72/claims.json` and its `instrument_supersessions` before citing a receipt.
+
+## Provenance (round 73 correction)
+
+The provenance trio this entry should have opened with is appended here, per the round-68
+correction shape (the filed text above stays unchanged):
+
+- `source:` S275 — proc_pid_environ(5), Linux man-pages 6.19, and the round-72 route's own receipts.
+- `verified-at:` 2026-11-04 — re-verified through the round-73 record audit (atom D5); the
+  receipt values this entry cites are unchanged at the round-73 record revision.
+- `recheck:` 180d — re-open the man-pages page and re-derive the round-72 receipts' key sets and
+  clause values with the frozen round-72 command.
