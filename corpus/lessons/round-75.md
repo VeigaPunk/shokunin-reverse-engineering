@@ -57,8 +57,7 @@ existing row's `used-by` changes (S277).
   `null` runner and lose the binding the atom checks).
 - **L1 determinism check.** Two independent battery runs at the tip (separate `--work` roots)
   produced identical mutant rows (`name, verdict, failed`) with pristine 25 and sole true; the
-  receipt pair is `l1/scores/c1-at-tip.json` and the scratch re-run (not committed — a re-run
-  receipt of the same counters).
+  receipt pair is `l1/scores/c1-at-tip.json` and `l1/scores/c1-at-tip-rerun.json`.
 - **ScoutSource** re-opened both pages (fresh GETs, digests identical to the registry snapshots) and
   located eight passages on `proc_pid_cmdline(5)`: argv mutability, the zombie empty read, NUL
   separation, and the `PR_SET_MM_ARG_START` relocation. Its conclusion: the pages support the
