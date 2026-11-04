@@ -1,0 +1,74 @@
+{
+ "schema": "kaidoku-r77-critic-claims-v1",
+ "seat": "CriticClaims",
+ "measured": {
+  "c1_base_188562d4": {"exit": 1, "mismatch_count": 4, "bound_clauses": 21, "in_scope_rows": 9,
+   "defect_labels": ["## Capabilities row 'capability-row binding' (first-working round 76)", "PROVINCE.md line 585"],
+   "matches_frozen_before": true},
+  "c1_freeze_6767a879": {"exit": 1, "mismatch_count": 4, "bound_clauses": 21, "in_scope_rows": 9},
+  "c2_base_188562d4": {"exit": 1, "arms_ok": 4, "arms_total": 6,
+   "note": "clone-run rc 0 PASS at base; round-76 gate-exits arm reports FIVE receipts without exit (predicate prose says three; erratum 11f0b19e acknowledges)"},
+  "c2_freeze_6767a879": {"exit": 1, "arms_ok": 4,
+   "note": "clone-run met TRUE with 'rc 1, prefile: FAIL' — A1 accepts a failing gate run on the untouched freeze"},
+  "c2_tip_11f0b19e": {"exit": 1, "arms_ok": 5,
+   "note": "only filing receipt missing; clone-run now rc 0 PASS; gate-exits met by two freeze-gate.py JSONs, not prefile-check.sh receipts"},
+  "selftests": {"c1": "15 cases, failures []", "c2": "13 cases, failures []"},
+  "ctl_pointer_only": {"exit": 0, "mismatch_count": 0, "atoms_ok": "9 of 9"}
+ },
+ "c1_over_set": [
+  {"attack": "FA forged-receipt re-point", "fixture_rev": "99956ecf18e7c0c09370f55719886278825e6e51",
+   "edit": "both false cells re-pointed to a hand-authored .ufo/waves/round-77/pre/green-r77.json (D24 ok true, mismatch_count 0)",
+   "result": {"exit": 0, "mismatch_count": 0, "bound_clauses": 21},
+   "why_false": "the round-76 receipt still in the tree records D24 false / mismatch_count 1; nothing authenticates named receipts",
+   "grammar": "accepts — nearest_path binds to any committed .json; kill-rule 'a path from another cell' undetected"},
+  {"attack": "FB re-punctuation, no new files", "fixture_rev": "86f1910f9acc3f77d3f963c904824ff5b904b512",
+   "edit": "(D24 true, mismatch_count 0) -> (D24: true, mismatch 0) in both cells; one no-op true clause appended to a green cell",
+   "result": {"exit": 0, "mismatch_count": 0, "bound_clauses": 18, "unbound_clauses": 5},
+   "why_false": "the false values still stand in the record, verbatim, against a receipt recording false/1; only punctuation changed",
+   "grammar": "accepts — QUALIFIER_RE strips 'D24:' leaving bare 'true' = prose; 'mismatch 0' is FIELD_RE with unknown field = unbound, not a defect; bound_clauses floor met at exactly 18"},
+  {"attack": "FC negated cells", "fixture_rev": "27201f7614d239df8ede1fb1ea3b271e5d3b4450",
+   "edit": "both false cells -> '(the receipt does not record D24 false, and no mismatches were recorded)'",
+   "result": {"exit": 0, "mismatch_count": 0, "bound_clauses": 17},
+   "why_false": "a reader reads a verdict; the grammar sees only prose",
+   "grammar": "accepts — no parsed clause in the group, prose counted, no defect"},
+  {"attack": "refuted", "detail": "validate defect-free on an absent validate block -> defect no_validate (refused); non-defect-free block -> value_mismatch (refused); atom shorthand D24 with 0 or 2+ matches -> unbound unknown/ambiguous_atom (never a pass); typed_equal blocks true/1 confusion (selftest red-type-mismatch)"}
+ ],
+ "c1_under_set": [
+  {"shape": "field alias", "surface": "'mismatch 1' already sits unbound in the FROZEN record (PROVINCE.md line 585 bullet, naming .ufo/waves/round-76/pre/c1-at-base.json) — a receipt that has mismatch_count 1 and no 'mismatch' key, so a reader-true clause binds nothing; the mirror-image reader-false 'mismatch 0' is equally unbound (FB)"},
+  {"shape": "qualifier", "surface": "'D24: true' parses as qualifier D24 + bare 'true' = prose; any '<word>:' prefix is stripped and discarded"},
+  {"shape": "scope floor", "surface": "rows with first-working round < 73 are never read (30 of 39 rows at base, incl. the round-72 row asserting '(11/11; A11 true)' against a base receipt of 9/11); predicate honestly claims only >= 73"},
+  {"shape": "province prefix", "surface": "PROVINCE bullets not starting '- **Core — ' are never read; predicate honestly claims only Core bullets"},
+  {"shape": "claim tables", "surface": "SCORECARD claim-table cells (e.g. the R76-C1 row asserting '0 mismatches' prose) and plans/*.md cells are never read; predicate does not claim them"},
+  {"note": "these blind spots are documented in the frozen scope, so they do not violate the predicate's letter — but mismatch_count 0 over the frozen scope is not mismatch_count 0 over the record a reader reads"}
+ ],
+ "c1_selftest_gap": "the '15 cases carry one red fixture per failure shape' clause fails under both readings: kill-rule shapes with no red fixture = negated cell, clause outside the group, path-from-another-cell, bound-floor-met-by-prose, mismatch-falling-via-scope-row-removal, edited-cell-keeping-the-false-value-by-re-punctuation; docstring statuses with no red fixture = no_atoms, no_pristine, no_validate (absent block), bad_literal; and two cases (green-prose, unbound-unknown-field) codify two of the exploited holes as green (assert defects == [])",
+ "c2_attacks": [
+  {"attack": "FD forged battery", "fixture_rev": "2959d7e268c97ac36cba60b41f3799fe78ba83b7",
+   "edit": "hand-written .ufo/waves/round-77/l1/scores/prefile-at-filing.json (internally consistent, exit 0, PASS stdout, correct digest, rev = BASE commit — stale) + .ufo/waves/round-77/l1/scores/gate-at-tip.json = {\"exit\": 0}",
+   "result": {"exit": 0, "arms_ok": 6, "arms_total": 6, "ok": true},
+   "why_false": "no gate ever ran at the fixture revision; the filing receipt's rev is not the measured revision",
+   "kill_rule": "two kill-rule shapes violated undetected: 'a filing receipt whose rev is not the filing revision' (A2 calls check_receipt without expect_rev) and gate receipts with no digest/stdout binding at all (A3 accepts any gate-*.json with an int exit)"},
+  {"attack": "A1 accepts FAIL", "evidence": "at the untouched freeze 6767a879 the battery's clone-run arm is met TRUE with observed 'rc 1, prefile: FAIL' — the arm's expected observation is 'a clean clone run'; met = rc in {0,1} + verdict line + clean receipt; also visible at FB and FD"},
+  {"attack": "A3 met by the wrong gate", "evidence": "live at tip 11f0b19e: the landed round-77 gate-at-freeze.json / gate-at-record.json record argv of tools/round-29/freeze-gate.py, not the claim's named filing gate tools/round-29/prefile-check.sh; A3 checks only that a gate-*.json carries an int exit, so the arm is met by receipts that retain a different instrument"},
+  {"attack": "refuted", "detail": "empty gate set refused (freeze: 0 round-77 gate receipts -> gate-exits unmet); 'exit=0' inside prose refused (A3 txt path anchors ^exit=N$); digest-not-covering-stdout refused (red-digest); stale 'passed' refused (check_receipt re-derives passed from exit+verdict); non-int exit refused; four-key env_keys allowlist enforced; reds A4-A6 always refused by construction"}
+ ],
+ "coupling": {
+  "c1_without_c2": "C1 at freeze 6767a879 (no round-77 gate receipts, no filing receipt): exit 1, mismatch_count 4, bound 21 — byte-identical population to base; C1 at FD (forged C2 receipts present): still exit 1, mismatch_count 4. C1 never reads gate or filing receipts.",
+  "c2_without_c1": "C2 at FB (both false annotations standing, re-punctuated): exit 1, arms_ok 4 of 6 — identical to base/freeze. C2 never reads SCORECARD/PROVINCE cells.",
+  "conclusion": "causal separability as frozen is CONFIRMED — and both counters are individually forgeable, so separability does not protect the round's verdicts"
+ },
+ "verdicts": {
+  "R77-C1": {"verdict": "FALSIFIED (over-set)",
+   "survives": "before-arm exact (exit 1, mismatch 4, exactly the two labels, 21 bound / 9 in-scope); counter runs; selftest 15/15 green; ctl-pointer-only control behaves as claimed",
+   "falsified_by": ["FA forged-receipt re-point (receipts/receipts/c1-FA.json)", "FB re-punctuation keeping the false values with bound_clauses exactly 18 (receipts/c1-FB.json)", "FC negated cells (receipts/c1-FC.json)"],
+   "smallest_safe_correction": "bind receipt authenticity the lane already owns since round 70: require each named receipt's rev == measured rev and instrument.sha256 == the frozen pin, defect otherwise; count unbound verdict-shaped clauses as defects (or gate ok on unbound == 0 — the wild 'mismatch 1' clause re-words to a binding mismatch_count 1, so the floor stays reachable); add the missing red fixtures (negated cell, re-punctuated keep-value edit, path-from-another-cell, no_atoms, no_pristine, no_validate, bad_literal)"},
+  "R77-C2": {"verdict": "FALSIFIED (over-set)",
+   "survives": "before-arm exact (exit 1, arms_ok 4; five-not-three gate receipts already erratum'd by 11f0b19e); counter runs; selftest 13/13 green; empty-gate-set and prose-exit shapes refused; check_receipt re-derives passed/digest/argv/env honestly",
+   "falsified_by": ["FD forged battery reaching 6 of 6 exit 0 at a rev where no gate ran (receipts/c2-FD.json)", "A1 met on a FAIL run at the untouched freeze (receipts/c2-freeze.json)", "A3 met at tip by freeze-gate.py receipts while the claim names prefile-check.sh (receipts/c2-tip.json + gate-at-freeze.json argv)"],
+   "smallest_safe_correction": "A2: pass expect_rev=rev; A3: require each gate receipt to pass check_receipt (argv naming prefile-check.sh, stdout digest) or pin their digests; A1: met requires token PASS (rc 0); add selftest reds for A1-FAIL-accepted, stale-rev filing receipt, empty gate set"}
+ },
+ "evidence_dir": ".ufo/waves/round-77/w1/CriticClaims/receipts/",
+ "instrument_pins_verified": {"tools/round-77/verdict-bind.py": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7", "tools/round-77/prefile-receipt.py": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd"},
+ "lane_writes": [".ufo/waves/round-77/w1/CriticClaims/"],
+ "tools_installed": "none (no installs; pacman paused respected)"
+}

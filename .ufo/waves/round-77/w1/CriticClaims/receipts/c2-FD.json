@@ -1,0 +1,100 @@
+{
+ "arms": [
+  {
+   "arm": "clone-run",
+   "detail": {
+    "argv": [
+     "bash",
+     "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/w-FD/clone-run/lane/tools/round-29/prefile-check.sh",
+     "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/w-FD/clone-run/lane"
+    ],
+    "env_keys": [
+     "HOME",
+     "LANG",
+     "PATH",
+     "TMPDIR"
+    ],
+    "exit": 1,
+    "lane": "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/w-FD/clone-run/lane",
+    "passed": false,
+    "prefile_line": "prefile: FAIL",
+    "rev": "2959d7e268c97ac36cba60b41f3799fe78ba83b7",
+    "schema": "kaidoku-r77-prefile-receipt-v1",
+    "stderr_tail": "",
+    "stdout": "prefile: tree clean\nprefile: ledger1 retired (erratum r68-1) \u2014 legacy ledger byte-identical to its retirement pin\nprefile: round-29 gate --disclosures corpus/claim-freezes-v2.tsv at 2959d7e268c97ac36cba60b41f3799fe78ba83b7 exit=1\nprefile: FAIL\n",
+    "stdout_lines": 4,
+    "stdout_sha256": "fdb2e50cb695859d06a361be59382777e2273d4568c67743ca2a7fced5516aee"
+   },
+   "met": true,
+   "observed": "rc 1, prefile: FAIL, receipt_defects []"
+  },
+  {
+   "arm": "record-receipt",
+   "detail": {
+    "argv": [
+     "bash",
+     "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/FD.ckXFNlCK/tools/round-29/prefile-check.sh",
+     "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/FD.ckXFNlCK"
+    ],
+    "env_keys": [
+     "HOME",
+     "LANG",
+     "PATH",
+     "TMPDIR"
+    ],
+    "exit": 0,
+    "lane": "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/FD.ckXFNlCK",
+    "passed": true,
+    "prefile_line": "prefile: PASS",
+    "rev": "188562d43e3cc58b217ad7aa763fb296c5b8a0b7",
+    "schema": "kaidoku-r77-prefile-receipt-v1",
+    "stderr_tail": "",
+    "stdout": "prefile: tree clean\nprefile: PASS\n",
+    "stdout_lines": 2,
+    "stdout_sha256": "a16dfbab8f7ccc90d9d4a0c8fdd769c2b3b51b952cfe30dfc9896c9869cc4549"
+   },
+   "met": true,
+   "observed": "exit 0, defects []"
+  },
+  {
+   "arm": "gate-exits",
+   "detail": {},
+   "met": true,
+   "observed": "round-77: 1 gate receipts, missing []"
+  },
+  {
+   "arm": "red-no-exit",
+   "detail": {},
+   "met": true,
+   "observed": "defects ['missing key exit']"
+  },
+  {
+   "arm": "red-verdict",
+   "detail": {},
+   "met": true,
+   "observed": "defects [\"passed True disagrees with exit 1 and verdict 'FAIL'\"]"
+  },
+  {
+   "arm": "red-rev",
+   "detail": {},
+   "met": true,
+   "observed": "defects [\"rev '0000000000000000000000000000000000000000' is not the expected '2959d7e268c97ac36cba60b41f3799fe78ba83b7'\"]"
+  }
+ ],
+ "arms_ok": 6,
+ "arms_total": 6,
+ "exit": 0,
+ "instrument": {
+  "path": "tools/round-77/prefile-receipt.py",
+  "sha256": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd"
+ },
+ "ok": true,
+ "predicate": "R77-C2 is verified iff `python3 -I -B tools/round-77/prefile-receipt.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `arms_ok 6`, `arms_total 6`, `ok true` and a defect-free `validate`, each arm carrying its expected observation (clone-run a clean clone run whose receipt passes --check-receipt; record-receipt the filing receipt at exit 0; gate-exits every gate receipt in the newest round dir carrying its exit; red-no-exit, red-verdict and red-rev each refused), while the same command at base 188562d4 exits 1 with `arms_ok 4` (the filing receipt absent and three round-76 gate receipts without exit), and the selftest's 13 cases carry both red fixtures and their legitimate look-alikes.",
+ "rev": "2959d7e268c97ac36cba60b41f3799fe78ba83b7",
+ "root": "/fast/scratch/hyaku/kaidoku-r77/CriticClaims/FD.ckXFNlCK",
+ "schema": "kaidoku-r77-prefile-battery-v1",
+ "validate": {
+  "arms": 6,
+  "defects": []
+ }
+}
