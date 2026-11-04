@@ -1,0 +1,129 @@
+{
+ "schema": "kaidoku-r76-w1-seat-receipt-v1",
+ "seat": "ExecPlanArms",
+ "round": 76,
+ "wave": "w1",
+ "date": "2026-11-04",
+ "freeze": "5824d5d8e135194a59db3df1533b76ff479753bf",
+ "base": "5303a662d43aac52b0667f2776cce49dfc004fcf",
+ "instruments": {
+  "tools/round-76/plan-command.py": {
+   "sha256": "f9c1cff3fd2241d00104621f3967ad3bd70ac662eadb6bf4b4fa62cd0797ccd0",
+   "pin_matches_claims_json": true
+  },
+  "tools/round-76/record-audit.py": {
+   "sha256": "88e3c2ceca0699754c34372638c84af389adeb924755beaddbdb3d5cc99dc989",
+   "pin_matches_claims_json": true
+  }
+ },
+ "isolation": {
+  "method": "freeze tree materialized with `git archive 5824d5d8 | tar -x` into the scratch dir, plus a scratch-local git repo (git init + fetch of the lane) so `git -C root show <rev>:<path>` resolves; every input verified blob-identical (git hash-object == git rev-parse 5824d5d8:<path>) for plan-command.py, record-audit.py, plans/round-76-claims.md and both fixtures; all children ran with cwd inside the scratch tree; TMPDIR pointed at the scratch work dir",
+  "reason": "the lane working tree is concurrently mutated by the wave: at measurement time the working-tree tools/round-76 files hashed 4766df5091cc.../18b2d7ba2ad... (sha256), neither equal to the freeze pins, while the committed blobs at freeze and at HEAD 201df797 are identical (3f617ef6/7ba1cce5) — freeze-rev reproduction therefore required insulation from the working tree"
+ },
+ "rows": [
+  {
+   "row": 1,
+   "arm": "r75-printed",
+   "method": "independent of the gate: own BLOCK_RE/FENCE_RE regex, backslash-continuations joined, shlex.split, subprocess.run(argv, shell=False, cwd=scratch-freeze, four-key child env)",
+   "fixture": ".ufo/waves/round-76/pre/fixtures/r75-printed.md",
+   "ellipsis_present_in_argv": true,
+   "ellipsis_token": "1fc1c8fc\u2026",
+   "independent_static_grammar": ["PLACEHOLDER_UNBOUND: abbreviation '\u2026'"],
+   "executed": true,
+   "rc": 2,
+   "message": "missing required arguments: work",
+   "expected": {"rc": 2, "message": "missing required arguments: work"},
+   "met": true
+  },
+  {
+   "row": 2,
+   "arm": "r75-argv",
+   "method": "same independent driver as row 1",
+   "fixture": ".ufo/waves/round-76/pre/fixtures/r75-argv.md",
+   "ellipsis_present_in_argv": false,
+   "independent_static_grammar": [],
+   "executed": true,
+   "rc": 2,
+   "message": "missing required arguments: work",
+   "expected": {"rc": 2, "message": "missing required arguments: work"},
+   "met": true
+  },
+  {
+   "row": 3,
+   "arm": "plan-c1",
+   "method": "plan's `counting-command: C1` block extracted from plans/round-76-claims.md at the freeze rev by the independent driver; argv verbatim with only $REV and $OUT substituted ($REV=5824d5d8..., $OUT=<scratch>/work/c1-receipt.json); executed with subprocess.run(shell=False, cwd=scratch-freeze)",
+   "argv": [
+    "python3", "-I", "-B",
+    "tools/round-76/record-audit.py",
+    "--root", ".",
+    "--rev", "5824d5d8e135194a59db3df1533b76ff479753bf",
+    "--json-out", "<scratch>/work/c1-receipt.json"
+   ],
+   "rc": 1,
+   "mismatch_count": 1,
+   "mismatches": ["D24_capability_rows"],
+   "d24_defects": [
+    "round 75 claims row 'A12 case-independence closure': absent from the ## Capabilities table",
+    "round 75 claims row 'exact-grammar record audit': absent from the ## Capabilities table"
+   ],
+   "validate": {"atoms": 9, "defects": []},
+   "expected": {"rc": 1, "mismatch_count": 1, "mismatches": ["D24_capability_rows"]},
+   "met": true,
+   "note": "value 1 at the freeze is the declared before-state; the landing value 0 is R76-C1's business (the C2 arm is executability-only)"
+  }
+ ],
+ "gate_self_checks": {
+  "battery": {
+   "command": "python3 -I -B tools/round-76/plan-command.py --root . --rev 5824d5d8e135194a59db3df1533b76ff479753bf --work <scratch>/work/battery --battery --json-out <scratch>/work/battery.json (cwd = scratch freeze tree; run under strace -f -e trace=execve)",
+   "exit": 0,
+   "arms_ok": 3,
+   "arms_total": 3,
+   "ok": true,
+   "plan_c1_observed": "rc 1, mismatch_count 1",
+   "r75_printed_observed": "PLACEHOLDER_UNBOUND: abbreviation '\u2026', executed false",
+   "r75_argv_observed": "EXECUTION_FAILED: rc 2: {\"unevaluable\": \"missing required arguments: work\"}",
+   "receipt_argv_0_3": ["python3", "-I", "-B"],
+   "met": true
+  },
+  "selftest": {
+   "exit": 0,
+   "cases": 3,
+   "case_names": ["ellipsis-rev", "missing-required-arg", "prose-plan"],
+   "failures": [],
+   "met": true
+  },
+  "control": {
+   "name": "ellipsis-rev",
+   "exit": 0,
+   "met": true,
+   "observed": "PLACEHOLDER_UNBOUND: abbreviation '\u2026', executed false",
+   "expected": "a $REV replaced by an abbreviated hash: PLACEHOLDER_UNBOUND",
+   "met_check": true
+  },
+  "no_shell": {
+   "strace_execve_targets": "only git (31 git show/log calls, PATH-probed across 12 PATH entries) and python3 (3 children: the gate, record-audit, probe-mutation); 0 execve of sh/bash/dash/zsh",
+   "shell_spawn_hits": 0,
+   "grep_c_shell_TRUE": 0,
+   "source": "both subprocess.run call sites (read_plan's git show; run_block's child) omit the shell keyword (default False); the only 'shell' tokens in the source are a docstring line and a comment"
+  }
+ },
+ "cross_checks_against_committed_pre_receipts": {
+  "c2-at-declaration.json": "arms_ok 3, exit 0, ok true, all three arms met — matches this battery run",
+  "c2-at-base.json": "arms_ok 0, exit 1, ok false — consistent with the claim's before-state (not re-run here; the pre receipt is committed at the freeze)",
+  "r75-printed-exec.txt": "hand run of the round-75 printed command: exit 2 with {\"unevaluable\": \"missing required arguments: work\"} for both the ellipsis and digest-bound forms — matches rows 1 and 2",
+  "c1-at-declaration.json": "mismatch 1 — consistent with row 3's freeze-rev value"
+ },
+ "tooling": {
+  "installs": "none (strace 6.14 and python 3.14.8 already present)"
+ },
+ "defects": [],
+ "evidence_files": [
+  ".ufo/waves/round-76/w1/ExecPlanArms/receipt.json",
+  ".ufo/waves/round-76/w1/ExecPlanArms.md",
+  ".ufo/waves/round-76/w1/ExecPlanArms/battery-at-freeze.json",
+  ".ufo/waves/round-76/w1/ExecPlanArms/control-ellipsis-rev.json",
+  ".ufo/waves/round-76/w1/ExecPlanArms/c1-block-receipt.json",
+  ".ufo/waves/round-76/w1/ExecPlanArms/repro-rows.json",
+  ".ufo/waves/round-76/w1/ExecPlanArms/execve-battery.log"
+ ]
+}

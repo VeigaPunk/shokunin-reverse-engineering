@@ -1,0 +1,16 @@
+$ grep -c 'shell=True' tools/round-76/plan-command.py
+0
+grep-exit=1
+
+$ grep -n 'shlex.split' tools/round-76/plan-command.py
+13:no shell (shlex.split) under a four-key child environment, and compares the
+107:    argv = shlex.split(joined)
+
+$ grep -n 'required=True' tools/round-76/plan-command.py
+333:    ap.add_argument("--rev", required=True)
+340:    ap.add_argument("--work", required=True)
+
+$ grep -n 'subprocess.run' tools/round-76/plan-command.py
+67:    proc = subprocess.run(["git", "-C", root, "show", f"{rev}:{path}"],
+162:    proc = subprocess.run(argv, cwd=root, env=env, capture_output=True,
+321:        subprocess.run(["rm", "-rf", "--", work])

@@ -1,0 +1,169 @@
+{
+ "seat": "ScribeRows",
+ "round": 76,
+ "wave": "r76-w1",
+ "date": "2026-11-04",
+ "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "head": "201df797d555d324ee2eb5e3c4b9bbe4fb77d85a",
+ "base": "5303a662d43aac52b0667f2776cce49dfc004fcf",
+ "production_registry_written": false,
+ "sources_md": {
+  "head_blob": "50d6c8d0090e232e3fb6dd8a6641441a0447f722",
+  "worktree_sha256": "dde75e6eb80b09c1ae3150aec068e228095d9c19d057d5925bc09c11dacf22fb",
+  "worktree_bytes": 225314,
+  "git_status": "M corpus/SOURCES.md",
+  "note": "the worktree diff carries three uncommitted S286/S287/S288 rows (git blame: Not Committed Yet)"
+ },
+ "snapshots": [
+  {
+   "row": "S286",
+   "name": "shlex.html",
+   "url": "https://docs.python.org/3/library/shlex.html#shlex.split",
+   "http": 200,
+   "bytes": 66497,
+   "sha256": "4c1f8bf65662ed0a4cde315df6602cde5c103b34a1ede6ae2552c227fb745ee5"
+  },
+  {
+   "row": "S287",
+   "name": "argparse.html",
+   "url": "https://docs.python.org/3/library/argparse.html",
+   "http": 200,
+   "bytes": 334994,
+   "sha256": "14d33eea5257a16d679b390d6ecb2cb5529da1c2dd2b1ad15517a2f7f5784fb2"
+  },
+  {
+   "row": "S288",
+   "name": "sh1.html",
+   "url": "https://man7.org/linux/man-pages/man1/sh.1.html",
+   "http": 404,
+   "bytes": 196,
+   "sha256": "80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880"
+  }
+ ],
+ "quotes": [
+  {
+   "row": "S286",
+   "snapshot": "shlex.html",
+   "heading": "shlex \u2014 Simple lexical analysis",
+   "heading_line": 218,
+   "entry": "shlex.split",
+   "entry_dt_lines": [
+    227,
+    228
+   ],
+   "quote_lines": [
+    229,
+    229
+   ],
+   "quote": "Split the string s using shell-like syntax.",
+   "words": 7,
+   "composite": "the word `s` sits in an <em> span; raw bytes: Split the string <em>s</em> using shell-like syntax."
+  },
+  {
+   "row": "S287",
+   "snapshot": "argparse.html",
+   "heading": "Exiting methods",
+   "heading_line": 2398,
+   "entry": "ArgumentParser.error",
+   "entry_dt_lines": [
+    2415,
+    2416
+   ],
+   "quote_lines": [
+    2417,
+    2418
+   ],
+   "quote": "This method prints a usage message, including the message, to sys.stderr and terminates the program with a status code of 2.",
+   "words": 21,
+   "composite": "`message` sits in an <em> span and `sys.stderr` in an <a> span; `ArgumentParser.exit(status=0, message=None)` entry dt at line 2400, prose at lines 2402-2403"
+  },
+  {
+   "row": "S288",
+   "snapshot": "sh1.html",
+   "heading": "404 Not Found",
+   "heading_line": 3,
+   "entry": "404 body",
+   "entry_dt_lines": [],
+   "quote_lines": [
+    6,
+    6
+   ],
+   "quote": "The requested URL was not found on this server.",
+   "words": 9,
+   "composite": null
+  }
+ ],
+ "consumer_search": {
+  "command": "grep -c 'shell=True' tools/round-76/plan-command.py",
+  "stdout": "0",
+  "exit": 1,
+  "transcript": "consumer-search.txt"
+ },
+ "checks": {
+  "row_checker_failures": 0,
+  "row_checker": "18 cell-grammar checks + 3 quote checks x 4 + digest/size/locator checks; see check-rows.txt",
+  "census": {
+   "head_baseline": {
+    "fixture": "HEAD:corpus/SOURCES.md (201df797d555d324ee2eb5e3c4b9bbe4fb77d85a)",
+    "rc": 0,
+    "lines": 24,
+    "e_codes": 0
+   },
+   "head_with_rows": {
+    "fixture": "same + the three drafts inserted after the last `| S` row",
+    "rc": 0,
+    "lines": 24,
+    "e_codes": 0
+   },
+   "worktree_baseline": {
+    "fixture": "worktree corpus/SOURCES.md sha256 dde75e6e\u2026 (uncommitted S286-S288 block)",
+    "rc": 0,
+    "lines": 24,
+    "e_codes": 0
+   },
+   "worktree_with_rows": {
+    "fixture": "same + the three drafts appended",
+    "rc": 1,
+    "lines": 28,
+    "e_codes": 3,
+    "e_codes_detail": [
+     "E03 S286 duplicate id",
+     "E03 S287 duplicate id",
+     "E03 S288 duplicate id"
+    ]
+   }
+  }
+ },
+ "used_by": "corpus/knowledge/2026-11-04-r76-plan-command-executability.md",
+ "used_by_sha256": "db671c853073177fb657f7269ab70e7a014e69fff3ef37a62656cc4f7924a2c5",
+ "used_by_source_line": "source: S286 (https://docs.python.org/3/library/shlex.html#shlex.split) and S287 (https://docs.python.org/3/library/argparse.html); instrument tools/round-76/plan-command.py",
+ "conflicts": [
+  "Frozen ids S286/S287/S288 are already occupied by three uncommitted rows in the worktree; appending these drafts yields E03 x3 (census-worktree-diff.txt).",
+  "The uncommitted S288 row rejects bash(1) (man1/bash.1.html, 497 852 B, sha256 e35fa296\u2026) instead of the frozen sh(1) URL, which returns HTTP 404.",
+  "The uncommitted S286 anchor calls the inline span a <var>; the served byte at line 229 is <em>.",
+  "The uncommitted S287 quote is the mid-sentence fragment on line 2418; this draft quotes the full sentence across lines 2417-2418.",
+  "The uncommitted S288 recheck is 180d; this draft uses on-release (the round-75 rejected-row convention)."
+ ],
+ "files": [
+  "argparse.html",
+  "census-e03.txt",
+  "census-exits.txt",
+  "census-head-baseline.txt",
+  "census-head-diff.txt",
+  "census-head-with-rows.txt",
+  "census-worktree-baseline.txt",
+  "census-worktree-diff.txt",
+  "census-worktree-with-rows.txt",
+  "check-rows.py",
+  "check-rows.txt",
+  "consumer-search.txt",
+  "receipt.json",
+  "rows-draft.md",
+  "rows.md",
+  "run-census.sh",
+  "sh1.html",
+  "sha256sums.txt",
+  "shlex.html",
+  "../ScribeRows.md"
+ ]
+}

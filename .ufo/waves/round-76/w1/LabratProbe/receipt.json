@@ -1,0 +1,98 @@
+{
+  "schema": "kaidoku-r76-labratprobe-v1",
+  "round": 76,
+  "wave": "r76-w1",
+  "seat": "RevengerProbe",
+  "artifact": ".ufo/waves/round-76/w1/LabratProbe",
+  "lane_root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "lane_head_at_probe": "201df797d555d324ee2eb5e3c4b9bbe4fb77d85a",
+  "python": "3.14.8",
+  "invocation": ["python3", "-I", "-B"],
+  "subject": {
+    "source": ".ufo/reports/round-75/kaidoku.md (R75-C1 after arm), joined as committed in .ufo/waves/round-76/pre/fixtures/r75-printed.md",
+    "instrument": "tools/round-75/probe-mutation.py",
+    "rev": "538b8b81",
+    "printed_command": "python3 -I -B tools/round-75/probe-mutation.py --root . --rev 538b8b81 --tool tools/round-75/seam-probe.py --patch-set r75probe --expect-survivors 0 --expect-target-sha256 1fc1c8fc\u2026 --expect-sole b-drop-canary-field"
+  },
+  "hypothesis": "the round-75 printed command fails for exactly the two reasons the gate names (missing required --work; abbreviated --expect-target-sha256 digest) and no third",
+  "runs": [
+    {
+      "id": "run1-printed-ellipsis",
+      "argv": ["python3", "-I", "-B", "tools/round-75/probe-mutation.py", "--root", ".", "--rev", "538b8b81", "--tool", "tools/round-75/seam-probe.py", "--patch-set", "r75probe", "--expect-survivors", "0", "--expect-target-sha256", "1fc1c8fc\u2026", "--expect-sole", "b-drop-canary-field"],
+      "rc": 2,
+      "elapsed_ms": 30,
+      "stderr": "",
+      "stdout": "{\"unevaluable\": \"missing required arguments: work\"}\n",
+      "executed": false,
+      "branch": "main required-argument preflight (before any git read, pin check or copy)",
+      "note": "the abbreviated digest is never reached; the missing --work refusal is first"
+    },
+    {
+      "id": "run2-digest-bound-no-work",
+      "argv": ["python3", "-I", "-B", "tools/round-75/probe-mutation.py", "--root", ".", "--rev", "538b8b81", "--tool", "tools/round-75/seam-probe.py", "--patch-set", "r75probe", "--expect-survivors", "0", "--expect-target-sha256", "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d", "--expect-sole", "b-drop-canary-field"],
+      "rc": 2,
+      "elapsed_ms": 29,
+      "stderr": "",
+      "stdout": "{\"unevaluable\": \"missing required arguments: work\"}\n",
+      "executed": false,
+      "branch": "main required-argument preflight",
+      "note": "identical observation to run 1: binding the digest changes nothing while --work is absent"
+    },
+    {
+      "id": "run3-work-and-digest-bound",
+      "argv": ["python3", "-I", "-B", "tools/round-75/probe-mutation.py", "--root", ".", "--rev", "538b8b81", "--tool", "tools/round-75/seam-probe.py", "--patch-set", "r75probe", "--expect-survivors", "0", "--expect-target-sha256", "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d", "--expect-sole", "b-drop-canary-field", "--work", "/fast/scratch/hyaku/kaidoku-r76/RevengerProbe/work3.tmpQcX"],
+      "rc": 0,
+      "elapsed_ms": 619,
+      "stderr": "",
+      "stdout_sha256": "83f20d17964f3d4faa80948952d0fda3c95cb7f37958e8d99e1dbb45218b7822",
+      "stdout_bytes": 5067,
+      "stdout_file": ".ufo/waves/round-76/w1/LabratProbe/step3-stdout.json",
+      "executed": true,
+      "branch": "score() -> score_text(): pristine selftest then all 15 mutants",
+      "timeout": "armed at 20 s with SIGTERM (--kill-after=5); not reached, no child process left",
+      "summary": {
+        "ok": true,
+        "survivor_count": 0,
+        "survivors": [],
+        "killed": 15,
+        "killed_wrong_case": [],
+        "pristine": {"cases": 25, "failed": [], "rc": 0},
+        "sole_detector_b-drop-canary-field": {"value": true, "failed": ["a12-kernel-canary-field"]},
+        "target_pin": {"expect": "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d", "matched": true, "pinned": true, "pinned_before_exec": true},
+        "runner_sha256": "d7757ae29e184137668c047189aac131b5722641f04a95c063df7aa70de85203"
+      },
+      "note": "no --json-out supplied; --rev 538b8b81 resolves; the only additions over the printed line are --work and the full digest"
+    },
+    {
+      "id": "run4-work-added-ellipsis-kept",
+      "argv": ["python3", "-I", "-B", "tools/round-75/probe-mutation.py", "--root", ".", "--rev", "538b8b81", "--tool", "tools/round-75/seam-probe.py", "--patch-set", "r75probe", "--expect-survivors", "0", "--expect-target-sha256", "1fc1c8fc\u2026", "--expect-sole", "b-drop-canary-field", "--work", "/fast/scratch/hyaku/kaidoku-r76/RevengerProbe/work4"],
+      "rc": 2,
+      "elapsed_ms": 30,
+      "stderr": "",
+      "stdout": "{\"unevaluable\": \"target pin mismatch before execution: expected 1fc1c8fc\\u2026, blob at 538b8b81:tools/round-75/seam-probe.py is 1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d\"}\n",
+      "executed": false,
+      "branch": "score() pin check (check_pin), before score_text() creates any generated copy",
+      "note": "the supplied work dir remained empty after the refusal"
+    }
+  ],
+  "digest_ground_truth": {
+    "computed_by": "git -C <lane> show 538b8b81:tools/round-75/seam-probe.py | sha256sum",
+    "sha256": "1fc1c8fc6d08b8626ead431961f286753805a08893b73bdb2350261ad1ac410d",
+    "equals_full_digest_in_run2_and_run3": true
+  },
+  "conclusion": {
+    "verdict": "complete",
+    "gate_reasons_are_complete_set": true,
+    "smallest_additions": ["--work <an existing empty directory>", "full 64-hex --expect-target-sha256 digest"],
+    "third_reason_found": false,
+    "evidence": "run 3 with only those two additions exits 0 in 619 ms and reproduces the report's counter (survivor_count 0, 15 killed, pristine 25, pin matched before execution)",
+    "ordering_note": "with both defects present the observed refusal is the --work one (run 1 = run 2); the ellipsis is only reachable after --work is supplied (run 4). A static block refuser (tools/round-76/plan-command.py) instead sees the ellipsis first and reports PLACEHOLDER_UNBOUND, matching the C2 r75-printed arm."
+  },
+  "lane_writes": [
+    ".ufo/waves/round-76/w1/LabratProbe.md",
+    ".ufo/waves/round-76/w1/LabratProbe/receipt.json",
+    ".ufo/waves/round-76/w1/LabratProbe/step3-stdout.json",
+    ".ufo/waves/round-76/w1/RevengerProbe.md"
+  ],
+  "scratch_deleted": true
+}

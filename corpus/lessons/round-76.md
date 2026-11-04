@@ -84,4 +84,49 @@ with a green face; captured by the gate's own selftest.
 
 ## What the wave found
 
-(pending the r76-w1 wave; appended when the wave settles)
+One v1 wave `r76-w1`, 14 seats, dispatched at `06:44:50` and settled with `WAVE-DONE`; seat records in
+`.ufo/waves/round-76/r76-w1-results.json`.
+
+- **MutationTester — five survivors on the first cut, all closed.** Nine one-point mutants of the two
+  instruments' own checks: `d24-a` (absent-row check made a no-op) survived because `cap-absent-row-red`'s
+  fixture used an *empty* table, so the "no data rows" guard fired identically on pristine and mutant
+  (guard-masked); `d24-e` (line-level claim parsing) survived because every fixture was a single line;
+  `gate-h` (`$OUT` containment dropped), `gate-i` (argv allowlist dropped) and `gate-f`'s angle-placeholder
+  half survived because no control exercised them. The closure (`98407fad`) populates the absent-row
+  fixture, adds `cap-wrapped-claim-accepts`, and adds four gate controls (`angle-placeholder`, `escape-out`,
+  `script-outside`, `shell-meta`); `tools/round-76/mutation-check.py` now scores nine mutants with **0
+  survivors and eight sole detectors** (`l1/scores/mutation-check-at-tip.json`). Sub-finding kept: `gate-g`
+  (`shell=True`) is killed only indirectly, by the rc-2 expectation, not by a shell-refusal case.
+- **ExecCapGrammar — the grammar rejects every cosmetic construction.** Seven cosmetic SCORECARDs (absent
+  named row over a populated table, `—` evidence, a one-slash token, an unresolved path, a round mismatch,
+  a three-word stub, an empty table, no claim line) each return their named defect, and three accept probes
+  (well-formed row, the real wrapped two-name claim, the landed card) return none
+  (`.ufo/waves/round-76/w1/ExecCapGrammar.md`).
+- **ExecPlanArms — C2's three arms reproduced without the gate.** The printed command's argv carries the
+  ellipsis; executing it directly (no shell) exits 2 with `missing required arguments: work`; the digest-bound
+  variant also exits 2; the plan's C1 block executes verbatim and returns a readable counter. It also records
+  that the working-tree instruments differ from the freeze pins — the disclosed `a8908930` revision
+  (`.ufo/waves/round-76/w1/ExecPlanArms.md`).
+- **ScoutSource — three blocking source defects, repaired before the record.** See the Gate above.
+- **ScribeRows — the rows re-derived and the W04 count corrected.** The seat re-fetched all three pages
+  (digests equal to the committed snapshots), drafted the rows in the 11-cell grammar, and caught that the
+  round's census receipts carry **23** W04 lines, not the 24 the L1's brief said; the round-76 statements in
+  `LOG.md`, `SCORECARD.md` and this lesson were corrected to the receipt's count, and the round-72/73
+  historical statements were left byte-identical (`.ufo/waves/round-76/w1/ScribeRows.md`).
+- **RevengerProbe (dispatched as the labrat item) — the two named reasons are the whole set.** Four runs:
+  printed (rc 2), digest bound without `--work` (rc 2), both fixed (rc 0, `survivor_count 0`, 619 ms), and
+  `--work` added with the ellipsis kept (rc 2, pin refused before execution). No third defect
+  (`.ufo/waves/round-76/w1/RevengerProbe.md`).
+- **ConnectorCross — no overlap absorbed.** The fleet holds one instrument-class plan-command file (this
+  lane's); `tsukuroi-shokunin/tools/check-self-assessment.py` checks a frozen capability-name list but treats a
+  miss as `CannotEvaluate` (exit 2), never a red verdict; `chousa`'s claims audits have no
+  `## Capabilities` rule class. Duplication with named divergences, nothing absorbed
+  (`.ufo/waves/round-76/w1/ConnectorCross.md`).
+- **Dead and incomplete seats (recorded, not counted as verification).** Four seats returned an empty output
+  with no terminal error line in the results file — `ExecBaseArms`, `ExecAuditAtoms`, `ReviewerC2`,
+  `SentinelScope` — cause unknown (the results record carries `note: null` and zero bytes); two returned
+  mid-work prose with no artifact — `ReviewerC1` (222 bytes: it had listed its six axes and stopped) and
+  `CriticClaims` (139 bytes: it had loaded the instruments and stopped). Their assignments remain unverified
+  by the wave: no seat independently re-derived C1 end to end, and the security review of the plan-command
+  executor did not land. What did land: the mutation battery, the grammar attack, the independent arm
+  reproduction, the source scout, the probe and the connector scan.

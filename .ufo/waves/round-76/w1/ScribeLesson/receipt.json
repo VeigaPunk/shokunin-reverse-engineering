@@ -1,0 +1,50 @@
+{
+  "schema": "kaidoku-r76-scribelesson-receipt-v1",
+  "seat": "ScribeLesson",
+  "round": 76,
+  "generated_at": "2026-11-04T09:47:18Z",
+  "lane": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "inputs": {
+    "base": "5303a662d43aac52b0667f2776cce49dfc004fcf",
+    "declaration": "be99e4f9b72fb2dbae75329c0d5c55002854cbed",
+    "freeze": "5824d5d8e135194a59db3df1533b76ff479753bf",
+    "contract": ["plans/round-76-claims.md", ".ufo/waves/round-76/claims.json"],
+    "outside_document": "corpus/lessons/round-75-verifier-spotcheck.md"
+  },
+  "files": {
+    "draft": ".ufo/waves/round-76/w1/ScribeLesson/lesson-draft.md",
+    "draft_sha256": "0b392284439f887297b19807723d893d0ed701b89b6abae8da67ae1be78f6c2e",
+    "gate_fetches": ".ufo/waves/round-76/w1/ScribeLesson/gate-fetches.json",
+    "gate_fetches_sha256": "f0affb4c3501066727588ac840ff0ce24e3c862ffc057db57bf79dd90a6694f2",
+    "checks": ".ufo/waves/round-76/w1/ScribeLesson/checks.json",
+    "checks_sha256": "ce07144dafefed412bbeab9c9b7bae344cab48a132411d6c56ee5d27a199f15c",
+    "census_after": ".ufo/waves/round-76/w1/ScribeLesson/census-after.txt",
+    "census_after_sha256": "a5818e9a15a93eefeb46c1db0b4a053418cbbd060a6cf4e55bf842a54b51d140",
+    "report": ".ufo/waves/round-76/w1/ScribeLesson.md"
+  },
+  "behavior": {
+    "sections": ["Mistakes", "Gate", "Routed-defect disposition (round-75 spot-check §6)"],
+    "gate_rows": [
+      {"id": "S286", "decision": "admit (mined), docs tier A", "quote_line": 229, "sha256": "4c1f8bf65662ed0a4cde315df6602cde5c103b34a1ede6ae2552c227fb745ee5"},
+      {"id": "S287", "decision": "admit (mined), docs tier A", "quote_lines": "2417-2418", "sha256": "14d33eea5257a16d679b390d6ecb2cb5529da1c2dd2b1ad15517a2f7f5784fb2"},
+      {"id": "S288", "decision": "reject, docs tier C", "quote_line": 477, "sha256": "e35fa2966c44a4e9ee519760160f1aba14c670451a463177968ed2c4710bf846"}
+    ],
+    "mistake_row_fields": ["class", "evidence", "captured-by", "fix"],
+    "routed_defects_dispositioned": [1, 2, 3, 4, 5, 6, 7, 8],
+    "unclaimed_corrections_named": [3, 5, 6, 7, 8]
+  },
+  "acceptance": {
+    "receipt_per_claim": "every numeric claim in the draft names a receipt path; the census after-run is this seat's own execution and is committed as census-after.txt",
+    "mistake_row_complete": true,
+    "every_routed_defect_has_disposition": true
+  },
+  "conflicts": [
+    "the seat brief says 24 W04 warnings at round start; the committed census receipt .ufo/waves/round-76/l1/census-start.txt contains 23 W04 lines (awk -F'\\t' '$2==\"W04\"' ... | wc -l -> 23), the round-75 lesson also records 23, and this round's post-append run reports 23",
+    "the frozen candidate URL for S288, https://man7.org/linux/man-pages/man1/sh.1.html, returns HTTP 404 (196 bytes); the landed row S288 names https://man7.org/linux/man-pages/man1/bash.1.html (HTTP 200, 497852 bytes, sha256 e35fa2966c44a4e9ee519760160f1aba14c670451a463177968ed2c4710bf846) and discloses the substitution; man7's section-1 index lists only sh.1p.html (line 2900)"
+  ],
+  "risks": [
+    "the SCORECARD rows appended in the landing tree name .ufo/waves/round-76/l1/scores/c1-at-landing.json and c2-at-landing.json; neither receipt exists on disk at draft time, and D24 requires a resolving evidence pointer at the measured revision",
+    "the S286-S288 rows and the four-row SCORECARD append are working-tree changes at draft time; the draft cites the landing-tree line numbers and the rows as they stand",
+    "the census after-run is this seat's own execution with the three rows present in the working tree; the L1 round-end census receipt is authoritative and was not on disk at draft time"
+  ]
+}

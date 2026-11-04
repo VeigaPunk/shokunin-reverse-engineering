@@ -1,0 +1,88 @@
+{
+  "schema": "kaidoku-r76-scribelesson-checks-v1",
+  "seat": "ScribeLesson",
+  "round": 76,
+  "checks": {
+    "rows_base": {
+      "command": "git show 5303a662:corpus/SOURCES.md | grep -cE '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|'",
+      "value": 191
+    },
+    "rows_worktree": {
+      "command": "grep -cE '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' corpus/SOURCES.md",
+      "value": 194
+    },
+    "census_start": {
+      "receipt": ".ufo/waves/round-76/l1/census-start.txt",
+      "command": "bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku",
+      "exit": 0,
+      "rows": 191,
+      "w04": 23,
+      "w04_command": "awk -F'\\t' '$2==\"W04\"' .ufo/waves/round-76/l1/census-start.txt | wc -l"
+    },
+    "census_after": {
+      "receipt": ".ufo/waves/round-76/w1/ScribeLesson/census-after.txt",
+      "command": "bash scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku",
+      "exit": 0,
+      "rows": 194,
+      "w04": 23,
+      "e_findings": 0,
+      "last_line": "kaidoku\\tok\\t/home/vgpnk/Projects/shokunin/kaidoku-shokunin/corpus/SOURCES.md",
+      "state": "three rows present in the working tree at draft time"
+    },
+    "w04_discrepancy": {
+      "brief_says": 24,
+      "census_start_receipt": 23,
+      "census_after_run": 23,
+      "round_75_lesson": 23
+    },
+    "shell_true_count": {
+      "command": "grep -c 'shell=True' tools/round-76/plan-command.py",
+      "value": 0
+    },
+    "near_duplicate_scan": {
+      "command": "grep -n 'shlex\\|argparse\\|man1/sh\\|bash\\.1' corpus/SOURCES.md",
+      "hits": ["202:S286", "203:S287", "204:S288", "233:round-76 search note"]
+    },
+    "defect3_commits": {
+      "command": "git show -s --format='%h %s' 668e545e fcf17efe; git merge-base --is-ancestor <h> cbd921e6; git merge-base --is-ancestor 3c15a156 <h>",
+      "commits": [
+        {"commit": "668e545e", "subject": "round-75: the frozen-battery reproduction of the base arm", "after_base": true, "ancestor_of_tip": true},
+        {"commit": "fcf17efe", "subject": "round-75: the record gate carries the disclosures ledger check", "after_base": true, "ancestor_of_tip": true}
+      ],
+      "round75_report_table": "/home/vgpnk/Projects/shokunin/.ufo/reports/round-75/kaidoku.md:60-95; grep for either hash returns no match"
+    },
+    "defect5_revisions": {
+      "command": "python3 -c \"json.load(<receipt>).get('rev')\" for each receipt",
+      "c1_at_landing": "4e0329a4f33831e36f7fcf499a6e0c8194bacc3e",
+      "gate_at_record": "717280004cfd130eb096d52fae274460c799d85a",
+      "coverage_selfcheck_at_record": "e44d8a8bcebdde373f291e27e4b39e6e1cf7ceb4",
+      "c1_at_tip": "538b8b810f5c50b74fc0330a19e0849b38b27267",
+      "c2_at_tip": "538b8b810f5c50b74fc0330a19e0849b38b27267"
+    },
+    "defect7_supersessions": {
+      "source": ".ufo/waves/round-75/claims.json instrument_supersessions",
+      "count": 4,
+      "commits": ["ad53c1e14354b7dd39dda7fdb65868180477a76d", "0465f25186c97d01491a1f75734f0783ebce2473", "4e93c1a569aae29d9a9af0c6212892c7f7203a06", "7edb005e39742b3b69f830e7126e96083ef204c9"],
+      "ledger_line": "corpus/claim-freezes-v2.tsv:51 says one revision ad53c1e1"
+    },
+    "defect8_exits": {
+      "pre/c1-at-base.json": 1,
+      "pre/c1-at-declaration.json": 1,
+      "pre/c2-at-base.json": 1,
+      "pre/c2-at-declaration.json": 0
+    },
+    "d24_claim_line": {
+      "base_line": 5868,
+      "claim_line_at_base": "D24 evidence in .ufo/waves/round-76/pre/c1-at-base.json",
+      "current_line": 5872,
+      "cause": "four-row append above the claim line in the landing tree"
+    },
+    "round76_disclosures": {
+      "instrument_supersessions": [],
+      "instruments": {
+        "tools/round-76/record-audit.py": "88e3c2ceca0699754c34372638c84af389adeb924755beaddbdb3d5cc99dc989",
+        "tools/round-76/plan-command.py": "f9c1cff3fd2241d00104621f3967ad3bd70ac662eadb6bf4b4fa62cd0797ccd0"
+      }
+    }
+  }
+}

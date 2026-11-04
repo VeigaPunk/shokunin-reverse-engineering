@@ -1,0 +1,90 @@
+{
+  "seat": "ScoutSource",
+  "wave": "round-76/w1",
+  "lane": "kaidoku-shokunin",
+  "date": "2026-11-04",
+  "mode": "read-only",
+  "report": ".ufo/waves/round-76/w1/ScoutSource.md",
+  "fetches": [
+    {"id": "S286", "url": "https://docs.python.org/3/library/shlex.html", "http": 200, "bytes": 66497, "sha256": "4c1f8bf65662ed0a4cde315df6602cde5c103b34a1ede6ae2552c227fb745ee5", "snapshot": "shlex.html"},
+    {"id": "S287", "url": "https://docs.python.org/3/library/argparse.html", "http": 200, "bytes": 334994, "sha256": "14d33eea5257a16d679b390d6ecb2cb5529da1c2dd2b1ad15517a2f7f5784fb2", "snapshot": "argparse.html"},
+    {"id": "S288-frozen", "url": "https://man7.org/linux/man-pages/man1/sh.1.html", "http": 404, "bytes": 196, "sha256": "80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880", "snapshot": "sh1.html", "note": "plan's named page; Apache 404 body, reproduced with browser UA"},
+    {"id": "sh1p-alt", "url": "https://man7.org/linux/man-pages/man1/sh.1p.html", "http": 200, "bytes": 78700, "sha256": "f9a6d7d00b940e23e29b85fbbca9fbf8494c275eeed320c32e8cb694d3c7c583", "snapshot": "sh1p.html", "note": "utility page only; grep -c 'field splitting' = 0; expansions delegated to Chapter 2 by reference"},
+    {"id": "S288", "url": "https://man7.org/linux/man-pages/man1/bash.1.html", "http": 200, "bytes": 497852, "sha256": "e35fa2966c44a4e9ee519760160f1aba14c670451a463177968ed2c4710bf846", "snapshot": "bash1.html"}
+  ],
+  "l1_snapshot_dir": ".ufo/waves/round-76/l1/sources/",
+  "l1_snapshots_match_independent_get": true,
+  "shlex": {
+    "signature_line": 228,
+    "signature": "shlex.split(s, comments=False, posix=True)",
+    "quote_line": 229,
+    "quote": "Split the string s using shell-like syntax.",
+    "defaults": {"posix": true, "comments": false, "default_lines": "228, 232-234"},
+    "shell_compatible_claim": "page says 'shell-like syntax' only; it disclaims shell validity at 553 and 628; the sole 'compatible' sentence (291) is about quote(), not split()",
+    "no_shell_recommendation": {"lines": "265-272", "quote": "Consider using functions that pass command arguments with lists such as subprocess.run() with shell=False.", "context": "Warning under quote()"},
+    "absence_probe": {"substitut": 0, "glob": 0, "expand": "1 (page chrome, line 71)", "exec": "2 (quote() warning, lines 269, 277)", "metacharacter": 0},
+    "gate_consumption": "plan-command.py:107 shlex.split(joined) with no kwargs; metacharacter refusal and var allowlist are the instrument's own (lines 44, 84-103); backslash-newline join at :106; list-argv subprocess.run at :162",
+    "verdict": "BLOCKING",
+    "blocking": [
+      "teaches credits the page with 'no shell metacharacter is ever interpreted' - that is static_defects/METACHARS in the instrument; page never mentions metacharacters",
+      "scope states 'performs no expansion, substitution or execution' - no such sentence; 'substitution' appears 0 times, 'execution' only in the quote() warning"
+    ],
+    "non_blocking": [
+      "anchor omits the documented defaults 228/232-234, which the gate relies on by passing no kwargs",
+      "page silent on backslash-newline continuation; instrument joins it itself",
+      "line 658-659 posix=False is the shlex CLASS default, not split()'s"
+    ]
+  },
+  "argparse": {
+    "error_line": 2418,
+    "error_quote": "This method prints a usage message, including the message, to sys.stderr and terminates the program with a status code of 2.",
+    "exit_lines": "2401-2403",
+    "exit_quote": "This method terminates the program, exiting with the specified status and, if given, it prints a message to sys.stderr before that.",
+    "override_note_lines": "2404-2409",
+    "required_option_statement": {"lines": "1382-1384", "quote": "if an option is marked as required, parse_args() will report an error if that option is not present at the command line."},
+    "error_examples": {"lines": ["931-933", "1169-1171", "1377-1379"], "documented_text": "PROG: error: the following arguments are required: bar|foo|--foo"},
+    "missing_required_exit_2_as_one_sentence": false,
+    "doc_version": "Python 3.15.2 (lines 20, 237)",
+    "host_python": "3.14.8",
+    "before_arm_rc2_origin": "tools/round-75/probe-mutation.py:447-452 - probe's own missing-args envelope and return 2; all probe options optional (:429-441), so argparse never took error()",
+    "receipt_string_origin": "probe-mutation.py:450 'missing required arguments: '; not argparse text",
+    "verdict": "BLOCKING",
+    "blocking": [
+      "scope tail and teaches ground the before-arm's rc 2 in argparse; that rc 2 is the probe's own return 2",
+      "scope overbroad: exit() defaults to 0 and error() is overridable",
+      "receipt's 'missing required arguments: work' is the probe's string, not the page's"
+    ]
+  },
+  "sh": {
+    "frozen_url": "https://man7.org/linux/man-pages/man1/sh.1.html",
+    "frozen_url_http": 404,
+    "frozen_url_body": "Apache '404 Not Found', 196 B",
+    "row_state": "S288 re-scoped to bash(1), rejected",
+    "s288_anchor_line_477_section": "[[ expression ]] (compound command), NOT EXPANSION; EXPANSION begins at 1931",
+    "s288_anchor_sentence": "The words between the [[ and ]] do not undergo word splitting and pathname expansion.",
+    "s288_anchor_verdict": "BLOCKING - quoted fragment drops subject and negation, asserting the opposite of its sentence",
+    "supporting_lines": {"expansion_list": "1932-1936", "expansion_order": "1938-1941", "pipeline_definition": "350-352", "exemption": "476-480"},
+    "reject_rationale": "no shell consumer: grep -c 'shell=True' tools/round-76/plan-command.py = 0; list-argv subprocess.run at :162; metacharacters refused at :44/84-103; shlex page itself recommends shell=False; plus the named page 404s",
+    "reject_reason_in_row": "mis-stated - the bash page does document the declared scope; what fails is that the gate has no consumer for it",
+    "flip": "(1) the gate gains a shell path (/bin/sh -c or a shell fragment) or a claim about shell word-splitting semantics, AND (2) the anchor is re-pointed to 1932-1936/1938-1941/350-352 (POSIX sh page, not bash, for sh semantics)"
+  },
+  "near_duplicates": {
+    "before_rows_landed": {"shlex": 0, "argparse": 0, "man1/sh": 0},
+    "after_rows_landed": {"S286": "shlex row", "S287": "argparse row", "S288": "bash(1) row"},
+    "docs_python_org_rows": 16,
+    "section1_manpages_other": 0,
+    "ids_unique": true
+  },
+  "files_written": [
+    ".ufo/waves/round-76/w1/ScoutSource.md",
+    ".ufo/waves/round-76/w1/ScoutSource/receipt.json",
+    ".ufo/waves/round-76/w1/ScoutSource/shlex.html",
+    ".ufo/waves/round-76/w1/ScoutSource/argparse.html",
+    ".ufo/waves/round-76/w1/ScoutSource/bash1.html",
+    ".ufo/waves/round-76/w1/ScoutSource/sh1.html",
+    ".ufo/waves/round-76/w1/ScoutSource/sh1p.html"
+  ],
+  "production_edits": "none; corpus/SOURCES.md was written by another seat during this window and is reported, not edited",
+  "tools_installed": "none",
+  "scratch": "/fast/scratch/hyaku/kaidoku-r76/ScoutSource (deleted before yield)"
+}

@@ -1,0 +1,133 @@
+{
+  "schema": "kaidoku-r76-mutation-receipt-v1",
+  "seat": "MutationTester-3",
+  "date": "2026-11-04",
+  "lane_root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+  "method": "nine single-point mutants built on scratch copies of the working-tree instruments (lane bytes never modified); each scored by running the instrument's own declared --selftest",
+  "gate_selftest_rev": "be99e4f9b72fb2dbae75329c0d5c55002854cbed",
+  "gate_selftest_rev_note": "the gate --selftest reads .ufo/waves/round-76/pre/fixtures/r75-printed.md via git show, so it must run at the declaration rev; at base 5303a662 it exits 2 unevaluable (fixtures absent at base)",
+  "pristine_sha256": {
+    "tools/round-76/record-audit.py": "18b2d7ba2adbe4f34603d86a15fa071ccba5dc6fcea868939f219ab8eece855d",
+    "tools/round-76/plan-command.py": "4766df5091cc53138e0f5841c31f9549aaa9c5818272ca5ff1498374888bed72"
+  },
+  "baseline": {
+    "record-audit.py --selftest": {"rc": 0, "cases": 17, "failures": []},
+    "plan-command.py --selftest": {"rc": 0, "cases": 3, "failures": []}
+  },
+  "mutants": [
+    {
+      "mutant": "d24-a",
+      "target": "tools/round-76/record-audit.py",
+      "mutation": "capability_defects: accept a row absent from the table (the `row is None` branch now silently continues instead of appending the absent-row defect)",
+      "sha256": "b2d6c5d1ae4798f87df11d0f65dcd7a10607a9f893cd13a8559718317891bf9d",
+      "expected_detector": "cap-absent-row-red",
+      "rc": 0,
+      "failures": [],
+      "verdict": "SURVIVOR",
+      "sole": false,
+      "class": "guard-masked: cap-absent-row-red's fixture has an EMPTY table, so the `if not table` guard emits 'the ## Capabilities table holds no data rows' identically on pristine and mutant (probe: both defect lists equal); no declared case claims a name absent from a populated table"
+    },
+    {
+      "mutant": "d24-b",
+      "target": "tools/round-76/record-audit.py",
+      "mutation": "capability_defects: drop the evidence-pointer existence check (the `absent = [p for p in pointers if not exists(p)]` block removed)",
+      "sha256": "71f2cdbd4097cc45ee549154335122ce283ebb2910ecc4a249280a432b93edab",
+      "expected_detector": "cap-absent-evidence-path-red",
+      "rc": 1,
+      "failures": ["cap-absent-evidence-path-red"],
+      "verdict": "killed",
+      "sole": true,
+      "class": null
+    },
+    {
+      "mutant": "d24-c",
+      "target": "tools/round-76/record-audit.py",
+      "mutation": "capability_defects: drop the first-working-round check (the `str(claim['round']) not in re.findall(r'\\d+', row[3])` block removed)",
+      "sha256": "7d9db869980b207b085fa46408e2465c39b357a47a4e144a656e4c68412070c7",
+      "expected_detector": "cap-round-mismatch-red",
+      "rc": 1,
+      "failures": ["cap-round-mismatch-red"],
+      "verdict": "killed",
+      "sole": true,
+      "class": null
+    },
+    {
+      "mutant": "d24-d",
+      "target": "tools/round-76/record-audit.py",
+      "mutation": "capability_defects: drop the stub-description check (the `len(row[1].split()) < 8` block removed)",
+      "sha256": "e2aac5d6b1ae8e4baebb8a927087135b2c4d7f20f5bb54c09f80feeb68eaba0b",
+      "expected_detector": "cap-stub-description-red",
+      "rc": 1,
+      "failures": ["cap-stub-description-red"],
+      "verdict": "killed",
+      "sole": true,
+      "class": null
+    },
+    {
+      "mutant": "d24-e",
+      "target": "tools/round-76/record-audit.py",
+      "mutation": "claimed_capability_rows: parse the claim at line level instead of paragraph level (every non-blank line flushed as its own paragraph)",
+      "sha256": "7a8ac72a7d9dda55081a95676ada674439bb13145653d9d6e3cb0d57dad3edd1",
+      "expected_detector": "none declared",
+      "rc": 0,
+      "failures": [],
+      "verdict": "SURVIVOR",
+      "sole": false,
+      "class": "no wrapped-claim fixture: all seven capability cases use single-line claims; on the real round-75 shape (claim sentence wraps, name straddles the wrap: `A12 case-independence\\nclosure`) the mutant returns names [] and emits a FALSE defect ('round 75 claim line 9 names no capability') on a correct record (probe: pristine claims [['A12 case-independence closure']] defects [], mutant claims [[]] defects 1)"
+    },
+    {
+      "mutant": "gate-f",
+      "target": "tools/round-76/plan-command.py",
+      "mutation": "static_defects: skip the static placeholder scan (both PLACEHOLDER_UNBOUND sub-checks removed: UNBOUND_RE angle placeholders and the ELLIPSIS abbreviation check)",
+      "sha256": "2ae659f1c18dd57cb4c8428fbc9fa4af7b21532ba0e0d04916b0829f9cdfd55b",
+      "expected_detector": "prose-plan (ellipsis-rev second)",
+      "rc": 1,
+      "failures": ["prose-plan", "ellipsis-rev"],
+      "verdict": "killed",
+      "sole": false,
+      "class": "two declared cases fail because the mutation removes both placeholder sub-checks; note the UNBOUND_RE half alone has NO declared detector (the r75-printed fixture carries a Unicode ellipsis, not an angle placeholder)"
+    },
+    {
+      "mutant": "gate-g",
+      "target": "tools/round-76/plan-command.py",
+      "mutation": "run_block: accept shell=True (subprocess.run(argv, shell=True, ...) instead of the no-shell argv exec)",
+      "sha256": "db983d11e46216456551dbcb7b7d3c069d21cca8d0596fd07457fb97badf2131",
+      "expected_detector": "missing-required-arg",
+      "rc": 1,
+      "failures": ["missing-required-arg"],
+      "verdict": "killed",
+      "sole": true,
+      "class": "indirect kill (rc-shape distortion): with a list argv, shell=True makes sh -c run bare `python3` (argv[0] only), rc 0 + RECEIPT_UNREADABLE instead of rc 2 `{\"unevaluable\": \"--rev is required\"}`; the declared rc-2 control fails. Probe: mutant control row executed true, rc 0, defects [RECEIPT_UNREADABLE]; pristine rc 2 EXECUTION_FAILED"
+    },
+    {
+      "mutant": "gate-h",
+      "target": "tools/round-76/plan-command.py",
+      "mutation": "run_block: drop the containment check on $OUT (out_real = out, containment() no longer called on the output path)",
+      "sha256": "2cb563eab136c822cddffe9471f6169e424affa74922cf2bcc431a7ac87c1001",
+      "expected_detector": "none declared",
+      "rc": 0,
+      "failures": [],
+      "verdict": "SURVIVOR",
+      "sole": false,
+      "class": "no declared control attempts an escaping $OUT: all three controls build $OUT inside --work, so containment(out, work) never bites; the containment-absolute/traversal-refused arms named in D22 belong to the round-75 freeze-pins selftest, not this instrument"
+    },
+    {
+      "mutant": "gate-i",
+      "target": "tools/round-76/plan-command.py",
+      "mutation": "build_argv: drop the argv allowlist (the SAFE_SCRIPT_PREFIX startswith/'..' Refused block removed)",
+      "sha256": "56eab8e74183fd029b4a99f863ac651d3197e1676ad3435bcc584b8bfea2590a",
+      "expected_detector": "none declared",
+      "rc": 0,
+      "failures": [],
+      "verdict": "SURVIVOR",
+      "sole": false,
+      "class": "no declared control runs (or refuses) a script outside tools/round-76/: prose-plan and ellipsis-rev are refused statically before build_argv, and missing-required-arg uses tools/round-76/record-audit.py; the allowlist only bites in battery arm_fixture (allow_prefix tools/round-75/), which --selftest does not run"
+    }
+  ],
+  "score": {"killed": 4, "survivor": 5, "total": 9},
+  "restoration": {
+    "lane_files_modified": false,
+    "mutant_location": "scratch only (/fast/scratch/hyaku/kaidoku-r76/MutationTester-3/mutants), deleted with the scratch dir before yield",
+    "lane_hash_check_after": "sha256 of tools/round-76/record-audit.py and tools/round-76/plan-command.py re-verified equal to pristine_sha256 after all runs"
+  }
+}
