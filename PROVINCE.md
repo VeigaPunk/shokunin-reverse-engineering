@@ -626,14 +626,16 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   `near_miss_field`, `negated_verdict`, `value_mismatch` (a parsed clause bound through a unique nested
   key), `unbound_verdict` (a parsable clause that binds nothing — the round-77 instrument computes its
   `defect` status and drops it), `clean_run`, `filing_rev`, `gate_receipt_schema`, `gate_receipt_rev`.
-  Retained evidence: `.ufo/waves/round-78/l1/scores/c1-at-record.json` (fixtures_total 10,
-  base_accepted 10, refused 10, validate defect-free).
+  Retained evidence: `.ufo/waves/round-78/l1/scores/c1-at-record.json` and
+  `.ufo/waves/round-78/pre/c1-at-base.json` (fixtures_total 10, base_accepted 10, refused 10, validate
+  defect-free).
 - **Core — surface recheck:** `tools/round-78/surface-recheck.py` parses eight drift-prone surface
   values from `PROVINCE.md` with declared patterns and compares them typed to the live object the record
   names (the three client configs' `rea` entry, the Ghidra provider's `application.properties`, the
   `.bashrc` exports, `java -version`); a pointer that is not the declared live source is a defect, and
-  the receipt carries `checked_at`. Retained evidence: `.ufo/waves/round-78/l1/scores/c2-at-record.json`
-  (checks_total 8, matched 8, unparsed 0).
+  the receipt carries `checked_at`. Retained evidence: `.ufo/waves/round-78/pre/c2-at-base.json`
+  (checks_total 8, unparsed 0, and its mismatches 2 are the two corrections); the record run is
+  `.ufo/waves/round-78/l1/scores/c2-at-record.json`.
 - **Still Frontier:** registries outside the SKILL block, a complete GFM parser, cryptographic receipt
   authenticity or signed receipts (the `rev`+`instrument.sha256` binding authenticates the producing
   blob, not the author), REA-internal and packer-internal child processes, other packers/carriers,

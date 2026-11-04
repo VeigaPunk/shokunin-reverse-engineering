@@ -422,11 +422,25 @@ def in_scope_cells(scorecard: str, province: str) -> list[dict]:
                     and int(parts[3]) >= SCOPE_MIN_ROUND:
                 cells.append({"where": f"SCORECARD capabilities row {parts[0]!r}",
                               "cells": parts})
+    bullets: list[str] = []
+    current: list[str] | None = None
     for line in province.splitlines():
-        if line.startswith("- **Core — ") and (
-                "tools/round-78/" in line or ".ufo/waves/round-78/" in line):
-            cells.append({"where": "PROVINCE core bullet " + line[:70],
-                          "cells": [line]})
+        if line.startswith("- **Core — "):
+            if current:
+                bullets.append(" ".join(current))
+            current = [line.strip()]
+        elif current is not None:
+            if line.startswith("- ") or not line.strip():
+                bullets.append(" ".join(current))
+                current = None
+            else:
+                current.append(line.strip())
+    if current:
+        bullets.append(" ".join(current))
+    for bullet in bullets:
+        if "tools/round-78/" in bullet or ".ufo/waves/round-78/" in bullet:
+            cells.append({"where": "PROVINCE core bullet " + bullet[:70],
+                          "cells": [bullet]})
     return cells
 
 
