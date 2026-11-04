@@ -5862,6 +5862,13 @@ closure` and `exact-grammar record audit`, each with its `l1/scores` receipt.
 (`_name_samples`, `_samples`, `a12_verdict`), not the runtime arm. R75-C2's surface is the record
 cells and receipts the atoms parse, not the instruments' runtime behaviour.
 
+**coverage-map repair (unclaimed).** The stem recipe's population had outgrown the map: at
+`98825979` the self-check reported 148/155 mapped (`missing` = the r69-r75 entries). One
+coverage-map row now names the seven instrument/record entries, and
+`python3 -I -B tools/round-66/coverage-selfcheck.py --selfcheck --root . --rev <record>` reports
+`mapped 155`, `mismatches 0` (`l1/scores/coverage-selfcheck-at-record.json`). The Owned-axes
+coverage row's 148/148 statement stays as the round-68 historical measurement.
+
 **census erratum.** The round-75 census closed at 191 rows (`l1/census-end.txt`, exit 0), up from
 189 at round start; two rows enter (S284 `os.path.commonpath`, mined; S285 `environ(7)`, rejected),
 one candidate row S283 (`re.fullmatch`) was written and withdrawn the same round as a duplicate of

@@ -4507,5 +4507,8 @@ fractions — and requires zero mismatches with at least two corrections that ea
   `corpus/knowledge/2026-11-04-r75-a12-case-independence.md`; the lesson
   `corpus/lessons/round-75.md` (Gate, Mistakes, the S275 old→new re-log and the row-`opened`
   convention).
+- **Unclaimed repair.** The coverage map had outgrown the stem recipe's population (148/155 at
+  `98825979`): one row now names the seven r69-r75 entries and the self-check reports `mapped 155`,
+  `mismatches 0` (receipt `l1/scores/coverage-selfcheck-at-record.json`).
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r75` is removed after the close; no pacman transaction
   and no tool install ran this round.
