@@ -23,9 +23,10 @@ that SKIPS the round's claimed work and scores it with the claim's own counter.
                          route bytes survive (`--patch-set r73base`, survivors
                          3): the do-nothing world the round-73 route must beat.
   c3_no_case             the round-73 route with the three new cases dropped
-                         from its registry is not scoreable at all: the battery
-                         refuses (pristine selftest red) instead of reporting
-                         survivors, so the case inventory is load-bearing.
+                         from its registry fails its own selftest naming
+                         `case-inventory`, so the registry binding is
+                         load-bearing and a silently dropped case cannot
+                         shrink the surface.
 
 Exit: 0 every control met its declared expectation; 1 a control did not; 2
 could-not-evaluate.  Writes one JSON receipt; all scratch lives under --work.
@@ -37,6 +38,7 @@ import argparse
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -126,13 +128,17 @@ def main(argv: list[str] | None = None) -> int:
     # c1_blind_witness
     probe = load_module(lane(PROBE73))
     allow = probe.CHILD_ENV_KEYS
-    clean = {"keys": sorted(allow), "canary_present": False}
-    dirty = {"keys": sorted(allow) + ["KAIDOKU_ENV_CANARY"], "canary_present": True}
+    clean = {"keys": sorted(allow), "canary_present": False,
+             "home_under": True, "tmpdir_under": True}
+    dirty = {"keys": sorted(allow) + ["KAIDOKU_ENV_CANARY"],
+             "canary_present": True, "home_under": False, "tmpdir_under": False}
     genuine = {"rc": 0, "kernel": {"git": clean, "readelf": clean}}
     forged_clean = {"kernel": {"git": clean, "readelf": clean},
-                    "shims": {"git": clean, "readelf": clean}}
+                    "shims": {"git": {**clean, "keys_exact": True},
+                              "readelf": {**clean, "keys_exact": True}}}
     forged_dirty = {"kernel": {"git": dirty, "readelf": dirty},
-                    "shims": {"git": clean, "readelf": clean}}
+                    "shims": {"git": {**clean, "keys_exact": True},
+                              "readelf": {**clean, "keys_exact": True}}}
     dirty_shims = {"kernel": {"git": dirty, "readelf": dirty},
                    "shims": {"git": dirty, "readelf": dirty}}
     blind = probe.a12_verdict(genuine, forged_clean, allow)
@@ -197,16 +203,18 @@ def main(argv: list[str] | None = None) -> int:
     no_case = os.path.join(scratch, "route-no-case.py")
     with open(no_case, "w", encoding="utf-8") as fh:
         fh.write(stripped)
-    res = run([sys.executable, "-I", "-B", lane(BATTERY), "--root", root,
-               "--rev", args.decl_rev, "--tool", os.path.relpath(no_case, root)
-               if False else no_case, "--patch-set", "r73", "--work", scratch])
-    # The battery reads its target through `git show`, so a scratch file is not
-    # scoreable; the control is the refusal itself (`unevaluable`, rc 2).
+    shutil.copy(lane("tools/round-73/capsule_audit.py"),
+                os.path.join(scratch, "capsule_audit.py"))
+    res = run([sys.executable, "-I", "-B", no_case, "--selftest",
+               "--work", scratch])
     payload = res["json"] or {}
     arms["c3_no_case"] = {
-        "rc": res["rc"], "unevaluable": payload.get("unevaluable"),
-        "stderr_tail": res["stderr_tail"][-300:],
-        "met": res["rc"] == 2 and isinstance(payload.get("unevaluable"), str)}
+        "rc": res["rc"], "failed": payload.get("failed"),
+        "cases": payload.get("cases"),
+        "stdout_tail": res["stdout_tail"][-400:],
+        "stderr_tail": res["stderr_tail"][-400:],
+        "met": (res["rc"] == 1
+                and "case-inventory" in (payload.get("failed") or []))}
 
     ok = all(a.get("met") is True for a in arms.values())
     out = {"instrument": "tools/round-73/controls.py",

@@ -123,7 +123,11 @@ def atom_c2_evidence_hash(root: str, rev: str) -> dict:
              if isinstance(measured, str) and not measured.startswith(tok)]
     correction = CORRECTION_MARK in body
     tail = body.split(CORRECTION_MARK, 1)[-1] if correction else ""
-    named = all(tok in tail for tok in wrong)
+    # The correction must name BOTH values: a correction that repeats only the
+    # wrong token leaves the record self-contradictory (round-73 CriticClaims'
+    # D1 false-green).
+    named = (all(tok in tail for tok in wrong)
+             and isinstance(measured, str) and measured[:8] in tail)
     ok = (bool(receipt) and blob_ok is True
           and (not wrong or (correction and named)))
     return {"id": "D1_c2_evidence_hash", "ok": bool(ok),

@@ -9,7 +9,27 @@
   "R73-C3 is verified iff the frozen mutation battery, run at the measured revision as `python3 -I -B tools/round-73/mutation-check.py --root . --rev <measured> --tool tools/round-73/packed-elf.py --patch-set r73 --work <scratch> --min-pristine-cases 38 --expect-target-sha256 <the route blob's sha256 at the measured revision> --json-out <receipt>`, exits 0 with `survivor_count 0`, every mutant `killed` with `expect_case` in its `failed` list, pristine `cases 38` green and `target_pin.matched` true \u2014 while the same battery with `--patch-set r73base --tool tools/round-72/packed-elf.py` reports `survivor_count 3` and survivors [\"git_reader_env_dropped\", \"readelf_env_dropped\", \"implicit_capsule_dropped\"]."
  ],
  "declaration_pointer": "plans/round-73-claims.md (no predicate amendments). The six instruments were committed BEFORE this claims file (QUALITY #33): declaration da6c17c1eb8dec0b780e276c7f1cb8d9b4fa4d4b (tools/round-73/*, the plan, the census-start receipt). Predicates byte-unchanged. The route receipt and the nonce commitment are pre receipts (A6) measured against the declared bytes before any claim data.",
- "errata": [],
+ "errata": [
+  {
+   "fields": [
+    "claims[0] (R73-C1) base-arm clause",
+    "frozen_atoms.A2"
+   ],
+   "text": "Pre-landing erratum (disclosed before any landing measurement). The frozen predicate's base arm named 'the same probe at the same revision against --tool tools/round-72/packed-elf.py reports 11 of 12 naming A12 false'. Measured at da6c17c1 it reports 8 of 12 (A2, A10, A11, A12 false): the route receipt is bound to the round-73 producer, so the round-72 route rejects it and its checker-mode children never run (receipt .ufo/waves/round-73/pre/c1-at-base.json). A12 therefore cannot be a route-differential at all: it measures the PROBE's channel, and passes whenever the genuine sub-run's checker accepts the receipt. The base arm is re-stipulated as the round-72 PROBE at the same revision and the same route receipt: 11 arms, 11 passed, no arm id A12_kernel_witness (.ufo/waves/round-73/pre/c1-at-base-r72probe.json), which is the world the round-73 probe must move with 12 of 12 and A12 true. The after-state target (12 of 12, A12 true, forged control convicted, grep '/proc/%d/environ' 3 in the round-73 probe against 0 in the round-72 one) and the kill rule are unchanged; no target was narrowed and the measured base value is reported, not hidden."
+  },
+  {
+   "fields": [
+    "plans/round-73-claims.md R73-C1 Counting command (grep count)"
+   ],
+   "text": "Pre-landing erratum, counting-command typo: the plan's counting line said the kernel-channel grep prints 0 in tools/round-72/seam-probe.py against 3 in tools/round-73/seam-probe.py. Measured with `grep -c '/proc/%d/environ' tools/round-72/seam-probe.py tools/round-73/seam-probe.py` it prints 0 against 1 (the string appears once, in `_proc_environ`; the poller `kernel_witness` reads the same file through that function). The predicate sentence in claims[0] does not carry this number; the measured values 0 and 1 are reported as-is."
+  },
+  {
+   "fields": [
+    "loaded_by_counter (the round-72/71 producer pins)"
+   ],
+   "text": "Pre-landing erratum, gate finding INSTRUMENT_PIN_MISMATCH at the freeze: loaded_by_counter named 973d504b for tools/round-72/packed-elf.py and 7f46e3ef for tools/round-72/seam-probe.py. The blobs at the measured revision are 330ecf89... and 602b305d... (the latter is also the value the round-72 C2 receipt records as its target sha, which is what routed defect 1 was about). The pins are corrected to the measured blobs; the freeze gate is re-run and must audit round-73 CLEAN."
+  }
+ ],
  "frontier": {
   "assimilation": "none (the merge/kaidoku/ package does not serve these claims; no adoption this round)",
   "considerthese": "absent in this lane (no considerthese/ directory)",
@@ -23,7 +43,7 @@
   "A3": "R73-C2: the audit's 7 atoms are derived from corpus/lessons/round-72-verifier-spotcheck.md \u00a76 (the non-author routed-defect list), never from SCORECARD itself; each atom is a predicate over `git show <rev>:<path>` bytes plus the receipts those bytes cite. D6 reads the literal `lowest-axis:` label in the round-73 section; D1 accepts a wrong token only when a `**Correction (round 73` block names both values.",
   "A4": "R73-C3: three seams (git_blob_sha256 env threading, readelf_header env threading, implicit_capsule derivation), three named cases (git-reader-allowlisted-exec, checker-readelf-allowlisted-exec, implicit-capsule-polluted-raw-log), three patch entries in PATCH_SETS['r73'] and the same defect classes in PATCH_SETS['r73base'] against tools/round-72/packed-elf.py.",
   "A5": "pins reused from rounds 70-72: packer upx 5.2.0 sha256 cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969; REA package 6.5.0 package.json sha256 a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c; the four carriers (jq, xxd, libz, dinit) and DECLARED_ORIG are the round-70 tables.",
-  "A6": "pre receipts (before any claim data): .ufo/waves/round-73/pre/route-at-declaration.json (the round-73 route at the declaration: met_target true, 4 carriers, 46 observed children, instrument sha256 e184cf11\u2026) with the nonce commitment .ufo/waves/round-73/l1/nonce-commitment.txt; .ufo/waves/round-73/pre/c1-at-base.json (the round-73 probe against tools/round-72/packed-elf.py: 11 of 12, A12 false); .ufo/waves/round-73/pre/c2-at-base.json (the audit at base 05bf0656: 6 mismatches); .ufo/waves/round-73/pre/c3-at-base.json (patch set r73base on the round-72 route: 3 survivors); .ufo/waves/round-73/pre/controls-at-declaration.json.",
+  "A6": "pre receipts (before any claim data): .ufo/waves/round-73/pre/route-at-declaration.json (the round-73 route at the instrument fix commit d36c6ee0: met_target true, 4 carriers, 46 observed children) with the nonce commitment .ufo/waves/round-73/l1/nonce-commitment.txt; .ufo/waves/round-73/pre/c1-at-base.json (the round-73 probe against tools/round-72/packed-elf.py: 8 of 12, A2/A10/A11/A12 false - the erratum's receipt); c1-at-base-r72probe.json (the round-72 probe at the same revision and receipt: 11 arms, 11 passed, no A12); c2-at-base.json (the audit at base 05bf0656: 6 mismatches); c3-at-base.json (patch set r73base on the round-72 route: 3 survivors).",
   "A7": "the nonce plaintext lives only in scratch; its sha256 is committed at .ufo/waves/round-73/l1/nonce-commitment.txt BEFORE the route runs; the receipt carries run_nonce and run_binding.",
   "A8": "landing receipts: .ufo/waves/round-73/l1/scores/c1-at-landing.json, c2-at-landing.json, c3-at-landing.json, c3-lying-check.json, controls-at-landing.json, gate-at-freeze.json, gate-at-landing.json, gate-at-record.json.",
   "A9": "frontier step: SOURCES.md gains S277 only if ScoutSource's live fetch and locate succeed (a failed fetch is a rejected row with its reason); the lesson's ## Gate records URL, access date and the <=25-word quote; the round-73 knowledge entry carries the provenance trio at its open; no considerthese/ directory exists; assimilation none.",
@@ -32,17 +52,30 @@
   "A12": "the wave-settlement receipt and the misroot sweep before the report."
  },
  "instruments": {
-  "tools/round-73/packed-elf.py": "e184cf118427e4678dbbf2647eb615948cffc8ecf59783b13850046d0a9970b1",
+  "tools/round-73/packed-elf.py": "ed3e26fab2ace12e94956704bab68940443fe093bd10aa2c70c75aa9c3284c1b",
   "tools/round-73/seam-probe.py": "7264d0c861d5d0f5344a4009dba738579a10952d27a207dd0d8530cf434b48ed",
-  "tools/round-73/mutation-check.py": "06a26a1384e14eae849b90db4735ce3e8faf9e52bfb84aa8895628afd7da9360",
+  "tools/round-73/mutation-check.py": "9b25ed2d47780e780f1433f40b6f5dc5bbb55a9c2d825b7ba84e7e24114df3cc",
   "tools/round-73/record-audit.py": "8f22d62037171ffef15bc9c4b2438285e350f15637bcbae6b7d6dafa5f40139d",
   "tools/round-73/controls.py": "bffbcf7866fe8a0c6bfdedba6f4e6721405707cddc174ba5af699fcd11b6dfa7",
   "tools/round-73/capsule_audit.py": "b05e70072bd9c58ee172ccf705926f926f8bd6cfbf0940d2903333894aa593de"
  },
  "loaded_by_counter": {
-  "tools/round-72/packed-elf.py": "973d504b415c58c1cc84896057322ce99c2db2762551de3b13f0c87f17ffefe7",
-  "tools/round-72/seam-probe.py": "7f46e3efb3c4768d16f9c5a7c01a3448b4f6dc15ae731f46f3150dc2f6e10622",
+  "tools/round-72/packed-elf.py": "330ecf89debe550ca2e3799f0a1643728604d24d95924e6d8053433d6e32bab6",
+  "tools/round-72/seam-probe.py": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2",
   "tools/round-71/packed-elf.py": "d8bd30b8b95cb57524e1045e9786d4b14837fb27b0a9f6842b0bff81545d7d7a"
  },
- "instrument_supersessions": []
+ "instrument_supersessions": [
+  {
+   "path": "tools/round-73/packed-elf.py",
+   "commit": "d36c6ee00122e9c991d7c8efc2e179dc0a10d9ed",
+   "reason": "pre-landing fix (no claim data measured): the three new cases shared one `seen` file, so dropping the git reader's env made the READELF case carry the failure and the git case pass spuriously; each seam now records into its own file and each case reads only its own. The route receipt was re-taken at this commit.",
+   "replacement_sha256": "ed3e26fab2ace12e94956704bab68940443fe093bd10aa2c70c75aa9c3284c1b"
+  },
+  {
+   "path": "tools/round-73/mutation-check.py",
+   "commit": "d36c6ee00122e9c991d7c8efc2e179dc0a10d9ed",
+   "reason": "pre-landing fix (no claim data measured): the r73base implicit-capsule patch site named the pre-supersession block (the round-72 freeze bytes) and matched 0 times at the measured revision; it now disables the shipped `elif` derivation. The r73 readelf patch site moved from the call site to the seam body, because a call-site mutation cannot be exercised by a case that calls the seam directly.",
+   "replacement_sha256": "9b25ed2d47780e780f1433f40b6f5dc5bbb55a9c2d825b7ba84e7e24114df3cc"
+  }
+ ]
 }

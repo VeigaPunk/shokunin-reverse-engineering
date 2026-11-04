@@ -413,7 +413,7 @@ def _proc_argv(pid: int) -> list[str] | None:
     return [p.decode("utf-8", "replace") for p in raw.split(b"\x00") if p]
 
 
-def _proc_environ(pid: int) -> dict | None:
+def _proc_env(pid: int) -> dict | None:
     try:
         with open("/proc/%d/environ" % pid, "rb") as fh:
             raw = fh.read()
@@ -428,13 +428,47 @@ def _proc_environ(pid: int) -> dict | None:
     return env
 
 
-def kernel_witness(shim_dir: str, stop, timeout: float = 180.0) -> list[dict]:
+def _proc_ppid(pid: int) -> int | None:
+    try:
+        with open("/proc/%d/stat" % pid, "rb") as fh:
+            stat = fh.read().decode("utf-8", "replace")
+    except OSError:
+        return None
+    try:
+        tail = stat.rsplit(")", 1)[1].split()
+        return int(tail[1])
+    except (IndexError, ValueError):
+        return None
+
+
+def _descends_from(pid: int, ancestors: set[int], hops: int = 4) -> bool:
+    """True when the process's parent chain reaches one of `ancestors`."""
+    current = pid
+    for _ in range(hops):
+        parent = _proc_ppid(current)
+        if parent is None or parent <= 1:
+            return False
+        if parent in ancestors:
+            return True
+        current = parent
+    return False
+
+
+def kernel_witness(shim_dir: str, stop, parents: set[int] | None = None,
+                   work_root: str | None = None,
+                   timeout: float = 180.0) -> list[dict]:
     """The KERNEL's record of each shim process's environment (R73-C1).
 
     Producer-independent by construction: the child's own dump is a claim, and
     `/proc/<pid>/environ` is the kernel's record of what that process actually
     received.  A wrapper that writes a clean dump while running under a dirty
     environment is visible here and nowhere else.
+
+    Two guards close the observer's own trust hole (round-73 SentinelScope S1,
+    CriticClaims' decoy attack): a candidate must name the shim dir AND its
+    parent chain must reach a process this arm started (`parents`), so a decoy
+    process elsewhere on the host cannot be sampled instead of the child; and
+    the record keeps booleans, never HOME/TMPDIR values (QUALITY row 128).
     """
     prefix = os.path.abspath(shim_dir)
     seen: dict[int, dict] = {}
@@ -449,12 +483,19 @@ def kernel_witness(shim_dir: str, stop, timeout: float = 180.0) -> list[dict]:
             argv = _proc_argv(pid)
             if not argv or not any(a.startswith(prefix) for a in argv):
                 continue
-            env = _proc_environ(pid)
+            if parents and not _descends_from(pid, parents):
+                continue
+            env = _proc_env(pid)
             if env is None:
                 continue
-            seen[pid] = {"pid": pid, "argv": argv, "keys": sorted(env),
-                         "canary_present": "KAIDOKU_ENV_CANARY" in env,
-                         "home": env.get("HOME"), "tmpdir": env.get("TMPDIR")}
+            seen[pid] = {
+                "pid": pid, "argv": argv, "keys": sorted(env),
+                "canary_present": "KAIDOKU_ENV_CANARY" in env,
+                "home_under": bool(work_root)
+                and under(work_root, env.get("HOME", "")),
+                "tmpdir_under": bool(work_root)
+                and under(work_root, env.get("TMPDIR", "")),
+            }
         time.sleep(0.004)
     return list(seen.values())
 
@@ -476,6 +517,8 @@ def a12_verdict(genuine: dict, forged: dict, allow_keys) -> dict:
                   and {"git", "readelf"} <= set(genuine_kernel)
                   and all(sorted(s.get("keys") or []) == allow
                           and not s.get("canary_present")
+                          and s.get("home_under") is True
+                          and s.get("tmpdir_under") is True
                           for s in genuine_kernel.values()))
     lie_clean = bool(forged_shims) and all(
         sorted(s.get("keys") or []) == allow and not s.get("canary_present")
@@ -489,22 +532,33 @@ def a12_verdict(genuine: dict, forged: dict, allow_keys) -> dict:
             "allow": allow}
 
 
-TRUTHFUL_SHIM = """#!/usr/bin/perl
-open(my $in, '<', '/proc/self/environ') or exit 127;
-binmode $in; local $/; my $data = <$in>; close $in;
-open(my $out, '>', '%(record)s') or exit 127;
-binmode $out; print $out $data; close $out;
-select(undef, undef, undef, 0.4);
-exec '%(real)s', @ARGV;
+# The shim reads every path from a sidecar `<shim>.cfg` (one key per line)
+# rather than from interpolated source: a scratch path containing a quote or a
+# newline must never become perl code (round-73 SentinelScope S2).
+SHIM_PRELUDE = """#!/usr/bin/perl
+open(my $cfg, '<', $0 . '.cfg') or exit 127;
+my (%c, $line);
+while (defined($line = <$cfg>)) { chomp $line; my ($k, $v) = split(/=/, $line, 2); $c{$k} = $v; }
+close $cfg;
+my $record = $c{'record'}; my $real = $c{'real'};
 """
 
-LYING_SHIM = """#!/usr/bin/perl
-open(my $out, '>', '%(record)s') or exit 127;
+TRUTHFUL_SHIM = SHIM_PRELUDE + """
+open(my $in, '<', '/proc/self/environ') or exit 127;
+binmode $in; local $/; my $data = <$in>; close $in;
+open(my $out, '>', $record) or exit 127;
+binmode $out; print $out $data; close $out;
+select(undef, undef, undef, 0.4);
+exec $real, @ARGV;
+"""
+
+LYING_SHIM = SHIM_PRELUDE + """
+open(my $out, '>', $record) or exit 127;
 binmode $out;
-print $out "HOME=%(home)s\\0LANG=C\\0PATH=%(path)s\\0TMPDIR=%(tmp)s\\0";
+print $out "HOME=" . $c{'home'} . "\\0LANG=C\\0PATH=" . $c{'path'} . "\\0TMPDIR=" . $c{'tmp'} . "\\0";
 close $out;
 select(undef, undef, undef, 0.4);
-exec '%(real)s', @ARGV;
+exec $real, @ARGV;
 """
 
 DIRTY_PRODUCER = """import subprocess, sys
@@ -524,7 +578,12 @@ def _write_shims(shim_dir: str, log_dir: str, template: str, fill: dict) -> dict
         record = os.path.join(log_dir, name + ".environ")
         shim = os.path.join(shim_dir, name)
         with open(shim, "w", encoding="utf-8") as fh:
-            fh.write(template % {"record": record, "real": real, **fill})
+            fh.write(template)
+        cfg = {name2: str(value).replace("\n", " ")
+               for name2, value in {"record": record, "real": real, **fill}.items()}
+        with open(shim + ".cfg", "w", encoding="utf-8") as fh:
+            for name2, value in cfg.items():
+                fh.write(f"{name2}={value}\n")
         os.chmod(shim, 0o755)
         records[name] = record
     return records
@@ -589,7 +648,9 @@ def kernel_witness_arm(instrument: str, root: str, rev: str, pkg: str,
     g_samples: list[dict] = []
 
     def _poll_genuine():
-        g_samples.extend(kernel_witness(os.path.join(g_dir, "shims"), stop))
+        g_samples.extend(kernel_witness(os.path.join(g_dir, "shims"), stop,
+                                        parents={g_proc.pid},
+                                        work_root=work_abs))
 
     g_thread = threading.Thread(target=_poll_genuine, daemon=True)
     g_thread.start()
@@ -623,7 +684,9 @@ def kernel_witness_arm(instrument: str, root: str, rev: str, pkg: str,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=f_env))
 
     def _poll_forged():
-        f_samples.extend(kernel_witness(os.path.join(f_dir, "shims"), f_stop))
+        f_samples.extend(kernel_witness(os.path.join(f_dir, "shims"), f_stop,
+                                        parents={p.pid for p in f_procs},
+                                        work_root=work_abs))
 
     f_thread = threading.Thread(target=_poll_forged, daemon=True)
     f_thread.start()
@@ -1173,11 +1236,15 @@ def selftest() -> int:
                          "readelf": shim(run_home)}, "/w")["ok"] is False
         and a11_verdict(0, {}, log_v, good_shims, "/w")["ok"] is False)
     allow = ("HOME", "LANG", "PATH", "TMPDIR")
-    clean = {"keys": list(allow), "canary_present": False}
-    dirty = {"keys": list(allow) + ["KAIDOKU_ENV_CANARY", "X"], "canary_present": True}
+    clean = {"keys": list(allow), "canary_present": False,
+             "home_under": True, "tmpdir_under": True}
+    dirty = {"keys": list(allow) + ["KAIDOKU_ENV_CANARY", "X"],
+             "canary_present": True, "home_under": False, "tmpdir_under": False}
     genuine_ok = {"rc": 0, "kernel": {"git": clean, "readelf": clean}}
-    lying = {"git": {"keys": list(allow), "canary_present": False},
-             "readelf": {"keys": list(allow), "canary_present": False}}
+    lying = {"git": {"keys": list(allow), "canary_present": False,
+                     "keys_exact": True},
+             "readelf": {"keys": list(allow), "canary_present": False,
+                         "keys_exact": True}}
     forged_dirty = {"kernel": {"git": dirty, "readelf": dirty}, "shims": lying}
     cases["a12-kernel-cases"] = (
         a12_verdict(genuine_ok, forged_dirty, allow)["ok"] is True
@@ -1190,6 +1257,12 @@ def selftest() -> int:
                         allow)["ok"] is True
         and a12_verdict(genuine_ok,
                         {"kernel": {}, "shims": lying}, allow)["ok"] is False
+        and a12_verdict({"rc": 0, "kernel": {
+            "git": {**clean, "home_under": False}, "readelf": clean}},
+            forged_dirty, allow)["ok"] is False
+        and a12_verdict({"rc": 0, "kernel": {
+            "git": {**clean, "tmpdir_under": False}, "readelf": clean}},
+            forged_dirty, allow)["ok"] is False
         and a12_verdict({"rc": 0, "kernel": {"git": dirty, "readelf": clean}},
                         forged_dirty, allow)["ok"] is False
         and a12_verdict({"rc": 1, "kernel": {"git": clean, "readelf": clean}},
