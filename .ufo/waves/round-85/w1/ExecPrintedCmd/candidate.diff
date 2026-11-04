@@ -1,0 +1,121 @@
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -688,8 +688,6 @@
+         state["corpus/SOURCES.md"] = row + "\n"
+         return state
+ 
+-    guarded("sourced-row-rejected-status", lambda: sourced_case(
+-        [base_state, with_sources(row_queued)], ["SOURCED_ROW_UNMET"]))
+     guarded("sourced-row-wrong-date", lambda: sourced_case(
+         [base_state, with_sources(row_old)], ["SOURCED_ROW_UNMET"]))
+     guarded("sourced-row-at-base", lambda: sourced_case(
+@@ -705,6 +703,15 @@
+              "corpus/knowledge/2026-11-04-r82-conjunction-and-printed-"
+              "commands.md": entry_other}],
+         ["SOURCED_ENTRY_UNCITED"]))
++
++    # R85-A cases
++    guarded("duplicate-row-first-binds", r85a_duplicate_row_first_binds)
++    guarded("id-prefix-not-bound", r85a_id_prefix_not_bound)
++    guarded("row-width-thirteen-exact", lambda: r85a_row_width_thirteen_exact(fixture_repo, base_state, full_state))
++    guarded("fully-mined-row-green", lambda: r85a_fully_mined_row_green(fixture_repo, base_state, full_state))
++    guarded("entry-second-source-line-ignored", r85a_entry_second_source_line_ignored)
++    guarded("sourced-row-rejected-status", lambda: r85a_sourced_row_rejected_status(fixture_repo, base_state, full_state, row_queued))
++    guarded("sourced-row-later-date", lambda: r85a_sourced_row_later_date(fixture_repo, base_state, full_state))
+ 
+     for root in fixture_roots:
+         subprocess.run(["rm", "-rf", "--", root])
+@@ -785,5 +792,93 @@
+     return 2
+ 
+ 
++# R85-C2 parser and sourced-arm fixtures exercise the production functions.
++# Git fixtures share selftest's work-root placement and cleanup.
++def r85a_duplicate_row_first_binds() -> bool:
++    first = "| S299 | first binding | docs | A | t | a | te | mined | 2026-11-04 | 90d | — |"
++    second = first.replace("first binding", "second binding")
++    with tempfile.TemporaryDirectory(prefix="printed-command-first-row-") as work:
++        ledger = Path(work) / "SOURCES.md"
++        ledger.write_text(first + "\n" + second + "\n", encoding="utf-8")
++        assert sources_row(ledger.read_text(encoding="utf-8"), "S299") == first
++    return True
++
++
++def r85a_id_prefix_not_bound() -> bool:
++    exact = "| S299 | exact binding | docs | A | t | a | te | mined | 2026-11-04 | 90d | — |"
++    prefix = exact.replace("S299", "S2999").replace("exact binding", "prefix decoy")
++    with tempfile.TemporaryDirectory(prefix="printed-command-prefix-row-") as work:
++        ledger = Path(work) / "SOURCES.md"
++        ledger.write_text(prefix + "\n" + exact + "\n", encoding="utf-8")
++        assert sources_row(ledger.read_text(encoding="utf-8"), "S299") == exact
++    return True
++
++
++def r85a_sourced_fixture(fixture_repo, base_state: dict[str, str],
++                         full_state: dict[str, str],
++                         row: str | None = None) -> dict:
++    state = dict(full_state)
++    if row is not None:
++        state[SOURCES] = row.rstrip("\n") + "\n"
++    fix, revs = fixture_repo([base_state, state])
++    return sourced_arm(fix, revs[-1], sid="S777", base_rev=revs[0])
++
++
++def r85a_row_width_thirteen_exact(fixture_repo, base_state: dict[str, str],
++                                 full_state: dict[str, str]) -> bool:
++    row = full_state[SOURCES].rstrip("\n") + " extra |"
++    assert len(row.split("|")) == 14
++    arm = r85a_sourced_fixture(fixture_repo, base_state, full_state, row)
++    assert arm["row_mined"] is False
++    assert arm["defects"] == ["SOURCED_ROW_UNMET"]
++    assert arm["met"] is False
++    return True
++
++
++def r85a_fully_mined_row_green(fixture_repo, base_state: dict[str, str],
++                              full_state: dict[str, str]) -> bool:
++    arm = r85a_sourced_fixture(fixture_repo, base_state, full_state)
++    assert arm == {
++        "arm": "sourced", "row_present": True, "row_mined": True,
++        "base_absent": True, "plan_names_row": True,
++        "entry_cites_row": True, "defects": [], "met": True,
++    }
++    return True
++
++
++def r85a_entry_second_source_line_ignored() -> bool:
++    with tempfile.TemporaryDirectory(prefix="printed-command-second-source-") as work:
++        entry = Path(work) / "entry.md"
++        entry.write_text(
++            "source: S260 — https://example.org/first\n"
++            "source: S299 — https://example.org/second\n",
++            encoding="utf-8")
++        assert entry_cites(entry.read_text(encoding="utf-8"), "S299") is False
++    return True
++
++
++def r85a_sourced_row_rejected_status(fixture_repo, base_state: dict[str, str],
++                                    full_state: dict[str, str],
++                                    row_queued: str) -> bool:
++    # Retain the original queued refusal and add the rejected status it missed.
++    rejected = full_state[SOURCES].replace("| mined |", "| rejected |")
++    for row in (row_queued, rejected):
++        arm = r85a_sourced_fixture(fixture_repo, base_state, full_state, row)
++        assert arm["row_mined"] is False
++        assert arm["defects"] == ["SOURCED_ROW_UNMET"]
++        assert arm["met"] is False
++    return True
++
++
++def r85a_sourced_row_later_date(fixture_repo, base_state: dict[str, str],
++                               full_state: dict[str, str]) -> bool:
++    row = full_state[SOURCES].replace("2026-11-04", "2026-11-05")
++    arm = r85a_sourced_fixture(fixture_repo, base_state, full_state, row)
++    assert arm["row_mined"] is False
++    assert arm["defects"] == ["SOURCED_ROW_UNMET"]
++    assert arm["met"] is False
++    return True
++
++
+ if __name__ == "__main__":
+     sys.exit(main())

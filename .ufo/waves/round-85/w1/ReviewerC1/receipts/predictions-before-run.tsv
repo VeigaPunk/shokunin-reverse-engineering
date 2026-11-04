@@ -1,0 +1,18 @@
+id	fixture	predicted_verdict	predicted_findings	reason
+F1	pre/c1/F1.json	FLAGGED	PB_NO_PREDICATE_PATH:R85-F1	plan target; kill_rule-only path does not satisfy predicate
+F2	pre/c1/F2.json	FLAGGED	PB_PREDICATE_NEGATED:R85-F2	plan target; path only inside negated sentence
+POS	round-84/claims.json	CLEAN-or-FLAGGED	-	R84-C1 and R84-C2 predicates contain 'none' in the same sentence as their path; if 'none' is in the negation list the positive control is FLAGGED (drift)
+A01	attacks/A01	CLEAN	-	at-least-one-path rule; affirmative sentence one, pinned negated path sentence two
+A02	attacks/A02	CLEAN	-	at-least-one-path rule; unpinned negated path does not flag under literal sentence; kill-rule text would call it unpinned
+A03	attacks/A03	CLEAN	-	NOT uppercase; frozen list is lowercase tokens; case-sensitive token match
+A04	attacks/A04	FLAGGED	PB_PREDICATE_NEGATED:ATK-A04	'not' inside quotes in same sentence (sentence-level scope): false refusal
+A05	attacks/A05	CLEAN	-	'not' in a separate sentence; sentence scope excludes it
+A06	attacks/A06	CLEAN	-	producers_not_counters admitted by frozen text; a producer passes as counter
+A07	attacks/A07	CLEAN	-	corpus/ .sh admitted by regex and frozen text; not a counter
+A08	attacks/A08	CLEAN	-	frozen sentence is vacuous over empty claims; r84 gate flags CONTAINER_NO_CLAIMS
+A09	attacks/A09	FLAGGED	PB_NO_PREDICATE_PATH:ATK-A09b	each claim's predicate must name a path
+A10	attacks/A10	FLAGGED	pin-mismatch-finding	digest zero-filled; blob digest differs
+A11	attacks/A11	FLAGGED	PB_PREDICATE_NEGATED:ATK-A11	'none' listed as qualifier token in frozen sentence
+A12	attacks/A12	FLAGGED	PB_PREDICATE_NEGATED:ATK-A12	'never' in same sentence
+A13	attacks/A13	CLEAN	-	'Known' contains 'no' as substring only; word-boundary match
+A14	attacks/A14	FLAGGED	PB_NO_PREDICATE_PATH:ATK-A14	kill_rule-only path (F1 variant)

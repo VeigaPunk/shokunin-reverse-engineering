@@ -1,0 +1,13 @@
+# sweep-red-before.txt — R3 pointer sweep over the round-84 lesson AT 91eeb72f (pre-correction wording)
+# lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+# r84 lesson bytes: git show 91eeb72f:corpus/lessons/round-84.md  (identical to the worktree copy at HEAD c1c81c7d)
+
+$ cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+$ git show 91eeb72f:corpus/lessons/round-84.md > $S/round-84.md
+$ grep -o 'l1/waves/round-84[^ )`]*' $S/round-84.md | sort -u | while read p; do test -e "$p" && echo "ok $p" || echo "MISSING $p"; done
+MISSING l1/waves/round-84/w1/SentinelScope/esc-receipt.json
+
+# RED: the lesson's own cited path l1/waves/round-84/w1/SentinelScope/esc-receipt.json does not exist.
+# The path exists only under the .ufo/ prefix (see sweep-green-after.txt).
+# note: the lesson cites the second receipt as the bare name 'esc-receipt-abs.json' (same cell), so the
+#       sweep pattern finds one distinct l1/-prefixed path; the -abs variant inherits the same missing prefix.

@@ -1,0 +1,78 @@
+{
+ "schema": "kaidoku-r84-claims-v1",
+ "round": 84,
+ "base": "043b89a25241710a68b45526c3287fb3c8d907c3",
+ "declaration_pointer": "e0de2088a7bddc16305357f90ac7e889fa0a0d11",
+ "claims": [
+  {
+   "id": "R84-C1",
+   "axis": "calibration",
+   "predicate": "tools/round-84/freeze-precheck.py reports the round-83 container FLAGGED with exactly CLAIM_NO_COUNTER_PATH:R83-C1 and the round-84 container CLEAN, each equal to its declared expectation, with mismatches none, refused 1, accepted 1, and the instruments-only control accepting the round-83 container",
+   "kill_rule": "Any verdict or expectation mismatch; a round-84 container that is not CLEAN; a round-83 container that is not FLAGGED with that exact finding; a control that does not accept the round-83 container or that reaches the target without the per-claim check; a changed predicate or container set; a named counter that is not a blob at the measured revision or is not pinned at its frozen digest."
+  },
+  {
+   "id": "R84-C2",
+   "axis": "depth",
+   "predicate": "tools/round-84/mutation-closure.py reports killed 13 of mutants 13 with survivors none, inconclusive none, pristine_failed none and ok true for the frozen mutant table, each kill bound to that mutant's declared selftest case, where the same frozen table at BASE kills 4 and leaves 9 named survivors",
+   "kill_rule": "Any survivor, inconclusive or red pristine target; a kill not bound to the declared case; an anchor absent or occurring more than once; a table edited after the freeze; a target digest differing from the frozen release pin without a disclosed instrument_supersessions entry."
+  },
+  {
+   "id": "R84-C3",
+   "axis": "coverage",
+   "predicate": "tools/round-84/nested-sqfs.py reports A1-A9 true, the file-count control firing, met true and exit 0 for a reproducible three-level little-endian SquashFS v4 gzip chain through REA 6.5.0 extract-firmware: 8 of 8 oracle members with matching bytes at max-depth 3 and 4, depth-3 coverage partial with exactly one depth-limited path at the deepest extract root and level-3 analysis_depth null, depth-4 coverage complete with level-3 analysis_depth 3, and equal unblob engine identity across both runs",
+   "kill_rule": "Any arm false; the control not firing; an error envelope instead of an extraction; fixture digests changing between the two depth runs; an engine identity difference; a changing predicate, fixture recipe or depth pair."
+  }
+ ],
+ "instruments": {
+  "tools/round-84/freeze-precheck.py": "4aae3f26d2c8f5db27d4c91e8ec3facfd24202a937e2dbcbde9263125127380e",
+  "tools/round-84/mutation-closure.py": "e5cfd2ededbdfa7af4b6d2a40cfc23685edc58828f971efd4a5739a07904f6ad",
+  "tools/round-84/nested-sqfs.py": "c79dc9b2e1fffcae9f1b8205e29064041c728130c8f9498034e1a7795bea0321"
+ },
+ "fixtures": {
+  "path": ".ufo/waves/round-84/mutants.json",
+  "rev": "e0de2088a7bddc16305357f90ac7e889fa0a0d11",
+  "sha256": "dbb6d4c93df656d4c8341dee8a42e9256ba77e1d2e56ecda5b07d1db77b8982b"
+ },
+ "frozen_instruments": {
+  "tools/round-84/freeze-precheck.py": "602239f5f52009f2211c2343c43c8cc97e5941b0e8815e225bddc32e72780326",
+  "tools/round-84/mutation-closure.py": "fd8aee39bdfaa1aa51d1de9a175a77be9770dd6f3e68571ca798b8f6bdbad084",
+  "tools/round-84/nested-sqfs.py": "08353f361ebc687abfde7609a310184cdbcf8c69da3767886f15580ea3b5d4b0"
+ },
+ "target_instruments": {
+  "tools/round-82/conjunction-gate.py": "f009009993160ca40dd55d771f8c05ce1e32799c22450f5430cae2c6e0bf163a",
+  "tools/round-82/printed-command.py": "91a01190bed4e5cd957177b77e6633e2928ead2a6b8bac581ee5ab7193b92a9f",
+  "tools/round-83/source-bind.py": "3986706e1502cbf90d414ce3cc0c837d12cc0e99f212d2980d87f24d4c3cc4cd"
+ },
+ "instrument_supersessions": [
+  {
+   "path": "tools/round-84/freeze-precheck.py",
+   "commit": "b15d8083baf4f6de420fb452bcec13a87f4bb22a",
+   "reason": "The instruments-only control is scored per container, so the claim's control is the defective container's own acceptance rather than the last container's, with a selftest case pinning the per-container rule (CriticClaims refutation 1 on the frozen bytes). Frozen predicate, containers and target unchanged."
+  },
+  {
+   "path": "tools/round-84/mutation-closure.py",
+   "commit": "b15d8083baf4f6de420fb452bcec13a87f4bb22a",
+   "reason": "SentinelScope's escape probe showed a table-supplied mutant id joined under --work could write outside it (unsafe_component() now refuses separators, parent and absolute spellings before any write, selftest unsafe-id-refused), and CriticClaims' table-drop probe showed the frozen table's bytes were not compared to the container's fixtures.sha256 (table_identity() now fails the run on a mismatch, selftest table-digest-match/mismatch). The 13-row table, its anchors and the kill binding are unchanged."
+  },
+  {
+   "path": "tools/round-84/nested-sqfs.py",
+   "commit": "b15d8083baf4f6de420fb452bcec13a87f4bb22a",
+   "reason": "ReviewerC3 probes: a dropped analysis_depth key scored as null (the arms now require the key present, selftest dropped-analysis-depth-fails), and CriticClaims refutation 5 showed deepest-analyzed was vacuously true at depth 4 because no level-4 file exists (the arm now selects the chain's deepest level and requires depth beyond it, selftest deepest-level-depth-mismatch-fails); an unused tempfile import was removed. Arms A1-A9, fixture recipe and depth pair unchanged."
+  },
+  {
+   "path": "tools/round-82/printed-command.py",
+   "commit": "b15d8083baf4f6de420fb452bcec13a87f4bb22a",
+   "reason": "ExecPcDetectors candidate integrated: sourced_arm takes the row id and base revision as keyword defaults (production values unchanged) and seven declared cases drive the production run path and sourced_arm. Frozen predicates and the mutant table unchanged."
+  },
+  {
+   "path": "tools/round-83/source-bind.py",
+   "commit": "b15d8083baf4f6de420fb452bcec13a87f4bb22a",
+   "reason": "ExecSbDetectors candidate integrated: two declared boundary fixtures (late-single-header, duplicate-target-second). Grammar function, CLI and receipts byte-identical."
+  },
+  {
+   "path": "tools/round-84/mutation-closure.py",
+   "commit": "4419abf6bf27a4d39917fc70d905fd6b17b26e23",
+   "reason": "Documentation-only revision: the module docstring said an absent declared case is inconclusive while the code and SKILL row score it as a survivor (ScoutLoci F7). Selftest, kill binding and the frozen table are unchanged; the landing receipt is re-run at the revision that carries these bytes (old sha256 f4be0217541a5ec0d9b1a3b23be16ba9e7da61fb86ac0358d16ebb046dbf1055, new e5cfd2ededbdfa7af4b6d2a40cfc23685edc58828f971efd4a5739a07904f6ad)."
+  }
+ ]
+}

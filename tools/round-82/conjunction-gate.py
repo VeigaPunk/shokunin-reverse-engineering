@@ -391,6 +391,9 @@ def selftest() -> tuple[dict, int]:
     check("detector-nonunique-refused",
           not ok and "detector_absent_or_passing" in defects)
 
+    # R85-C2 (cg-frozen-detector-ge): one guarded entry; builder at file end.
+    check("frozen-duplicate-detector-refused", r85c_frozen_detector_ge())
+
     # rule order is deterministic on a state failing two conjuncts
     both = copy.deepcopy(base)
     both["binder_sha256"] = WRONG_BINDER
@@ -430,6 +433,20 @@ def selftest() -> tuple[dict, int]:
     print(json.dumps(summary, indent=1, sort_keys=True))
     print(f"SELFTEST cases={len(cases)} failures={len(failures)}")
     return summary, 0 if not failures else 1
+
+
+def r85c_frozen_detector_ge() -> bool:
+    """cg-frozen-detector-ge: a duplicated detector row is not frozen-killed.
+
+    The re-derived frozen rule requires exactly one declared-case detector row
+    (``len(detector) == 1``); a synthetic genuine receipt with that row
+    duplicated must therefore be refused (frozen_killed False), so a relaxed
+    ``>= 1`` membership cannot accept it.
+    """
+    receipt = synthetic_genuine()
+    receipt["mutant"]["cases"] = receipt["mutant"]["cases"] + [
+        {"case": CASE, "pass": False}]
+    return frozen_killed(receipt) is False
 
 
 def main() -> int:

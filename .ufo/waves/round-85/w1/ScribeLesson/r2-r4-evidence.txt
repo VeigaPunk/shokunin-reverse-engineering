@@ -1,0 +1,107 @@
+=== E1: R2 grep (exact command from brief) ===
+$ git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 91eeb72f:corpus/SOURCES.md | grep -n -F 'rea-agents-6.5.0.tgz'
+85:| S079 | Evidence-ID minting and projection source in the rea-agents 6.5.0 package tarball https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz (members `package/dist/...`), read from the installed copy at `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/`, which is file-for-file identical to the tarball (S080) — package root `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/` (`domain/evidence.js`, `domain/canonicalDigest.js`, `application/DirectAnalysis.js`, `application/binaryDiagnostics/BinaryLayoutService.js`, `domain/analysisView/analysisView.js`, `domain/analysisView/binaryLayoutView.js`) | code | A | How rea-agents@6.5.0 mints an `ev_` Evidence identifier and projects it into native-reader output: the hashed semantic projection and the call sites that feed it; not the per-verb identity outcomes this round measured | Package `6.5.0`; `domain/evidence.js:156-180` hashed field list, `:181-182` id rule, `:234-240` mint, sha256 `f992d93eaf228bf8d7c6bc3bf566f4ff4554b53299f35cd7ff29e3b18a78dcff`; `domain/canonicalDigest.js:8-25` sha256 `f46d6bd4dd94835504d71b396cd9e1b995e5eff7da17a618d374c48765be81d9`; `application/DirectAnalysis.js:72-82` sha256 `09d2b2225dd9817674f3a454d33447a6a917e82441f2081c6553511e2dc72617`; `application/binaryDiagnostics/BinaryLayoutService.js:54-68` sha256 `b7c249a7ba2bdc88287961c4259f0cb41d9e00b7270b56dac618dfc5e7cac2f4`; `domain/analysisView/analysisView.js:504,556` sha256 `2685fc2c0f6dda136b9bc004ab3af30d4272b850b1a8d026ad14b2e22ef68363`; `domain/analysisView/binaryLayoutView.js:71-73` sha256 `5bd86489988b6cf4cb59bd6085805accdd83277870578426baebff687ff7b070`; opened 2026-10-22 | An `ev_` identifier is `ev_` plus the SHA-256 of a canonical-JSON projection of the record's semantic fields: the subject contributes only digest, format and architecture, never its path, while parameters, results and locations are hashed, so any path carried in those fields changes the identifier. | mined | 2026-10-22 | on-release | corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md, corpus/lessons/round-26.md, corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md, corpus/lessons/round-27.md |
+86:| S080 | rea-agents 6.5.0 npm registry record — https://registry.npmjs.org/rea-agents/6.5.0 (tarball https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz; packument https://registry.npmjs.org/rea-agents) | dataset | A | Publish identity and integrity of rea-agents@6.5.0 as served by the npm registry, and the identity of the npx-installed copy the R26-C1 runs use; not the package's runtime behaviour | Version document `dist.integrity` `sha512-C6BG7LyrAdR74mSjertM6PrxJkcNZ2bfQNOJornPo9erDEp2tyPRVYPnV5Yodr+1RqewCQla68WulXlVnveD+A==`, `dist.shasum` `7ea5e6f669bc18c45dbf5dba653edaa1ada07ab3`; packument `time["6.5.0"]` `2026-10-14T12:56:14.513Z`; attestation `https://registry.npmjs.org/-/npm/v1/attestations/rea-agents@6.5.0`, predicate `https://slsa.dev/provenance/v1`, `resolvedDependencies[0].digest.gitCommit` `3b79af28e80785afce9f5998d8f03289402a1847`; npx lock `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/.package-lock.json` entry `node_modules/rea-agents`; fetched bytes sha256 `52184d3129b17c15a223736c48a3235038f26aa8aaa959f30a4b0931453b5cde` (version document), `bfa6974e131d1bafa18cbfd5d2b590c9ae9ee9965916e0c45014f3e8fce36450` (packument), `af5a2c203702c99a70713075860cdf87ef108383cc74d3e020a235ad2d7bdf0b` (attestation); opened 2026-10-22 | The 6.5.0 tarball behind the R26-C1 runs is the registry's own published artefact: the npx-cached tarball's sha512 and sha1 equal `dist.integrity` and `dist.shasum`, and the installed tree is file-for-file identical to that tarball, so the pin is a named registry record rather than a local directory. | mined | 2026-10-22 | on-release | corpus/knowledge/2026-10-22-r26-native-reader-evidence-id-identity.md, corpus/lessons/round-26.md |
+89:| S083 | rea-agents 6.5.0 Ghidra target-snapshot naming code — installed `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/cli-runtime/binary-BVOr2mgE.js` (the bundled runtime the CLI runs), `dist/ghidra/GhidraTargetSnapshot.js` (same logic) and `bridge/ghidra/ReaGhidraBridge.java`, members of the tarball https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz (identity in S080) | code | A | How the 6.5.0 CLI names the file Ghidra imports, which becomes the program name reported as `document`; not the Hopper route, Windows behaviour or other pins | binary-BVOr2mgE.js sha256 `64c07dae6fe8b79a2015550cd8de208bc41f7b325dddd7262031ef76820c00df` `:293` (realpath), `:5261` (snapshot name), `:5318` (suffix rule); GhidraTargetSnapshot.js sha256 `a27e410752f5474b3a97f7388bf8fdace65d21d5dad8858ad3c27e310f03f52b` `:13-14`, `:76-78`; ReaGhidraBridge.java sha256 `db16aed4d16ab94da883843281ef7a8a33a244cd8379bd4013e8dee479c0a105` `:1972-1976` (`listDocuments` returns `currentProgram.getName()`) | The extension of the resolved target path enters the snapshot name `target-<sha256[0:12]><suffix>` (suffix kept if it matches `^\.[A-Za-z0-9]{1,12}$`, else `.bin`), so it enters the `analyze` and `inspect` evidence ids | mined | 2026-10-22 | on-release | corpus/knowledge/2026-10-22-r27-renamed-copy-evidence-id-identity.md, corpus/lessons/round-27.md |
+96:| S090 | rea-agents 6.5.0 Rust auditable-reader implementation — https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz (members `package/dist/...`), compared with `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/` | code | A | The `inspect_rust_binary` reader's Rust dependency-section gates, input/section/inflate/output/nesting limits, schema/root/index checks and refusal messages; not observed REA outcomes | Tarball SHA-256 `531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699`; `RustAuditableReader.js` SHA-256 `1f3748c9ed6d04721a9bef364195e5d9b3d86794088c8594a366a9fb97fd6505`, `:5-14,51-57,78-94,136-170,188-205,220-285,299-309`; `RustBinaryImage.js` SHA-256 `08adaa596386428c84c2a8faa5d9e7b80199c14e5650ebd9fca41acd236ea681`, `:42-56`; `GoElfImage.js` SHA-256 `ee88b9cd54763d7106068d4ba4055eac8f6c57218bc34aaed5dc9eecaa483204`, `:181-195`; bundled `dist/cli-runtime/cli.js` SHA-256 `168cd322a29c9baed02d7e44ab5ae9b2634b3f5b872ff5fcfa3bd20b718e2204`, `:5117,5176-5218,5284-5310,5390-5410,5453-5457` | Grounds the frozen R30-C2 predictions in the matching published 6.5.0 reader and CLI-bundled implementation; actual prediction agreement requires the live C2 run and its receipts. | mined | 2026-10-23 | on-release | corpus/knowledge/2026-10-23-r30-rust-auditable-refusals.md |
+98:| S092 | rea-agents 6.5.0 SQLite database-inspection implementation — https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz (members `package/dist/...`), compared with `/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents/dist/` | code | A | The 6.5.0 `inspect_sqlite_database` implementation: input contract and limits, SQLite/WAL/journal snapshot, bounded read-only worker inspection, and result/error shaping; not observed REA outcomes | Tarball SHA-256 `531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699`; byte-identical to installed copy: `SqliteDatabaseFailures.js` SHA-256 `5a908695ec398079e97750bf60ece6ac273bdc74f06f7c9c1fd5777cfa90d419` `:25-26,104-105`; `SqliteDatabaseInspection.js` SHA-256 `edfcd90f9e2e1dbde531b6aafc4efb1bd105a372df617dee619a414425354970` `:358-367`; `SqliteDatabaseLimits.js` SHA-256 `92df76ffd21386dba134051791230e9d143220854a49e3e65e72d51daa074121` `:1-8`, especially `:4`; `SqliteDatabaseProvider.js` SHA-256 `018756d9d7f620995c9b8929d268c33ff1f7c973683bd0f4ddc6d781e5268104` `:18-19,150-169`; `SqliteDatabaseSnapshot.js` SHA-256 `c8af51f8496703a1992e7e7646c8bf8b6c56796a7571f5f8e9c84a284740ce19` `:104-121,134`; `SqliteDatabaseWorker.js` SHA-256 `ebb39f583db802ccb31b3ac328b0f8dd712fa6f0e5dd5a63da6908d7fe60cf63` `:11-20,38-41`; `SqliteDatabaseWorkerExecution.js` SHA-256 `6e49c2ab222982434d769fd279ad8053b857d6747f9b1101e07163d8a5e4c203` `:59-82,94`; `domain/sqlite/sqliteDatabase.js` SHA-256 `c7a0eff5674414110085ecf0257a71c1949de7e27be392ef2d8c8bd8cf000ae1` `:90-94`; `artifacts/readStableArtifact.js` SHA-256 `06a23746346a3de150f1aa21b781fffd8a482c0f5e98900c458f3f599b9d2707` `:29-32` | Follow the pinned SQLite path from bounded input and artifact capture through read-only worker inspection and validated output; use live receipts, not implementation alone, to establish observed refusals. | mined | 2026-10-23 | on-release | corpus/knowledge/2026-10-23-r31-sqlite-refusals.md, corpus/knowledge/2026-10-23-r31-sqlite-positive.md |
+125:| S119 | rea-agents 6.5.0 published package, firmware publication and gap schema — https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz | code | A | REA 6.5.0's extraction-gap kinds, the `dependencies` field, `unpublished_entries` and how unblob reports reach `diagnostics`; not unblob's own decisions, not other REA versions | tarball sha256 531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699, integrity sha512-C6BG7LyrAdR74mSjertM6PrxJkcNZ2bfQNOJornPo9erDEp2tyPRVYPnV5Yodr+1RqewCQla68WulXlVnveD+A== equal to `npm view` and to S080; all 1574 dist files equal the installed copy; `dist/domain/firmware/firmwareAnalysis.js:84-91` six gap kinds, `:100` "Extractor executables named by the producer; empty when it named none."; `dist/firmware/FirmwarePublication.js:68-75,301-308` non-file entries become `unpublished-entry` | Read gap kind, dependency name and diagnostics together; a dependency row suppresses the failure row for the same chunk | mined | 2026-10-26 | on-release | corpus/knowledge/2026-10-26-r39-sqfs-outcome-triage.md, corpus/knowledge/2026-10-26-r40-sqfs-triage-v2.md |
+129:| S123 | rea-agents 6.5.0 published package, envelope `operation`/provider assignment and operation surface — https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz | code | A | which REA 6.5.0 code sets an Evidence envelope's `operation` and `provider.id`, the `extract_firmware`→`unblob` and `inspect_firmware_regions`→`binwalk` pairing, the operation catalog and CLI command map, and which commands read a SquashFS file; not gap kinds, `dependencies` or `unpublished_entries` (S119), not unblob's own behaviour, not other REA versions | tarball sha256 531717a06e92ca651aab52691190f916fac044272c01f875e22c5e293218e699 re-downloaded 2026-10-26, equal to S119/S080; all 1574 `dist` files and `package.json` equal the installed copy; `dist/application/firmware/FirmwareAnalysisService.js:28-29` `createEvidence(execution.subject, execution.provider, { operation,`; `dist/firmware/FirmwareProvider.js:141` engine chosen by `request.operation`, `:281-284` catalog identity; `dist/firmware/FirmwareRelease.js:15-24` ids `binwalk`, `unblob`; `dist/domain/evidence.js:274-281`; `dist/cliCommandNames.js:162-182` CLI→operation aliases; `dist/domain/binaryTarget.js:11-24` | Gate a result on the envelope's own `operation` and `provider.id` before reading any firmware field: `extract_firmware`/`unblob` is the only pair that carries gaps and diagnostics, while `inspect_firmware_regions`/`binwalk`, `execute_rizin_command`/`rizin`, `inspect_with_objdump`/`gnu.objdump` and `inspect_evm_interface`/`evmole-interface` also exit 0 on a SquashFS file and carry none | mined | 2026-10-26 | 180d | corpus/knowledge/2026-10-26-r40-sqfs-triage-v2.md |
+219:| S303 | npm tarball `rea-agents-6.5.0.tgz` as authority for the extraction-gap taxonomy — https://registry.npmjs.org/rea-agents/-/rea-agents-6.5.0.tgz | code | A | Curation candidate: the packed package as an authority for gap-kind semantics | Opened 2026-11-04; the registry already holds this URL in five scopes (S083/S090/S092/S119/S123) and the packed bytes expose no stable anchor | REJECTED: a tarball is not an anchored document and the URL is already in scope; S302 is the anchored authority; flip: a published REA documentation URL that anchors the gap taxonomy | rejected | 2026-11-04 | on-release | corpus/lessons/round-84.md |
+
+=== E2: row ids only (field 2 of the table) ===
+85:| S079 
+86:| S080 
+89:| S083 
+96:| S090 
+98:| S092 
+125:| S119 
+129:| S123 
+219:| S303 
+
+=== E3: count (grep -c -F) ===
+8
+
+=== E4: which table column holds the URL per row (col 3 = source) ===
+line 85 row  S079 
+   col 3
+line 86 row  S080 
+   col 3
+line 89 row  S083 
+   col 3
+line 96 row  S090 
+   col 3
+line 98 row  S092 
+   col 3
+line 125 row  S119 
+   col 3
+line 129 row  S123 
+   col 3
+line 219 row  S303 
+   col 3
+
+=== E5: same count at the r84 spot-check commit b3084c8c and the r84 lesson commit 8ae9c8ee ===
+b3084c8c count: 8
+8ae9c8ee count: 8
+
+=== E6: R4 log -S (exact command from brief) ===
+$ git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin log --oneline -S 'met = all(arms)' 91eeb72f -- tools
+(no output: no commit under tools/ ever contained the literal 'met = all(arms)')
+
+=== E7: same pickaxe without the tools/ path filter (all paths, all refs) ===
+c1c81c7d round-85: wave r85-w1 spec, validated dispatch, and briefs (pre-dispatch evidence)
+152029d5 
+90fb817c 
+5dbe5691 
+b3084c8c round-84 verifier spot-check (integrator, hyaku): non-author admit/reject
+d2a4cbcb 
+5d3ec7f6 
+8ae9c8ee round-84: record the three claims, the capability rows, the lesson, the source and quality deltas and the landing receipts
+b937148e 
+
+=== E8: pickaxe for the aggregate met line still present in tools/ ===
+5b8a8984 
+e0de2088 round-84: freeze claim-metadata gate, mutation-closure counter and nested-chain counter with base controls
+f251f3af 
+c7df6105 
+
+=== E9: earliest committed revision of tools/round-84/nested-sqfs.py — score_envelope return + aggregate met ===
+159:        return {"depth": depth, "arms": {"envelope-readable": False},
+163:        return {"depth": depth, "arms": {"envelope-readable": True,
+201:    return {"depth": depth, "arms": arms, "observed": observed}
+241:            "met": all(arms.values()) and control["fires"]}
+
+=== E10: at the declaration rev 91eeb72f ===
+158:        return {"depth": depth, "arms": {"envelope-readable": False},
+162:        return {"depth": depth, "arms": {"envelope-readable": True,
+208:    return {"depth": depth, "arms": arms, "observed": observed}
+248:            "met": all(arms.values()) and control["fires"]}
+
+=== E11: the committed receipt that names the mutant (M84-4 evidence pointer) ===
+{
+ "mistake": "M84-2",
+ "mutant": "envelope met = all(mutually exclusive coverage arms)",
+ "exit": 0,
+ "failures": []
+}
+
+=== E12: commit that added that receipt ===
+4d110e00 
+b15d8083 round-84: integrate the seven printed-command and two source-bind declared cases, tighten the precheck control, the mutation table identity and the nested-depth arms; wave r84-w1 evidence
+--- ancestry of the named commit vs 91eeb72f ---
+b15d8083 ancestor-of-91eeb72f: YES
+4d110e00 ancestor-of-91eeb72f: NO
+
+=== E13: blob digest of the receipt at 91eeb72f ===
+3f25b6290496cbf802510b5b09d33b866b6265b3
+45e4bafa4927e11f3c13d18f3b7403f7058a9def0ac165429efd4a302160255f  -
+
+=== E14: does any committed revision of tools/ carry a per-run met inside score_envelope? ===
+26cd02e5 1
+3592bba7 1
+4d110e00 1
+b15d8083 1
+5b8a8984 1
+e0de2088 1
+f251f3af 1
+c7df6105 1

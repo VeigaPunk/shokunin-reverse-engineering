@@ -107,7 +107,11 @@ def selftest(json_out: str | None) -> int:
     script = os.path.abspath(__file__)
     checks: list[dict] = []
     try:
-        for name, text, sid, expected in FIXTURES:
+        # R85-C2 depth cases are built by the r85c_* functions at the end of
+        # this file; one case-tuple entry each, same shape as FIXTURES.
+        fixtures = FIXTURES + (r85c_entry_cites_no_em_dash_refused(),
+                               r85c_id_prefix_not_attributed())
+        for name, text, sid, expected in fixtures:
             entry = os.path.join(work, f"{name}.txt")
             if text is not None:
                 with open(entry, "w", encoding="utf-8") as handle:
@@ -147,6 +151,31 @@ def selftest(json_out: str | None) -> int:
               f"{'ok' if check['ok'] else 'FAIL'} rc={check['rcs']}")
     print(f"selftest: {'passed' if passed else 'FAILED'}")
     return 0 if passed else 1
+
+
+# --------------------------------------------------------------------------
+# round-85 R85-C2 depth cases (wave r85-w1, seat ExecSourceBind)
+# --------------------------------------------------------------------------
+
+def r85c_entry_cites_no_em_dash_refused() -> tuple:
+    """sb-emdash-optional: no em dash in the source field, nothing attributed.
+
+    The frozen grammar attributes only a ``source:`` header whose value is an
+    S-id list followed by space-em-dash-space; prose after the ids without the
+    em dash is commentary and must not attribute S299.
+    """
+    return ("entry-cites-no-em-dash-refused", "source: S299 is cited here\n",
+            "S299", 1)
+
+
+def r85c_id_prefix_not_attributed() -> tuple:
+    """sb-id-substring: S2999 is a longer id, not S299.
+
+    Attribution is exact membership over the comma-split id list, never a
+    substring test, so S299 stays unattributed on a header naming only S2999.
+    """
+    return ("id-prefix-not-attributed",
+            "source: S2999 — https://example.com/b\n", "S299", 1)
 
 
 # --------------------------------------------------------------------------

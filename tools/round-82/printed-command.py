@@ -688,8 +688,6 @@ def selftest(root: str, rev: str, json_out: str | None = None) -> int:
         state["corpus/SOURCES.md"] = row + "\n"
         return state
 
-    guarded("sourced-row-rejected-status", lambda: sourced_case(
-        [base_state, with_sources(row_queued)], ["SOURCED_ROW_UNMET"]))
     guarded("sourced-row-wrong-date", lambda: sourced_case(
         [base_state, with_sources(row_old)], ["SOURCED_ROW_UNMET"]))
     guarded("sourced-row-at-base", lambda: sourced_case(
@@ -706,8 +704,27 @@ def selftest(root: str, rev: str, json_out: str | None = None) -> int:
              "commands.md": entry_other}],
         ["SOURCED_ENTRY_UNCITED"]))
 
+    # R85-A cases
+    guarded("duplicate-row-first-binds", r85a_duplicate_row_first_binds)
+    guarded("id-prefix-not-bound", r85a_id_prefix_not_bound)
+    guarded("row-width-thirteen-exact", lambda: r85a_row_width_thirteen_exact(fixture_repo, base_state, full_state))
+    guarded("fully-mined-row-green", lambda: r85a_fully_mined_row_green(fixture_repo, base_state, full_state))
+    guarded("entry-second-source-line-ignored", r85a_entry_second_source_line_ignored)
+    guarded("sourced-row-rejected-status", lambda: r85a_sourced_row_rejected_status(fixture_repo, base_state, full_state, row_queued))
+    guarded("sourced-row-later-date", lambda: r85a_sourced_row_later_date(fixture_repo, base_state, full_state))
+
     for root in fixture_roots:
         subprocess.run(["rm", "-rf", "--", root])
+
+    # R85-B cases
+    guarded("dot-slash-script-refused", r85b_dot_slash_script_refused)
+    guarded("rc1-without-expectation-executable", r85b_rc1_without_expectation_executable)
+    guarded("string-counter-refused", r85b_string_counter_refused)
+    guarded("int-counter-equals-string-expectation", r85b_int_counter_equals_string_expectation)
+    guarded("static-defect-ledger-copied", r85b_static_defect_ledger_copied)
+    guarded("pipe-metachar-refused", r85b_pipe_metachar_refused)
+    guarded("ascii-ellipsis-refused", r85b_ascii_ellipsis_refused)
+    guarded("unbound-plan-variable-refused", r85b_unbound_plan_variable_refused)
 
     failures = sorted(k for k, v in cases.items() if not v)
     summary = {"selftest": "tools/round-82/printed-command.py",
@@ -783,6 +800,222 @@ def main() -> int:
         return battery(a.root, a.rev, a.work, a.json_out)
     print("usage: --run | --battery | --control | --selftest", file=sys.stderr)
     return 2
+
+
+# R85-C2 parser and sourced-arm fixtures exercise the production functions.
+# Git fixtures share selftest's work-root placement and cleanup.
+def r85a_duplicate_row_first_binds() -> bool:
+    first = "| S299 | first binding | docs | A | t | a | te | mined | 2026-11-04 | 90d | — |"
+    second = first.replace("first binding", "second binding")
+    with tempfile.TemporaryDirectory(prefix="printed-command-first-row-") as work:
+        ledger = Path(work) / "SOURCES.md"
+        ledger.write_text(first + "\n" + second + "\n", encoding="utf-8")
+        assert sources_row(ledger.read_text(encoding="utf-8"), "S299") == first
+    return True
+
+
+def r85a_id_prefix_not_bound() -> bool:
+    exact = "| S299 | exact binding | docs | A | t | a | te | mined | 2026-11-04 | 90d | — |"
+    prefix = exact.replace("S299", "S2999").replace("exact binding", "prefix decoy")
+    with tempfile.TemporaryDirectory(prefix="printed-command-prefix-row-") as work:
+        ledger = Path(work) / "SOURCES.md"
+        ledger.write_text(prefix + "\n" + exact + "\n", encoding="utf-8")
+        assert sources_row(ledger.read_text(encoding="utf-8"), "S299") == exact
+    return True
+
+
+def r85a_sourced_fixture(fixture_repo, base_state: dict[str, str],
+                         full_state: dict[str, str],
+                         row: str | None = None) -> dict:
+    state = dict(full_state)
+    if row is not None:
+        state[SOURCES] = row.rstrip("\n") + "\n"
+    fix, revs = fixture_repo([base_state, state])
+    return sourced_arm(fix, revs[-1], sid="S777", base_rev=revs[0])
+
+
+def r85a_row_width_thirteen_exact(fixture_repo, base_state: dict[str, str],
+                                 full_state: dict[str, str]) -> bool:
+    row = full_state[SOURCES].rstrip("\n") + " extra |"
+    assert len(row.split("|")) == 14
+    arm = r85a_sourced_fixture(fixture_repo, base_state, full_state, row)
+    assert arm["row_mined"] is False
+    assert arm["defects"] == ["SOURCED_ROW_UNMET"]
+    assert arm["met"] is False
+    return True
+
+
+def r85a_fully_mined_row_green(fixture_repo, base_state: dict[str, str],
+                              full_state: dict[str, str]) -> bool:
+    arm = r85a_sourced_fixture(fixture_repo, base_state, full_state)
+    assert arm == {
+        "arm": "sourced", "row_present": True, "row_mined": True,
+        "base_absent": True, "plan_names_row": True,
+        "entry_cites_row": True, "defects": [], "met": True,
+    }
+    return True
+
+
+def r85a_entry_second_source_line_ignored() -> bool:
+    with tempfile.TemporaryDirectory(prefix="printed-command-second-source-") as work:
+        entry = Path(work) / "entry.md"
+        entry.write_text(
+            "source: S260 — https://example.org/first\n"
+            "source: S299 — https://example.org/second\n",
+            encoding="utf-8")
+        assert entry_cites(entry.read_text(encoding="utf-8"), "S299") is False
+    return True
+
+
+def r85a_sourced_row_rejected_status(fixture_repo, base_state: dict[str, str],
+                                    full_state: dict[str, str],
+                                    row_queued: str) -> bool:
+    # Retain the original queued refusal and add the rejected status it missed.
+    rejected = full_state[SOURCES].replace("| mined |", "| rejected |")
+    for row in (row_queued, rejected):
+        arm = r85a_sourced_fixture(fixture_repo, base_state, full_state, row)
+        assert arm["row_mined"] is False
+        assert arm["defects"] == ["SOURCED_ROW_UNMET"]
+        assert arm["met"] is False
+    return True
+
+
+def r85a_sourced_row_later_date(fixture_repo, base_state: dict[str, str],
+                               full_state: dict[str, str]) -> bool:
+    row = full_state[SOURCES].replace("2026-11-04", "2026-11-05")
+    arm = r85a_sourced_fixture(fixture_repo, base_state, full_state, row)
+    assert arm["row_mined"] is False
+    assert arm["defects"] == ["SOURCED_ROW_UNMET"]
+    assert arm["met"] is False
+    return True
+# --------------------------------------------------------------------------
+# R85-B: declared-case selftests for the round-85 mutant table
+# (.ufo/waves/round-85/mutants.json). Each case drives a production entry
+# point (build_argv, run_block or static_defects) against a fixture git repo
+# or synthetic bytes and asserts the exact refusal token, defect token or
+# returned value named by its row.
+# --------------------------------------------------------------------------
+
+def r85b_fixture_repo(states: list[dict[str, str]]) -> tuple[str, list[str]]:
+    """Scratch git repo from per-commit file states; (root, revs)."""
+    root = tempfile.mkdtemp(prefix="printed-command-r85b-")
+    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+           "HOME": root, "LANG": "C.UTF-8", "TMPDIR": root}
+
+    def run(argv: list[str]) -> str:
+        done = subprocess.run(argv, env=env, capture_output=True, text=True)
+        if done.returncode != 0:
+            raise RuntimeError(f"{argv}: {done.stderr.strip()}")
+        return done.stdout
+
+    run(["git", "-C", root, "init", "-q"])
+    toplevel = run(["git", "-C", root,
+                    "rev-parse", "--show-toplevel"]).strip()
+    if toplevel != os.path.realpath(root):
+        raise RuntimeError("fixture root mismatch")
+    revs = []
+    for index, files in enumerate(states):
+        for rel, text in files.items():
+            target = os.path.join(root, rel)
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            Path(target).write_text(text)
+            run(["git", "-C", root, "add", "--", rel])
+        run(["git", "-C", root, "-c", "user.name=f", "-c",
+             "user.email=f@f", "commit", "-qm", f"state {index}"])
+        revs.append(run(["git", "-C", root, "rev-parse", "HEAD"]).strip())
+    return root, revs
+
+
+def r85b_member(counter_expr: str, exit_code: int) -> str:
+    """A pinned member script that writes {"refused": <expr>} then exits."""
+    return ("import json, pathlib, sys\n"
+            "argv = sys.argv[1:]\n"
+            "out = argv[argv.index('--json-out') + 1]\n"
+            "pathlib.Path(out).write_text(json.dumps({'refused': "
+            + counter_expr + "}) + '\\n')\n"
+            "sys.exit(" + str(exit_code) + ")\n")
+
+
+def r85b_run_case(command: str, pin: str, script_source: str,
+                  expect_counter: str | None = None) -> dict:
+    """run_block against a one-script fixture repo; the row it returns."""
+    fix, _ = r85b_fixture_repo([{
+        "member.py": script_source,
+        ".ufo/waves/round-82/claims.json": json.dumps(
+            {"instruments": {"member.py": pin}}),
+    }])
+    try:
+        work = os.path.join(fix, "work")
+        return run_block(fix, "HEAD", command, work,
+                         os.path.join(work, "out.json"), "refused",
+                         claim_pins(fix, "HEAD"),
+                         expect_counter=expect_counter)
+    finally:
+        subprocess.run(["rm", "-rf", "--", fix])
+
+
+def r85b_dot_slash_script_refused() -> bool:
+    pins = {"tools/round-82/conjunction-gate.py": "0" * 64}
+    try:
+        build_argv("python3 -I -B ./tools/round-82/conjunction-gate.py"
+                   " --rev $REV", "r", "/w", "/w/o.json", "/root", pins)
+    except Refused as exc:
+        return "SCRIPT_NOT_PINNED" in str(exc)
+    return False
+
+
+def r85b_rc1_without_expectation_executable() -> bool:
+    script = r85b_member("3", 1)
+    row = r85b_run_case("python3 -I -B member.py --rev $REV --json-out $OUT",
+                        sha256_bytes(script.encode()), script)
+    return bool(row["executed"] and row["rc"] == 1 and not row["defects"])
+
+
+def r85b_string_counter_refused() -> bool:
+    script = r85b_member("'3'", 0)
+    row = r85b_run_case("python3 -I -B member.py --rev $REV --json-out $OUT",
+                        sha256_bytes(script.encode()), script)
+    return bool(row["executed"] and row["rc"] == 0
+                and any(d.startswith("COUNTER_NOT_INTEGER")
+                        for d in row["defects"]))
+
+
+def r85b_int_counter_equals_string_expectation() -> bool:
+    script = r85b_member("13", 0)
+    row = r85b_run_case("python3 -I -B member.py --rev $REV --json-out $OUT",
+                        sha256_bytes(script.encode()), script,
+                        expect_counter="13")
+    return bool(row["executed"] and row["rc"] == 0 and not row["defects"]
+                and (row["counter"] or {}).get("matched") is True
+                and (row["counter"] or {}).get("value") == 13)
+
+
+def r85b_static_defect_ledger_copied() -> bool:
+    row = run_block("root", "rev",
+                    "python3 -I -B tools/round-82/conjunction-gate.py"
+                    " --rev <measured>", "work", "work/out.json", "refused",
+                    {}, expect_counter=None)
+    return bool(not row["executed"] and row["static_defects"]
+                and row["defects"] == row["static_defects"])
+
+
+def r85b_pipe_metachar_refused() -> bool:
+    defects = static_defects(
+        "python3 -I -B tools/round-82/conjunction-gate.py --rev $REV | wc -l")
+    return "SHELL_METACHAR: |" in defects
+
+
+def r85b_ascii_ellipsis_refused() -> bool:
+    defects = static_defects(
+        "python3 -I -B tools/round-82/conjunction-gate.py --rev $REV ...")
+    return "PLACEHOLDER_UNBOUND: abbreviation '...'" in defects
+
+
+def r85b_unbound_plan_variable_refused() -> bool:
+    defects = static_defects(
+        "python3 -I -B tools/round-82/conjunction-gate.py --plan $PLAN"
+        " --rev $REV")
+    return "VARIABLE_UNBOUND: $PLAN" in defects
 
 
 if __name__ == "__main__":

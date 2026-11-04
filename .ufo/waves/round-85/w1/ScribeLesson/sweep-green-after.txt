@@ -1,0 +1,19 @@
+# sweep-green-after.txt — R3 corrected pointer resolution (after the appended Correction, round 85 / C-R3)
+# lane root: /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+
+$ cd /home/vgpnk/Projects/shokunin/kaidoku-shokunin
+$ test -e .ufo/waves/round-84/w1/SentinelScope/esc-receipt.json && echo ok ...
+ok .ufo/waves/round-84/w1/SentinelScope/esc-receipt.json
+ok .ufo/waves/round-84/w1/SentinelScope/esc-receipt-abs.json
+
+# same sweep shape over the CORRECTED pointer spelling (all round-84 wave pointers the round-85 lesson cites):
+$ grep -o '\.ufo/waves/round-84[^ )`]*' $S/round-85-corrections-pointers.txt | sort -u | while read p; do test -e "$p" && echo "ok $p" || echo "MISSING $p"; done
+ok .ufo/waves/round-84/w1/SentinelScope/esc-receipt-abs.json
+ok .ufo/waves/round-84/w1/SentinelScope/esc-receipt.json
+
+# GREEN: both corrected pointers resolve in the lane tree (read-only test -e; no write).
+
+# blob-level proof at the declaration rev 91eeb72f:
+$ git cat-file -e 91eeb72f:.ufo/waves/round-84/w1/SentinelScope/esc-receipt.json && echo 'blob ok'
+blob ok
+blob-abs ok
