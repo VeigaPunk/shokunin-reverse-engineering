@@ -18,11 +18,13 @@ under its sha256 pin and calls its `measure()`, patching exactly five things:
 
   1. GAPRULE   -> tools/round-67/gap-rule-v2.json (pinned by RULE_V2_PIN), whose
                   `required.char-device` is false and whose `class_disposition`
-                  block states the reason; `allowed`/`removed`/`structural` are
-                  unchanged, so a gap that names a char device is still allowed
-                  and counted, the round-50 `removed.silent` row is kept (inert
-                  under the class rule), and every symlink stays per-row
-                  required.
+                  block states the reason; `allowed` and `structural` are
+                  unchanged and `removed` keeps its diagnostic, kinds and
+                  exclusive disposition, so a gap that names a char device is
+                  still allowed and counted and every symlink stays per-row
+                  required.  The round-50 `removed.silent.char-device` row is
+                  dropped: under `required.char-device false` no char-device row
+                  consults it, so the drop is inert and narrows nothing.
   2. AFTERDIR  -> corpus/evidence/round-67/c1 (fresh receipts, first added after
                   this round's freeze)
   3. ENTRY/STEM/CORE_HEADING/FRONTIER_MARK/OPENED_DATES -> the round-67
@@ -93,7 +95,7 @@ OPENED_DATES = ("2026-11-03",)
 PROV_BASE = "/fast/scratch/hyaku/kaidoku-r67/"
 PROV_SEGMENT = "/kaidoku-r67/"
 TARGET = 4
-RULE_V2_PIN = "b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0"
+RULE_V2_PIN = "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e"
 CONTROL_RECEIPT = ".ufo/waves/round-67/l1/pre/control-dryrun.json"
 # The round-42 rea-pkg pin's `package_lock_sha256` (d42d56f0) is no longer
 # reproducible on this host: a fresh npx cache resolves the same rea-agents
