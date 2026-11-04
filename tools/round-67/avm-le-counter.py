@@ -86,6 +86,23 @@ PROV_BASE = "/fast/scratch/hyaku/kaidoku-r67/"
 PROV_SEGMENT = "/kaidoku-r67/"
 TARGET = 4
 DROPPED_CLAUSES = ("carrier_fresh_ok",)
+# The round-42 rea-pkg pin's `package_lock_sha256` (d42d56f0) is no longer
+# reproducible on this host: a fresh npx cache resolves the same rea-agents
+# 6.5.0 artifact (package.json sha256 a5003023, unchanged) but a different
+# transitive lock (815c18f1).  The engine's evidence-id recompute binds the
+# package's own digest code, so the wrapper re-pins the package by version,
+# package.json sha256 and the lock this host actually resolves, and records the
+# substitution in every receipt.  This is an environment re-pin, not a clause
+# change: evidence_id_ok still has to pass.
+REA_PKG_R67 = {
+    "schema": "kaidoku-r67-rea-pkg-v1",
+    "name": "rea-agents",
+    "version": "6.5.0",
+    "package_root": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents",
+    "package_json_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c",
+    "package_lock_sha256": "815c18f14daefceeee603065a291e008330ae1af763639e31bab52a58373f803",
+    "supersedes": "tools/round-42/rea-pkg.json package_lock_sha256 d42d56f0 (the npm registry re-resolved the transitive set; a fresh npx cache reproduces 815c18f1 today, and no copy of the old lock bytes survives)",
+}
 PREDICATE = (
     "R67-C1 is verified iff the pinned round-50 scoring engine, run under the "
     "round-67 gap rule and the round-67 documentation bindings, reports "
@@ -137,6 +154,31 @@ def claims_predicate(path: Path) -> str:
     return pred
 
 
+def rea_package_problems_r67(mod, root, freeze, pkg65):
+    """The engine's check with the round-67 re-pin (version + manifest + lock)."""
+    import os
+    probs = []
+    doc = REA_PKG_R67
+    if doc["version"] != mod.REA_VERSION:
+        probs.append("rea-pkg version %r != %r" % (doc["version"], mod.REA_VERSION))
+    pkg_root = os.path.abspath(pkg65)
+    lock_candidates = [os.path.join(os.path.dirname(pkg_root), "package-lock.json"),
+                       os.path.join(os.path.dirname(os.path.dirname(pkg_root)),
+                                    "package-lock.json")]
+    lock_path = next((p for p in lock_candidates if os.path.isfile(p)), None)
+    candidates = (("package.json", os.path.join(pkg_root, "package.json"),
+                   "package_json_sha256"),
+                  ("package-lock.json", lock_path, "package_lock_sha256"))
+    for name, p, key in candidates:
+        want = doc.get(key)
+        got = mod.file_sha256(p) if p else None
+        if got is None:
+            probs.append("%s unreadable beside --pkg65" % name)
+        elif got != want.lower():
+            probs.append("%s sha256 %s != round-67 pin %s" % (name, got, want))
+    return probs, doc, "tools/round-67/avm-le-counter.py:REA_PKG_R67"
+
+
 def patch_engine(mod, rule: Path, work: Path, repo: Path) -> dict:
     """The six disclosed patches.  Everything else is the pinned engine."""
     # the engine reads its rule through `git show <rev>:<path>`, so the patched
@@ -158,11 +200,15 @@ def patch_engine(mod, rule: Path, work: Path, repo: Path) -> dict:
     os.makedirs(str(work), exist_ok=True)
     kept = tuple(c for c in mod.CLAUSES if c not in DROPPED_CLAUSES)
     mod.CLAUSES = kept
+    mod.rea_package_problems = lambda root, freeze, pkg65: rea_package_problems_r67(
+        mod, root, freeze, pkg65)
     return {"gap_rule": str(rule), "afterdir": AFTERDIR, "entry": ENTRY,
             "stem": STEM, "core_heading": CORE_HEADING,
             "frontier_mark": FRONTIER_MARK, "opened_dates": list(OPENED_DATES),
             "prov_base": PROV_BASE, "prov_segment": PROV_SEGMENT,
-            "clauses": list(kept), "dropped_clauses": list(DROPPED_CLAUSES)}
+            "clauses": list(kept), "dropped_clauses": list(DROPPED_CLAUSES),
+            "rea_pkg": "round-67 re-pin (version + package.json sha256 + the lock this host "
+                       "resolves); the r42 lock d42d56f0 is no longer reproducible"}
 
 
 def emit(doc: dict, out) -> None:
