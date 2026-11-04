@@ -323,8 +323,8 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
             raise Unevaluable("landing material unusable for landing-world shapes")
         path = write_shape(shape_dir, shape, lmat, base_rev)
         p = run([sys.executable, "-I", "-B", probe_blob, "--root", root,
-                 "--rev", rev, "--tool", tool, "--pkg", pkg, "--work", shape_dir,
-                 "--receipt", path])
+                 "--rev", superseded_rev, "--tool", tool, "--pkg", pkg,
+                 "--work", shape_dir, "--receipt", path])
         pjson = json_out(p["stdout"]) or {}
         armmap = {a.get("id"): a.get("ok") for a in (pjson.get("arms") or [])
                   if a.get("id") in ("A5_carrier_record", "A6_packer_pin")}
@@ -372,13 +372,14 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
         lying_rows.append(row)
     # the genuine receipts still pass the frozen readers
     g = run([sys.executable, "-I", "-B", reader, "--check-receipt",
-             landing_material_path, "--root", root, "--rev", rev])
+             landing_material_path, "--root", root, "--rev", superseded_rev])
     gjson = json_out(g["stdout"]) or {}
-    gp = run([sys.executable, "-I", "-B", probe_blob, "--root", root, "--rev", rev,
-              "--tool", tool, "--pkg", pkg, "--work", scratch,
-              "--receipt", landing_material_path])
+    gp = run([sys.executable, "-I", "-B", probe_blob, "--root", root,
+              "--rev", superseded_rev, "--tool", tool, "--pkg", pkg,
+              "--work", scratch, "--receipt", landing_material_path])
     gpjson = json_out(gp["stdout"]) or {}
     genuine = {"checker_rc": g["rc"], "met": gjson.get("met"),
+               "rev": superseded_rev,
                "probe_rc": gp["rc"], "probe_arms_passed": gpjson.get("arms_passed"),
                "probe_target": gpjson.get("target")}
     if g["rc"] != 0 or gjson.get("met") is not True:
@@ -537,6 +538,11 @@ def validate(path: str) -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"validate": "forged-receipts-battery", "unevaluable": str(exc)}))
         return 2
+    if not isinstance(receipt, dict):
+        print(json.dumps({"validate": "forged-receipts-battery",
+                          "unevaluable": f"receipt root is {type(receipt).__name__}, "
+                                        f"not an object"}))
+        return 2
     defects = []
     shapes = receipt.get("shapes")
     if not isinstance(shapes, list) or not shapes:
@@ -546,6 +552,8 @@ def validate(path: str) -> int:
             defects.append(f"{s.get('shape')}: shape or clause absent")
         if s.get("base_rc") != 0 or s.get("landing_rc") != 1:
             defects.append(f"{s.get('shape')}: rc pair not (0, 1)")
+        if s.get("clause_found") is not True:
+            defects.append(f"{s.get('shape')}: clause not found")
     lying = receipt.get("lying_shapes")
     if lying is not None:
         if not isinstance(lying, list) or len(lying) != 6:

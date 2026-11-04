@@ -83,17 +83,28 @@ def check(root: str, work: str, probe: str, battery: str, census: str) -> dict:
         try:
             with open(os.path.join(root, R70_LANDING), encoding="utf-8") as fh:
                 r70_landing = json.load(fh)
-            expect_upx = r70_landing["carriers"][0]["runs"]["pack"]["argv"][0]
-        except (OSError, json.JSONDecodeError, KeyError, IndexError) as exc:
+        except (OSError, json.JSONDecodeError) as exc:
             raise Unevaluable(f"round-70 landing receipt unusable: {exc}")
-        os.makedirs(os.path.dirname(expect_upx), exist_ok=True)
+        # A receipt must never grant a write destination (SentinelScope SS-1):
+        # the pinned packer is copied into THIS control's scratch and a
+        # scratch-owned fixture receipt carries that path in every argv[0].
+        expect_upx = os.path.join(scratch, "upx-pinned-copy")
         shutil.copy2("/usr/bin/upx", expect_upx)
         os.chmod(expect_upx, 0o755)
+        fixture = json.loads(json.dumps(r70_landing))
+        for c in fixture.get("carriers") or []:
+            for name in ("pack", "unpack"):
+                argv = ((c.get("runs") or {}).get(name) or {}).get("argv")
+                if isinstance(argv, list) and argv:
+                    argv[0] = expect_upx
+        fixture_path = os.path.join(scratch, "round-70-receipt-argv-relabelled.json")
+        with open(fixture_path, "w", encoding="utf-8") as fh:
+            json.dump(fixture, fh)
         base = run([sys.executable, "-I", "-B", probe, "--root", root,
                     "--rev", R70_REV, "--tool", "tools/round-70/packed-elf.py",
                     "--battery", "tools/round-70/mutation-check.py",
                     "--pkg", REA_PKG, "--work", scratch,
-                    "--receipt", R70_LANDING,
+                    "--receipt", fixture_path,
                     "--expect-upx", expect_upx])
         bjson = json_out(base["stdout"]) or {}
         passed = bjson.get("arms_passed")
@@ -104,7 +115,8 @@ def check(root: str, work: str, probe: str, battery: str, census: str) -> dict:
                                             "A9_concurrent_collision",
                                             "A10_run_binding"},
                         {"rc": base["rc"], "arms_passed": passed,
-                         "failed": failed}))
+                         "failed": failed, "receipt_relabelled": True,
+                         "expect_upx": expect_upx}))
 
         # c1-constant-probe: a ten-arm receipt with no observations is rejected.
         const = {"instrument": "tools/round-71/packed-elf.py",
@@ -130,12 +142,13 @@ def check(root: str, work: str, probe: str, battery: str, census: str) -> dict:
         shapes = len(base_receipt.get("shapes") or [])
         landing = len(base_receipt.get("landing_probe_shapes") or [])
         lying = len(base_receipt.get("lying_shapes") or [])
+        forged_total = shapes + landing + lying
         arms.append(arm("c2-do-nothing",
                         shapes == 10 and landing == 2 and lying == 0,
                         {"base_world_shapes": shapes,
                          "landing_world_shapes": landing,
-                         "lying_shapes": lying, "forged_total": shapes + lying,
-                         "target": 16}))
+                         "lying_shapes": lying, "forged_total": forged_total,
+                         "target": 18}))
 
         # c2-constant-battery: six lying rows whose rc pair is (0, 0).
         const_bat = {"schema": "kaidoku-r71-forged-receipts-v1",
@@ -206,6 +219,11 @@ def validate(path: str) -> int:
             receipt = json.load(fh)
     except (OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"validate": "controls-receipt", "unevaluable": str(exc)}))
+        return 2
+    if not isinstance(receipt, dict):
+        print(json.dumps({"validate": "controls-receipt",
+                          "unevaluable": f"receipt root is {type(receipt).__name__}, "
+                                        f"not an object"}))
         return 2
     defects = []
     arms = receipt.get("arms")

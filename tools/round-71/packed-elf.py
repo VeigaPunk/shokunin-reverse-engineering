@@ -53,7 +53,8 @@ Frontier line "runtime env-capture/concurrent-scratch coverage of the seam
 arms"): every child of the route - packer, REA node, readelf, git - runs under
 the SAME pure `build_child_env(run_root)` allowlist, and with
 `--child-env-log <path>` the route records each child's OBSERVED environment
-(the launcher writes `/proc/self/environ` before exec) into a JSONL log and
+(the launcher writes its own `os.environ` - the block `execvp` passes to the
+child - before exec) into a JSONL log and
 summarises it in the receipt (`child_env_observed`: records, keys,
 all_allowlisted, home_under_run, tmpdir_under_run, canary_present, children).
 `--challenge <32-hex>` plus `--nonce-commitment <sha256>` bind the receipt to a
@@ -176,6 +177,7 @@ REGISTERED_CASES = [
     "nonce-hex-reject",
     "observed-env-allowlist",
     "observed-env-canary",
+    "observed-env-sibling-prefix",
     "nonce-clause-absent",
     "nonce-clause-mismatch",
     "nonce-clause-clean",
@@ -208,8 +210,8 @@ def child_env_audit(env: dict, work: str) -> dict:
     root = os.path.abspath(work)
     return {"keys": sorted(env), "allowlist": list(CHILD_ENV_KEYS),
             "home": env.get("HOME"), "tmpdir": env.get("TMPDIR"),
-            "home_under_work": str(env.get("HOME", "")).startswith(root),
-            "tmpdir_under_work": str(env.get("TMPDIR", "")).startswith(root),
+            "home_under_work": under(root, env.get("HOME", "")),
+            "tmpdir_under_work": under(root, env.get("TMPDIR", "")),
             "work": root}
 
 
@@ -302,6 +304,15 @@ os.execvp(sys.argv[2], sys.argv[2:])
 NONCE_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
+def under(root: str, path: str) -> bool:
+    """True when path is root itself or a descendant (no sibling-prefix match)."""
+    try:
+        root_abs = os.path.abspath(root)
+        return os.path.commonpath([root_abs, os.path.abspath(str(path))]) == root_abs
+    except (TypeError, ValueError):
+        return False
+
+
 def run(argv: list[str], timeout: int = 900, env: dict | None = None,
         capture: str | None = None) -> dict:
     real = list(argv)
@@ -347,9 +358,9 @@ def observed_env(log_path: str | None, run_root: str) -> dict | None:
             "all_allowlisted": bool(envs) and all(
                 sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs),
             "home_under_run": bool(envs) and all(
-                str(e.get("HOME", "")).startswith(root) for e in envs),
+                under(root, e.get("HOME", "")) for e in envs),
             "tmpdir_under_run": bool(envs) and all(
-                str(e.get("TMPDIR", "")).startswith(root) for e in envs),
+                under(root, e.get("TMPDIR", "")) for e in envs),
             "canary_present": any("KAIDOKU_ENV_CANARY" in e for e in envs),
             "children": children}
 
@@ -396,14 +407,15 @@ def nonce_clauses(receipt: dict, commitment: str) -> list[str]:
     return failing
 
 
-def rea(pkg: str, env: dict, *args: str) -> dict:
+def rea(pkg: str, env: dict, *args: str, capture: str | None = None) -> dict:
     return run(["node", os.path.join(pkg, "scripts", "rea.mjs"), *args],
-               timeout=900, env=env)
+               timeout=900, env=env, capture=capture)
 
 
-def analyze(pkg: str, path: str, receipt_path: str, env: dict) -> tuple[dict, dict]:
+def analyze(pkg: str, path: str, receipt_path: str, env: dict,
+            capture: str | None = None) -> tuple[dict, dict]:
     """Run REA analyze, keep the raw envelope, return (envelope, run record)."""
-    rec = rea(pkg, env, "analyze", "--format", "json", path)
+    rec = rea(pkg, env, "analyze", "--format", "json", path, capture=capture)
     env = {}
     try:
         env = json.loads(rec["stdout"]) if rec["stdout"].strip() else {}
@@ -414,8 +426,10 @@ def analyze(pkg: str, path: str, receipt_path: str, env: dict) -> tuple[dict, di
     return env, rec
 
 
-def decompile(pkg: str, path: str, address: str, env: dict) -> dict:
-    rec = rea(pkg, env, "decompile", path, address, "--format", "json")
+def decompile(pkg: str, path: str, address: str, env: dict,
+              capture: str | None = None) -> dict:
+    rec = rea(pkg, env, "decompile", path, address, "--format", "json",
+              capture=capture)
     env = {}
     try:
         env = json.loads(rec["stdout"]) if rec["stdout"].strip() else {}
@@ -757,19 +771,18 @@ def score(root: str, rev: str, pkg: str, work: str, out: str | None,
 
     def git(*argv: str) -> str:
         try:
-            return subprocess.run(["git", "-C", root, *argv], check=True,
-                                  capture_output=True, text=True,
-                                  env=cenv).stdout
-        except subprocess.CalledProcessError as exc:
-            raise Unevaluable(f"git {' '.join(argv)} failed: rc={exc.returncode}") from exc
-        except OSError as exc:
-            raise Unevaluable(f"broken_tool: git ({exc.__class__.__name__}: {exc})")
+            return run(["git", "-C", root, *argv], timeout=120, env=cenv,
+                       capture=capture)["stdout"]
+        except Unevaluable as exc:
+            raise Unevaluable(f"broken_tool: git ({exc})")
 
     run_root = tempfile.mkdtemp(prefix="packed-", dir=work)
     for sub in ("home", "tmp"):
         os.makedirs(os.path.join(run_root, sub), exist_ok=True)
     cenv = build_child_env(run_root)
     capture = env_log
+    if capture is not None and not os.path.isabs(capture):
+        capture = os.path.join(run_root, capture)
     try:
         packer_env = preflight(upx, pkg, work, check_work=not skip_run,
                                child_env=cenv, capture=capture)
@@ -825,7 +838,11 @@ def score(root: str, rev: str, pkg: str, work: str, out: str | None,
         if out:
             open(out, "w", encoding="utf-8").write(text + "\n")
         print(text)
-        shutil.rmtree(run_root, ignore_errors=True)
+        # A run-scoped env log (a relative --child-env-log) lives under the
+        # run root; keep it for the caller that asked for it.  An absolute log
+        # is the caller's artifact and survives on its own.
+        if not (capture and capture.startswith(run_root)):
+            shutil.rmtree(run_root, ignore_errors=True)
         return 1
 
     carriers = []
@@ -844,7 +861,8 @@ def score(root: str, rev: str, pkg: str, work: str, out: str | None,
             if orig_sha != c["sha256"]:
                 raise Unevaluable(f"carrier pin drift {c['id']}: {orig_sha}")
             orig_env, orig_run = analyze(pkg, orig,
-                                         os.path.join(cdir, "orig.analyze.json"), cenv)
+                                         os.path.join(cdir, "orig.analyze.json"),
+                                         cenv, capture)
             orig_counts = counts_from(orig_env)
             if not orig_counts or orig_counts["procedure_count"] < c["min_orig_procedures"]:
                 raise Unevaluable(f"carrier {c['id']}: original inventory below the floor "
@@ -859,19 +877,21 @@ def score(root: str, rev: str, pkg: str, work: str, out: str | None,
             readelf = run(["readelf", "-SW", packed], env=cenv, capture=capture)
             secs = section_count(readelf["stdout"] + readelf["stderr"])
             packed_env, packed_run = analyze(pkg, packed,
-                                             os.path.join(cdir, "packed.analyze.json"), cenv)
+                                             os.path.join(cdir, "packed.analyze.json"),
+                                             cenv, capture)
             packed_counts = counts_from(packed_env) or {}
             unpacked = os.path.join(cdir, "unpacked-" + base)
             unpack = run([upx_v, "-d", "-q", "-o", unpacked, packed],
                          env=cenv, capture=capture)
             unpacked_sha = sha256_file(unpacked) if os.path.exists(unpacked) else None
             rec_env, rec_run = analyze(pkg, unpacked,
-                                       os.path.join(cdir, "unpacked.analyze.json"), cenv)
+                                       os.path.join(cdir, "unpacked.analyze.json"),
+                                       cenv, capture)
             rec_counts = counts_from(rec_env) or {}
             refusal = None
             if c.get("address"):
-                d_packed = decompile(pkg, packed, c["address"], cenv)
-                d_unpacked = decompile(pkg, unpacked, c["address"], cenv)
+                d_packed = decompile(pkg, packed, c["address"], cenv, capture)
+                d_unpacked = decompile(pkg, unpacked, c["address"], cenv, capture)
                 code = d_unpacked["code"] or ""
                 refusal = {"packed_rc": d_packed["run"]["rc"],
                            "packed_error_code": d_packed["error_code"],
@@ -952,7 +972,7 @@ def _model(**over: object) -> dict:
     return base
 
 
-def selftest() -> int:
+def selftest(work: str | None = None) -> int:
     cases = []
     # section_count
     cases.append(("sections-none", section_count("There are no sections in this file.\n") == 0))
@@ -1030,7 +1050,7 @@ def selftest() -> int:
     cases.append(("nonce-hex-accept", bool(NONCE_RE.match("ab" * 32))))
     cases.append(("nonce-hex-reject", not NONCE_RE.match("AB" * 32)
                   and not NONCE_RE.match("ab" * 31)))
-    sel_scratch = tempfile.mkdtemp(prefix="packed-selftest-")
+    sel_scratch = tempfile.mkdtemp(prefix="packed-selftest-", dir=work)
     try:
         log = os.path.join(sel_scratch, "env.jsonl")
         allow = build_child_env(sel_scratch)
@@ -1052,6 +1072,9 @@ def selftest() -> int:
         cases.append(("observed-env-canary",
                       obs2["canary_present"] is True
                       and obs2["all_allowlisted"] is False))
+        cases.append(("observed-env-sibling-prefix",
+                      under(sel_scratch, sel_scratch + "-outside/home") is False
+                      and under(sel_scratch, os.path.join(sel_scratch, "home")) is True))
     finally:
         shutil.rmtree(sel_scratch, ignore_errors=True)
     good_receipt = {"run_nonce": nonce,
@@ -1101,7 +1124,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv)
     if args.selftest:
-        return selftest()
+        return selftest(args.work)
     if args.check_receipt:
         if not (args.root and args.rev):
             print("packed-elf: --check-receipt requires --root and --rev", file=sys.stderr)

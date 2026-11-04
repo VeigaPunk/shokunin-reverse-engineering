@@ -68,6 +68,15 @@ UPX_SHA256_PIN = "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c9
 UPX_VERSION_PIN = "upx 5.2.0"
 TMP_FALLBACK_PATTERN = 'os.environ.get("HOME", "/tmp")'
 CHILD_ENV_KEYS = ("HOME", "LANG", "PATH", "TMPDIR")
+
+
+def under(root, path) -> bool:
+    """Descendant test without the sibling-prefix false green (QUALITY #120)."""
+    try:
+        root_abs = os.path.abspath(str(root))
+        return os.path.commonpath([root_abs, os.path.abspath(str(path))]) == root_abs
+    except (TypeError, ValueError):
+        return False
 CHILD_ENV_CASES = ("child-env-allowlist", "child-env-home-in-work", "child-env-no-tmp")
 
 
@@ -354,10 +363,8 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     children = sorted({os.path.basename(str((r.get("argv") or ["?"])[0]))
                        for r in raw_records})
     raw_allow = bool(envs) and all(sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs)
-    raw_home = bool(envs) and all(str(e.get("HOME", "")).startswith(str(run_root))
-                                  for e in envs)
-    raw_tmp = bool(envs) and all(str(e.get("TMPDIR", "")).startswith(str(run_root))
-                                 for e in envs)
+    raw_home = bool(envs) and all(under(run_root, e.get("HOME", "")) for e in envs)
+    raw_tmp = bool(envs) and all(under(run_root, e.get("TMPDIR", "")) for e in envs)
     raw_canary = any("KAIDOKU_ENV_CANARY" in e for e in envs)
     a8_ok = (a8["rc"] == 0 and raw_ok and raw_allow and raw_home and raw_tmp
              and not raw_canary and isinstance(run_root, str) and bool(run_root)
@@ -405,17 +412,17 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     route_procs = []
     route_paths = []
     for i in range(3):
-        log_i = os.path.join(a9_dir, "env-%d.jsonl" % i)
+        log_name = "env-%d.jsonl" % i
         out_i = os.path.join(a9_dir, "route-%d.json" % i)
-        route_paths.append((log_i, out_i))
+        route_paths.append((log_name, out_i))
         route_procs.append(subprocess.Popen(
             [sys.executable, "-I", "-B", instrument, "--root", root, "--rev", rev,
              "--pkg", pkg, "--work", a9_dir, "--skip-run",
-             "--child-env-log", log_i, "--json-out", out_i],
+             "--child-env-log", log_name, "--json-out", out_i],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
             env=base_env))
     route_results = []
-    for proc, (log_i, out_i) in zip(route_procs, route_paths):
+    for proc, (log_name, out_i) in zip(route_procs, route_paths):
         proc.communicate(timeout=1800)
         payload = None
         try:
@@ -423,20 +430,27 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
                 payload = json.load(fh)
         except (OSError, json.JSONDecodeError):
             payload = None
+        rr = (payload or {}).get("run_root")
+        obs_i = (payload or {}).get("child_env_observed") or {}
+        log_path = obs_i.get("log")
         records = []
         try:
-            with open(log_i, encoding="utf-8") as fh:
+            with open(log_path, encoding="utf-8") as fh:
                 records = [json.loads(line) for line in fh if line.strip()]
-        except (OSError, json.JSONDecodeError):
+        except (OSError, TypeError, json.JSONDecodeError):
             records = []
-        rr = (payload or {}).get("run_root")
         envs_i = [r.get("env") or {} for r in records]
         route_results.append({
             "rc": proc.returncode, "run_root": rr, "records": len(records),
+            "log": log_path,
+            "log_under_run": (isinstance(rr, str) and isinstance(log_path, str)
+                              and under(rr, log_path)),
             "own_home": bool(envs_i) and isinstance(rr, str) and all(
-                str(e.get("HOME", "")).startswith(rr) for e in envs_i),
+                under(rr, e.get("HOME", "")) for e in envs_i),
             "own_tmp": bool(envs_i) and isinstance(rr, str) and all(
-                str(e.get("TMPDIR", "")).startswith(rr) for e in envs_i),
+                under(rr, e.get("TMPDIR", "")) for e in envs_i),
+            "own_keys": bool(envs_i) and all(
+                sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs_i),
             "verdict_claimed": (payload or {}).get("verdict_claimed")})
     bat_dirs = [r["work_dir"] for r in bat_results]
     route_roots = [r["run_root"] for r in route_results]
@@ -446,6 +460,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
              and len(set(bat_dirs)) == 3
              and all(r["rc"] == 1 and r["verdict_claimed"] is False
                      and r["records"] >= 1 and r["own_home"] and r["own_tmp"]
+                     and r["own_keys"] and r["log_under_run"]
                      and isinstance(r["run_root"], str)
                      and r["run_root"].startswith(os.path.abspath(a9_dir))
                      for r in route_results)
@@ -564,6 +579,11 @@ def validate(path: str) -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"validate": "seam-probe-receipt", "unevaluable": str(exc)}))
         return 2
+    if not isinstance(receipt, dict):
+        print(json.dumps({"validate": "seam-probe-receipt",
+                          "unevaluable": f"receipt root is {type(receipt).__name__}, "
+                                        f"not an object"}))
+        return 2
     defects = validate_defects(receipt)
     arms = receipt.get("arms") if isinstance(receipt.get("arms"), list) else []
     out = {"validate": "seam-probe-receipt", "path": path, "ok": not defects,
@@ -604,6 +624,8 @@ def selftest() -> int:
         parse_unevaluable("", '{"unevaluable": "missing_tool: upx"}')
         == {"unevaluable": "missing_tool: upx"})
     cases["parse-json-out"] = parse_json_out('{"ok": true}\n') == {"ok": True}
+    cases["containment-descendant"] = under("/w/run", "/w/run/home") is True
+    cases["containment-sibling-prefix"] = under("/w/run", "/w/run-outside/home") is False
     print(json.dumps({"selftest": "tools/round-71/seam-probe.py",
                       "cases": len(cases),
                       "failures": [k for k, v in cases.items() if not v]},

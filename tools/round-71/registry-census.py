@@ -54,6 +54,15 @@ GRAMMAR = ("v2: split on unescaped '|', unescape '\\|'; tool/purpose/verdict/"
            "backtick path that exists at --rev, and a non-empty pinned cell")
 HEADER = ("| tool | gate or probe - purpose | verdict map (exit codes) | self-test "
           "command | pinned-value path | write scope | owner |")
+# The four filed round-69 rows whose pinned-value cell contains a literal pipe.
+# Grammar v2 accepts an EIGHT-cell row only for these paths; any other over-count
+# row is a new malformed row (the kill rule), never a legitimate join.
+LEGACY_MULTICELL = {
+    "tools/round-69/packed-elf.py",
+    "tools/round-69/mutation-check.py",
+    "tools/round-69/contract-probe.py",
+    "tools/round-69/controls.py",
+}
 
 
 class CensusError(ValueError):
@@ -142,9 +151,14 @@ def parse(skill: str, exists) -> dict:
                 path = None
         if len(cells) < 6:
             defects.append("cells<6")
+        if len(cells) > 7 and not (path in LEGACY_MULTICELL and len(cells) == 8):
+            defects.append("cells>7")
         pinned = "|".join(cells[4:-2]).strip() if len(cells) >= 6 else ""
         if not pinned or pinned == "—":
             defects.append("pinned-empty")
+        if len(cells) >= 6 and (not cells[1] or not cells[2] or not cells[3]
+                                 or not cells[-2] or not cells[-1]):
+            defects.append("blank-cell")
         if path is not None and not exists(path):
             defects.append("path-absent")
         rows.append({"line": lineno, "tool": token, "path": path,
@@ -196,7 +210,7 @@ def verdict(doc: dict) -> tuple[dict, int]:
     return out, (0 if not findings else 1)
 
 
-def selftest() -> int:
+def selftest(work: str | None = None) -> int:
     cases = {}
 
     def row(*cells: str) -> str:
@@ -204,8 +218,8 @@ def selftest() -> int:
 
     good = row("`tools/a.py`", "gate - a", "0/1/2", "--selftest", "pin", "none",
                "kaidoku")
-    r69 = row("`tools/b.py`", "gate - b", "0/1/2", "--selftest", "pin one",
-              "pin two", "write", "kaidoku")
+    r69 = row("`tools/round-69/packed-elf.py`", "gate - b", "0/1/2",
+              "--selftest", "pin one", "pin two", "write", "kaidoku")
     six = row("`tools/c.py`", "gate - c", "0/1/2", "--selftest", "pin",
               "write")
     escaped = row("`tools/d.py`", "gate - d", "0/1/2", "--selftest",
@@ -213,16 +227,18 @@ def selftest() -> int:
     table = lambda *rows: (OPEN + "\n" + HEADER + "\n"
                            + "|---|---|---|---|---|---|---|\n" + "".join(rows) + CLOSE)
 
-    paths = {"tools/a.py", "tools/b.py", "tools/c.py", "tools/d.py", "tools/e.py"}
+    paths = {"tools/a.py", "tools/b.py", "tools/c.py", "tools/d.py",
+             "tools/e.py", "tools/round-69/packed-elf.py"}
     parsed = parse(table(good, r69, escaped), lambda p: p in paths)
     cases["clean-7-cell"] = (parsed["rows"] == 3 and not parsed["nonconformant"]
                              and parsed["duplicates"] == [])
     cases["r69-8-cell-joined"] = (
-        parsed["legacy_rows"] == [{"tool": "`tools/b.py`", "cells": 8}]
+        parsed["legacy_rows"] == [{"tool": "`tools/round-69/packed-elf.py`",
+                                   "cells": 8}]
         and parsed["rows"] == 3)
     b_row = parse(table(r69), lambda p: p in paths)["row_list"][0]
-    cases["pinned-rejoined"] = b_row["pinned"] == "pin one|pin two"
-    cases["pinned-write-owner"] = (b_row["write_scope"] == "write"
+    cases["pinned-write-owner"] = (b_row["pinned"] == "pin one|pin two"
+                                   and b_row["write_scope"] == "write"
                                    and b_row["owner"] == "kaidoku")
     d_row = parse(table(escaped), lambda p: p in paths)["row_list"][0]
     cases["escaped-pipe-one-cell"] = (d_row["cells"] == 7
@@ -231,22 +247,24 @@ def selftest() -> int:
     cases["six-cell-nonconformant"] = (
         [r["defects"] for r in six_parsed["nonconformant"]]
         == [["pinned-empty"]])
-    five = row("`tools/e.py`", "gate", "0/1", "--selftest")
-    five_parsed = parse(table(good, five), lambda p: p in paths)
-    cases["five-cell-nonconformant"] = (
-        five_parsed["nonconformant"][0]["defects"] == ["cells<6", "pinned-empty"])
-    absent = parse(table(row("`tools/z.py`", "g", "0", "s", "p", "w", "kaidoku")),
-                   lambda p: p in paths)
-    cases["absent-path-named"] = (
-        absent["nonconformant"][0]["defects"] == ["path-absent"])
+    short = row("`tools/e.py`", "gate", "0/1", "--selftest")
+    short_parsed = parse(table(good, short), lambda p: p in paths)
+    cases["short-row-nonconformant"] = (
+        short_parsed["nonconformant"][0]["defects"] == ["cells<6", "pinned-empty"])
+    new8 = row("`tools/b.py`", "smuggled", "0/1", "--selftest", "a", "b",
+               "write", "kaidoku")
+    extra = parse(table(good, new8), lambda p: p in paths)
+    cases["new-eight-cell-rejected"] = (
+        ["cells>7"] in [r["defects"] for r in extra["nonconformant"]])
+    blank = row("`tools/a.py`", "", "0/1", "--selftest", "pin", "none", "kaidoku")
+    blank_parsed = parse(table(blank), lambda p: p in paths)
+    cases["blank-cell-rejected"] = (
+        blank_parsed["nonconformant"] and
+        "blank-cell" in blank_parsed["nonconformant"][0]["defects"])
     dup = parse(table(good, good), lambda p: p in paths)
     cases["duplicate-named"] = dup["duplicates"] == ["tools/a.py"]
     # CLI fixtures: the outer CLI, isolated roots, exit codes and finding codes.
-    scratch = os.environ.get("TMPDIR") or os.path.join(
-        os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku"),
-        "kaidoku-r71", "registry-census-selftest")
-    os.makedirs(scratch, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="registry.", dir=scratch) as root:
+    with tempfile.TemporaryDirectory(prefix="registry.", dir=work) as root:
         os.makedirs(os.path.join(root, "tools"))
         for name in ("a.py", "b.py"):
             with open(os.path.join(root, "tools", name), "w") as fh:
@@ -287,9 +305,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out")
     ap.add_argument("--json-out")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--work")
     args = ap.parse_args(argv)
     if args.selftest:
-        return selftest()
+        return selftest(args.work)
     if not (args.root and args.rev):
         print("registry-census: --root and --rev are required", file=sys.stderr)
         return 2
