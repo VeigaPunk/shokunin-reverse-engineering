@@ -4,7 +4,7 @@
  "base": "a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92",
  "declaration_pointer": "plans/round-67-claims.md (no amendments). Both instruments were committed BEFORE this claims file - the QUALITY #33 order - with their do-nothing controls and pre-freeze receipts in .ufo/waves/round-67/l1/pre/; the carry-in LOG entry is an ancestor of this freeze (QUALITY #34, the M65-3 order check). The operative freeze is the commit that first adds this file: git log --diff-filter=A --format=%H -- .ufo/waves/round-67/claims.json. No amendment series.",
  "instruments": {
-  "tools/round-67/avm-le-counter.py": "f78ed365ab1d014fb2e80bdee611796dfb4667c9e2ab8f16f2893fdb7c5e0320",
+  "tools/round-67/avm-le-counter.py": "55decb5133499633b0eb81eeeec7ae8564c34e78f6f2d1384de2f42ffba0983a",
   "tools/round-67/mutation-battery.py": "cabc0a0b6a47ca00d3e5c20e9795ba4c129b44a3c14a882d69f9c6b2534851ab",
   "tools/round-67/gap-rule-v2.json": "e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e",
   "tools/round-67/c1-run.sh": "00be5a879a0e132f9d1765f477537b8afc55f95210aa4a8396e3a70da27a70ca",
@@ -40,6 +40,14 @@
   "A6": "R67-C1 data: four carriers fetched through the pinned chain into a scratch cache (never committed; AVM licence), each data run writes corpus/evidence/round-67/c1/<id>/{after.json,run.json} after the freeze; the counter re-runs REA on the same bytes and re-derives the oracle with unsquashfs 4.7.5",
   "A7": "R67-C2 instrument: the two round-66 instruments are loaded by path under CLOSURE_PIN/COVERAGE_PIN; the mutants are the r66 M5 line rewrite and the r66 M2 span replacement; the battery's selftest also runs both pristine selftests and the two binding cases",
   "A8": "sourced claim: the C1 knowledge entry corpus/knowledge/2026-11-03-r67-avm-le-squashfs-core.md cites the SOURCES row opened this round (the Linux kernel SquashFS device-node inode text); the row's Gate block carries this round's access date and a located quote of at most 25 words",
-  "A9": "no-harm: the r50 and r66 instruments are unchanged (pins checked); the round-50 rule file unchanged; LOG additions only; the owned-axes coverage row's head sentence is re-derived at the landing; no filed round-66 byte rewritten"
- }
+  "A9": "no-harm: the r50 and r66 instruments are unchanged (pins checked); the round-50 rule file unchanged; LOG additions only; the owned-axes coverage row's head sentence is re-derived at the landing; no filed round-66 byte rewritten",
+  "A10": "instrument supersession: tools/round-67/avm-le-counter.py changed at 1e7fe7b7 after the freeze (absolute -> lane-relative gap-rule name; the engine's git-object lookup); the re-taken before record is l1/pre/control-dryrun.json with counter sha256 55decb51, gaps_ok_round50 2 / round67 4; no after-arm existed before the change"
+ },
+ "instrument_supersessions": [
+  {
+   "path": "tools/round-67/avm-le-counter.py",
+   "commit": "1e7fe7b7ed228b8e3ab731ee6eb09e0acc7f0391",
+   "reason": "the patched gap-rule name was passed as an absolute path; the engine reads its rule through `git show <rev>:<path>`, so `measure()` raised 'gap-rule.json absent at freeze' (exit 2) before any after-arm existed. The patch now sets the lane-relative name; the before record (l1/pre/control-dryrun.json) was re-taken with the corrected bytes (sha256 55decb51) and the frozen_atoms A3/A4 values are unchanged in substance."
+  }
+ ]
 }
