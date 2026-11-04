@@ -17,7 +17,7 @@ line.
 |---|---|---|---|---|
 | S292, Python `stdtypes` Numeric Types, admit (mined) | https://docs.python.org/3/library/stdtypes.html | 2026-11-04 (HTTP 200, 814 496 B, sha256 `16f072e1…`) | "In addition, Booleans are a subtype of integers" (8 words; Numeric Types, snapshot line 441) | `isinstance(x, int)` accepts `True`, so every integer field in a receipt contract must exclude bool explicitly. The row grounds that guard in `check_receipt_like`/`check_receipt`, not the receipt schema (S289 holds JSON's taxonomy). |
 | S293, Python `tomllib`, admit (mined) | https://docs.python.org/3/library/tomllib.html | 2026-11-04 (HTTP 200, 34 923 B, sha256 `d98e62f7…`) | "This module provides an interface for parsing TOML 1.1.0 … This module does not support writing TOML." (17 words; module introduction, snapshot line 221) | The Kimi pin is parsed from `mcp_servers.rea.args`, not grepped; a parse failure is an `unparsed` id, never a pass, and the file is never written. |
-| S294, GnuPG handbook, Digital signatures, reject | https://www.gnupg.org/gph/en/manual.html | 2026-11-04 (HTTP 200, 113 892 B, sha256 `6d8e63bd…`) | "A signature is created using the private key of the signer" (12 words; Digital signatures, snapshot line 1017) | REJECTED as the authority for signed receipts: a signature authenticates possession of a private key, not the receipt's field contents; the lane holds no key and records no signer. Flip: an operator-owned signing key exists and the lane records its fingerprint and a verification command. |
+| S294, GnuPG handbook, Digital signatures, reject | https://www.gnupg.org/gph/en/manual.html | 2026-11-04 (HTTP 200, 113 892 B, sha256 `6d8e63bd…`) | "A signature is created using the private key of the signer" (11 words; Digital signatures, snapshot line 1017) | REJECTED as the authority for signed receipts: a signature authenticates possession of a private key, not the receipt's field contents; the lane holds no key and records no signer. Flip: an operator-owned signing key exists and the lane records its fingerprint and a verification command. |
 
 **Refused reuse (not a row).** `https://docs.python.org/3/library/re.html` was opened for the
 grammar question and refused registration: S143 already holds that URL
@@ -29,6 +29,8 @@ under `## Mistakes` M78-1; both snapshots were removed rather than registered.
 start: exit 0, 197 rows, 23 W04 warnings (`l1/census-start.txt`). At round end: exit 0, 200 rows
 (`l1/census-end.txt`), same 23 W04 warnings and none added. Three rows enter (S292 mined, S293
 mined, S294 rejected); no existing row's `status`/`recheck`/`used-by` changed.
+
+**Word-count correction (same round, in place).** S294's anchor cell first said 12 words; the quote is 11 (`A signature is created using the private key of the signer`). Corrected here and in the row; the row's other values are unchanged.
 
 **Spot-check (non-author).** The round's outside discernment check is the non-author closure's
 document (filed by the closure session, not by this lane); this lesson records the sample it should
@@ -43,3 +45,22 @@ re-open (S292 and S293 admits, the S294 reject).
 | **fixture for the wrong reason** (carried from round 77) — a red fixture that is red because the code cannot see the field proves nothing about the comparison; the round-78 gate's first `a5` fixture was red for the base instrument because its atom table was absent, not because the nested value differed. | `.ufo/waves/round-78/pre/c1-at-base.json` after the fix: `a5-nested-field` base `exit 0, mismatch_count 0` (bound 1) while the nested `forged_detected` is `false`; before the fix the same fixture scored base `exit 1, mismatch_count 0` from the missing `atoms` table | the gate's own `base_acceptance` arm (a fixture whose base arm is not accepted is not a live attack class) | the fixture receipt gained the atom table so the only reason it passes is the nested field; the base arm now records `accepted true` for all ten fixtures |
 | **a computed status dropped** — `tools/round-77/verdict-bind.py` computes a clause status `defect` (e.g. `no_atoms`) and never appends it to the cell's defect list, so the clause is invisible to `mismatch_count` and the record scores green. | `tools/round-77/verdict-bind.py` `bind_cell` (the `status == "defect"` reason is returned in the clause, not collected); round-78 fixture `a6-dropped-defect` accepted at exit 0 (`pre/c1-at-base.json`) while the gate refuses it with `{"reason": "no_atoms"}` | round-78 rule `unbound_verdict` in `tools/round-78/attack-gate.py` (a parsable clause that binds nothing is a defect) and QUALITY row 136 | the rule refuses the shape; the fixture is committed and the base arm proves the round-77 instrument accepts it |
 | **record value superseded in place** — `PROVINCE.md` held `openjdk version "21.0.12.1"` and "the live OMP file no longer records the disable"; both were true when written on 2026-10-20 and false on 2026-11-04, and nothing re-derived them. | `pre/c2-at-base.json`: `mismatches 2` — `jdk-version` (record 21.0.12.1, live 21.0.13) and `omp-rea-disable` (record false, live `disabledServers: ["rea"]`) | `tools/round-78/surface-recheck.py`'s declared patterns and typed comparison (QUALITY row 137) | both sentences corrected in `PROVINCE.md` with the 2026-11-04 recheck pointer; `c2-at-record.json` re-derives `mismatches 0` |
+
+## Wave evidence (drafts landed by the L1)
+
+- `ScribeLesson` drafted ten `## Mistakes` rows, one per attack class, at
+  `.ufo/waves/round-78/w1/ScribeLesson/mistakes.md` (sha256 `bafe6782…`) plus QUALITY rows at
+  `quality.md` (`d5bf8d79…`); the rows filed above are the L1's, and the draft is the per-class evidence
+  the closure may re-open.
+- `ScribeSources` independently reached the same three sources, the same two mined rows and the same
+  withholding of `re.html` behind S143 (`.ufo/waves/round-78/w1/ScribeSources/gate-block.md`), and its
+  quote re-measurement corrected S294's word count from 12 to 11.
+- `ConnectorSibling` found a real gap in `receipt_auth`: `git show <rev>:<path>` returns link text for a
+  mode-`120000` symlink and a tree pseudo-header for a mode-`040000` tree, so a receipt could authenticate
+  a pin that is not instrument bytes. Closed in-round by `blob_mode` and the mode check (`1a99064b`), with
+  four selftest cases.
+- `ExecSurfaceProbe`'s independent re-derivation reports three mismatches where the instrument reports two:
+  it compares `.bashrc`'s `$HOME/.local/opt/…` as a literal string, while the instrument expands `$HOME`
+  and resolves both sides — the exact trap the C2 kill rule names. The two value drifts agree exactly.
+- `ScoutRouted` independently found the `re.html` URL collision with S143 that M78-1 records, and
+  reproduced the round-77 wave accounting (12 seats, 10 non-empty, 2 zero-byte).
