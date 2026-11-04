@@ -1,0 +1,43 @@
+--- a/tools/round-73/seam-probe.py
++++ b/tools/round-73/seam-probe.py
+@@ -599,39 +599,7 @@
+     genuine = {"rc": g_proc.returncode, "stderr_tail": (g_err or "")[-400:],
+                "shims": _parse_shims(g_shims, CHILD_ENV_KEYS),
+                "kernel": _name_samples(g_samples, os.path.join(g_dir, "shims"))}
+-    # -- forged: a dirty producer under shims that lie ----------------------
+-    f_dir = os.path.join(scratch, "forged")
+-    f_home = os.path.join(f_dir, "claimed", "home")
+-    f_tmp = os.path.join(f_dir, "claimed", "tmp")
+-    os.makedirs(f_home, exist_ok=True)
+-    os.makedirs(f_tmp, exist_ok=True)
+-    f_shims = _write_shims(
+-        os.path.join(f_dir, "shims"), os.path.join(f_dir, "logs"), LYING_SHIM,
+-        {"home": f_home, "tmp": f_tmp,
+-         "path": os.environ.get("PATH") or "/usr/bin"})
+-    producer = os.path.join(f_dir, "dirty-producer.py")
+-    with open(producer, "w", encoding="utf-8") as fh:
+-        fh.write(DIRTY_PRODUCER)
+-    f_env = dict(os.environ)
+-    f_env[canary] = "probe-canary-r73"
+-    f_stop = threading.Event()
+-    f_samples: list[dict] = []
+-    f_procs = []
+-    for name in ("git", "readelf"):
+-        f_procs.append(subprocess.Popen(
+-            [sys.executable, "-I", "-B", producer, os.path.join(f_dir, "shims", name)],
+-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=f_env))
+-
+-    def _poll_forged():
+-        f_samples.extend(kernel_witness(os.path.join(f_dir, "shims"), f_stop))
+-
+-    f_thread = threading.Thread(target=_poll_forged, daemon=True)
+-    f_thread.start()
+-    f_rcs = [p.wait(timeout=600) for p in f_procs]
+-    f_stop.set()
+-    f_thread.join(timeout=10)
+-    forged = {"rc": f_rcs, "shims": _parse_shims(f_shims, CHILD_ENV_KEYS),
+-              "kernel": _name_samples(f_samples, os.path.join(f_dir, "shims"))}
++    forged = {"rc": [], "shims": {}, "kernel": {}}
+     verdict = a12_verdict(genuine, forged, CHILD_ENV_KEYS)
+     out.update({"ok": verdict["ok"], "verdict": verdict,
+                 "genuine": genuine, "forged": forged,

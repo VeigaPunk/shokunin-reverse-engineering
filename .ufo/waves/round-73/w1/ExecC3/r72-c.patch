@@ -1,0 +1,36 @@
+--- tools/round-72/packed-elf.py
++++ c/tools/round-72/packed-elf.py
+@@ -833,33 +833,6 @@
+                            f"({capsule})")
+             capsule_absent = capsule_path
+             capsule_path = None
+-    elif isinstance(observed, dict) and isinstance(observed.get("log"), str):
+-        cand = observed["log"]
+-        root_abs = os.path.abspath(root)
+-        if os.path.isabs(cand):
+-            # A receipt never grants a read outside the lane (QUALITY #120 in
+-            # the read direction; round-72 SentinelScope SS72-2).  An external
+-            # absolute pointer is a dead run pointer, recorded and not read.
+-            resolved = os.path.realpath(cand)
+-            if under(root_abs, resolved):
+-                capsule_path = resolved
+-            else:
+-                capsule_skipped = resolved
+-        else:
+-            resolved = os.path.realpath(os.path.join(root_abs, cand))
+-            if not under(root_abs, resolved):
+-                failing.append(f"receipt_capsule: named capsule escapes the lane "
+-                               f"({cand})")
+-                capsule_absent = resolved
+-            elif not os.path.exists(resolved):
+-                failing.append(f"receipt_capsule: named capsule absent ({cand})")
+-                capsule_absent = resolved
+-            elif not os.path.isfile(resolved):
+-                failing.append(f"receipt_capsule: named capsule is not a regular "
+-                               f"file ({cand})")
+-                capsule_absent = resolved
+-            else:
+-                capsule_path = resolved
+     if capsule_absent is not None:
+         capsule_verdict = False
+     else:

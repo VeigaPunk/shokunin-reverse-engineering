@@ -1,0 +1,145 @@
+{
+  "axes": [
+    "coverage",
+    "calibration",
+    "operability"
+  ],
+  "declaration": "da6c17c1eb8dec0b780e276c7f1cb8d9b4fa4d4b",
+  "source_sha256": "e184cf118427e4678dbbf2647eb615948cffc8ecf59783b13850046d0a9970b1",
+  "C1": {
+    "attack": "argv identity substitution with clean decoys and dirty unnamed real process",
+    "real_keys": [
+      "HOME",
+      "KAIDOKU_ENV_CANARY",
+      "LANG",
+      "PATH",
+      "TMPDIR"
+    ],
+    "real_canary_present": true,
+    "watched_samples": {
+      "git": {
+        "keys": [
+          "HOME",
+          "LANG",
+          "PATH",
+          "TMPDIR"
+        ],
+        "canary_present": false
+      },
+      "readelf": {
+        "keys": [
+          "HOME",
+          "LANG",
+          "PATH",
+          "TMPDIR"
+        ],
+        "canary_present": false
+      }
+    },
+    "verdict": {
+      "ok": false,
+      "genuine_ok": true,
+      "lie_clean": true,
+      "forged_detected": false,
+      "allow": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ]
+    },
+    "interpretation": "observer blind to dirty real process; verdict fails closed, not a false green"
+  },
+  "C2": {
+    "atom": "D1_c2_evidence_hash",
+    "before": {
+      "id": "D1_c2_evidence_hash",
+      "ok": false,
+      "detail": "the record's C2 target sha re-derives from the receipt's own rev, or a round-73 correction names both values",
+      "evidence": {
+        "receipt_target_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2",
+        "receipt_rev": "e67f3a1b1f79bcd5ce56dd4f64edb4ed18f903ff",
+        "blob_matches": true,
+        "stated_tokens": [
+          "39a2193e"
+        ],
+        "wrong_tokens": [
+          "39a2193e"
+        ],
+        "correction_block": false,
+        "correction_names_wrong": false
+      }
+    },
+    "after_prose_only": {
+      "id": "D1_c2_evidence_hash",
+      "ok": true,
+      "detail": "the record's C2 target sha re-derives from the receipt's own rev, or a round-73 correction names both values",
+      "evidence": {
+        "receipt_target_sha256": "602b305d79222222c1f17c51cc10365246ecfc184cdd4afd8f773a0f5fd5f0e2",
+        "receipt_rev": "e67f3a1b1f79bcd5ce56dd4f64edb4ed18f903ff",
+        "blob_matches": true,
+        "stated_tokens": [
+          "39a2193e"
+        ],
+        "wrong_tokens": [
+          "39a2193e"
+        ],
+        "correction_block": true,
+        "correction_names_wrong": true
+      }
+    },
+    "correction_text": "**Correction (round 73):** 39a2193e remains correct.",
+    "receipt_unchanged": true,
+    "correct_hash_present_in_correction": false
+  },
+  "C3": [
+    {
+      "mutant": "git_checker_callsite_env_dropped",
+      "old": "blob_sha = git_blob_sha256(root, rev, TOOL, env=cenv, capture=capture)",
+      "new": "blob_sha = git_blob_sha256(root, rev, TOOL, env=None, capture=capture)",
+      "rc": 0,
+      "selftest": {
+        "selftest": "tools/round-73/packed-elf.py",
+        "cases": 38,
+        "failed": [],
+        "ok": true
+      }
+    },
+    {
+      "mutant": "readelf_checker_callsite_env_dropped",
+      "old": "rh = readelf_header(row[\"source\"], env=cenv, capture=capture)",
+      "new": "rh = readelf_header(row[\"source\"], env=None, capture=capture)",
+      "rc": 0,
+      "selftest": {
+        "selftest": "tools/round-73/packed-elf.py",
+        "cases": 38,
+        "failed": [],
+        "ok": true
+      }
+    },
+    {
+      "mutant": "implicit_checker_callsite_bypassed",
+      "old": "implicit = implicit_capsule(observed, root)",
+      "new": "implicit = {\"path\": None, \"absent\": None, \"skipped\": None, \"failures\": []}",
+      "rc": 0,
+      "selftest": {
+        "selftest": "tools/round-73/packed-elf.py",
+        "cases": 38,
+        "failed": [],
+        "ok": true
+      }
+    },
+    {
+      "mutant": "git_seam_PATH_only_inherited_rest",
+      "old": "                   env=env, capture=capture)",
+      "new": "                   env={**os.environ, \"PATH\": env[\"PATH\"]}, capture=capture)",
+      "rc": 0,
+      "selftest": {
+        "selftest": "tools/round-73/packed-elf.py",
+        "cases": 38,
+        "failed": [],
+        "ok": true
+      }
+    }
+  ]
+}

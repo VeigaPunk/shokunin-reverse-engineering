@@ -1,0 +1,16 @@
+--- a/tools/round-72/packed-elf.py
++++ b/tools/round-72/packed-elf.py
+@@ -821,13 +821,6 @@
+     observed = receipt.get("child_env_observed")
+     capsule_path = capsule
+     capsule_out = None
+-    if capsule_path is None and isinstance(observed, dict) \
+-            and isinstance(observed.get("log"), str):
+-        cand = observed["log"]
+-        if not os.path.isabs(cand):
+-            cand = os.path.join(os.path.abspath(root), cand)
+-        if os.path.exists(cand):
+-            capsule_path = cand
+     capsule_verdict = None
+     if capsule_path is not None:
+         capsule_out = capsule_audit.audit(capsule_path, observed or {},

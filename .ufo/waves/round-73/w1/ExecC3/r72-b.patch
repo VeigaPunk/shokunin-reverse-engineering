@@ -1,0 +1,11 @@
+--- tools/round-72/packed-elf.py
++++ b/tools/round-72/packed-elf.py
+@@ -782,7 +782,7 @@
+             failing.append(f"{cid}: refusal {refusal} present for an addressless carrier")
+         derived_format = None
+         if os.path.exists(row["source"]):
+-            rh = run(["readelf", "-h", row["source"]], env=cenv, capture=capture)
++            rh = run(["readelf", "-h", row["source"]], capture=capture)
+             derived_format = elf_format(rh["stdout"] + rh["stderr"])
+         if c.get("format") != derived_format:
+             failing.append(f"{cid}: format {c.get('format')} != readelf of the "

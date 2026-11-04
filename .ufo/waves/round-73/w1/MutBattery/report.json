@@ -1,0 +1,11 @@
+{
+  "mutant": "r73 readelf environment omission and compound git/readelf failure",
+  "expected_detector": "38-case selftest plus mutation-check named-case scoring",
+  "output": {"readelf_mutant_rc": 0, "compound_failed": ["git-reader-allowlisted-exec", "checker-readelf-allowlisted-exec"], "compound_battery_verdict": "killed", "inventory_deletions_rc": [1, 1], "wrong_site_score_rc": 1, "wrong_route_score_rc": 2, "wrong_pin_score_rc": 1, "dropped_case_floor_score_rc": 2},
+  "verdict": "coverage survivor and compound-failure false-positive kill; inventory and binding attacks rejected",
+  "restoration": {"landing_sha256": "ed3e26fab2ace12e94956704bab68940443fe093bd10aa2c70c75aa9c3284c1b", "landing_mutations_restored_exactly": true, "restored_selftests_rc": 0, "scratch_removed": true},
+  "evidence": ["manual-selftests.json", "battery-attacks.json", "../MutBattery.md"],
+  "limitations": "Battery score rc is derived using main's mapping from actual check() results, not a separate CLI process exit. Declaration comparator is not an exact restoration probe.",
+  "self_evaluation": {"accuracy": "4: actual outputs retained; scoring rc distinguished from CLI exit", "completeness": "4: all requested attacks covered through check seam, not full CLI", "clarity": "4: report distinguishes landing from declaration", "actionability": "4: exact hashes and named failed cases identify defects", "conciseness": "4: detailed evidence retained outside short handoff", "overall": 4.0, "improvements": ["Full CLI probes would remove the scoring-exit limitation; no additional probe performed after assigned mutation experiment."], "self_check": "Findings are reproducible from retained outputs; limits are explicit."},
+  "Report": ".ufo/waves/round-73/w1/MutBattery/report.json"
+}

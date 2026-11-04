@@ -4370,3 +4370,50 @@ fractions — and requires zero mismatches with at least two corrections that ea
 - Files touched by this entry: this LOG, `corpus/`, `PROVINCE.md`, `SCORECARD.md`, `SKILL.md`,
   `.ufo/waves/round-72/`, and the redacted `w1/ExecC1/caller-env.redacted.txt`.
 
+
+## 2026-11-04 — round 73: the kernel's record, the record audit, and the reader-seam battery
+
+- **Claims.** Three, one per axis, all capability acquisitions, each causally separable and
+  scored by its own instrument (`plans/round-73-claims.md`; frozen container
+  `.ufo/waves/round-73/claims.json`, freeze `8b928422`, three errata disclosed there and two
+  supersession batches at `d36c6ee0` and `55cac1d2`). `lowest-axis: coverage` — no nudge
+  waiver is claimed (the round-72 spot-check's routed defect 6 correction).
+- **R73-C1 (coverage; the kernel-side witness).** A12 reads `/proc/<pid>/environ` for the shims
+  the arm started, bound by ancestry, key census only, against an in-arm forged control:
+  landing 12 of 12 with `forged_detected true` and genuine samples exactly
+  HOME/LANG/PATH/TMPDIR (`.ufo/waves/round-73/l1/scores/c1-at-landing.json`); base
+  `pre/c1-at-base-r72probe.json` (the round-72 probe: 11 arms, no A12) and `pre/c1-at-base.json`
+  (the same probe against the round-72 route: 8 of 12 — erratum 1).
+- **R73-C2 (calibration; the record audit).** Seven atoms derived from the round-72 non-author
+  spot-check's routed-defect list: 6 mismatches at base `05bf0656`
+  (`pre/c2-at-base.json`) → 0 at the record revision (`l1/scores/c2-at-landing.json`); the five
+  record repairs are appended corrections in `SCORECARD.md`, the ledger row, the knowledge
+  entry's correction block and the recorded rc.
+- **R73-C3 (operability; the reader seams).** `readelf_header`/`implicit_capsule` extracted and
+  bound by `git-reader-allowlisted-exec`, `checker-readelf-allowlisted-exec`,
+  `implicit-capsule-polluted-raw-log`; patch set `r73` 0 survivors with each killed by its
+  declared case and the target pinned (`l1/scores/c3-at-landing.json`), base `r73base` 3
+  survivors (`pre/c3-at-base.json`).
+- **Controls.** Six arms, all met (`l1/scores/controls-at-landing.json`): no-kernel-channel
+  probe, blind-witness verdict, base audit, lying audit receipt rejected, base reader mutants,
+  stripped registry red on `case-inventory`.
+- **Gate.** Freeze `8b928422` FLAGGED on `INSTRUMENT_PIN_MISMATCH` (two producer pins named
+  digests that are not the blobs at the freeze; the gate reads pins from the freeze commit, so
+  the finding is permanent for this freeze; corrected at the record revision and recorded in
+  `corpus/claim-freezes-v2.tsv` as FLAGGED). Disclosures 48 of 48 exact, missing [], stray [].
+- **Wave.** `r73-w1`: 16 seats (5 executor, 3 scribe, 2 reviewer, 2 mutation-tester, 1 critic,
+  1 sentinel, 1 scout, 1 connector), attack roles 5/16 = 31%, one connector; all 16 settled,
+  none dead (`r73-w1-results.json`). Findings: SentinelScope's three blocking items fixed
+  in-round; CriticClaims' decoy attack closed by the ancestry guard, its D1 false-green closed;
+  MutProbe's six A12 selftest survivors and ExecC2's D7 false-green routed to round 74.
+- **Sources.** `corpus/SOURCES.md` 183 → 184 rows: S277 (the man-pages 6.19
+  `proc_pid_cmdline(5)` page, tier A, opened this round; snapshot sha256 `1fc68168…`, 15-word
+  located quote) grounds R73-C1's selection mechanism and its boundary through
+  `corpus/knowledge/2026-11-04-r73-kernel-witness-record.md`. Census start
+  `l1/census-start.txt` (exit 0, 183 rows) and end (exit 0, 184 rows).
+- **Record.** `corpus/QUALITY.md` rows 129–132; `PROVINCE.md` `## Round-73 additions to Core`
+  plus frontier note; `corpus/README.md` index row and frontier note; `SCORECARD.md` five
+  round-72 corrections plus the round-73 section; `SKILL.md` registry rows for six instruments
+  (round-71 grammar); the lesson `corpus/lessons/round-73.md`.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r73` removed after the close; no pacman transaction
+  and no tool install ran this round.

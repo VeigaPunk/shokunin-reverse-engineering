@@ -1,0 +1,197 @@
+{
+  "audit_missing_population_missing_r73_before_bad_D1_and_bad_D5": {
+    "schema": "kaidoku-r73-record-audit-v1",
+    "rev": "fixture",
+    "root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+    "population": {
+      "document": "corpus/lessons/round-72-verifier-spotcheck.md",
+      "present": false,
+      "atoms": 7
+    },
+    "atoms": [
+      {
+        "id": "D1_c2_evidence_hash",
+        "ok": true,
+        "detail": "the record's C2 target sha re-derives from the receipt's own rev, or a round-73 correction names both values",
+        "evidence": {
+          "receipt_target_sha256": "eaaabfd68dcf7f66c3104fcaf0c880b872b445d0f78f179e7e72582b9f07803b",
+          "receipt_rev": "fixture",
+          "blob_matches": true,
+          "stated_tokens": [
+            "01234567"
+          ],
+          "wrong_tokens": [
+            "01234567"
+          ],
+          "correction_block": true,
+          "correction_names_wrong": true
+        }
+      },
+      {
+        "id": "D2_c2_pin_conjunct",
+        "ok": true,
+        "detail": "a landing mutation receipt pins an exact target blob (expect == target_sha256, matched true)",
+        "evidence": {
+          "receipt": ".ufo/waves/round-73/l1/scores/c2-at-landing.json",
+          "target_pin": {
+            "expect": "eaaabfd68dcf7f66c3104fcaf0c880b872b445d0f78f179e7e72582b9f07803b",
+            "matched": true
+          },
+          "target_sha256": "eaaabfd68dcf7f66c3104fcaf0c880b872b445d0f78f179e7e72582b9f07803b"
+        }
+      },
+      {
+        "id": "D3_record_gate_disclosures",
+        "ok": true,
+        "detail": "the record gate's disclosures block is empty-missing and empty-stray, and the freeze ledger carries both rounds",
+        "evidence": {
+          "base_gate_has_disclosures": false,
+          "r73_gate_present": true,
+          "r73_disclosures": {
+            "missing": [],
+            "stray": []
+          },
+          "ledger_round_72": true,
+          "ledger_round_73": true
+        }
+      },
+      {
+        "id": "D4_c3_exit_code",
+        "ok": true,
+        "detail": "the lying-receipt checker run records rc 1 with met false",
+        "evidence": {
+          "base_receipt_rc": null,
+          "landing_receipt_rc": 1,
+          "landing_met": false
+        }
+      },
+      {
+        "id": "D5_provenance_trio_open",
+        "ok": true,
+        "detail": "the round-72 entry carries the appended correction trio and the round-73 entry opens with its own trio",
+        "evidence": {
+          "r72_trio_in_first_12": true,
+          "r72_correction_trio": false,
+          "r73_trio_in_first_12": true
+        }
+      },
+      {
+        "id": "D6_nudge_rationale",
+        "ok": true,
+        "detail": "the round-73 section names its lowest-axis target and does not claim the nudge waiver",
+        "evidence": {
+          "section_present": true,
+          "names_lowest_axis": true,
+          "claims_waiver": false
+        }
+      },
+      {
+        "id": "D7_before_pointer",
+        "ok": true,
+        "detail": "every before receipt a round section names resolves at the measured revision and records its rev",
+        "evidence": {
+          "named": [
+            "l1/pre/shared.json"
+          ],
+          "rows": [
+            {
+              "path": "l1/pre/shared.json",
+              "exists": true,
+              "rev": "fixture"
+            }
+          ]
+        }
+      }
+    ],
+    "mismatches": [],
+    "mismatch_count": 0,
+    "ok": true
+  },
+  "missing_required_inputs": [
+    "corpus/lessons/round-72-verifier-spotcheck.md",
+    ".ufo/waves/round-73/l1/pre/shared.json",
+    ".ufo/waves/round-72/l1/scores/gate-at-record.json",
+    ".ufo/waves/round-72/l1/scores/c3-lying-check.json"
+  ],
+  "correct_D1_digest_absent_from_correction": true,
+  "record_validator_partial": {
+    "rc": 0,
+    "output": {
+      "validate": "/fast/scratch/hyaku/kaidoku-r73/ReviewerGates/partial-record.json",
+      "defects": []
+    }
+  },
+  "mutation_validator_partial_wrong_count": {
+    "rc": 0,
+    "output": {
+      "defects": [],
+      "mutants": 1,
+      "ok": true,
+      "path": "/fast/scratch/hyaku/kaidoku-r73/ReviewerGates/partial-mutation.json",
+      "validate": "mutation-receipt"
+    }
+  },
+  "a12": {
+    "positive": {
+      "ok": true,
+      "genuine_ok": true,
+      "lie_clean": true,
+      "forged_detected": true,
+      "allow": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ]
+    },
+    "no_genuine_samples": {
+      "ok": false,
+      "genuine_ok": false,
+      "lie_clean": true,
+      "forged_detected": true,
+      "allow": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ]
+    },
+    "no_forged_samples": {
+      "ok": false,
+      "genuine_ok": true,
+      "lie_clean": true,
+      "forged_detected": false,
+      "allow": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ]
+    },
+    "one_forged_child_only": {
+      "ok": true,
+      "genuine_ok": true,
+      "lie_clean": true,
+      "forged_detected": true,
+      "allow": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "TMPDIR"
+      ]
+    }
+  },
+  "c3_no_case_never_selftests": {
+    "rc": 2,
+    "stdout": "",
+    "stderr": "{\"schema\": \"kaidoku-r72-mutation-check-v1\", \"unevaluable\": \"git show da6c17c1eb8dec0b780e276c7f1cb8d9b4fa4d4b:/fast/scratch/hyaku/kaidoku-r73/ReviewerGates/route-no-case.py failed rc=128\"}\n",
+    "control_met_predicate": true
+  },
+  "source_sha256": {
+    "record-audit": "8f22d62037171ffef15bc9c4b2438285e350f15637bcbae6b7d6dafa5f40139d",
+    "seam-probe": "7264d0c861d5d0f5344a4009dba738579a10952d27a207dd0d8530cf434b48ed",
+    "mutation-check": "9b25ed2d47780e780f1433f40b6f5dc5bbb55a9c2d825b7ba84e7e24114df3cc",
+    "controls": "bffbcf7866fe8a0c6bfdedba6f4e6721405707cddc174ba5af699fcd11b6dfa7"
+  },
+  "scope": "Synthetic function counterexamples plus one real battery CLI refusal. No live kernel probe, environment dump, git writes, or full controls run."
+}

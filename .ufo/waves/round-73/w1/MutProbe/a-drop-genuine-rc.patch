@@ -1,0 +1,12 @@
+--- a/tools/round-73/seam-probe.py
++++ b/tools/round-73/seam-probe.py
+@@ -472,8 +472,7 @@
+     genuine_kernel = genuine.get("kernel") or {}
+     forged_kernel = forged.get("kernel") or {}
+     forged_shims = forged.get("shims") or {}
+-    genuine_ok = (genuine.get("rc") == 0
+-                  and {"git", "readelf"} <= set(genuine_kernel)
++    genuine_ok = ({"git", "readelf"} <= set(genuine_kernel)
+                   and all(sorted(s.get("keys") or []) == allow
+                           and not s.get("canary_present")
+                           for s in genuine_kernel.values()))

@@ -5687,3 +5687,80 @@ or an explicit scope retirement; (d) the r63 planned record-section sweep; (e) s
 round that lands receipts; the r58/r60 bare-name findings and the r64 placeholder-token disposition
 stay named debt.
 
+
+## Record corrections — round 72 (appended by round 73; filed bytes not rewritten)
+
+**Correction (round 73, routed defect 1 of the round-72 spot-check).** The R72-C2 row above
+cites the C2 target sha `39a2193e…`; that blob is `tools/round-72/seam-probe.py` at the
+superseded commit `d8297e8`. The measured blob at the receipt's own `rev` `e67f3a1` is
+`602b305d…`, which is the value `.ufo/waves/round-72/l1/scores/c2-at-landing.json` records in
+`target_sha256`. The receipt's value is operative; the row's citation is superseded, not
+silently rewritten (audit atom D1 re-derives both).
+
+**Correction (round 73, routed defect 3 of the round-72 spot-check).** The round-72 record
+gate `.ufo/waves/round-72/l1/scores/gate-at-record.json` was run without `--disclosures` and
+carries no `disclosures` block; the freeze ledger `corpus/claim-freezes-v2.tsv` has a
+`round-72` row from round 73 (verdict CLEAN, findings `-`). The round-72 record sentence
+"disclosures exact, missing [] stray []" is unsupported by that receipt; this block replaces
+it.
+
+**Correction (round 73, routed defect 4 of the round-72 spot-check).** The R72-C3 sentence
+"the round-72 checker on the lying receipt exits 1" is not a recorded rc: `c3-lying-check.json`
+records `met false`, `clauses.receipt_capsule false` and `failing ["receipt_capsule: canary"]`
+with `rc: null`. The round-73 landing receipt `.ufo/waves/round-73/l1/scores/c3-lying-check.json`
+records the integer rc for the same run.
+
+**Correction (round 73, routed defect 6 of the round-72 spot-check).** The round-72 section's
+"the stagnation nudge applies" rationale is superseded: capability rows entered in rounds 70
+and 71 sit inside the 10-round window, so the waiver condition was not met; the lowest-axis
+obligation was satisfied by working coverage, tied-lowest at 10.0 (audit atom D6).
+
+**Correction (round 73, routed defect 7).** The round-72 C1 before receipt is
+`.ufo/waves/round-72/l1/pre/c1-at-base.json` (rev `6316c10`, 9 of 11, A8 true); the report's
+`c1-at-base-final.json` is a second measurement (rev `e67f3a1`, 9 of 11, A8 false). The row's
+pointer is the one a reader re-derives.
+
+## 2026-11-04 — round 73: the kernel's record, the record audit, and the reader-seam battery
+
+Base `05bf065684e52d72ea25aad95f7acb71fcd7874c`; declaration `da6c17c1` (the six round-73
+instruments, the plan, the census-start receipt), with the instrument fix `d36c6ee0` and the
+hardening `55cac1d2` disclosed in `.ufo/waves/round-73/claims.json` `instrument_supersessions`
++ `errata` (three errata: the base-arm comparator, the grep-count typo, and two producer pins
+the freeze named). Freeze `8b928422b51e2f03039ab365f7bafa838389c6d2` (the first commit adding
+`claims.json`); the round-29 gate audits it **FLAGGED** on `INSTRUMENT_PIN_MISMATCH` (the two
+round-72 producer pins, corrected at the record revision — the gate reads pins from the freeze
+commit, so the finding is permanent for this freeze and the ledger row says so). Three claims
+on three distinct axes, all capability acquisitions.
+
+**lowest-axis: coverage** (coverage/depth/calibration tied at 10.0 behind different proxies;
+R73-C1 works coverage). No nudge waiver is claimed.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R73-C1 | coverage | capability acquisition (kernel-side witness; Frontier → Core) | the probe reports `arms_passed 12` of `target 12` with `A12_kernel_witness` true — genuine kernel samples exactly HOME/LANG/PATH/TMPDIR, canary absent, HOME/TMPDIR contained; forged child dumps clean while forged kernel samples dirty; verdict `forged_detected true` — while the round-72 probe at the same revision reports 11 arms and no A12 | base `pre/c1-at-base-r72probe.json`: 11 arms, 11 passed, no A12 (kernel-channel grep 0 vs 1); `pre/c1-at-base.json`: the same probe against the round-72 route, 8 of 12; landing `l1/scores/c1-at-landing.json`: 12 of 12, `failed []`, genuine `["HOME","LANG","PATH","TMPDIR"]` with both containment flags, forged 275 keys + canary | **verified** (comparator re-stipulated by disclosed erratum 1; the measured 8/12 is reported, not hidden) |
+| R73-C2 | calibration | capability acquisition (record-vs-receipt audit) | the audit exits 0 with `mismatch_count 0` over 7 atoms at the record revision, while at base `05bf0656` it exits 1 with `mismatch_count 6` naming D1, D2, D3, D4, D5, D6 and D7 already true | base `pre/c2-at-base.json`: 6 mismatches; landing `l1/scores/c2-at-landing.json`: 0 mismatches, 7 atoms ok | **verified** |
+| R73-C3 | operability | capability acquisition (reader-seam mutation closure) | `--patch-set r73` exits 0 with `survivor_count 0`, each mutant killed by its declared case, pristine 38 cases green and the target pinned, while `--patch-set r73base` on the round-72 route reports 3 survivors | base `pre/c3-at-base.json`: 3 survivors; landing `l1/scores/c3-at-landing.json`: 0 survivors, `killed` names each case, `target_pin.matched true` | **verified** |
+
+**Capabilities entered.** (1) a kernel-side environment witness bound to the arm's own
+process ancestry, with an in-arm forged control, first working round 73; (2) a record-vs-receipt
+audit over an outside defect population, first working round 73; (3) reader-seam selftest
+closure for the three round-72 mutation survivors, first working round 73.
+
+**Name by surface.** R73-C1's surface is the observer channel (kernel record vs child claim),
+not a re-score of A11; R73-C2's surface is the record's own evidence pointers against the
+receipts they cite; R73-C3's surface is the reader seams' selftest binding, not the route's
+runtime behavior.
+
+**Wave.** One v1 wave `r73-w1`: 16 seats (5 executor, 3 scribe, 2 reviewer, 2 mutation-tester,
+1 critic, 1 sentinel, 1 scout, 1 connector); attack roles 5/16 = 31%; one connector; all 16
+settled, none dead (`r73-w1-results.json`). L1 held the planner seat; no residual call.
+
+**planned (next steered round only):** (a) close the A12 selftest survivors MutProbe reported
+(dropping `forged_detected`, `lie_clean`, the canary conjunct or the genuine rc leaves the
+selftest green) with one case per conjunct; (b) the D7 atom is semantically false-green — bind
+it to the report/SCORECARD pointer agreement or retire it with a reason; (c) `--patch-set r73`
+killed `git_reader_env_dropped` by its declared case only after the seam split — add a case that
+binds the *call site* as well as the seam body; (d) the round-73 freeze's pin finding stands:
+pin producers from the blobs at the freeze, verified before the freeze commit; (e) standing
+duties every round that lands receipts; the r63 record-section sweep and the r58/r60/r64 items
+stay named debt.
