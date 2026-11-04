@@ -6420,3 +6420,7 @@ C3's fixture pins against a frozen constant and widen A3/A9 to the `sasquatch` c
 round-81 old-counter outer-selftest, the receipt-auth/gate-exits and r63 record-section sweeps and
 the concurrent-replacement race as named debt; (e) one shokuknow `merge/kaidoku/` theme when a
 round's claim budget allows (this round: `Assimilation: none`).
+
+## Final committed-byte replay
+
+Final instrument revision `16be078adae62713c7e166bdbd642b222edcaca0`: C1 and C2 exit0 (`l1/scores/c1-at-final.json`, `c2-at-final.json`). C3 initially exits1 in the Eval subprocess because REA_UNBLOB_COMMAND is absent; the typed capability_unavailable envelope is retained (`c3-at-final.json`). With explicit `REA_UNBLOB_COMMAND=/home/vgpnk/.local/bin/unblob` and PATH prefixed by `/home/vgpnk/.local/bin`, the same committed counter exits0, A1-A9 true, control fires (`c3-at-final-with-provider.json`, producing execution record retains overrides). No failed run is discarded. Final freeze/disclosure and source census commands exit0. Mutation-closure's final documentation-only revision is disclosed at 4419abf6 in the round84 container; its final pin is e5cfd2ed…. WAVE-DONE received from Main, all14 settled; results retain null outputs after orchestrator restart, but all14 report files exist.

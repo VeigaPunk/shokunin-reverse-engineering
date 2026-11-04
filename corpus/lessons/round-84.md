@@ -129,3 +129,7 @@ integrated before landing: the sentinel's id-escape probe (M84-5), the reviewer'
 (frozen-table identity) and its depth-4 vacuity refutation (deepest-level arm). The scout's F12
 (registry case counts) and F7 (docstring wording) are corrected in the final commit; its F8/F9
 (round-82 and round-83 target revisions) are disclosed in those containers' supersessions.
+
+## Final committed-byte replay
+
+Final instrument revision `16be078adae62713c7e166bdbd642b222edcaca0`: C1 and C2 exit0 (`l1/scores/c1-at-final.json`, `c2-at-final.json`). C3 initially exits1 in the Eval subprocess because REA_UNBLOB_COMMAND is absent; the typed capability_unavailable envelope is retained (`c3-at-final.json`). With explicit `REA_UNBLOB_COMMAND=/home/vgpnk/.local/bin/unblob` and PATH prefixed by `/home/vgpnk/.local/bin`, the same committed counter exits0, A1-A9 true, control fires (`c3-at-final-with-provider.json`, producing execution record retains overrides). No failed run is discarded. Final freeze/disclosure and source census commands exit0. Mutation-closure's final documentation-only revision is disclosed at 4419abf6 in the round84 container; its final pin is e5cfd2ed…. WAVE-DONE received from Main, all14 settled; results retain null outputs after orchestrator restart, but all14 report files exist.

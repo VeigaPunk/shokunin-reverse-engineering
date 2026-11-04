@@ -7,8 +7,9 @@ Declaration: `e0de2088a7bddc16305357f90ac7e889fa0a0d11`. First container:
 
 Method: read-only git and the frozen blobs extracted by `git show HEAD:<path>`; probes in
 `/fast/scratch/hyaku/kaidoku-r84/CriticClaims/` only; receipts copied to
-`w1/CriticClaims/receipts/`. No production edit, no fleet/sibling write, no git/jj mutation,
-no `task` spawn, no `agent://all`.
+`w1/CriticClaims/receipts/`. No production edit, no fleet/sibling write, no lane or fleet git/jj
+mutation (scratch fixture repos only, each with a `git rev-parse --show-toplevel` assertion), no
+`task` spawn, no `agent://all`.
 
 ## Verdicts
 
@@ -71,6 +72,14 @@ Receipt: `met true`, `refused_expected 1`, `accepted_expected 1`, `mismatches []
 single control field belongs to the **last** container (round-84, CLEAN). The frozen receipt
 therefore does not measure the claim's clause "the instruments-only control accepting the
 round-83 container"; it measures a neighbour's non-empty `instruments` map.
+
+Direct answer to the posed cheap-gate question: an instruments-only gate **cannot** score 1/1
+refused and 1/1 accepted. Both real containers have non-empty `instruments`, so the cheap rule
+accepts both; `refused_expected` would be 0 and the round-83 `FLAGGED` expectation would be a
+mismatch. The target is failable by the cheap rule, which is the claim's stated purpose. The
+defect is narrower: the control **witness** is not attributed to the refused container, so the
+kill rule "the control must accept the round-83 container" can be violated while the run still
+reports `met true`.
 
 The order dependence is decisive. Fixture `fixture-c1b`: the round-83-like container has **no**
 `instruments` key and no claim path (FLAGGED); the round-84-like container has a pinned
@@ -412,4 +421,4 @@ No installs or upgrades. `~/.omp/agent/RULES.md` was read before this report; th
 and the host-wide pacman pause were respected, and nothing was installed. Tools used: Python
 3.14.8, git 2.56.0, mksquashfs/unsquashfs 4.7.5, coreutils. This seat did not run REA/npx; the C3
 REA evidence is the committed pilot plus ReviewerC3's independent run, cited as such. Scratch `/fast/scratch/hyaku/kaidoku-r84/CriticClaims/` removed before
-yield; receipts copied to `w1/CriticClaims/receipts/` (12 files, listed above).
+yield; receipts copied to `w1/CriticClaims/receipts/` (13 files: the JSON/text receipts plus `c1-fixture-bytes.json`).

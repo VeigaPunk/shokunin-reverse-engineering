@@ -395,12 +395,12 @@ numbers are wrong and are cheap to correct. Flagging for the registry-duty owner
 | F4 | All 13 mutants are verdict-relevant to their declared case (behavioural probes, not textual) | none — no neutral mutants |
 | F5 | The `floor` row's 2-edit pair is *necessary*: either edit alone leaves the selftest green | none, but a single-edit rewrite of that row would silently become a survivor |
 | F6 | `-repro-time` does not normalise file mtimes below the epoch (`min(src, epoch)`); C3's fixture is unaffected because the tool writes its members at run time | none for C2; recorded for C3's fixture-identity wording |
-| F7 | **Docstring/code divergence in the frozen counter**: `mutation-closure.py:8` and `:13-14` say an absent declared case is *inconclusive*; the code (`:169-173`) and the counter's own selftest (`:310-313`) and the SKILL row say *survivor* | **needs a disclosed correction** — the code's behaviour is the stricter one and satisfies the predicate, but the frozen instrument's self-description is wrong |
-| F8 | Editing `printed-command.py` flips round-82 CLEAN→FLAGGED (`INSTRUMENT_REVISED`); a disclosed `instrument_supersessions` entry restores CLEAN | **sequencing obligation for L1** |
-| F9 | `source-bind.py` is pinned by no claims container; editing it trips the C2 "target digest differing from the frozen release pin" clause with no existing disclosure route | **sequencing obligation for L1** — the two halves of C2's nine new cases need different disclosure routes |
-| F10 | Two of the five `source-*` mutants are verdict-neutral against the live lane tree (only `source-mined` flips there) | **implementation caution** — those cases need a fixture repo, else four mutants stay survivors |
-| F11 | A new selftest case quoting an anchor string verbatim raises that anchor's count to 2 → `inconclusive` (`mutation-closure.py:141-146`) | **implementation caution** for the case writers |
-| F12 | SKILL.md rows understate the three round-84 counters' selftest sizes (10/7/7 vs 11/10/9) | registry duty, not C2 |
+| F7 | **Docstring/code divergence in the frozen counter**: `mutation-closure.py:8` and `:13-14` say an absent declared case is *inconclusive*; the code (`:169-173` frozen / `:200-204` post-integration) and the counter's own selftest (`:310-313` / `:311-313`) and the SKILL row say *survivor* | **needs a disclosed correction** — still live after the integration; the code's behaviour is the stricter one and satisfies the predicate, but the pinned instrument's self-description is wrong |
+| F8 | Editing `printed-command.py` flips round-82 CLEAN→FLAGGED (`INSTRUMENT_REVISED`); a disclosed `instrument_supersessions` entry restores CLEAN | **discharged** — the integration added the round-82 supersession; round-82 is CLEAN at HEAD (§7b.2) |
+| F9 | `source-bind.py` is pinned by no claims container; editing it trips the C2 "target digest differing from the frozen release pin" clause with no existing disclosure route | **discharged for C2** — the integration added a round-84-container supersession (§7b.2); but the **round-83 canonical-identity receipt is now stale** and the freeze gate is blind to it (§7b.3) |
+| F10 | Two of the five `source-*` mutants are verdict-neutral against the live lane tree (only `source-mined` flips there) | **heeded** — the integrated cases are fixture-driven and all four kill (§7b.1) |
+| F11 | A new selftest case quoting an anchor string verbatim raises that anchor's count to 2 → `inconclusive` (`mutation-closure.py:141-146`) | **heeded** — anchor census re-run at HEAD is 14/14 exactly once (§7b.1) |
+| F12 | SKILL.md rows understate the three round-84 counters' selftest sizes (10/7/7 vs 11/10/9) | registry duty, not C2 — **still live**, and re-measure after the integration (§7b.3) |
 
 ## 7b. Post-integration re-verification (at HEAD `b15d8083`)
 
@@ -531,9 +531,13 @@ re-verified by the 13/13 kills above.
 
 * `.ufo/waves/round-84/w1/ScoutLoci.md` — this report.
 * `.ufo/waves/round-84/w1/ScoutLoci/receipts/` — `anchors.json`, `anchors.txt`, `anchors.py`,
-  `verdict_relevance.json`, `c2-base.json`, `probe.py`, `freeze-gate-head.json`,
-  `freeze-gate-base.json`, `attr-audit-edited.json`, `c1-precheck-head.json`.
+  `verdict_relevance.json`, `c2-base.json`, `c2-at-head.json`, `probe.py`,
+  `freeze-gate-head.json`, `freeze-gate-base.json`, `freeze-gate-at-head.json`,
+  `attr-audit-edited.json`, `c1-precheck-head.json`, `c1-precheck-at-head.json`.
 
 Scratch dir `/fast/scratch/hyaku/kaidoku-r84/ScoutLoci/` was removed after copying the receipts
-above. No file outside `.ufo/waves/round-84/w1/ScoutLoci/` and that scratch path was written;
-no git or jj mutation was made in the lane tree.
+above; `/fast/scratch/hyaku/kaidoku-r84/ScoutLoci2/` (the post-integration re-verification
+scratch) was removed on the same pass. No file outside `.ufo/waves/round-84/w1/ScoutLoci/` and
+those scratch paths was written; no git or jj mutation was made in the lane tree. The private
+clone used for the F8/F9 disclosure experiment was created under my scratch dir and deleted with
+it; it was never a lane path.

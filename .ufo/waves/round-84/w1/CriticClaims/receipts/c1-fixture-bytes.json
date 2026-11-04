@@ -1,0 +1,50 @@
+{
+ "purpose": "R84-C1 control-attribution fixture, exact bytes as written to a private git repo; each container is committed and scored by the frozen tool tools/round-84/freeze-precheck.py sha256 602239f5f52009f2211c2343c43c8cc97e5941b0e8815e225bddc32e72780326",
+ "counter_blob": {
+  "path": "tools/round-84/counter.py",
+  "bytes": "#!/usr/bin/env python3\nprint('counter')\n",
+  "sha256": "e50249728cae54b8005fef7b9c37ae721219131bcc29a7cf8ee45d4ba00661ee"
+ },
+ "round83_like_container": {
+  "path": ".ufo/waves/round-83/claims.json",
+  "json": {
+   "schema": "fixture",
+   "claims": [
+    {
+     "id": "R83-C1",
+     "predicate": "attribution mismatches 0 across exactly eight frozen cases"
+    }
+   ]
+  },
+  "note": "no instruments key, no script path in any claim string -> CLAIM_NO_COUNTER_PATH:R83-C1; the cheap instruments-only rule rejects it"
+ },
+ "round84_like_container": {
+  "path": ".ufo/waves/round-84/claims.json",
+  "json": {
+   "schema": "fixture",
+   "instruments": {
+    "tools/round-84/counter.py": "e50249728cae54b8005fef7b9c37ae721219131bcc29a7cf8ee45d4ba00661ee"
+   },
+   "fixtures": {
+    "path": ".ufo/waves/round-84/mutants.json",
+    "rev": "deadbeef",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+   },
+   "claims": [
+    {
+     "id": "R84-C1",
+     "predicate": "Nothing here; tools/round-84/counter.py is unrelated prose."
+    }
+   ]
+  },
+  "note": "pinned path, but a decoy predicate and a deliberately wrong fixtures digest; the frozen gate returns CLEAN"
+ },
+ "commands": [
+  "python3 -I -B <frozen-602239f5.py> --root <fixture> --rev HEAD --container .ufo/waves/round-83/claims.json --expect .ufo/waves/round-83/claims.json=FLAGGED --container .ufo/waves/round-84/claims.json --expect .ufo/waves/round-84/claims.json=CLEAN --control instruments-only --json-out BA.json",
+  "python3 -I -B <frozen-602239f5.py> --root <fixture> --rev HEAD --container .ufo/waves/round-84/claims.json --expect .ufo/waves/round-84/claims.json=CLEAN --container .ufo/waves/round-83/claims.json --expect .ufo/waves/round-83/claims.json=FLAGGED --control instruments-only --json-out AB.json"
+ ],
+ "observed": {
+  "BA": "receipts/c1-frozen-fixture-BA.json: met true, refused 1, accepted 1, control {accepted true, rule instruments-only}; the cheap rule never accepted the refused container",
+  "AB": "receipts/c1-frozen-fixture-AB.json: met false, exit 1, control {accepted false}; same containers and expectations, only the order changed"
+ }
+}
