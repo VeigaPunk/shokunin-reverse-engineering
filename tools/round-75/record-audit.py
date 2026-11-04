@@ -53,6 +53,7 @@ import sys
 
 SCORECARD = "SCORECARD.md"
 SOURCES = "corpus/SOURCES.md"
+FREEZES = "corpus/claim-freezes-v2.tsv"
 LESSON75 = "corpus/lessons/round-75.md"
 ENTRY75 = "corpus/knowledge/2026-11-04-r75-a12-case-independence.md"
 CLAIMS75 = ".ufo/waves/round-75/claims.json"
@@ -391,16 +392,24 @@ def atom_binding_and_pins(root: str, rev: str) -> dict:
                           "blob": sha256_bytes(blob) if blob else None,
                           "matched": blob is not None
                           and sha256_bytes(blob) == digest}
+    ledger = show(root, rev, FREEZES) or ""
+    ledger_rows = [ln for ln in ledger.splitlines() if ln.strip()]
+    debt = any(ln.startswith("round-73\tFLAGGED\tINSTRUMENT_PIN_MISMATCH")
+               for ln in ledger_rows)
+    own_row = any(ln.startswith("round-75\tCLEAN\t-") for ln in ledger_rows)
     ok = (runner_ok and bool(named) and sorted(pins) == named
           and all(row["matched"] for row in rows.values())
-          and len(rows) == len(pins))
+          and len(rows) == len(pins) and debt and own_row)
     return {"id": "D21_binding_and_pins", "ok": bool(ok),
-            "detail": "the base receipt binds the round-75 runner, and the "
-                      "freeze pins exactly the plan's round-75 instruments, "
-                      "each equal to the blob at the freeze",
+            "detail": "the base receipt binds the round-75 runner, the freeze "
+                      "pins exactly the plan's round-75 instruments each equal "
+                      "to the blob at the freeze, and the ledger restates the "
+                      "round-73 standing pin debt beside the round-75 row",
             "evidence": {"runner_ok": runner_ok, "plan_tools": named,
                          "pinned": sorted(pins), "freeze_rev": freeze_rev,
-                         "pins_match": {k: v["matched"] for k, v in rows.items()}}}
+                         "pins_match": {k: v["matched"] for k, v in rows.items()},
+                         "ledger_round73_debt": debt,
+                         "ledger_round75_row": own_row}}
 
 
 def atom_security_arms(root: str, rev: str) -> dict:
