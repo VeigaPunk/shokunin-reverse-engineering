@@ -4654,3 +4654,18 @@ tied-lowest axis). No nudge waiver is claimed.
   the base commit; the round-77 routed items 8–10 and §6 item 7 ride R78-C1, items 1–6 and §8 item 11 are
   record/prose repairs, and item 12 is closed by that base commit. **Filing.** The prefile gate passes in
   clean clones at `bc73b27a` (`l1/scores/gate-at-record.json`) and `3bb87162` (`l1/scores/gate-at-tip.json`).
+- **Round 78 — dispositions of the round-77 closure's routed defects** (append-only; the filed
+  round-77 report and its lesson stay byte-identical, per QUALITY 65). §6 item 1: the round-77 wave's
+  accounting is restated here from `r77-w1-results.json` — 12 seats, 10 with non-empty output, 2
+  zero-byte (ExecC2Receipt, ReviewerC1), and of the 10 only 8 left a substantive report file
+  (CriticClaims 766 B and SentinelScope 372 B returned progress notes); `CriticClaims` later wrote a full
+  11.6 KB adversarial report, committed at `6205ec8c`. §6 item 2: the C2 controls first land at
+  `37f5d069`, not `1d84253a`; the round-77 report's row is superseded by this sentence. §6 item 3: the
+  two prose mistakes are now rows M78-3 and M78-4 in `corpus/lessons/round-78.md`. §6 item 4: the round-78
+  receipt set carries integer `exit` on every receipt (`gate-at-record`, `gate-at-tip`,
+  `prefile-at-filing`, `prefile-at-tip`); the round-77 rev-binding receipts stay as filed. §6 item 5: the
+  round-78 controls record typed reasons (`c1-base-only`, `c1-all-refuse`, `c1-no-fixtures`,
+  `c2-token-grep`); the round-77 forged-arms control stays as filed. §6 item 6: this round's report
+  carries the `Stale-lane` statement ("open > 2 ticks, progressing"). §8 items 8–11 ride R78-C1
+  (`clean_run`, `filing_rev`, `receipt_auth`, the red cases). §8 item 12: the inherited `CriticClaims`
+  evidence is committed at the base commit, and this round waits for `WAVE-DONE` before filing.
