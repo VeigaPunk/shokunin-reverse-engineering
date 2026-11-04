@@ -1,0 +1,337 @@
+{
+  "rev": "5b59ae615a2ab68e3b421820d1c72751e1185385",
+  "parser": "independent regex negative-lookbehind; no counter import",
+  "limits": "Not a general GFM renderer; consecutive backslashes require separate semantic inspection.",
+  "rows": 129,
+  "paths": 129,
+  "histogram": {
+    "7": 118,
+    "8": 10,
+    "6": 1
+  },
+  "duplicates": [],
+  "nonconformant": [
+    {
+      "path": "tools/round-77/verdict-bind.py",
+      "file_line": 1908,
+      "cells": [
+        "`tools/round-77/verdict-bind.py`",
+        "gate \u2014 R77-C1 calibration: reads the record's annotation surface (SCORECARD `## Capabilities` rows with first-working round >= 73 plus the PROVINCE `- **Core \u2014 ` bullets), parses each parenthesised annotation with a closed eight-form grammar (typed `field literal`, unique atom shorthand, `field N of M` with the `*_ok`->`*_total` pairing, `N mismatches`, `N survivors`, atoms counted with word numerals, `pristine N`, `validate defect-free`), strips a leading `<word>:` qualifier, and re-derives every bound clause from the JSON receipt the cell names at `--rev`; unparsable clauses and absent receipt fields are unbound, never passes; a bound clause with no JSON pointer is `no_json_receipt`. Type-strict comparison: `true` never satisfies an integer field (S289)",
+        "0=no defect and at least one bound clause; 1=defects named with claimed vs actual; 2=unevaluable (SCORECARD absent at the rev, unknown clause kind)",
+        "`python3 -I -B tools/round-77/verdict-bind.py --selftest` \u2014 15 cases, exit 0 on 2026-11-04",
+        "`git show <rev>:<path>` only, for SCORECARD.md, PROVINCE.md and the receipt JSON it names; no receipt is trusted as stated",
+        "`--json-out` receipt only",
+        "read-only; none",
+        "kaidoku-r77"
+      ],
+      "count": 8,
+      "errors": [
+        "cells>7"
+      ]
+    },
+    {
+      "path": "tools/round-77/prefile-receipt.py",
+      "file_line": 1909,
+      "cells": [
+        "`tools/round-77/prefile-receipt.py`",
+        "gate \u2014 R77-C2 operability: runs `tools/round-29/prefile-check.sh` as a child (no shell, `argv` list) under exactly PATH/HOME/TMPDIR/LANG with `TMPDIR`/`HOME` inside the work root, and writes a receipt binding argv, rev, integer exit, the last `prefile: ` verdict line, stdout + its sha256, `passed` and the child's non-empty key set; `--check-receipt [--expect-rev]` re-derives every clause from the receipt bytes (a failing gate is a valid receipt); `--battery` scores six arms (clone-run, record-receipt, gate-exits over the newest round dir, and three red receipts)",
+        "0=every arm met; 1=arms unmet, each named; 2=unevaluable (gate script absent, clone/checkout failure, missing `--rev`/`--work`)",
+        "`python3 -I -B tools/round-77/prefile-receipt.py --selftest` \u2014 13 cases, exit 0 on 2026-11-04",
+        "the lane tree read-only; `git clone --shared` for the clean-clone arm; `git show` for the record receipts",
+        "clone under `--work`; `--filing` writes the named receipt path; `--json-out`",
+        "`--work` root, one clone per run",
+        "kaidoku-r77"
+      ],
+      "count": 8,
+      "errors": [
+        "cells>7"
+      ]
+    },
+    {
+      "path": "tools/round-77/gen-controls.py",
+      "file_line": 1910,
+      "cells": [
+        "`tools/round-77/gen-controls.py`",
+        "probe \u2014 R77-C1 do-nothing controls, frozen before data: derives control instruments from the pinned bytes of `tools/round-77/verdict-bind.py` by appending one documented override each (`parse_clause` -> None = no-binding; `bind` -> failing verdict = all-false), verifies the patch applied, and scores both plus round 76's pointer-only audit at `--base`; records `meets_target` per control against the frozen `mismatch_count 0 AND bound_clauses >= 18`",
+        "0=no control reaches the target; 1=a control does; 2=usage",
+        "`python3 -I -B tools/round-77/gen-controls.py --root . --base 188562d4 --out-dir <scratch> --json-out <receipt>`",
+        "the instrument bytes and `tools/round-76/record-audit.py`",
+        "control copies under `--out-dir`; `--json-out`",
+        "caller's `--out-dir`",
+        "kaidoku-r77"
+      ],
+      "count": 8,
+      "errors": [
+        "cells>7"
+      ]
+    },
+    {
+      "path": "tools/round-78/attack-gate.py",
+      "file_line": 1911,
+      "cells": [
+        "`tools/round-78/attack-gate.py`",
+        "gate \u2014 R78-C1 calibration: materialises the ten committed attack fixtures (`.ufo/waves/round-78/attacks/`, two-commit repos so a receipt's `rev` resolves to a commit carrying the pinned blob), measures that the frozen `tools/round-77/verdict-bind.py` / `prefile-receipt.py` ACCEPT each one (`base_accepted`), then refuses it by the one declared rule its class names \u2014 `receipt_auth` (40-hex rev plus `instrument.sha256` re-derived from the blob at that rev), `qualified_atom`, `near_miss_field`, `negated_verdict`, `value_mismatch` (unique nested binding), `unbound_verdict` (a parsable clause that binds nothing, including a computed `defect` status the round-77 binder drops), `clean_run`, `filing_rev`, `gate_receipt_schema`, `gate_receipt_rev` \u2014 and judges the real record with every rule; `--control base-only",
+        "all-refuse",
+        "no-fixtures` are the frozen controls",
+        "0=ten fixtures refused by their declared rules, ten base acceptances, the genuine record clean, `validate` defect-free; 1=otherwise, each unmet count named; 2=unevaluable (fixture absent, git failure)",
+        "`python3 -I -B tools/round-78/attack-gate.py --root . --rev <rev> --work <scratch> --battery --json-out <receipt>`; `--selftest` (37 cases; the round-80 revision adds one isolating case per `validate_receipt` clause)",
+        "the ten fixture trees, `tools/round-77/verdict-bind.py`, `tools/round-77/prefile-receipt.py`, `tools/round-29/prefile-check.sh`",
+        "receipts name each fixture's base observation and refusal reasons"
+      ],
+      "count": 8,
+      "errors": [
+        "cells>7"
+      ]
+    },
+    {
+      "path": "tools/round-78/surface-recheck.py",
+      "file_line": 1912,
+      "cells": [
+        "`tools/round-78/surface-recheck.py`",
+        "gate \u2014 R78-C2 freshness: parses eight drift-prone surface values from `PROVINCE.md` with declared patterns (three `rea` pins and their pointers, the OMP disable claim, the Ghidra `application.version` and install dir, the JDK version, `JAVA_HOME`), reads the live object each record names (the three client configs' `rea` entry via json/tomllib, the Ghidra `application.properties`, the `.bashrc` exports, `java -version`), compares typed values, refuses a pointer that is not the declared live source, and writes `checked_at`, `unparsed_ids` and a per-check `record`/`live` pair; `--control token-grep` is the do-nothing control (a value found in the live text is not the value the named object holds)",
+        "0=eight checks matched, nothing unparsed, `validate` defect-free; 1=a mismatch or unparsed value; 2=unevaluable (record absent)",
+        "`python3 -I -B tools/round-78/surface-recheck.py --battery --root . --rev <rev> --json-out <receipt>`; `--selftest` (12 cases)",
+        "the three client configs, the Ghidra provider, `.bashrc`, `java`",
+        "receipts record pins, the `disabledServers` presence and paths only \u2014 never an `env` block or a token (QUALITY row 128)"
+      ],
+      "count": 6,
+      "errors": [
+        "pinned-empty"
+      ]
+    },
+    {
+      "path": "tools/round-79/gate-mutation.py",
+      "file_line": 1913,
+      "cells": [
+        "`tools/round-79/gate-mutation.py`",
+        "gate \u2014 R79-C1 calibration: applies eight exact single-occurrence edits to `tools/round-78/attack-gate.py` at `--rev` and scores each mutant by ONE declared selftest case \u2014 present and failing kills it, absent survives, anchor 0/>1 occurrences and copies without a `SELFTEST` summary are inconclusive; scores the predicate's pristine case count (29) and the three required sole detectors, records `sole_detector`, re-derives its target pin from the same revision and reports the empty-set control as not met",
+        "0=eight mutants killed by their declared cases, survivors 0, pristine green, pin matched, `validate` defect-free; 1=otherwise, each survivor, unapplied or inconclusive mutant named; 2=could-not-evaluate (target absent at rev, bad argv)",
+        "`python3 -I -B tools/round-79/gate-mutation.py --selftest` \u2014 14 cases, exit 0 on 2026-11-04",
+        "`tools/round-78/attack-gate.py` at `--rev`; digest in the receipt and `TARGET_SHA256`",
+        "`--json-out` receipt; one scratch copy per mutant under `--work`",
+        "read-only on the lane; copies under `--work` only",
+        "kaidoku-r79"
+      ],
+      "count": 8,
+      "errors": [
+        "cells>7"
+      ]
+    },
+    {
+      "path": "tools/round-79/pointer-bind.py",
+      "file_line": 1914,
+      "cells": [
+        "`tools/round-79/pointer-bind.py`",
+        "gate \u2014 R79-C2 freshness: binds `PROVINCE.md`'s five pointer cells (three REA pins, the Ghidra `application.version` line, the `.bashrc` export range) at the 1-based line or range they name, requiring each pointer to name the declared live object (round 78's `same_path` rule) and retaining a digest of the pointed lines, never their bytes; `--control path-only` is the frozen control that cannot fail on a moved line and never reports `ok true`",
+        "0=five pointers bound, `unparsed 0`, `validate` defect-free; 1=each stale, absent, out-of-range or unparsable pointer named; 2=could-not-evaluate (PROVINCE.md absent at rev, bad argv)",
+        "`python3 -I -B tools/round-79/pointer-bind.py --selftest` \u2014 21 cases, exit 0 on 2026-11-04; entry command `python3 -I -B tools/round-79/pointer-bind.py --root . --rev <40-hex> --json-out <receipt>`",
+        "`PROVINCE.md` at `--rev`; live files at the receipt's `checked_at`",
+        "`--json-out` receipt only",
+        "read-only; reads the pointed lines of the client configs",
+        "kaidoku-r79"
+      ],
+      "count": 8,
+      "errors": [
+        "cells>7"
+      ]
+    }
+  ],
+  "legacy": [
+    {
+      "path": "tools/round-69/packed-elf.py",
+      "file_line": 1862,
+      "cells": [
+        "`tools/round-69/packed-elf.py`",
+        "gate \u2014 R69-C1/C2/C3: supersession of the round-68 packed-ELF route (which stays byte-identical) \u2014 the arm seam `evaluate_carrier()` with 20 selftest cases including one arm-false case per arm; a typed preflight (exit 2 `unevaluable` for missing node/git/readelf/upx, an unusable `--work`, a packer version or sha256 mismatch) with the UPX 5.2.0 pin ENFORCED; per-carrier records naming name, format (readelf -h), packing_mode (`upx --best`) and pin; a third pinned carrier of kind shared-object (`/usr/lib/libz.so.1.3.2`); and `--check-receipt` for R69-C3 (target 3, every arm, every ceiling ratio <= 0.75, a shared-object carrier)",
+        "0=met: carriers_matched 3 of 3, control_ok true, failing []; 1=not met: each false arm/clause named and the receipt still written; 2=could-not-evaluate: each typed `unevaluable` class above, carrier pin drift, REA package drift, unknown revision or bad argv",
+        "`python3 -I -B tools/round-69/packed-elf.py --selftest` \u2014 20 cases, exit 0 on 2026-11-03; `--check-receipt` exit 0 on a synthetic in-bounds receipt and exit 1 with `libz: before_ceiling_ratio 0.9 > 0.75` on the loose-ceiling fixture",
+        "`.ufo/waves/round-69/l1/pre/` (base arms), `.ufo/waves/round-69/w1/` (wave evidence); scratch under $HYAKU_SCRATCH",
+        "UPX_SHA256_PIN, UPX_VERSION_PIN, the CARRIERS table (sha256, floors, stub ceilings) and REA_PKGJSON_SHA256 in the source, all enforced",
+        "--json-out receipt and --work scratch; every copy is rebuilt inside --work and deleted",
+        "kaidoku"
+      ],
+      "count": 8,
+      "errors": []
+    },
+    {
+      "path": "tools/round-69/mutation-check.py",
+      "file_line": 1863,
+      "cells": [
+        "`tools/round-69/mutation-check.py`",
+        "gate \u2014 R69-C1 calibration: applies the five 2026-11-03 route mutants (M1_identity, M2_recovery, M3_detected, M4_before, M5_control) to a git blob in scratch and runs only the instrument's `--selftest`; patch set r68 expects the five survivors at 13 cases, patch set r69 expects 0 survivors with each kill naming its declared arm-false case (`killed_wrong_case` is never a kill)",
+        "0=expectation met; 1=missed, each survivor and wrong-case kill named; 2=could-not-evaluate (unknown revision, patch site absent or ambiguous, pristine selftest not green, refused --work, bad argv)",
+        "`mutation-check.py --validate <receipt>` checks a battery receipt's structural honesty (mutant rows, int rc, failed list, survivors consistent); controls reject an empty-record receipt",
+        "`.ufo/waves/round-69/l1/pre/c1-at-base.json` (5 survivors) and the landing receipt (0)",
+        "the PATCH_SETS table (each patch site and its expected arm-false case) in the source",
+        "--json-out receipt only; every mutant lives in scratch",
+        "kaidoku"
+      ],
+      "count": 8,
+      "errors": []
+    },
+    {
+      "path": "tools/round-69/contract-probe.py",
+      "file_line": 1864,
+      "cells": [
+        "`tools/round-69/contract-probe.py`",
+        "gate \u2014 R69-C2 operability: six black-box arms against the instrument under test \u2014 A1 a PATH without node, A2 an unwritable --work, A3 `--upx` a script reporting 5.1.0, A4 `--upx` a real upx plus one byte, A5 the receipt's carrier records re-derived from the pinned source bytes and the pack argv, A6 the receipt's enforced packer pins against the host packer",
+        "0=all six arms pass; 1=arms failed, each named with its observation; 2=could-not-evaluate (unknown revision, missing host tool, bad argv)",
+        "`contract-probe.py --validate <receipt>` checks the arm rows, observations and the `arms_passed`/`failed` consistency",
+        "`.ufo/waves/round-69/l1/pre/c2-at-base.json` (0 of 6) and the landing probe receipt (6 of 6)",
+        "UPX path, PACKING_MODE and the six arm ids in the source; the instrument under test is named by --rev and --tool",
+        "--json-out receipt only; fixtures live in scratch",
+        "kaidoku"
+      ],
+      "count": 8,
+      "errors": []
+    },
+    {
+      "path": "tools/round-69/controls.py",
+      "file_line": 1865,
+      "cells": [
+        "`tools/round-69/controls.py`",
+        "gate \u2014 the round's seven do-nothing/shortcut controls, scored with the same frozen counters: c1-do-nothing (r68 instrument + r68 patch set, 5 survivors), c1-constant-battery (rejected), c2-do-nothing (base instrument + base receipt, 0 of 6), c2-constant-probe (rejected), c3-do-nothing (r68 receipt, target 2), c3-synthetic-met (in-bounds receipt, met), c3-loose-ceiling (ratio 0.9, rejected)",
+        "0=every control shows what it must show; 1=any control misses its expectation, named; 2=bad argv or a missing --work",
+        "`controls.py --root . --rev <base> --work <scratch> --json-out <receipt>`",
+        "`.ufo/waves/round-69/l1/pre/controls-at-base.json`",
+        "the four tool paths in TOOLS and BASE_RECEIPT in the source",
+        "--json-out receipt only; synthetic receipts and scratch fixtures",
+        "kaidoku"
+      ],
+      "count": 8,
+      "errors": []
+    }
+  ],
+  "all_paths": [
+    "tools/round-41/c1-counter.py",
+    "tools/round-41/c1-extra.py",
+    "tools/round-41/c1-run.sh",
+    "tools/round-41/c2-controls.py",
+    "tools/round-41/c2-counter.py",
+    "tools/round-41/fetch-vendor.py",
+    "tools/round-41/gen-squashfs.py",
+    "tools/round-41/heldout-gen-v3.py",
+    "tools/round-41/indep-eval-v3.py",
+    "tools/round-41/local-source-gate.py",
+    "tools/round-41/mk-l-carriers.py",
+    "tools/round-41/sqfs-list.py",
+    "tools/round-41/sqfs-triage-v3.py",
+    "tools/round-42/c1-counter.py",
+    "tools/round-42/c1-run.sh",
+    "tools/round-42/c2-controls.py",
+    "tools/round-42/c2-counter.py",
+    "tools/round-42/fetch-carrier.py",
+    "tools/round-42/heldout-gen-v4.py",
+    "tools/round-42/indep-eval-v4.py",
+    "tools/round-42/prefile-gate.py",
+    "tools/round-42/sqfs-triage-v4.py",
+    "tools/round-42/sqfs3-oracle.py",
+    "tools/round-42/unblob-logtee.sh",
+    "tools/round-43/c1-counter.py",
+    "tools/round-43/c2-score-r43.py",
+    "tools/round-43/heldout-gen-v4r43.py",
+    "tools/round-43/verify-copies-r43.py",
+    "tools/round-44/c1-counter.py",
+    "tools/round-44/c1-run.sh",
+    "tools/round-44/c2-counter.py",
+    "tools/round-45/c1-counter.py",
+    "tools/round-45/c2-counter.py",
+    "tools/round-45/frozen-path-preflight.py",
+    "tools/round-46/attest.py",
+    "tools/round-46/census.py",
+    "tools/round-46/gate.py",
+    "tools/round-46/registry.py",
+    "tools/round-47/exact.py",
+    "tools/round-47/record.py",
+    "tools/round-48/meanings.py",
+    "tools/round-48/record2.py",
+    "tools/round-49/c1-controls.py",
+    "tools/round-49/c1-counter.py",
+    "tools/round-49/c1-oracle.py",
+    "tools/round-49/c1-run.py",
+    "tools/round-49/c1-run.sh",
+    "tools/round-49/c2-mismatch.py",
+    "tools/round-50-c3/sqfs-triage-v5.py",
+    "tools/round-50/c1-controls.py",
+    "tools/round-50/c1-counter.py",
+    "tools/round-50/c1-run.sh",
+    "tools/round-50/c2-record.py",
+    "tools/round-50/fetch-vendor.py",
+    "tools/round-50/selftest-r49-c2.py",
+    "tools/round-51/census3.py",
+    "tools/round-53/r53-record.py",
+    "tools/round-53/sqfs-triage-v6.py",
+    "tools/round-53/v5-baseline-witness.py",
+    "tools/round-55/corrections-pin.py",
+    "tools/round-55/v6-block-digest.py",
+    "tools/round-56/receipt-audit.py",
+    "tools/round-57/record-receipt-audit.py",
+    "tools/round-59/annotation-audit.py",
+    "tools/round-60/annotation-sweep.py",
+    "tools/round-61/numstat-edge-audit.py",
+    "tools/round-62/base-binding-sweep.py",
+    "tools/round-63/edge-numstat-sweep.py",
+    "tools/round-64/jsc-route-matrix.py",
+    "tools/round-65/coverage-recipe.py",
+    "tools/round-65/jsc-closure-matrix.py",
+    "tools/round-66/closure-boundary.py",
+    "tools/round-66/coverage-selfcheck.py",
+    "tools/round-67/avm-le-counter.py",
+    "tools/round-67/mutation-battery.py",
+    "tools/round-68/packed-elf.py",
+    "tools/round-68/registry-conformance.py",
+    "tools/round-69/contract-probe.py",
+    "tools/round-69/controls.py",
+    "tools/round-69/mutation-check.py",
+    "tools/round-69/packed-elf.py",
+    "tools/round-69/provenance-check.py",
+    "tools/round-70/contract-probe.py",
+    "tools/round-70/controls.py",
+    "tools/round-70/forged-receipts.py",
+    "tools/round-70/mutation-check.py",
+    "tools/round-70/packed-elf.py",
+    "tools/round-70/seam-probe.py",
+    "tools/round-71/controls.py",
+    "tools/round-71/forged-receipts.py",
+    "tools/round-71/packed-elf.py",
+    "tools/round-71/registry-census.py",
+    "tools/round-71/seam-probe.py",
+    "tools/round-72/capsule-audit.py",
+    "tools/round-72/capsule_audit.py",
+    "tools/round-72/controls.py",
+    "tools/round-72/mutation-check.py",
+    "tools/round-72/packed-elf.py",
+    "tools/round-72/seam-probe.py",
+    "tools/round-73/capsule_audit.py",
+    "tools/round-73/controls.py",
+    "tools/round-73/mutation-check.py",
+    "tools/round-73/packed-elf.py",
+    "tools/round-73/record-audit.py",
+    "tools/round-73/seam-probe.py",
+    "tools/round-74/controls.py",
+    "tools/round-74/freeze-pins.py",
+    "tools/round-74/probe-mutation.py",
+    "tools/round-74/record-audit.py",
+    "tools/round-74/seam-probe.py",
+    "tools/round-75/controls.py",
+    "tools/round-75/freeze-pins.py",
+    "tools/round-75/probe-mutation.py",
+    "tools/round-75/record-audit.py",
+    "tools/round-75/seam-probe.py",
+    "tools/round-76/mutation-check.py",
+    "tools/round-76/plan-command.py",
+    "tools/round-76/record-audit.py",
+    "tools/round-77/gen-controls.py",
+    "tools/round-77/prefile-receipt.py",
+    "tools/round-77/verdict-bind.py",
+    "tools/round-78/attack-gate.py",
+    "tools/round-78/surface-recheck.py",
+    "tools/round-79/gate-mutation.py",
+    "tools/round-79/pointer-bind.py",
+    "tools/round-80/guard-battery.py",
+    "tools/round-80/pointer-bind.py",
+    "tools/round-80/receipt-provenance.py",
+    "tools/round-80/strictness-battery.py"
+  ],
+  "counter_sha256": "b85b4d7922ab571af04f633e415a4fe91859e440c9a609d4182a46aec61bb380"
+}

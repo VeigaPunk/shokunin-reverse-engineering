@@ -270,6 +270,63 @@ def selftest() -> int:
          validate_receipt(empty)["defects"][:1],
          ["ok true while the control does not reproduce every red case"])
 
+    # Keep the parser, git_show, declared_ok, bind and battery real. Only the
+    # live-file input is redirected; no client configuration is opened.
+    binder_path = pathlib.Path(__file__).with_name("pointer-bind.py")
+    if not binder_path.is_file():
+        binder_path = pathlib.Path(__file__).parent.parent / "round-80/pointer-bind.py"
+    binder = load_module(str(binder_path), "record_selftest_binder")
+    ghidra = str(pathlib.Path(work) / "fixture-ghidra")
+    live = {
+        binder.DECLARED["devin-pin"]: ['"rea-agents@6.7.0"\n'],
+        binder.DECLARED["omp-pin"]: ['"rea-agents@6.7.0"\n'],
+        binder.DECLARED["kimi-pin"]: ['"rea-agents@6.7.0"\n'],
+        ghidra + "/Ghidra/application.properties": [
+            "application.version=12.0\n"],
+        binder.DECLARED["bashrc-exports"]: [
+            f"export GHIDRA_INSTALL_DIR={ghidra}\n", "export JAVA_HOME=/fixture/java\n"],
+    }
+    record = (
+        f'Devin `rea-agents@6.7.0` (`{binder.DECLARED["devin-pin"]}:1`)\n'
+        f'OMP `rea-agents@6.7.0` (`{binder.DECLARED["omp-pin"]}:1`)\n'
+        f'Kimi `rea-agents@6.7.0` (`{binder.DECLARED["kimi-pin"]}:1`)\n'
+        f'`{ghidra}/Ghidra/application.properties:1` application.version=12.0\n'
+        f'`{binder.DECLARED["bashrc-exports"]}:1-2`\n'
+    )
+    duplicate = (
+        f'OMP `rea-agents@6.7.0` (`{binder.DECLARED["omp-pin"]}:1`)\n')
+    old_read_lines = binder.read_lines
+    old_ghidra = os.environ.get("GHIDRA_INSTALL_DIR")
+    binder.read_lines = lambda path: live.get(path)
+    os.environ["GHIDRA_INSTALL_DIR"] = ghidra
+    try:
+        for name, extra, want in (
+            ("record-fixture-committed-clean", "",
+             {"checks_total": 5, "matched": 5, "mismatches": 0,
+              "unparsed": 0, "duplicates": [], "ok": True}),
+            ("record-fixture-committed-duplicate", duplicate,
+             {"checks_total": 6, "matched": 6, "mismatches": 0,
+              "unparsed": 0, "duplicates": ["omp-pin"], "ok": False}),
+        ):
+            try:
+                repo = make_fixture_repo(record, extra, work)
+                # Deliberately disagree with HEAD: reading worktree bytes
+                # instead of the committed record cannot satisfy either case.
+                pathlib.Path(repo, "PROVINCE.md").write_text("not a record\n")
+                receipt = binder.battery(repo, "HEAD", None)
+                got = {key: receipt.get(key) for key in want}
+            except (Unevaluable, binder.Unevaluable) as exc:
+                # A missing commit must be a named failure, not a crash that
+                # prevents the frozen counter from observing SELFTEST.
+                got = {"unevaluable": str(exc)}
+            case(name, got, want)
+    finally:
+        binder.read_lines = old_read_lines
+        if old_ghidra is None:
+            os.environ.pop("GHIDRA_INSTALL_DIR", None)
+        else:
+            os.environ["GHIDRA_INSTALL_DIR"] = old_ghidra
+
     shutil.rmtree(work, ignore_errors=True)
     failures = [c for c in cases if not c["pass"]]
     for case_ in cases:

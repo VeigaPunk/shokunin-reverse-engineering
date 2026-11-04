@@ -1,0 +1,11 @@
+--- a/tools/round-81/record-integration.py
++++ b/tools/round-81/record-integration.py
+@@ -74,6 +74,8 @@
+         mutant = result['mutant']
+         detector = [r for r in mutant['cases'] if r.get('case') == CASE]
+         killed = (result['pristine']['exit'] == 0 and result['pristine']['summary'] is not None
++                  and result['pristine']['summary'][0] >= 11
++                  and result['pristine']['summary'][1] == 0
+                   and mutant['summary'] is not None and mutant['exit'] == 1
+                   and len(detector) == 1 and detector[0].get('pass') is False)
+         result.update({'mutants': 1, 'killed': int(killed), 'survivors': int(not killed),
