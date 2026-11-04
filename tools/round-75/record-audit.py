@@ -354,15 +354,37 @@ def atom_grammar_reds(root: str, rev: str) -> dict:
     cases = grammar_cases()
     receipt = show_json(root, rev, AUDIT_SELFTEST)
     names = set((receipt or {}).get("case_names") or [])
+    sources = show(root, rev, SOURCES) or ""
+    registry = section(sources, REGISTRY_HEADING)
+    s277 = row_by_id(registry, "S277") or []
+    used_tokens, used_defects = parse_used_by(s277[10] if len(s277) > 10 else "")
+    used_resolve = [p for p in used_tokens if show(root, rev, p) is not None]
+    note, note_defects = parse_search_note(section(sources, SEARCH_HEADING),
+                                           "round 75")
+    s285 = row_by_id(registry, "S285") or []
+    rej_defects = parse_rejected_row(s285) if s285 else ["S285 absent"]
+    scorecard = show(root, rev, SCORECARD) or ""
+    errata_defects = parse_census_erratum(section(scorecard, ROUND75_HEADING),
+                                          census_rows(sources))
+    live = {"s277_tokens": used_tokens, "s277_defects": used_defects,
+            "s277_resolved": used_resolve, "note_defects": note_defects,
+            "s285_defects": rej_defects, "erratum_defects": errata_defects}
+    live_ok = (bool(used_tokens) and not used_defects
+               and used_resolve == used_tokens and note is not None
+               and not note_defects and not rej_defects and not errata_defects)
     ok = (all(cases.values())
           and set(GRAMMAR_CASES) <= names
-          and (receipt or {}).get("failures") == [])
+          and (receipt or {}).get("failures") == []
+          and live_ok)
     return {"id": "D20_grammar_reds", "ok": bool(ok),
             "detail": "the four strengthened grammars reject their red fixture "
-                      "in-process and in a committed selftest receipt",
+                      "in-process and in a committed selftest receipt, and the "
+                      "live S277 used-by cell, round-75 search note, S285 rejected "
+                      "row and census erratum all parse clean",
             "evidence": {"cases": cases, "receipt_present": bool(receipt),
                          "receipt_names_grammars": sorted(
-                             set(GRAMMAR_CASES) & names)}}
+                             set(GRAMMAR_CASES) & names),
+                         "live": live}}
 
 
 def atom_binding_and_pins(root: str, rev: str) -> dict:
