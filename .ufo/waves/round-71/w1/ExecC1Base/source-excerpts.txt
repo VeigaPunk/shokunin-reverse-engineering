@@ -1,0 +1,131 @@
+round70 packed-elf (landing blob)
+260: def run(argv: list[str], timeout: int = 900, env: dict | None = None) -> dict:
+261:     try:
+262:         proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout,
+263:                               env=env)
+264:     except OSError as exc:
+265:         raise Unevaluable(f"child_unexecutable: {argv[0]} ({exc.__class__.__name__}: {exc})")
+266:     return {"argv": argv, "rc": proc.returncode, "stdout": proc.stdout,
+267:             "stdout_bytes": len(proc.stdout), "stderr": proc.stderr[-4000:]}
+268: 
+269: 
+270: def rea(pkg: str, *args: str) -> dict:
+271:     return run(["node", os.path.join(pkg, "scripts", "rea.mjs"), *args], timeout=900)
+272: 
+295:     return {"run": rec, "code": code if isinstance(code, str) else None,
+296:             "error_code": env.get("code") if isinstance(env, dict) else None}
+297: 
+298: 
+299: def elf_format(readelf_header_text: str) -> dict | None:
+300:     """ELF identity from `readelf -h` output: class, data, type, machine."""
+301:     keys = {"Class": "class", "Data": "data", "Type": "type", "Machine": "machine"}
+302:     found = {}
+303:     for line in readelf_header_text.splitlines():
+304:         m = re.match(r"^\s*(Class|Data|Type|Machine):\s+(.+?)\s*$", line)
+598:     def git(*argv: str) -> str:
+599:         try:
+600:             return subprocess.run(["git", "-C", root, *argv], check=True,
+601:                                   capture_output=True, text=True).stdout
+602:         except subprocess.CalledProcessError as exc:
+603:             raise Unevaluable(f"git {' '.join(argv)} failed: rc={exc.returncode}") from exc
+604: 
+605:     packer_env = preflight(upx, pkg, work, check_work=not skip_run)
+606:     upx_v = packer_env["upx"]
+607:     instrument = {"path": TOOL, "sha256": sha256_file(os.path.abspath(__file__)),
+608:                   "rev": git("log", "-1", "--format=%H", "--", TOOL).strip() or None}
+624:     env = {
+625:         "instrument": instrument, "rev": rev,
+626:         "packer": packer_env,
+627:         "claims": ["R70-C1", "R70-C2", "R70-C3"],
+628:         "child_env": child_env_audit(build_child_env(work), work),
+629:         "rea": {"version": pkg_meta.get("version"), "package_json_sha256": pkg_sha,
+630:                 "root": pkg, "lock_path": lock,
+631:                 "lock_sha256": sha256_file(lock) if lock else None,
+632:                 "lock_recorded_not_pinned": True,
+633:                 "node": shutil.which("node"),
+634:                 "node_version": run([shutil.which("node") or "node", "--version"]).get("stdout", "").strip()},
+635:     }
+645:     carriers = []
+646:     run_root = tempfile.mkdtemp(prefix="packed-", dir=work)
+647:     packer_env_cenv = build_child_env(run_root)
+648:     for sub in ("home", "tmp"):
+649:         os.makedirs(os.path.join(run_root, sub), exist_ok=True)
+669:             packed = os.path.join(cdir, "packed-" + base)
+670:             pack = run([upx_v, "--best", "-q", "-o", packed, orig], env=packer_env_cenv)
+671:             if pack["rc"] != 0 or not os.path.exists(packed):
+672:                 raise Unevaluable(f"carrier {c['id']}: upx pack failed rc={pack['rc']}")
+673:             packed_sha = sha256_file(packed)
+674:             listing = run([upx_v, "-l", packed], env=packer_env_cenv)
+675:             readelf = run(["readelf", "-SW", packed])
+676:             secs = section_count(readelf["stdout"] + readelf["stderr"])
+677:             packed_env, packed_run = analyze(pkg, packed, os.path.join(cdir, "packed.analyze.json"))
+678:             packed_counts = counts_from(packed_env) or {}
+840:     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+841:     ap.add_argument("--root")
+842:     ap.add_argument("--rev")
+843:     ap.add_argument("--pkg")
+844:     ap.add_argument("--work")
+845:     ap.add_argument("--upx", default=UPX)
+846:     ap.add_argument("--json-out")
+847:     ap.add_argument("--check-receipt")
+848:     ap.add_argument("--skip-run", action="store_true")
+849:     ap.add_argument("--selftest", action="store_true")
+850:     args = ap.parse_args(argv)
+round70 seam-probe (landing blob)
+1: #!/usr/bin/env python3
+2: """seam-probe.py - round-70 instrument (R70-C2 operability, capability).
+3: 
+4: The safe packer seam, proven black-box against the instrument's committed
+5: bytes (round-69 routed defects M69-9/S-1, M69-10, M69-11; QUALITY #113):
+6: 
+7:   A1 hash_before_exec       the caller-supplied --upx is hashed and pin-compared
+8:                             BEFORE its first execution: an impostor script that
+9:                             prints the pinned version but hashes differently is
+10:                             refused (exit 2, packer sha256 clause) and provably
+11:                             never executed (its execution log stays absent)
+12:   A2 threaded_path          the validated packer path is the one the carrier
+13:                             loop executes: in the producer-bound measured
+14:                             receipt every upx argv[0] equals the pinned-copy
+15:                             path the run was given (--expect-upx), never the
+16:                             module default
+17:   A3 child_env_allowlist    the packer's children receive exactly the frozen
+18:                             allowlist (build_child_env): the committed case
+19:                             inventory names the child-env cases and the blob's
+20:                             own --selftest is green at that case count
+21:   A4 broken_node_typed      a node that exists but cannot run is a typed
+22:                             `broken_tool: node` exit 2, never a traceback or a
+23:                             misleading inventory clause
+24:   A5 packer_exec_format     an exec-format-less --upx is a typed packer refusal
+25:                             (exit 2, no traceback)
+26:   A6 home_no_tmp            with HOME unset the instrument still never falls
+27:                             back to /tmp: the receipt's child_env HOME lives
+28:                             inside --work, and the blob carries no /tmp HOME
+29:                             fallback
+30:   A7 per_run_work           two battery runs sharing one --work each record
+31:                             their own distinct mkdtemp work_dir
+32: 
+33: The instrument under test is read from git (`--root`/`--rev`) into per-run
+34: scratch and invoked as a black box; the measured receipt read by A2 is bound to
+35: its producer (its recorded revision and instrument hash must equal the ones
+36: this probe was invoked with) before its argv records are trusted.
+37: 
+38: Exit: 0 all seven arms pass; 1 arms failed, each named with its observation;
+39: 2 could-not-evaluate (unknown revision, missing host tool, bad argv).
+40: `--validate <receipt>` checks a probe receipt's structural honesty.
+41: """
+42: 
+round70 seam-probe:71:     spec = importlib.util.spec_from_file_location("r70_seam_probe_target", blob_path)
+round70 seam-probe:194:     arms.append(arm("A1_hash_before_exec",
+round70 seam-probe:221:         arms.append(arm("A2_threaded_path", threaded,
+round70 seam-probe:225:         arms.append(arm("A2_threaded_path", False,
+round70 seam-probe:236:     arms.append(arm("A3_child_env_allowlist", a3_ok,
+round70 seam-probe:257:     arms.append(arm("A4_broken_node_typed",
+round70 seam-probe:269:     arms.append(arm("A5_packer_exec_format",
+round70 seam-probe:283:     arms.append(arm("A6_home_no_tmp", a6["rc"] == 1 and home_ok and no_tmp_fallback,
+round70 seam-probe:302:     arms.append(arm("A7_per_run_work", a7_ok,
+round70 seam-probe:311:             "arms": arms, "arms_passed": len(arms) - len(failed),
+round70 seam-probe:312:             "target": len(arms), "failed": failed, "ok": not failed,
+round70 seam-probe:336:     if receipt.get("arms_passed") != len(derived):
+round70 seam-probe:337:         defects.append("arms_passed disagrees with the arm rows")
+round70 seam-probe:338:     if receipt.get("target") != len(arms):
+round70 seam-probe:339:         defects.append(f"target {receipt.get('target')} != arm rows {len(arms)}")

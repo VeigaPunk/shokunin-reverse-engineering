@@ -1,0 +1,11 @@
+--- frozen
++++ d.py
+@@ -367,7 +367,7 @@
+     instrument = receipt.get("instrument") or {}
+     carriers = receipt.get("carriers") or []
+     if not isinstance(nonce, str) or not NONCE_RE.match(nonce):
+-        failing.append("run_nonce absent")
++        pass  # missing nonce is mistakenly accepted
+     elif hashlib.sha256(nonce.encode()).hexdigest() != commitment:
+         failing.append(f"run_nonce hash != commitment {commitment}")
+     else:

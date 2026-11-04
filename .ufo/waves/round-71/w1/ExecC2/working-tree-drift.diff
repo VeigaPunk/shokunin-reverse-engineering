@@ -1,0 +1,34 @@
+diff --git c/tools/round-71/forged-receipts.py w/tools/round-71/forged-receipts.py
+index cd95a71c..f0196d83 100755
+--- c/tools/round-71/forged-receipts.py
++++ w/tools/round-71/forged-receipts.py
+@@ -323,8 +323,8 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
+             raise Unevaluable("landing material unusable for landing-world shapes")
+         path = write_shape(shape_dir, shape, lmat, base_rev)
+         p = run([sys.executable, "-I", "-B", probe_blob, "--root", root,
+-                 "--rev", rev, "--tool", tool, "--pkg", pkg, "--work", shape_dir,
+-                 "--receipt", path])
++                 "--rev", superseded_rev, "--tool", tool, "--pkg", pkg,
++                 "--work", shape_dir, "--receipt", path])
+         pjson = json_out(p["stdout"]) or {}
+         armmap = {a.get("id"): a.get("ok") for a in (pjson.get("arms") or [])
+                   if a.get("id") in ("A5_carrier_record", "A6_packer_pin")}
+@@ -372,13 +372,14 @@ def check(work: str, root: str, rev: str, base_rev: str, tool: str, base_tool: s
+         lying_rows.append(row)
+     # the genuine receipts still pass the frozen readers
+     g = run([sys.executable, "-I", "-B", reader, "--check-receipt",
+-             landing_material_path, "--root", root, "--rev", rev])
++             landing_material_path, "--root", root, "--rev", superseded_rev])
+     gjson = json_out(g["stdout"]) or {}
+-    gp = run([sys.executable, "-I", "-B", probe_blob, "--root", root, "--rev", rev,
+-              "--tool", tool, "--pkg", pkg, "--work", scratch,
+-              "--receipt", landing_material_path])
++    gp = run([sys.executable, "-I", "-B", probe_blob, "--root", root,
++              "--rev", superseded_rev, "--tool", tool, "--pkg", pkg,
++              "--work", scratch, "--receipt", landing_material_path])
+     gpjson = json_out(gp["stdout"]) or {}
+     genuine = {"checker_rc": g["rc"], "met": gjson.get("met"),
++               "rev": superseded_rev,
+                "probe_rc": gp["rc"], "probe_arms_passed": gpjson.get("arms_passed"),
+                "probe_target": gpjson.get("target")}
+     if g["rc"] != 0 or gjson.get("met") is not True:

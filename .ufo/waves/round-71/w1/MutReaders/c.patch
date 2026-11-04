@@ -1,0 +1,11 @@
+--- frozen
++++ c.py
+@@ -765,7 +765,7 @@
+         except OSError as exc:
+             raise Unevaluable(f"broken_tool: git ({exc.__class__.__name__}: {exc})")
+ 
+-    run_root = tempfile.mkdtemp(prefix="packed-", dir=work)
++    run_root = os.path.join(work, "packed-fixed")
+     for sub in ("home", "tmp"):
+         os.makedirs(os.path.join(run_root, sub), exist_ok=True)
+     cenv = build_child_env(run_root)

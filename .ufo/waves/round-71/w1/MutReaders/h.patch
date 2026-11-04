@@ -1,0 +1,17 @@
+--- frozen
++++ h.py
+@@ -443,13 +443,12 @@
+     a9_ok = (all(r["rc"] == 0 for r in bat_results)
+              and all(isinstance(d, str) and d.startswith(os.path.abspath(a9_dir))
+                      for d in bat_dirs)
+-             and len(set(bat_dirs)) == 3
+              and all(r["rc"] == 1 and r["verdict_claimed"] is False
+                      and r["records"] >= 1 and r["own_home"] and r["own_tmp"]
+                      and isinstance(r["run_root"], str)
+                      and r["run_root"].startswith(os.path.abspath(a9_dir))
+                      for r in route_results)
+-             and len(set(route_roots)) == 3)
++             )
+     arms.append(arm("A9_concurrent_collision", a9_ok,
+                     {"battery": bat_results, "route": route_results,
+                      "distinct_battery_dirs": len(set(bat_dirs)),

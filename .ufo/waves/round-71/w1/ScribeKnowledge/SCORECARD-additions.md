@@ -1,0 +1,27 @@
+# Draft additions for SCORECARD.md
+
+Integration guard: the capability rows and Core transitions below are landing text contingent on genuine measured-revision receipts meeting all frozen predicates. They are not observations by ScribeKnowledge. The live table already contained round-70 and round-71 rows when read: use these as replacement/consolidation candidates, not duplicate acquisitions. Named `l1/scores/*-at-landing.json` destinations below are intended evidence slots, not files this seat observed.
+
+## Capabilities
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| R71-C1 — runtime-observed packed-route environment, concurrent isolation and run binding | routes packer/REA node/readelf/git children through HOME/LANG/PATH/TMPDIR; A8 reads the raw observed child log with canary absent and HOME/TMPDIR under each run_root; A9 measures three concurrent batteries and three route preflights with distinct work_dirs/run_roots; A10 accepts the committed-nonce genuine receipt and rejects a legacy transplant, wrong nonce and broken binding; one launcher artifact exclusion, replay/transplant rejection rather than cryptographic authenticity | `.ufo/waves/round-71/l1/scores/c1-at-landing.json` (10/10, all observations); corresponding bound route receipt and retained raw child-env log; `.ufo/waves/round-71/l1/pre/c1-at-base.json` (7/10); `.ufo/waves/round-71/l1/pre/nonce-commitment.txt`; `tools/round-71/{packed-elf,seam-probe}.py` | 71 |
+| R71-C2 — six lying-field shapes in the frozen receipt battery | exercises unpacked_counts, packed_sha256, section_count/upx_list_rc, runs argv, refusal and format in the FIRST-CUT world, requires each first_cut_rc 0 and superseded_rc 1 with named clause, and preserves ten base-world plus two landing-world rows, genuine receipts and pin/floor/work-dir/constant controls | `.ufo/waves/round-71/l1/scores/c2-at-landing.json` (18 forged rows: 10 + 6 + 2); `.ufo/waves/round-71/l1/pre/c2-do-nothing.json` (12 forged rows, no lying_shapes); `tools/round-71/forged-receipts.py` | 71 |
+| R71-C3 — executable registry drift census under grammar v2 | reads escaped pipes and four filed eight-cell round-69 rows without rewriting; measures the six disclosed round-70 owner-cell repairs, names each nonconformant row/duplicate and checks path existence over the whole marked registry; 14-case selftest demonstrates both success and refusal shapes | `.ufo/waves/round-71/l1/scores/c3-at-landing.json` (nonconformant [], duplicates [], paths == rows, four multicell rows, six repaired seven-cell rows); `.ufo/waves/round-71/l1/pre/c3-at-base.json` (six pinned-empty rows); census selftest and legacy-census base receipt; `tools/round-71/registry-census.py` | 71 |
+
+## Round-71
+
+**Status:** receipt-index skeleton, not an admission or score increase. Axes remain distinct: coverage / calibration / operability. All finite numeric owned proxies remain saturated; no numeric increase is inferred.
+
+**Provenance:** base `82c8e620c9222fb218aa0260570a3765da2afb44`; operative freeze `b827a8b5d54f2885ec9be7786389f356c59226ce`; predicates and instrument hashes `.ufo/waves/round-71/claims.json`; plan `plans/round-71-claims.md`. Declaration conflict must remain disclosed: assignment says `329208cf4a234aac391b7f02b50769c5920f1beb`, container says `46366cc5525f661b97d26a8c70ed3a53d0b4b916`. This draft does not adjudicate it.
+
+| Claim / axis | Frozen acceptance / before | Receipt slots and admission requirement |
+|---|---|---|
+| R71-C1 / coverage | 10/10 A1–A10 versus round-70 landing 7/10 with A8/A9/A10 false | `l1/scores/c1-at-landing.json`, bound route receipt and retained raw env log, `l1/pre/c1-at-base.json`, `l1/pre/nonce-commitment.txt`; L1 records actual measured revision, exit, observations, and attack dispositions before promotion |
+| R71-C2 / calibration | six lying rows first-cut accepted / superseded rejected with clauses; 18 total forged rows; genuine/control arms green versus 12 old rows and zero lying rows | `l1/scores/c2-at-landing.json`, `l1/pre/c2-do-nothing.json`; FIRST-CUT `4737a542ae3b1b910d8fe43efbd572bc578b07c6`, superseded `7c155617bb42dadf1725b88a06fe3f235c364f0a`; do not cite six source clauses as six executed rows |
+| R71-C3 / operability | zero nonconformant/duplicates, paths == rows, four preserved multicell rows and six repaired owner cells; all 14 selftests green; base six pinned-empty findings and legacy exit 2 | `l1/scores/c3-at-landing.json`, `l1/pre/c3-at-base.json`, executor selftest/base-legacy receipts and old→new disclosure in LOG.md; legacy tool named by the predicate is `tools/round-51/census3.py` |
+
+All receipt slots in this section are relative to `.ufo/waves/round-71/`. Final L1 text must use observed artifact paths, not dead nested scratch run pointers. Frozen six-arm controls are indexed at `l1/pre/controls-at-declaration.json`; after controls and independent attack reports remain separate evidence, not assumed green.
+
+**Repairs carried, not additional claims:** round-70 capability rows (G1); appended W04 erratum (21, not “the same 20”, G2); appended `ca9817cf`→`ca9817cd` erratum (G3); wave-settlement receipt with actual evidence source (G4); SOURCES search-log entries and tempfile rejection row (G5). Old filed prose is not rewritten. Knowledge entry `corpus/knowledge/2026-11-04-r71-registry-grammar.md` and corpus index rows describe the grammar/source scope, not execution receipts.

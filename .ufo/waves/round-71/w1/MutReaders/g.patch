@@ -1,0 +1,11 @@
+--- frozen
++++ g.py
+@@ -353,7 +353,7 @@
+     envs = [r.get("env") or {} for r in raw_records]
+     children = sorted({os.path.basename(str((r.get("argv") or ["?"])[0]))
+                        for r in raw_records})
+-    raw_allow = bool(envs) and all(sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs)
++    raw_allow = bool(envs) and all(set(CHILD_ENV_KEYS) <= set(e) for e in envs)
+     raw_home = bool(envs) and all(str(e.get("HOME", "")).startswith(str(run_root))
+                                   for e in envs)
+     raw_tmp = bool(envs) and all(str(e.get("TMPDIR", "")).startswith(str(run_root))

@@ -1,0 +1,11 @@
+--- frozen
++++ b.py
+@@ -292,7 +292,7 @@
+ # interpreter adds no LC_CTYPE of its own, and the marker key is removed before
+ # the observation.  Everything else the route passed is recorded verbatim and
+ # exec'ed unchanged (the declared launcher-artifact exclusion is this one key).
+-os.environ.pop("PYTHONCOERCECLOCALE", None)
++pass  # marker is mistakenly inherited by the executed child
+ with open(sys.argv[1], "a", encoding="utf-8") as fh:
+     fh.write(json.dumps({"argv": sys.argv[2:], "env": dict(os.environ)},
+                          sort_keys=True) + "\n")
