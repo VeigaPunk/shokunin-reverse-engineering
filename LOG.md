@@ -4516,3 +4516,58 @@ fractions — and requires zero mismatches with at least two corrections that ea
   `mismatches 0` (receipt `l1/scores/coverage-selfcheck-at-record.json`).
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r75` is removed after the close; no pacman transaction
   and no tool install ran this round.
+
+## 2026-11-04 — round 76: the capability rows become a checked claim, and a printed counting command becomes executable
+
+Base `5303a662d43aac52b0667f2776cce49dfc004fcf`; declaration `be99e4f9b72fb2dbae75329c0d5c55002854cbed`;
+pre-freeze instrument revision `58316c9218e0345bcdc1ff43357c8ca815481f86`; freeze
+`5824d5d8e135194a59db3df1533b76ff479753bf` — the round-29 gate audits it **CLEAN** with no findings and two
+instrument paths (`l1/scores/gate-at-freeze.txt`), and `--disclosures` reports 51 of 51 exact
+(`l1/scores/gate-disclosures.txt`, exit 0). Two claims on two distinct axes, both capability acquisitions,
+causally separable: R76-C2's green arm checks executability only, so neither claim reads the other's value.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies; R76-C1 works a
+tied-lowest axis). No nudge waiver is claimed.
+
+- **R76-C1 (calibration; capability-row binding).** `tools/round-76/record-audit.py` keeps the round-75 atoms
+  D16-D23 byte-identical and adds `D24_capability_rows`: every round section that claims capability rows entered
+  is parsed at paragraph granularity (the round-75 claim wraps, and the backticked name straddles the wrap, so a
+  line parser extracts zero names) and each claimed name must be a row of the SCORECARD `## Capabilities` table
+  with a description of at least eight words, an evidence path resolving at `--rev`, and a first-working-round
+  cell naming the claiming round. Six red fixtures, one per failure shape. Base `pre/c1-at-base.json`: exit 1,
+  `mismatch_count 1` naming exactly D24 with both absent rows; the round-75 audit at the same revision is
+  **green** (`pre/c1-control-r75audit-at-base.json`, 0 mismatches over eight atoms) — the do-nothing control.
+- **R76-C2 (operability; executable printed counting command).** `tools/round-76/plan-command.py` extracts a
+  plan's `counting-command` block, refuses every `<...>` placeholder, ellipsis abbreviation, unbound variable and
+  shell metacharacter before any execution, tokenises with `shlex.split`, runs the argv with no shell under a
+  four-key child environment with `$WORK`/`$OUT` contained in the work root, and reads the counter from the
+  receipt the command wrote. `--battery` scores three arms; base `pre/c2-at-base.json`: `arms_ok 0`;
+  the round-75 printed command itself exits 2 at its instrument's preflight
+  (`pre/r75-printed-exec.txt`). Three do-nothing controls (`prose-plan`, `missing-required-arg`,
+  `ellipsis-rev`) are selftest cases and each fails in its named way.
+- **Wave.** `r76-w1`: 14 seats (4 executor, 2 scribe, 1 scout, 1 connector, 2 reviewer, 1 critic,
+  1 mutation-tester, 1 sentinel, 1 revenger), attack roles 5/14 = 35.7%, one connector; the L1 holds the
+  planner seat; no residual call.
+- **Gate.** Freeze `5824d5d8` CLEAN at the freeze and at the disclosure revision; the round-76 ledger row is
+  `CLEAN -` with the freeze pointer (`corpus/claim-freezes-v2.tsv`).
+- **Sources.** 191 → 194 rows: S286 (`shlex.split`, mined, 66 497 B, sha256 `4c1f8bf6…`, composite-labelled
+  7-word quote), S287 (`argparse`, mined, 334 994 B, sha256 `14d33eea…`, 9-word quote), S288 (`bash(1)`,
+  rejected, 497 852 B, sha256 `e35fa296…`, 9-word quote; the plan's `sh(1)` URL 404s and the substitution is
+  recorded). Census start `l1/census-start.txt` (exit 0, 191 rows, 24 W04) and end `l1/census-end.txt`.
+- **Record.** The round-76 section and four capability rows in `SCORECARD.md` (the two round-75 rows the
+  round-75 spot-check found missing, and the two this round enters); the entries
+  `corpus/knowledge/2026-11-04-r76-plan-command-executability.md` and
+  `corpus/knowledge/2026-11-04-r76-capability-row-binding.md`; the lesson `corpus/lessons/round-76.md`; the
+  coverage-map row and frontier note; the `PROVINCE.md` round-76 additions; the two `SKILL.md` registry rows.
+- **Corrections carried (unclaimed, round-75 routed defects 3, 5, 6, 7, 8).** The two uncited round-75 commits
+  `668e545e` and `fcf17efe` are named in this round's report; the receipt-revision prose is restated in the
+  report; the freeze-ledger disclosure sentence is corrected by a companion row in
+  `corpus/claim-freezes-corrections.tsv` (the round-75 row stays byte-identical — the ledger is append-only);
+  and the round-75 C2 receipts' missing `exit` field is restated: both round-76 receipts carry their own
+  `exit`, and the round-75 predicate's exit clause is evidenced only by the wrapper log.
+- **Correction to the round-75 LOG entry.** The round-75 entry above says the eight atoms "re-derive the
+  round-74 spot-check's routed defects 1-8". The atom set is D16-D23 over routed defects **1-7**; defect 8 was
+  a report rounding and was not atomised, by reason. This entry supersedes that clause; the filed text stays.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r76` is removed after the close; no pacman transaction and no tool
+  install ran this round.
+

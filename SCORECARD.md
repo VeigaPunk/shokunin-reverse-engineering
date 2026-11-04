@@ -651,6 +651,10 @@ Retired: none.
 | reader-seam selftest closure | binds each of the three round-72 reader-seam mutation survivors to a declared killing case on the pinned target | `.ufo/waves/round-73/l1/scores/c3-at-landing.json` (r73: 0 survivors, pristine 38 cases) | round 73 |
 | kernel-witness probe-mutation closure | scores ten defect classes against declared cases with `tools/round-74/probe-mutation.py`, closing the six round-73 A12 selftest survivors | `.ufo/waves/round-74/pre/c1-post-at-declaration.json` (r74probe: 0 survivors, pristine 20 cases, target pinned) | round 74 |
 | record-audit v2 | re-derives sixteen atoms over the round-73 routed set and planned items with `tools/round-74/record-audit.py`, retaining D1-D7 and adding D7b plus D8-D15 | `tools/round-74/record-audit.py`; `.ufo/waves/round-74/pre/c2-at-base.json` (11 mismatches at base; not a landing result) | round 74 |
+| `A12 case-independence closure` | scores a fifteen-class patch set against the A12 witness with a per-mutant `sole_detector` field, every mutant killed by its declared case, and the target pin compared before any generated copy executes | `.ufo/waves/round-75/l1/scores/c1-at-tip.json` (0 survivors, sole true, pristine 25) | 75 |
+| `exact-grammar record audit` | parses the record cells it checks — used-by path lists, search-note fields and integer counts, rejected-row reason+flip, erratum values bound to a measured receipt — with one committed red fixture per grammar in its selftest | `.ufo/waves/round-75/l1/scores/c2-at-tip.json` (0 mismatches, validate defect-free) | 75 |
+| `capability-row binding` | re-derives every round section that claims capability rows entered against the SCORECARD `## Capabilities` table: the named row must exist with a real description, a resolving evidence pointer and its claiming round, and six red fixtures show each failure shape detectable | `.ufo/waves/round-76/l1/scores/c1-at-landing.json` (D24 true, mismatch_count 0) | 76 |
+| `executable printed counting command` | extracts a plan's `counting-command` block, refuses every unbound placeholder, executes the argv with no shell under a four-key child environment inside the work root, and scores the receipt's counter — the round-75 printed command is refused statically and, with its digest bound, fails at rc 2 | `.ufo/waves/round-76/l1/scores/c2-at-landing.json` (arms_ok 3 of 3) | 76 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -5884,3 +5888,54 @@ coverage row's 148/148 statement stays as the round-68 historical measurement.
 one candidate row S283 (`re.fullmatch`) was written and withdrawn the same round as a duplicate of
 S143 (ids are not reused, so S283 is a gap), and S277's `used-by` gained the round-75 entry. 23 W04
 duplicate-URL warnings at both ends; no new warning class.
+
+## 2026-11-04 — round 76: the capability rows become a checked claim, and a printed counting command becomes executable
+
+Base `5303a662d43aac52b0667f2776cce49dfc004fcf`; declaration `be99e4f9b72fb2dbae75329c0d5c55002854cbed`;
+pre-freeze instrument revision `58316c9218e0345bcdc1ff43357c8ca815481f86`; freeze
+`5824d5d8e135194a59db3df1533b76ff479753bf` — the round-29 gate audits it **CLEAN** with no findings and two
+instrument paths (`l1/scores/gate-at-freeze.txt`), and `--disclosures` reports 51 of 51 exact
+(`l1/scores/gate-disclosures.txt`, exit 0). Two claims on two distinct axes, both capability acquisitions,
+causally separable: R76-C2's green arm checks executability only (rc 0 or 1 and an integer counter), so neither
+claim reads the other's value.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies; R76-C1 works a
+tied-lowest axis). No nudge waiver is claimed.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R76-C1 | calibration | capability acquisition (capability-row binding) | `tools/round-76/record-audit.py` at the measured revision exits 0 with `mismatch_count 0` over nine atoms `D16`–`D24`, every row `ok true`, `validate {defects [], atoms 9}`, atom `D24_capability_rows` true naming the round-75 claim line and both rows — while at base `5303a662` the same command exits 1 with `mismatch_count 1` naming exactly `D24` and defects naming the two absent rows, and six red fixtures cover one failure shape each | base `pre/c1-at-base.json`: 1 mismatch, both absent rows named → `l1/scores/c1-at-landing.json`: 0 mismatches, nine atoms | improved |
+| R76-C2 | operability | capability acquisition (executable printed counting command) | `tools/round-76/plan-command.py --battery` at the measured revision exits 0 with `arms_ok 3`, `arms_total 3`, `ok true`, each arm carrying its expected observation (`plan-c1` executed with rc in {0,1} and an integer `mismatch_count`; `r75-printed` refused with `PLACEHOLDER_UNBOUND` and nothing executed; `r75-argv` executed at rc 2 with `missing required arguments: work`) — while at base `5303a662` the same command exits 1 with `arms_ok 0`, and the three do-nothing controls each fail in their named way | base `pre/c2-at-base.json`: `arms_ok 0` → `l1/scores/c2-at-landing.json`: `arms_ok 3` | improved |
+
+**Capabilities entered.** (1) a capability-row binding — every round section that claims capability rows
+entered is parsed at paragraph granularity (the round-75 claim wraps, and its backticked name straddles the
+wrap) and each claimed name must be a `## Capabilities` row with a real description, a resolving evidence
+pointer and its claiming round, with six red fixtures; (2) an executable printed counting command — a plan's
+`counting-command` block is refused on any unbound placeholder or shell metacharacter before execution, run with
+no shell under a four-key child environment inside the work root, and its receipt's counter read.
+
+**Capabilities rows appended** in the table above (`## Capabilities`): `capability-row binding`, `executable printed counting command`, each with its `l1/scores` receipt.
+
+**Name by surface.** R76-C1's surface is the `## Capabilities` table and the round sections that claim rows in
+it, not the counters that earned those rows. R76-C2's surface is the printed command text in plans and reports
+and the executor that runs it, not any counter's value.
+
+**census erratum.** The round-76 census closed at 194 rows (`l1/census-end.txt`, exit 0), up from 191 at round
+start (`l1/census-start.txt`, exit 0, 24 W04 duplicate-URL warnings at both ends). Three rows enter (S286 mined,
+S287 mined, S288 rejected); no existing row's status, recheck or used-by changes.
+
+**Routed defects carried (unclaimed).** The round-75 spot-check's defects 3, 5, 6, 7 and 8 are record
+corrections: the two uncited round-75 commits are named in the round-76 report; the receipt-revision prose is
+restated there; the `LOG.md` "defects 1-8" clause takes an appended correction; the freeze ledger's disclosure
+sentence takes a companion row in `corpus/claim-freezes-corrections.tsv` (the round-75 row stays byte-identical);
+and both round-76 receipts carry their own `exit`.
+
+**Trend verdicts.** expansion **unchanged** — the two new entries deepen the already-mapped instrument/record
+ground (`corpus/README.md` row "Instrument and record layer, round 76"), and the frontier step adds two mined
+rows and one rejection, no new ground entered Core. quality **improved** — the record's repertoire claim is now
+re-derived against the table it names, and a plan's counting command is executed by the gate that scores it, each
+with red fixtures and controls committed before data. discernment **improved** — the round works from an outside
+document (the round-75 non-author spot-check) and its atom set is that document's routed set, not a set the lane
+chose; the pre-freeze control defect (a control that removed a defaulted argument and could not fail) was caught
+by the instrument's own selftest and repaired before the freeze, at `58316c92`.
+

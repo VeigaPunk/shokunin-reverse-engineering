@@ -579,3 +579,23 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
 - **Still Frontier:** a process that overrides its argv region after exec (the page says it may;
   this lane does not measure it), `PR_SET_MM_ARG_START`-moved command lines, non-Linux substrates,
   and signed receipts.
+
+## Round-76 additions to Core
+
+- **Core — capability-row binding:** `tools/round-76/record-audit.py` atom `D24_capability_rows` re-derives every
+  round section that claims capability rows entered against the SCORECARD `## Capabilities` table: the named row
+  must exist with a description of at least eight words, an evidence pointer that resolves at the measured
+  revision and a first-working-round cell naming the claiming round; six red fixtures in its selftest. Retained
+  evidence: `.ufo/waves/round-76/l1/scores/c1-at-landing.json` (D24 true, mismatch_count 0) and
+  `.ufo/waves/round-76/pre/c1-at-base.json` (mismatch 1, both absent rows named).
+- **Core — executable printed counting command:** `tools/round-76/plan-command.py` extracts a plan's
+  `counting-command` block, refuses every unbound placeholder and shell metacharacter before any execution,
+  tokenises with `shlex.split`, runs the argv with no shell under a four-key child environment with `$WORK`/`$OUT`
+  contained in the work root, and reads the counter from the receipt the command wrote. Retained evidence:
+  `.ufo/waves/round-76/l1/scores/c2-at-landing.json` (arms_ok 3 of 3) and
+  `.ufo/waves/round-76/pre/r75-printed-exec.txt` (the round-75 printed command: rc 2, missing required
+  arguments: work).
+- **Still Frontier:** registries outside the SKILL block, a complete GFM parser, cryptographic receipt
+  authenticity or signed receipts, REA-internal and packer-internal child processes, other packers/carriers,
+  anti-UPX stubs, packed PE/Mach-O and semantic inventory equality.
+
