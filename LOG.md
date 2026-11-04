@@ -4627,3 +4627,30 @@ tied-lowest axis). No nudge waiver is claimed.
   count is wrong, and the frozen predicate file stays byte-identical.
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r77` is removed after the close; no pacman transaction and no tool
   install ran this round.
+- **Round 78 (2026-11-04) — two capability acquisitions on the lane's own evidence layer.**
+  Base `6205ec8c575fb070243c0c40e34a2b0daacde46a`; declaration `3e6b1efc`; freeze `ffcb47d1`
+  (round-29 gate CLEAN, findings [], two instrument paths; two post-freeze instrument revisions
+  disclosed in `claims.json` `instrument_supersessions`). **R78-C1 (calibration)**:
+  `tools/round-78/attack-gate.py --battery` materialises ten committed attack fixtures
+  (`.ufo/waves/round-78/attacks/`, one class each), measures that the frozen round-77 instruments
+  accept all ten (`base_accepted 10`), refuses all ten by their declared rules (`refused 10`) and
+  scans the real record under every rule (`genuine.mismatch_count 0`, `genuine.defects []`); receipt
+  `l1/scores/c1-at-record.json` at `93753d88`. **R78-C2 (freshness)**:
+  `tools/round-78/surface-recheck.py --battery` re-derives eight surface values from the live
+  objects `PROVINCE.md` names; the base text carries two drifts (`jdk-version` 21.0.12.1 vs 21.0.13;
+  `omp-rea-disable` "no longer records" vs `disabledServers: ["rea"]`), both corrected with the
+  2026-11-04 recheck pointer, and the record run reports `matched 8`, `mismatches 0`, `unparsed 0`
+  (`l1/scores/c2-at-record.json` at `93753d88`). Controls scored before data: `base-only` refused 0 of
+  10, `all-refuse` `genuine.mismatch_count 1`, `no-fixtures` `base_accepted 0`, `token-grep` accepting a
+  forged `ghidra_version 8.5` (`pre/controls/`, `pre/selftest-c1.json` 21 cases, `pre/selftest-c2.json`
+  12 cases). Record: the round-78 SCORECARD section and two capability rows; PROVINCE's JDK and OMP
+  sentences corrected plus two `- **Core — ` bullets; `corpus/knowledge/2026-11-04-r78-{attack-gate,surface-recheck}.md`;
+  `corpus/lessons/round-78.md` (five `## Mistakes` rows, Gate block with S292/S293 admits and the S294
+  reject); QUALITY rows 136–137; the coverage-map row; two SKILL registry rows; SOURCES 197 → 200
+  (S292/S293 mined, S294 rejected, no duplicate URL); the `claim-freezes-v2.tsv` round-78 row.
+  **Census.** `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` start exit 0,
+  197 rows (`l1/census-start.txt`); end exit 0, 200 rows (`l1/census-end.txt`), same 23 W04 warnings.
+  **Inherited state.** The round-77 wave's late `CriticClaims` evidence (routed item 12) is committed at
+  the base commit; the round-77 routed items 8–10 and §6 item 7 ride R78-C1, items 1–6 and §8 item 11 are
+  record/prose repairs, and item 12 is closed by that base commit. **Filing.** The prefile gate passes in
+  clean clones at `bc73b27a` (`l1/scores/gate-at-record.json`) and `3bb87162` (`l1/scores/gate-at-tip.json`).

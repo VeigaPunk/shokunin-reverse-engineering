@@ -6033,3 +6033,66 @@ gate at `37f5d069` with `exit 0`, `prefile: PASS` and the four-key child environ
 **Seats.** `r77-w1`: 12 seats dispatched in one v1 wave, 10 returned evidence, 2 died with zero-byte output
 (`ExecC2Receipt`, `ReviewerC1`; `results.json` carries no error text and neither wrote an evidence dir); no
 replacements, no residual call.
+
+## 2026-11-04 — round 78: the frozen instruments' ten attack classes are refused, and the surface values are re-derived from live bytes
+
+Base `6205ec8c575fb070243c0c40e34a2b0daacde46a`; declaration `3e6b1efcad3a743913baa09f46427e5f8877a62b`;
+freeze `ffcb47d13f0340f88397af6c8d2707a9554abab3` — the round-29 gate audits it **CLEAN** with no findings and
+two instrument paths (`l1/scores/freeze-audit-at-freeze.json`). The gate changed twice after the freeze; both
+commits (`59a92fbd`, `01768ac5`) are disclosed with their reasons in `claims.json`
+`instrument_supersessions`, and the gate at the record rev `3bb87162` is CLEAN with `exact 53 of 53`
+disclosures. Two claims on two distinct axes, both capability acquisitions, causally separable: C1 reads ten
+committed attack fixtures and the frozen round-77 instruments' verdicts on them; C2 reads `PROVINCE.md` and
+the live objects the record names. Neither counter reads the other's receipt.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies; R78-C1 works a
+tied-lowest axis). No nudge waiver is claimed — capability rows entered in rounds 73–78, inside the window.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R78-C1 | calibration | capability acquisition (attack-class refusal) | `tools/round-78/attack-gate.py --battery` at the measured revision exits 0 with `fixtures_total 10`, `base_accepted 10`, `refused 10`, `genuine.mismatch_count 0`, `genuine.defects []` and a defect-free `validate`, every fixture refused by its declared rule and every base acceptance re-derived by running the frozen round-77 instruments on the same fixture tree; controls `base-only` `refused 0` of 10 and `all-refuse` `genuine.mismatch_count >= 1` | base `6205ec8c`: the counter's file does not exist; the frozen round-77 instruments accept 10 of 10 attack fixtures (`base_accepted 10`, measured in the same battery) and a battery that only re-runs them refuses 0 of 10 → record `93753d88`: `refused 10`, `base_accepted 10`, genuine clean, exit 0 (`l1/scores/c1-at-record.json`) | improved |
+| R78-C2 | freshness | capability acquisition (surface recheck) | `tools/round-78/surface-recheck.py --battery` at the measured revision exits 0 with `checks_total 8`, `matched 8`, `mismatches 0`, `unparsed 0` and a defect-free `validate`, every value re-derived from the live object the record names and compared typed; control `token-grep` accepts a forged `ghidra_version 8.5` the parsed check refuses | base record text (byte-identical at the declaration): `mismatches 2` — `jdk-version` 21.0.12.1 vs 21.0.13, `omp-rea-disable` false vs `disabledServers: ["rea"]` (`pre/c2-at-base.json`) → record `93753d88`: `matched 8`, `mismatches 0`, exit 0 (`l1/scores/c2-at-record.json`) | improved |
+
+**Capabilities entered.** (1) *attack-class refusal* — ten committed attack classes that the frozen round-77
+instruments accept are each refused by one declared rule (`receipt_auth`, `qualified_atom`, `near_miss_field`,
+`negated_verdict`, `value_mismatch`, `unbound_verdict`, `clean_run`, `filing_rev`, `gate_receipt_schema`,
+`gate_receipt_rev`) while the real record stays clean under every rule. (2) *surface recheck* — eight
+drift-prone surface values parsed from `PROVINCE.md` and compared typed to the live objects the record names,
+with `checked_at`, an `unparsed` id list and a pointer rule.
+
+**Capabilities rows appended** in the table above (`## Capabilities`): `attack-class refusal` and
+`surface recheck`, each with its record receipt.
+
+**Name by surface.** R78-C1's surface is the fixtures and the frozen instruments' verdicts on them — not the
+attack gate as such; R78-C2's surface is `PROVINCE.md`'s drift-prone values and the live objects named there —
+not the tool.
+
+### Round-78 measured records
+
+**R78-C1 at `93753d88`** (`l1/scores/c1-at-record.json`): exit 0, `fixtures_total 10`, `base_accepted 10`,
+`refused 10`, `genuine {mismatch_count 0, defects []}`, `validate` defect-free; the genuine record scan covers
+the round-78 `## Capabilities` rows and the two round-78 `- **Core — ` bullets (joined continuation lines).
+Base arm per fixture is recorded inside the receipt (`base.accepted`, `base.observed`), measured by running
+`tools/round-77/verdict-bind.py` (record classes) or `tools/round-77/prefile-receipt.py --battery` (receipt
+classes) on the materialised fixture repo.
+
+**R78-C2 at `93753d88`** (`l1/scores/c2-at-record.json`): exit 0, `checks_total 8`, `matched 8`,
+`mismatches 0`, `unparsed 0`, `checked_at` recorded; the two drifts found at the base text are corrected in
+`PROVINCE.md` with the receipt pointer, and the base receipt `pre/c2-at-base.json` records `mismatches 2`.
+
+**Controls (scored before data).** `pre/controls/c1-base-only.json`: `refused 0` of 10. `pre/controls/c1-all-refuse.json`:
+`refused 10` but `genuine.mismatch_count 1` (over-tightening is not a pass). `pre/controls/c1-no-fixtures.json`:
+`base_accepted 0`, below the `fixtures_total 10` floor. `pre/controls/c2-token-grep.json`: the token grep
+matches 6 of 8 including a vacuous `omp-rea-disable`, and the selftest case `red-token-grep-accepts` shows it
+accepting a forged `ghidra_version 8.5` that the parsed check refuses.
+
+**Selftests.** `pre/selftest-c1.json` (21 cases, 0 failures) and `pre/selftest-c2.json` (12 cases, 0 failures),
+both exit 0 at the declaration rev.
+
+**Limits named by the round (not falsifications).** `receipt_auth` authenticates the producing blob at the
+receipt's own rev, not the author: a receipt that copies a real rev and a real instrument digest still passes
+auth and is caught only by a value clause that disagrees with it (signed receipts stay Frontier). The record
+scan's scope is the round's own cells (Capabilities rows with first-working round at least 78 plus the
+`- **Core — ` bullets that name a round-78 path); a cell outside that scope is not judged. The surface
+recheck reads the host's live objects at its `checked_at`: a later host change invalidates the receipt, and
+the next round re-runs the command.
