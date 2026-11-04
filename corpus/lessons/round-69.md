@@ -51,13 +51,41 @@ computed before the row is written.
 
 ## Outcome
 
-- **R69-C1.** `[L1]`
-- **R69-C2.** `[L1]`
-- **R69-C3.** `[L1]`
-- **No-harm.** `[L1]`
+- **R69-C1 — verified.** `python3 -I -B tools/round-69/mutation-check.py --root . --rev
+  5ee94c56ce7490938ee38c2e5c10930a1fd1330a --tool tools/round-69/packed-elf.py --patch-set r69
+  --work <scratch>` exits 0 with `survivors []`, the five `killed` mutants each naming its declared
+  arm-false case, `killed_wrong_case []`, `pristine.cases 20`, `pristine.ok true`,
+  `target_sha256 4ac0d83b…` (`.ufo/waves/round-69/l1/scores/c1-at-landing.json`). The same battery
+  with patch set r68 against `tools/round-68/packed-elf.py` at the base exits 0 with exactly the five
+  survivors and `pristine.cases 13` (`.ufo/waves/round-69/l1/scores/c1-before-recheck.json`).
+  Independent re-derivation: `w1/ExecC1/rederive.md` (both a constant-`True` and the literal patch
+  family; every kill names exactly its case; the r68 mutant shas equal the round-68 wave's).
+- **R69-C2 — verified, with a routed counter-strength defect.** The contract probe at the landing
+  reports `arms_passed 6` of `target 6`, `failed []`, against the landing receipt
+  (`.ufo/waves/round-69/l1/scores/c2-at-landing.json`); the base arm reports 0 of 6 naming all six
+  (`.ufo/waves/round-69/l1/pre/c2-at-base.json`). The probe does not bind the receipt to its producer
+  (M69-8): a fabricated receipt passes it, so the six-arm result is evidence only together with the
+  provenance gate below and the independent re-derivation (`w1/ExecC2/rederive.md`).
+- **R69-C3 — verified, with a routed counter gap.** `packed-elf.py --check-receipt` on the
+  three-carrier receipt reports `met true`, `failing []` (`.ufo/waves/round-69/l1/scores/
+  c3-check-at-landing.json`); the receipt reports `target 3`, `carriers_matched 3`, `control_ok true`,
+  ratios 0.0599 / 0.1010 / 0.6522, `before_procedures [3, 3, 98]` (`.ufo/waves/round-69/l1/scores/
+  c3-at-landing.json`). The checker alone accepts a fabricated receipt (M69-8); the provenance gate
+  binds the receipt to the frozen instrument (`instrument.sha256 4ac0d83b…`, `rev 5ee94c56…`) and
+  re-derives the three carriers (`provenance-at-landing.json`, `met true`), and `w1/ExecC3/verify.md`
+  reproduced every count, format, pin and packed sha256 independently.
+- **Controls.** The seven do-nothing/shortcut controls re-run at the base: all seven arms show what
+  they must (`controls-at-base-recheck.json`); the C3 synthetic receipt does reach the checker (the
+  routed gap), which is why the provenance gate exists.
+- **No-harm.** No owned axis score is lowered: coverage gains a carrier class, depth gains the
+  contract table and the arm seam, calibration gains a gate that can fail. Two counter defects
+  (M69-8) and one new security seam defect (M69-9, `--upx` executed before hashing; no lane run
+  passes `--upx`) are reported, routed to the next freeze, and the container/instruments were not
+  edited post-freeze.
 
 ## Census
 
 - Start: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` exit 0,
   176 rows, 19 standing W04, malformed 0 (`.ufo/waves/round-69/l1/census-start.txt`).
-- End: `[L1]`
+- End: exit 0, **177 rows** after S270, malformed 0, mined 168 / rejected 9, tiers A 163 / B 9 / C 5,
+  the same 19 W04 (`.ufo/waves/round-69/l1/census-end.txt`).

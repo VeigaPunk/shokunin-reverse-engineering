@@ -5344,3 +5344,124 @@ refused `--work` (ADV-2/ADV-3), plus the carrier record naming format and packin
 control-driver scope question (M68-7) and the thin-grammar comma edge (ADV-4); (d) the r63 planned record-section
 sweep stays open; (e) the standing duties re-run every round that lands receipts; the r58/r60 bare-name findings and
 the r64 placeholder-token disposition stay named debt.
+
+## 2026-11-03 — round 69: the packed route's gate can fail, its contract is typed, and a shared object joins the carriers
+
+Base `d7d9a62cc70935304e600ed0dee864fc4f1751f7`; operative freeze `f15998102f1ce3569e61faa2ac6f286bc414538e`
+(the first commit adding `.ufo/waves/round-69/claims.json`; the declaration `616a5f2f` — four instruments, the
+seven controls, the plan and the three base receipts — precedes it, atom A0). Measured/landing
+`5ee94c56ce7490938ee38c2e5c10930a1fd1330a`. Three claims on three distinct axes, causally separable, all
+capability acquisitions. The stagnation nudge applies: every owned axis sat at 10.0 (saturation 10.0,
+window 10) before this round, so the lowest-axis obligation is waived and the round is a
+capability/frontier move.
+
+| claim | axis | type | predicate (frozen sentence) | before → after | verdict |
+|---|---|---|---|---|---|
+| R69-C1 | calibration | capability acquisition (an arm-false selftest through the `evaluate_carrier()` seam) + the repair of the round-68 routed defect M68-6 | R69-C1 is verified iff the frozen mutation battery, run at the measured revision against tools/round-69/packed-elf.py with patch set r69, reports survivors [] with all five mutants killed and each kill's failed list naming its declared arm-false case, and pristine.cases 20 with pristine.ok true, while the same battery against tools/round-68/packed-elf.py at the base revision d7d9a62cc70935304e600ed0dee864fc4f1751f7 with patch set r68 reports exactly the five survivors M1_identity, M2_recovery, M3_detected, M4_before, M5_control and pristine.cases 13. | base: `survivors [M1_identity … M5_control]`, `pristine.cases 13`; landing: `survivors []`, five `killed` naming `arm-pack-{identity,recovery,detected,before,control}-false`, `pristine.cases 20`, `target_sha256 4ac0d83b…` | **verified** |
+| R69-C2 | operability | capability acquisition (typed exit-2 preflight, enforced UPX pin, per-carrier format/mode records) + the repair of M68-4 / ADV-2 / ADV-3 | R69-C2 is verified iff the frozen contract probe, run at the measured revision against tools/round-69/packed-elf.py with the measured run's receipt, reports arms_passed 6 of target 6 — A1_missing_node, A2_work_unusable, A3_packer_version, A4_packer_sha256, A5_carrier_record and A6_packer_pin each true — while the same probe against tools/round-68/packed-elf.py and its own round-68 landing receipt at the base revision reports arms_passed 0 of 6 naming all six arms. | base: `arms_passed 0` of 6, all six named; landing: `arms_passed 6` of 6, `failed []` | **verified** (counter-strength defect routed, M69-8) |
+| R69-C3 | coverage | capability acquisition (a packed shared object as a carrier class) — Frontier → Core | R69-C3 is verified iff the frozen receipt checker, run at the measured revision over the instrument's three-carrier receipt, reports met true with target 3, carriers_matched 3, control_ok true, failing [], every carrier's before_ceiling_ratio at or below 0.75, and one carrier of kind shared-object (libz), while the same checker over the round-68 receipt .ufo/waves/round-68/l1/scores/c2-at-landing.json reports target 2 and no shared-object carrier. | base: `target 2 != 3`, no shared-object carrier (exit 1); landing: `met true`, `failing []`, `carriers_matched 3`, ratios 0.0599/0.1010/0.6522, `before_procedures [3, 3, 98]` | **verified** (counter gap routed, M69-8) |
+
+**R69-C1 receipts.** `python3 -I -B tools/round-69/mutation-check.py --root . --rev 5ee94c56 --tool
+tools/round-69/packed-elf.py --patch-set r69 --work <scratch> --json-out <receipt>` → exit 0,
+`survivors []`, `killed` the five, `killed_wrong_case []`, `pristine.cases 20`, `pristine.ok true`,
+`target_sha256 4ac0d83b…` (`.ufo/waves/round-69/l1/scores/c1-at-landing.json`). Before-arm: the same
+battery with `--tool tools/round-68/packed-elf.py --patch-set r68 --rev d7d9a62` → exit 0, exactly the
+five survivors, `pristine.cases 13`, `target_sha256 48ef4c68…` (`c1-before-recheck.json`; the
+pre-freeze receipt `l1/pre/c1-at-base.json` agrees). Independent re-derivation: `w1/ExecC1/rederive.md`
+— its own applier, a constant-`True` family and the battery's literal family, both killing all five
+with exactly one named case each; the r68 mutant sha256s equal the round-68 wave's recorded mutants.
+Extra mutants (report-only): six more killed, one crash-classified (`X4`), and the r68 `control_ok`
+local proven a dead store.
+
+**R69-C2 receipts.** `python3 -I -B tools/round-69/contract-probe.py --root . --rev 5ee94c56 --tool
+tools/round-69/packed-elf.py --pkg <REA 6.5.0> --work <scratch> --receipt
+.ufo/waves/round-69/l1/scores/c3-at-landing.json --json-out <receipt>` → exit 0, `arms_passed 6`,
+`target 6`, `failed []` (`c2-at-landing.json`); A1 `missing_tool: node`, A2 `work_unusable`, A3
+`packer_mismatch: version 'upx 5.1.0'`, A4 `packer_mismatch: sha256 …`, A5 the three carrier records
+re-derived from the pinned source bytes and the pack argv, A6 the enforced pins equal to the host
+packer. Before-arm: the same probe against the r68 instrument and `.ufo/waves/round-68/l1/scores/
+c2-at-landing.json` at the base → 0 of 6, all six named (`c2-at-base.json`; ExecC2's independent
+harness reproduces every arm and the same 0/6). Counter-strength defect: a fabricated receipt passes
+the probe (CriticClaims §R69-C2), so the claim's evidence is the landing receipt plus the provenance
+gate, not the probe alone (M69-8, routed).
+
+**R69-C3 receipts.** `python3 -I -B tools/round-69/packed-elf.py --check-receipt
+.ufo/waves/round-69/l1/scores/c3-at-landing.json` → exit 0, `met true`, `failing []`
+(`c3-check-at-landing.json`). The three-carrier receipt: `rev 5ee94c56`, `instrument.sha256
+4ac0d83b…`, `carriers_matched 3`, `target 3`, `control_ok true`, `before_procedures [3, 3, 98]`,
+ratios 0.0599 (`jq` 10/167) / 0.1010 (`xxd` 10/99) / 0.6522 (`libz` 120/184), every arm true, the
+packer `upx 5.2.0` sha `cf2f6e7c…` with `pin_enforced true` (`c3-at-landing.json`). Provenance gate:
+`python3 -I -B tools/round-69/provenance-check.py --root . --rev 5ee94c56 --instrument-sha256
+4ac0d83b… --receipt …` → exit 0, `met true` (`provenance-at-landing.json`), rejecting five forged
+shapes (`prov-forged-instrument`, `prov-forged-rev`, `prov-two-carriers`, `prov-relabelled`,
+`prov-wrong-ratio`, each exit 1 with its clause). Independent reproduction: `w1/ExecC3/verify.md`
+re-derived every pin, format, section count, count triple and packed sha256 from the host bytes; a
+second shared object (`liblzma.so.5.8.4`) generalised the route. The checker alone accepts a fabricated
+receipt (CriticClaims §R69-C3: invented counts, a relabelled executable, two rows vs `carriers_matched
+3`, a ratio that does not equal ceiling/orig), so the counter gap is routed (M69-8).
+
+**Freeze integrity.** The four instruments' sha256 at the freeze, at the landing and at the worktree
+are the container pins (`4ac0d83b…`, `51b64c56…`, `e609d85d…`, `1f8f78c1…`); `git diff f1599810..
+5ee94c56 -- tools/round-69` is empty (reviewer and critic both re-derived this). No instrument
+supersession and no post-freeze instrument edit. The round-29 gate's audit of the container reports
+`FLAGGED` / `INSTRUMENT_NONE` — the container pins under `instrument_pins` and keeps the predicates in
+`frozen_atoms`, while the gate reads claim-string values and a top-level `instruments` object; recorded
+verbatim in `corpus/claim-freezes-v2.tsv` as `round-69`, disclosed and routed to the next freeze
+(M69-1), never repaired post-freeze.
+
+**Repairs carried (not claims).** R68-V1: the round-68 entry gains an appended `## Correction — round
+69` block with the provenance trio as list items (never an in-place rewrite). R68-V2: the round-68
+knowledge-index row moved below the table delimiter, and the round-69 row added there. R68-V3: this
+round's prefile receipt is committed at the ticket tree (`.ufo/waves/round-69/l1/records/`), not a
+report paste. R68-V4: `tools/round-29/prefile-check.sh`'s prose (21 rows, last round-35; `exact 20 of
+21` at `f78fc766`) and its unreachable `${got:-absent}` branch corrected by an existence test; the
+filed LOG line is not rewritten (the LOG landing entry appends the correction). R68-V5: S269's
+"(11 words)" label corrected by a recorded reason not to supersede, in the lesson Gate (the quote is 10
+words; both are ≤25 and the row's anchor/sha re-derive). R68-V6: the round-68 report's "two of them
+corrected" overstatement is corrected in this round's report erratum.
+
+**Sources and frontier.** `corpus/SOURCES.md` 176 → 177 rows (S270 admitted: UPX 5.2.0 packer source,
+`src/help.cpp:465` and `src/main.cpp:1174` at tag `v5.2.0`, fetched 2026-11-03, 27 279 B sha256
+`0b893ca8…` / 41 889 B sha256 `a02c7cba…`, 4-word and 5-word located quotes; five candidates rejected
+with reasons in `corpus/lessons/round-69.md` Gate; the generated manual page `doc/upx.1` is recorded as
+a secondary locator, not a second row). Coverage map 148/148 under the stem recipe at the record.
+`PROVINCE.md` gains `## Round-69 additions to Core` and its frontier note; the entry
+`corpus/knowledge/2026-11-03-r69-packed-route-contract.md` is the new knowledge; `corpus/QUALITY.md`
+rows 112, 113 and 114 land. Assimilation: none (the `merge/kaidoku/` themes do not serve the frozen
+claims and may not widen them); no `considerthese/` directory exists in this lane.
+
+**Capabilities entered.** (3) an arm-false selftest seam over a gate's own arm expressions —
+`tools/round-69/packed-elf.py --selftest` (20 cases), first working round 69; (4) a typed exit-2
+preflight with an enforced host-tool pin and per-carrier format/mode records —
+`tools/round-69/packed-elf.py`, first working round 69; (5) a three-carrier packed route including a
+shared object — `tools/round-69/packed-elf.py --score` / `--check-receipt`, first working round 69;
+(6) receipt provenance corroboration — `tools/round-69/provenance-check.py`, first working round 69.
+
+**Trends.** expansion **improved** (one admitted entry on ground held only as a Frontier line — packed
+shared objects — citing mined S270; registry +1). quality **improved** (two counter-strength defects
+found by the wave and closed for corroboration by a new provenance gate; six routed repairs closed
+append-only; QUALITY 112-114; the prefile gate's prose/branch corrected; both gates' claims measured at
+the landing). discernment **improved** (the wave's critic falsified the C2/C3 counters with fabricated
+receipts and the lane recorded it rather than smoothing it; the sentinel found a high-severity seam
+defect; the source gate recorded one admit and four rejects; the mutation seats produced 17 additional
+survivors and three counter-level false greens, all named and routed).
+
+**Wave.** One v1 wave `r69-w1`, 15 seats (5 executor, 2 reviewer, 1 critic, 2 mutation-testers, 1
+sentinel, 1 scout, 1 connector, 2 scribes), attack share 5/15 = 33%. L1 held the planner seat (the
+validator rejects a planner role). No residual call.
+
+**Name by surface.** R69-C1's surface is the gate's own arm wiring (a selftest that can feed a false
+model per arm), not a re-score of any rule the lane holds; R69-C2's surface is the route's failure
+contract and host-tool identity at the instrument boundary; R69-C3's surface is a new artifact class in
+the carrier set, named in PROVINCE Core and in the map.
+
+**planned (next steered round only):** (a) bind the C2/C3 counters to receipt provenance directly —
+`instrument.sha256`, `rev`, the canonical carrier ids/pins and the ceiling re-derivation inside the
+frozen probe/checker (the provenance gate is corroboration, not the counter); (b) R69-C2's `--upx` seam:
+hash before executing, minimal child environment, and thread the validated path through the carrier
+loop (M69-9/S-1, S-2); (c) type the remaining preflight leaks (broken `node`, exec-format-less or
+unreadable `--upx`) and remove the `/tmp` HOME fallback and the fixed-name scratch dirs (M69-10/11);
+(d) the C1 battery's own hazards: pin `target_sha256` to the container, enforce `pristine.cases`, and
+make `--work` per-run (M69-8); (e) the r63 planned record-section sweep stays open; (f) the standing
+duties re-run every round that lands receipts; the r58/r60 bare-name findings and the r64
+placeholder-token disposition stay named debt.
