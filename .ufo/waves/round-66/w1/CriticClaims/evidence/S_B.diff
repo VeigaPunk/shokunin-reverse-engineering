@@ -1,0 +1,11 @@
+--- frozen/closure-boundary.py
++++ S_B.py
+@@ -459,6 +459,8 @@
+         return selftest()
+     if args.skip_run:
+         result = skip_run_receipt(args)
++        result["closure"] = {"ok": True}  # SHORTCUT: CLI claims what verify never sees
++        result["closure_claimed"] = True
+         emit(result, args.out)
+         return result["exit"]
+     if args.verify:

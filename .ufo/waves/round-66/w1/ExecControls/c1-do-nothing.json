@@ -1,0 +1,88 @@
+{
+ "arms": [
+  {
+   "arm": "a1-guarded-fixture-green",
+   "detail": {
+    "cache_on_disk_after_probe": [],
+    "control_meets_r66_arm": true,
+    "r65_order_state": {
+     "cache_present": [],
+     "entries": 5,
+     "ok": true
+    },
+    "r66_arm_would_pass": true
+   },
+   "passed": true
+  },
+  {
+   "arm": "a2-unguarded-fixture-red",
+   "detail": {
+    "cache_on_disk_after_probe": [
+     "__pycache__",
+     "__pycache__/fixture_mod.cpython-315.pyc"
+    ],
+    "control_meets_r66_arm": false,
+    "r65_order_state": {
+     "cache_present": [],
+     "entries": 5,
+     "ok": true
+    },
+    "r66_arm_would_pass": false
+   },
+   "passed": false
+  },
+  {
+   "arm": "a3-real-manifest-count-green",
+   "detail": {
+    "control_meets_r66_arm": false,
+    "count_ok_field_present": false,
+    "r65_order_state": {
+     "entries": 30,
+     "ok": true
+    },
+    "reason": "r65 emits the count but asserts nothing, so the arm's count_ok clause has no line"
+   },
+   "passed": false
+  },
+  {
+   "arm": "a4-truncated-manifest-red",
+   "detail": {
+    "control_meets_r66_arm": false,
+    "r65_exit": 0,
+    "r65_manifest": {
+     "entries": 29,
+     "findings": [],
+     "ok": true
+    },
+    "reason": "r65 --manifest exits 0 with a synthetic ok on a manifest one entry short"
+   },
+   "passed": false
+  },
+  {
+   "arm": "a5-skip-run-no-closure",
+   "detail": {
+    "control_meets_r66_arm": false,
+    "r65_closure": {
+     "cache_present": [],
+     "entries": 30,
+     "findings": [],
+     "missing": [],
+     "ok": true,
+     "pin_mismatch": []
+    },
+    "r65_exit": 1,
+    "reason": "r65 --skip-run hardcodes closure.ok true"
+   },
+   "passed": false
+  }
+ ],
+ "arms_total": 5,
+ "ok": false,
+ "passed": 1,
+ "skips": "the probe-before-cache order, the count assertion and the skip-run closure claim",
+ "target": 5,
+ "tool": "c1-do-nothing control",
+ "v1_path": "tools/round-65/jsc-closure-matrix.py",
+ "v1_pin": "79a4dca40d2b37dc8d88711e9a95ec25e7d2e099bfd3ed52bb38bab77ff922c6",
+ "v1_sha256": "79a4dca40d2b37dc8d88711e9a95ec25e7d2e099bfd3ed52bb38bab77ff922c6"
+}

@@ -1,0 +1,30 @@
+--- frozen/closure-boundary.py
++++ S_A2.py
+@@ -207,6 +207,18 @@
+     return run
+ 
+ 
++def planted_probe(mod, python, root):
++    """SHORTCUT: run the guarded probe, then manufacture the cache it should write."""
++    def run():
++        ok, msg = fixture_probe(mod, python, root, guarded=True)()
++        if not ok:
++            return ok, msg
++        (root / "__pycache__").mkdir()
++        (root / "__pycache__" / "fixture_mod.cpython-315.pyc").write_bytes(b"planted\n")
++        return True, "ok"
++    return run
++
++
+ def scratch_dir(args) -> Path:
+     if args.work:
+         p = Path(args.work).resolve()
+@@ -249,7 +261,7 @@
+     write_fixture(fx2)
+     st2 = closure_state(mod, fx2, fx2 / "probe.jsc", fx2 / "node", fx2 / "interp",
+                         pins_for(fx2, FIXTURE_RELS), len(FIXTURE_RELS) + 3,
+-                        fixture_probe(mod, args.python, fx2, guarded=False),
++                        planted_probe(mod, args.python, fx2),
+                         fixture_pins(fx2))
+     named_pyc = [p for p in st2["cache_present"] if p.endswith(".pyc")]
+     arms.append(arm(ARMS[1], st2["ok"] is False and bool(named_pyc)

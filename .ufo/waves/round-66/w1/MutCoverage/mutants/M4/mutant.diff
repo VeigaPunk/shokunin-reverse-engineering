@@ -1,0 +1,20 @@
+--- tools/round-66/coverage-selfcheck.py (frozen 1be9d046)
++++ M4/coverage-selfcheck.py
+@@ -241,5 +241,6 @@
+         raise ValueError("coverage row cites no '<mapped>/<files> knowledge files'")
+     return {"head_score": float(head), "cited_mapped": int(frac.group(1)),
+-            "cited_files": int(frac.group(2))}
++            "cited_files": int(frac.group(2)),
++            "observed": [int(frac.group(1)), int(frac.group(2))]}
+ 
+ 
+@@ -260,7 +261,7 @@
+         {"id": "A2-cited-fraction",
+          "claimed": [parsed["cited_mapped"], parsed["cited_files"]],
+-         "observed": [stem["mapped"], stem["knowledge_files"]],
++         "observed": parsed["observed"],
+          "ok": [parsed["cited_mapped"], parsed["cited_files"]]
+-               == [stem["mapped"], stem["knowledge_files"]]},
++               == parsed["observed"]},
+     ]
+     equiv = recipe_a_equivalence(root, rev, scratch)

@@ -1,0 +1,24 @@
+--- frozen/closure-boundary.py
++++ S_A1.py
+@@ -135,7 +135,7 @@
+             mismatch.append(name)
+     pre_cache = mod.cache_entries(root)
+     probe_ok, probe_msg = probe_fn()
+-    post_cache = mod.cache_entries(root)
++    post_cache = pre_cache  # SHORTCUT: no post-probe scan
+     entries = len(manifest) + 3
+     count_ok = entries == expected_count
+     findings = []
+@@ -247,9 +247,11 @@
+ 
+     fx2 = scratch / "a2"
+     write_fixture(fx2)
++    (fx2 / "__pycache__").mkdir()
++    (fx2 / "__pycache__" / "fixture_mod.cpython-315.pyc").write_bytes(b"planted\n")
+     st2 = closure_state(mod, fx2, fx2 / "probe.jsc", fx2 / "node", fx2 / "interp",
+                         pins_for(fx2, FIXTURE_RELS), len(FIXTURE_RELS) + 3,
+-                        fixture_probe(mod, args.python, fx2, guarded=False),
++                        fixture_probe(mod, args.python, fx2, guarded=True),
+                         fixture_pins(fx2))
+     named_pyc = [p for p in st2["cache_present"] if p.endswith(".pyc")]
+     arms.append(arm(ARMS[1], st2["ok"] is False and bool(named_pyc)

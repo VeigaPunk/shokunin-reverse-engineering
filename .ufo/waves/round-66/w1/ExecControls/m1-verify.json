@@ -1,0 +1,71 @@
+{
+ "arms": [
+  {
+   "arm": "a1-guarded-fixture-green",
+   "detail": {
+    "cache_present": [],
+    "findings": [],
+    "ok": true
+   },
+   "passed": true
+  },
+  {
+   "arm": "a2-unguarded-fixture-red",
+   "detail": {
+    "cache_present": [
+     "__pycache__",
+     "__pycache__/fixture_mod.cpython-315.pyc"
+    ],
+    "findings": [
+     "cache present after probe 2: __pycache__, __pycache__/fixture_mod.cpython-315.pyc"
+    ],
+    "ok": false,
+    "probe": {
+     "message": "ok",
+     "ok": true
+    }
+   },
+   "passed": true
+  },
+  {
+   "arm": "a3-real-manifest-count-green",
+   "detail": {
+    "count_ok": false,
+    "entries": 30,
+    "findings": [
+     "count 30 != 29"
+    ],
+    "ok": false
+   },
+   "passed": false
+  },
+  {
+   "arm": "a4-truncated-manifest-red",
+   "detail": {
+    "count_ok": true,
+    "dropped_entry": "d8-14.7.173/d8",
+    "entries": 29,
+    "findings": [],
+    "ok": true
+   },
+   "passed": false
+  },
+  {
+   "arm": "a5-skip-run-no-closure",
+   "detail": {
+    "closure": null,
+    "closure_claimed": false
+   },
+   "passed": true
+  }
+ ],
+ "arms_total": 5,
+ "count": 29,
+ "exit": 1,
+ "ok": false,
+ "passed": 3,
+ "predicate": "R66-C1 is verified iff the repaired closure counter passes all five of its boundary arms: a1 the guarded fixture probe leaves closure.ok true with an empty cache; a2 the same probe without -B or the bytecode env makes closure.ok false and names a .pyc path; a3 the frozen 30-entry toolchain manifest verifies with count_ok true; a4 a manifest one entry short reports entries 29 != 30 and closure.ok false; a5 --skip-run emits no closure object claiming ok.",
+ "scratch": "/fast/scratch/hyaku/kaidoku-r66/ExecControls/work-m1",
+ "tool": "tools/round-66/closure-boundary.py",
+ "v1_pin": "79a4dca40d2b37dc8d88711e9a95ec25e7d2e099bfd3ed52bb38bab77ff922c6"
+}
