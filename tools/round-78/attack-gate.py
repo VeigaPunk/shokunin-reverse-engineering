@@ -318,7 +318,8 @@ def bind_clause(clause: dict, receipt: dict) -> tuple[bool, str, dict]:
             actual = matches[0].get("ok")
             return (typed_equal(claimed, actual), "bound",
                     {"field": field, "claimed": claimed, "actual": actual})
-        hits = resolve_field(receipt, field)
+        hits = ([("/" + field, receipt[field])] if field in receipt
+                else resolve_field(receipt, field))
         if not hits:
             stem = re.sub(r"_(count|total|ok)$", "", field)
             reason = "near_miss_field" if stem in NEAR_MISS_STEMS else "unknown_field"
@@ -377,6 +378,7 @@ def bind_clause(clause: dict, receipt: dict) -> tuple[bool, str, dict]:
 def judge_group(group: str, receipt: dict | None, rules: set[str]) -> list[dict]:
     """Apply the declared rules to one parenthesised verdict group."""
     findings: list[dict] = []
+    receipt_placeholder = receipt or {}
     clauses = [c.strip() for c in re.split(r",(?![^`]*`)", group) if c.strip()]
     if "negated_verdict" in rules and NEGATION_RE.search(group):
         findings.append({"rule": "negated_verdict", "group": group,
@@ -387,7 +389,13 @@ def judge_group(group: str, receipt: dict | None, rules: set[str]) -> list[dict]
                              "clause": clause,
                              "reason": "an atom id carrying a qualifier"})
             continue
-        if "near_miss_field" in rules and NEAR_MISS_RE.match(clause):
+        near = parse_clause(clause)
+        if "near_miss_field" in rules and (
+                (near is None and NEAR_MISS_RE.match(clause))
+                or (near is not None and near.get("kind") == "field"
+                    and near["f"] not in receipt_placeholder
+                    and re.sub(r"_(count|total|ok)$", "", near["f"])
+                    in NEAR_MISS_STEMS)):
             findings.append({"rule": "near_miss_field", "group": group,
                              "clause": clause,
                              "reason": "a verdict token in a spelling the grammar "
