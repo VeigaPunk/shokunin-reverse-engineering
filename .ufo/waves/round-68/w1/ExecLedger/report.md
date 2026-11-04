@@ -20,7 +20,7 @@ jj/git mutation; every write is under `.ufo/waves/round-68/w1/ExecLedger/`.**
 | item | verdict | evidence |
 |---|---|---|
 | Defect 3 (QUALITY #100 companion row for the round-64 findings cell) | **row derived, exact, append-only**; series id `round-64/correction-1` | §1; `evidence/proposed-correction-row.tsv` |
-| Defect 4a (prefile gate receipt) | **run; exit 1 at `6ffa9ce1`** — red for two independent reasons, both by design in-wave (§2.1) | `evidence/prefile-at-6ffa9ce1.txt` |
+| Defect 4a (prefile gate receipt) | **run; exit 1 at `6ffa9ce1`** — red for three independent reasons, all expected in-wave (§2.1) | `evidence/prefile-at-6ffa9ce1.txt` |
 | Defect 4b (round-24 ledger retirement) | **21 rows: 20 exact, 1 stray, 16 missing keys**; retirement erratum text supplied | §2.3 + `evidence/proposed-retirement-erratum.md` |
 | Item 3 (round-68 gate verdict) | **FLAGGED `INSTRUMENT_UNPINNED`** ×2 paths; needs one appended v2 row, and the finding is **permanent** for that claims file | §3 |
 
