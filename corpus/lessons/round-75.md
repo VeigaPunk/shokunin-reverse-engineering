@@ -46,6 +46,15 @@ existing row's `used-by` changes (S277).
   naming 23/24 while the measured count is 25). The exact grammar rejects all six, each with a
   defect naming the failed shape, and accepts the two well-formed fixtures — no blocking defect
   (`.ufo/waves/round-75/w1/ExecAuditGrammars.md`).
+- **ReviewerClaims** re-derived R75-C1 end-to-end from frozen revisions and found no blocking
+  defect: the two target pins match their blobs, the fifteen patch sites each occur exactly once,
+  the renamed-case control is red for all seven closed names, and its independent runs of the
+  frozen battery reproduce every count in the committed receipts. Its provenance finding (F1): the
+  committed base receipt's `runner.sha256` is `d7757ae2…`, the *revised* battery disclosed as
+  `ad53c1e1`, while the freeze pins `ec089411…`; the two differ only in the runner-binding block,
+  so the receipt's runner field is honest about what executed but does not match the freeze pin.
+  Recorded as a known skew, not repaired (re-generating it with the frozen blob would write a
+  `null` runner and lose the binding the atom checks).
 - **ScoutSource** re-opened both pages (fresh GETs, digests identical to the registry snapshots) and
   located eight passages on `proc_pid_cmdline(5)`: argv mutability, the zombie empty read, NUL
   separation, and the `PR_SET_MM_ARG_START` relocation. Its conclusion: the pages support the
