@@ -1,0 +1,35 @@
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -141,6 +141,15 @@
+     data = get(root, rev, script)
+     if sha256_bytes(data) != digest:
+         raise Refused(f"SCRIPT_PIN_MISMATCH: {script} bytes differ from the pin")
++    path = Path(root) / script
++    if path.resolve() != Path(os.path.abspath(path)):
++        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} resolves through a symlink")
++    try:
++        actual = path.read_bytes()
++    except OSError as exc:
++        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} unreadable: {exc}") from exc
++    if sha256_bytes(actual) != digest:
++        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} executed path differs from the pin")
+ 
+ 
+ def containment(path: str, work_root: str) -> str:
+@@ -495,12 +504,14 @@
+     try:
+         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+                "HOME": scratch, "LANG": "C.UTF-8", "TMPDIR": scratch}
+-        subprocess.run(["git", "init", "-q"], cwd=scratch, env=env,
++        subprocess.run(["git", "-C", scratch, "init", "-q"], env=env,
+                        capture_output=True, check=True)
+         toplevel = subprocess.run(
+             ["git", "-C", scratch, "rev-parse", "--show-toplevel"],
+             capture_output=True, text=True, env=env, check=True).stdout.strip()
+-        check("fixture-repo-top", toplevel == os.path.realpath(scratch))
++        if toplevel != os.path.realpath(scratch):
++            raise RuntimeError("fixture root mismatch")
++        check("fixture-repo-top", True)
+         member = os.path.join(scratch, "member.py")
+         Path(member).write_text("print('member')\n")
+         subprocess.run(["git", "-C", scratch, "add", "member.py"], env=env,

@@ -380,7 +380,7 @@ def main(argv: list[str] | None = None) -> int:
         "round": ROUND,
         "base": BASE,
         "checked_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
-        "instrument": {"path": "tools/round-80/strictness-battery.py",
+        "instrument": {"path": "tools/round-81/strictness-battery.py",
                        "sha256": sha256_bytes(pathlib.Path(__file__).read_bytes())},
         "fixtures": {"path": args.fixtures,
                      "sha256": sha256_bytes(pathlib.Path(fixture_path).read_bytes()),

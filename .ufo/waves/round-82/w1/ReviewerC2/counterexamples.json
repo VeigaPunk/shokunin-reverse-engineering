@@ -1,0 +1,176 @@
+{
+  "axes": [
+    "execution-byte identity",
+    "exact sourced-row binding",
+    "containment",
+    "runtime pin refusal"
+  ],
+  "revision": "2d63e1a7d04d4dcff45c3908bb51be787a2f22e1",
+  "instrument_sha256": "d447f6b487f2f9b39e0585ddf48f41cf4068cb5da6f64a299cf7be3066aacd8c",
+  "cases": {
+    "wrong_worktree_bytes": {
+      "row": {
+        "command": "python3 -I -B tools/round-82/conjunction-gate.py --json-out $OUT",
+        "static_defects": [],
+        "executed": true,
+        "rc": 0,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "counter": {
+          "field": "refused",
+          "value": 3,
+          "expected": null,
+          "matched": null
+        },
+        "defects": [],
+        "argv": [
+          "python3",
+          "-I",
+          "-B",
+          "tools/round-82/conjunction-gate.py",
+          "--json-out",
+          "/fast/scratch/hyaku/kaidoku-r82/ReviewerC2/work/out.json"
+        ]
+      },
+      "receipt": {
+        "refused": 3,
+        "origin": "uncommitted-worktree"
+      },
+      "pinned_sha256": "7a013df13b83ae48d0fdd79dc8d00282b53856ec79a4509296828ef6bd0c58b6",
+      "executed_worktree_sha256": "949d92fc3993b5f0e76ead1965779d7a7ce9e9b0dbb7a54cd02d4fcfb9e8b03e",
+      "fixture_rev": "c73e977a424a679d92dc702040cfa3bde03415ae"
+    },
+    "revision_pin_mismatch": {
+      "command": "python3 -I -B tools/round-82/conjunction-gate.py --json-out $OUT",
+      "static_defects": [],
+      "executed": false,
+      "rc": null,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "counter": null,
+      "defects": [
+        "REFUSED: SCRIPT_PIN_MISMATCH: tools/round-82/conjunction-gate.py bytes differ from the pin"
+      ]
+    },
+    "unpinned_script": {
+      "command": "python3 -I -B tools/round-82/not-pinned.py --json-out $OUT",
+      "static_defects": [],
+      "executed": false,
+      "rc": null,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "counter": null,
+      "defects": [
+        "REFUSED: SCRIPT_NOT_PINNED: tools/round-82/not-pinned.py is not a claims instrument"
+      ]
+    },
+    "literal_output_escape": {
+      "row": {
+        "command": "python3 -I -B tools/round-82/conjunction-gate.py --json-out /fast/scratch/hyaku/kaidoku-r82/ReviewerC2/outside-work.json",
+        "static_defects": [],
+        "executed": true,
+        "rc": 0,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "counter": {
+          "field": "refused",
+          "value": 3,
+          "expected": null,
+          "matched": null
+        },
+        "defects": [],
+        "argv": [
+          "python3",
+          "-I",
+          "-B",
+          "tools/round-82/conjunction-gate.py",
+          "--json-out",
+          "/fast/scratch/hyaku/kaidoku-r82/ReviewerC2/outside-work.json"
+        ]
+      },
+      "outside_created": true,
+      "outside_receipt": {
+        "refused": 3,
+        "origin": "pinned"
+      },
+      "stale_contained_receipt": {
+        "refused": 3,
+        "origin": "uncommitted-worktree"
+      }
+    },
+    "explicit_output_escape_refused": {
+      "command": "python3 -I -B tools/round-82/conjunction-gate.py --json-out $OUT",
+      "static_defects": [],
+      "executed": false,
+      "rc": null,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "counter": null,
+      "defects": [
+        "REFUSED: path escapes the work root: /fast/scratch/hyaku/kaidoku-r82/ReviewerC2/outside-work.json"
+      ]
+    },
+    "symlink_output_escape_refused": {
+      "command": "python3 -I -B tools/round-82/conjunction-gate.py --json-out $OUT",
+      "static_defects": [],
+      "executed": false,
+      "rc": null,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "counter": null,
+      "defects": [
+        "REFUSED: path escapes the work root: /fast/scratch/hyaku/kaidoku-r82/ReviewerC2/work/link.json"
+      ]
+    },
+    "source_S2990": {
+      "arm": "sourced",
+      "row_present": true,
+      "row_mined": true,
+      "base_absent": true,
+      "plan_names_row": true,
+      "entry_cites_row": true,
+      "defects": [],
+      "met": true
+    },
+    "mined_arbitrary_cell": {
+      "input_row": "| S299 | docs | docs | A | scope | anchor | mined discussion only | queued | 2026-11-04 | on-release | entry |",
+      "arm": {
+        "arm": "sourced",
+        "row_present": true,
+        "row_mined": true,
+        "base_absent": true,
+        "plan_names_row": true,
+        "entry_cites_row": true,
+        "defects": [],
+        "met": true
+      }
+    },
+    "plan_S2990": {
+      "arm": "sourced",
+      "row_present": true,
+      "row_mined": true,
+      "base_absent": true,
+      "plan_names_row": true,
+      "entry_cites_row": true,
+      "defects": [],
+      "met": true
+    },
+    "different_source_control": {
+      "arm": "sourced",
+      "row_present": true,
+      "row_mined": true,
+      "base_absent": true,
+      "plan_names_row": true,
+      "entry_cites_row": false,
+      "defects": [
+        "SOURCED_ENTRY_UNCITED"
+      ],
+      "met": false
+    }
+  },
+  "tool_versions": {
+    "python": "3.14.8",
+    "git": "git version 2.56.0",
+    "installs": []
+  }
+}

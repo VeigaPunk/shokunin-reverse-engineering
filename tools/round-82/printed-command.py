@@ -141,6 +141,15 @@ def pin_matches(root: str, rev: str, script: str, digest: str) -> None:
     data = get(root, rev, script)
     if sha256_bytes(data) != digest:
         raise Refused(f"SCRIPT_PIN_MISMATCH: {script} bytes differ from the pin")
+    path = Path(root) / script
+    if path.resolve() != Path(os.path.abspath(path)):
+        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} resolves through a symlink")
+    try:
+        actual = path.read_bytes()
+    except OSError as exc:
+        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} unreadable: {exc}") from exc
+    if sha256_bytes(actual) != digest:
+        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} executed path differs from the pin")
 
 
 def containment(path: str, work_root: str) -> str:
@@ -179,6 +188,17 @@ def run_block(root: str, rev: str, command: str, work: str, out: str,
         pin_matches(root, rev, script, pins[script])
         out_real = containment(out, work)
         work_real = containment(work, work)
+        for index, token in enumerate(argv):
+            if token.startswith("--json-out="):
+                actual_out = token.split("=", 1)[1]
+            elif token == "--json-out" and index + 1 < len(argv):
+                actual_out = argv[index + 1]
+            else:
+                continue
+            if containment(actual_out, work) != out_real:
+                raise Refused("OUTPUT_ARG_MISMATCH: printed output is not the contained receipt")
+        if Path(out_real).exists():
+            raise Refused("OUTPUT_ALREADY_EXISTS: refusing a stale receipt")
     except Refused as exc:
         result["defects"].append(f"REFUSED: {exc}")
         return result
@@ -237,16 +257,18 @@ def sources_row(text: str, sid: str) -> str | None:
 def entry_cites(text: str, sid: str) -> bool:
     for line in text.splitlines():
         if line.startswith("source:"):
-            return sid in line
+            return sid in re.findall(r"\bS[0-9]+\b", line)
     return False
 
 
 def sourced_arm(root: str, rev: str) -> dict:
     row = sources_row(read_text(root, rev, SOURCES), SOURCED_ROW)
-    row_ok = bool(row and "mined" in row and "2026-11-04" in row)
+    cells = [c.strip() for c in row.split("|")] if row else []
+    row_ok = bool(len(cells) == 13 and cells[8] == "mined"
+                  and cells[9] == "2026-11-04")
     base_text = read_text(root, BASE, SOURCES)
     base_absent = sources_row(base_text, SOURCED_ROW) is None
-    plan_names = SOURCED_ROW in read_text(root, rev, PLAN)
+    plan_names = SOURCED_ROW in re.findall(r"\bS[0-9]+\b", read_text(root, rev, PLAN))
     try:
         entry_text = read_text(root, rev, ENTRY)
         entry_ok = entry_cites(entry_text, SOURCED_ROW)
@@ -495,12 +517,14 @@ def selftest(root: str, rev: str, json_out: str | None = None) -> int:
     try:
         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
                "HOME": scratch, "LANG": "C.UTF-8", "TMPDIR": scratch}
-        subprocess.run(["git", "init", "-q"], cwd=scratch, env=env,
+        subprocess.run(["git", "-C", scratch, "init", "-q"], env=env,
                        capture_output=True, check=True)
         toplevel = subprocess.run(
             ["git", "-C", scratch, "rev-parse", "--show-toplevel"],
             capture_output=True, text=True, env=env, check=True).stdout.strip()
-        check("fixture-repo-top", toplevel == os.path.realpath(scratch))
+        if toplevel != os.path.realpath(scratch):
+            raise RuntimeError("fixture root mismatch")
+        check("fixture-repo-top", True)
         member = os.path.join(scratch, "member.py")
         Path(member).write_text("print('member')\n")
         subprocess.run(["git", "-C", scratch, "add", "member.py"], env=env,
@@ -566,11 +590,21 @@ def main() -> int:
     ap.add_argument("--battery", action="store_true")
     ap.add_argument("--control")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--cli-selftest", action="store_true")
     ap.add_argument("--work")
     ap.add_argument("--out")
     ap.add_argument("--counter-field", default="refused")
     ap.add_argument("--json-out")
     a = ap.parse_args()
+    if a.cli_selftest:
+        if not a.work:
+            ap.error("--cli-selftest requires --work")
+        argv = [sys.executable, "-I", "-B", str(Path(__file__).with_name("cli-fixtures.py")),
+                "--root", a.root, "--rev", a.rev, "--work", a.work,
+                "--which", "printed"]
+        if a.json_out:
+            argv += ["--json-out", a.json_out]
+        return subprocess.run(argv).returncode
     if a.selftest:
         return selftest(a.root, a.rev, a.json_out)
     if a.control:

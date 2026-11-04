@@ -109,25 +109,33 @@ def conjunction(receipt: dict) -> tuple[bool, list[str]]:
                 if isinstance(r, dict) and r.get("case") == CASE]
     if receipt.get("binder_sha256") != BINDER_SHA256:
         defects.append("binder_digest_mismatch")
-    if pristine.get("exit") != 0:
+    if type(pristine.get("exit")) is not int or pristine.get("exit") != 0:
         defects.append("pristine_exit_nonzero")
     summary = pristine.get("summary")
     if not (isinstance(summary, list) and len(summary) == 2
-            and all(isinstance(v, int) for v in summary)):
+            and all(type(v) is int for v in summary)):
         defects.append("pristine_failures_nonzero")
     elif summary[1] != 0:
         defects.append("pristine_failures_nonzero")
-    if len(cases) < PRISTINE_FLOOR:
+    if (len(cases) < PRISTINE_FLOOR or not isinstance(summary, list)
+            or len(summary) != 2 or type(summary[0]) is not int
+            or summary[0] < PRISTINE_FLOOR or summary[0] != len(cases)):
         defects.append("pristine_cases_below_floor")
-    if frozen_killed(receipt) is not True:
+    if (frozen_killed(receipt) is not True
+            or type(receipt.get("killed")) is not int or receipt.get("killed") != 1
+            or type(mutant.get("exit")) is not int):
         defects.append("frozen_rule_not_killed")
-    if receipt.get("survivors") != 0:
+    if type(receipt.get("survivors")) is not int or receipt.get("survivors") != 0:
         defects.append("survivors_not_zero")
-    if receipt.get("mutants") != 1:
+    if type(receipt.get("mutants")) is not int or receipt.get("mutants") != 1:
         defects.append("mutants_not_one")
     names = [r.get("case") for r in cases if isinstance(r, dict)]
     missing = [n for n in ORIGINAL_CASES if n not in names]
-    if missing:
+    if (missing or any(names.count(n) != 1 for n in ORIGINAL_CASES)
+            or len(names) != len(cases)
+            or any(not isinstance(n, str) for n in names)
+            or len(set(names)) != len(names)
+            or any(r.get("pass") is not True for r in cases if isinstance(r, dict))):
         defects.append("original_cases_absent")
     if len(detector) != 1 or detector[0].get("pass") is not False:
         defects.append("detector_absent_or_passing")
@@ -315,6 +323,16 @@ def selftest() -> tuple[dict, int]:
     ok, defects = conjunction(dirty)
     check("failures-refused", not ok and defects[0] == "pristine_failures_nonzero")
     check("failures-deficiency-frozen-accepts", frozen_killed(dirty) is True)
+    short_summary = copy.deepcopy(base)
+    short_summary["pristine"]["summary"] = [1, 0]
+    ok, defects = conjunction(short_summary)
+    check("summary-floor-independent", not ok and
+          "pristine_cases_below_floor" in defects)
+    bool_summary = copy.deepcopy(base)
+    bool_summary["pristine"]["summary"] = [11, False]
+    ok, defects = conjunction(bool_summary)
+    check("summary-bool-refused", not ok and
+          "pristine_failures_nonzero" in defects)
 
     swap = copy.deepcopy(base)
     swap["binder_sha256"] = WRONG_BINDER
@@ -420,8 +438,19 @@ def main() -> int:
     ap.add_argument("--rev", default="HEAD")
     ap.add_argument("--battery", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--cli-selftest", action="store_true")
+    ap.add_argument("--work")
     ap.add_argument("--json-out")
     a = ap.parse_args()
+    if a.cli_selftest:
+        if not a.work:
+            ap.error("--cli-selftest requires --work")
+        argv = [sys.executable, "-I", "-B", str(Path(__file__).with_name("cli-fixtures.py")),
+                "--root", a.root, "--rev", a.rev, "--work", a.work,
+                "--which", "conjunction"]
+        if a.json_out:
+            argv += ["--json-out", a.json_out]
+        return subprocess.run(argv).returncode
     if a.selftest:
         _, code = selftest()
         return code

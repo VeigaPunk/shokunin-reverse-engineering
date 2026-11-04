@@ -1,0 +1,18 @@
+--- a/tools/round-82/printed-command.py
++++ b/tools/round-82/printed-command.py
+@@ -141,6 +141,15 @@
+     data = get(root, rev, script)
+     if sha256_bytes(data) != digest:
+         raise Refused(f"SCRIPT_PIN_MISMATCH: {script} bytes differ from the pin")
++    path = Path(root) / script
++    if path.resolve() != Path(os.path.abspath(path)):
++        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} resolves through a symlink")
++    try:
++        actual = path.read_bytes()
++    except OSError as exc:
++        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} unreadable: {exc}") from exc
++    if sha256_bytes(actual) != digest:
++        raise Refused(f"SCRIPT_PIN_MISMATCH: {script} executed path differs from the pin")
+ 
+ 
+ def containment(path: str, work_root: str) -> str:
