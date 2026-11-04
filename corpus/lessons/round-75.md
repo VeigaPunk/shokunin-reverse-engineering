@@ -55,6 +55,15 @@ existing row's `used-by` changes (S277).
   so the receipt's runner field is honest about what executed but does not match the freeze pin.
   Recorded as a known skew, not repaired (re-generating it with the frozen blob would write a
   `null` runner and lose the binding the atom checks).
+- **ExecProbeCases** hand-applied five mutants to a scratch copy of the round-74 blob (never
+  running the battery): the four closed classes each leave `--selftest` green at 20 cases
+  (survivors reproduced independently), and deleting the `canary_present` line fails exactly
+  `a12-kernel-multiple-samples` and `a12-kernel-canary-field` — the cross-binding, reproduced by
+  hand (`.ufo/waves/round-75/w1/ExecProbeCases.md`).
+- **ExecBattery** re-ran both frozen arms at the frozen revisions: `r75probe` 0 survivors, sole
+  true, pristine 25; `r75base` exactly the four survivors, canary not sole, pristine 20; both
+  `--validate` clean and `--selftest` green (`.ufo/waves/round-75/w1/ExecBattery/receipt-A-r75probe.json`,
+  `receipt-B-r75base.json`).
 - **L1 determinism check.** Two independent battery runs at the tip (separate `--work` roots)
   produced identical mutant rows (`name, verdict, failed`) with pristine 25 and sole true; the
   receipt pair is `l1/scores/c1-at-tip.json` and `l1/scores/c1-at-tip-rerun.json`.
