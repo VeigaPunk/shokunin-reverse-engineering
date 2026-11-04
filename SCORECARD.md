@@ -6024,6 +6024,10 @@ counter reports the unbound clauses, and round 78 should reject near-miss field 
 checks the filing receipt's internal consistency; the revision binding is imposed by the kill rule and demonstrated
 above (`prefile-rev-binding-*`), and `gate-exits` accepts any integer `exit` key, not a full gate receipt.
 
+**Tip receipts.** `l1/scores/gate-at-tip.json` records the freeze gate at `37f5d069` with `exit 0`,
+`required_failed []` and `disclosures {exact 52, of 52}`; `l1/scores/prefile-at-tip.json` records the prefile
+gate at `37f5d069` with `exit 0`, `prefile: PASS` and the four-key child environment.
+
 **Seats.** `r77-w1`: 12 seats dispatched in one v1 wave, 10 returned evidence, 2 died with zero-byte output
 (`ExecC2Receipt`, `ReviewerC1`; `results.json` carries no error text and neither wrote an evidence dir); no
 replacements, no residual call.
