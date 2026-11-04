@@ -1,0 +1,1574 @@
+#!/usr/bin/env python3
+"""seam-probe.py - round-72 instrument (R72-C1 coverage, R72-C2 calibration).
+
+Round-71 arms are retained.
+
+The safe packer seam, proven black-box against the instrument's committed
+bytes (round-69 routed defects M69-9/S-1, M69-10, M69-11; QUALITY #113):
+
+  A1 hash_before_exec       the caller-supplied --upx is hashed and pin-compared
+                            BEFORE its first execution: an impostor script that
+                            prints the pinned version but hashes differently is
+                            refused (exit 2, packer sha256 clause) and provably
+                            never executed (its execution log stays absent)
+  A2 threaded_path          the validated packer path is the one the carrier
+                            loop executes: in the producer-bound measured
+                            receipt every upx argv[0] equals the pinned-copy
+                            path the run was given (--expect-upx), never the
+                            module default
+  A3 child_env_allowlist    the packer's children receive exactly the frozen
+                            allowlist (build_child_env): the committed case
+                            inventory names the child-env cases and the blob's
+                            own --selftest is green at that case count
+  A4 broken_node_typed      a node that exists but cannot run is a typed
+                            `broken_tool: node` exit 2, never a traceback or a
+                            misleading inventory clause
+  A5 packer_exec_format     an exec-format-less --upx is a typed packer refusal
+                            (exit 2, no traceback)
+  A6 home_no_tmp            with HOME unset the instrument still never falls
+                            back to /tmp: the receipt's child_env HOME lives
+                            inside --work, and the blob carries no /tmp HOME
+                            fallback
+  A7 per_run_work           two battery runs sharing one --work each record
+                            their own distinct mkdtemp work_dir
+
+The instrument under test is read from git (`--root`/`--rev`) into per-run
+scratch and invoked as a black box; the measured receipt read by A2 is bound to
+its producer (its recorded revision and instrument hash must equal the ones
+this probe was invoked with) before its argv records are trusted.
+
+Exit: 0 all seven arms pass; 1 arms failed, each named with its observation;
+2 could-not-evaluate (unknown revision, missing host tool, bad argv).
+`--validate <receipt>` checks a probe receipt's structural honesty.
+
+Round 71 adds the three runtime arms the round-70 wave routed (M70-6), moving
+the frontier line "runtime env-capture/concurrent-scratch coverage of the seam
+arms" into Core: A8 observes the child environment from the raw per-child log
+(the packer, node and readelf children, exact allowlist, HOME/TMPDIR under that
+run's own run_root, an exported canary absent); A9 starts three battery runs and
+three route preflights concurrently on one --work parent and requires distinct
+work_dirs and distinct run_roots with each env log under its own root; A10
+checks the pre-committed run binding (nonce hash against the caller's
+commitment, a re-derived run_binding, the genuine receipt accepted and a
+transplanted round-70 receipt, a wrong-nonce copy and a broken-binding copy each
+rejected with their clause).
+
+Round 72 (R72-C1/C2).  A10's binding verdict is read from the CHECKER's own
+JSON clauses (`clauses.run_nonce`, `clauses.run_binding`), never re-derived
+from the receipt's fields: the round-71 wave's mutation survivor i forced a
+probe-side `binding_ok = True` and survived the probe's own test.  A11 closes
+the checker-mode child-environment gap the round-71 note left Frontier: the
+checker is run with a `git` and a `readelf` shim first on PATH that record the
+exact bytes of their exec environment, with an exported canary in the caller's
+environment; the arm requires both shims to observe exactly
+HOME/LANG/PATH/TMPDIR, the canary absent, HOME and TMPDIR under the checker's
+run root, and the checker's own `checker_child_env` block to record at least
+the `git` and `readelf` classes cleanly.
+
+Round 74 (R74-C1 operability).  Round 73's mutation probe reported six A12
+selftest survivors: deleting the genuine-canary conjunct, making an unreadable
+`/proc/<pid>/environ` read as an empty environment, keeping only the first
+kernel sample, dropping the `canary_present` field, swapping the verdict's two
+witnesses and skipping the forged sub-run all left `--selftest` green.  Six
+cases now bind them, and the acquisition and wiring seams they need are named
+code: `kernel_witness` takes its `/proc` readers as injectable functions and
+does one deterministic pass when a pid list is injected; `forged_subrun` is a
+separate function taking its spawner and witness; `assemble_arm` is the wiring
+that runs the genuine producer, then the forged one, then the verdict.  Each
+case feeds the seam a false input and requires the distinguishing outcome, and
+`tools/round-74/probe-mutation.py` scores every mutant against its declared
+case.
+
+Round 75 (R75-C1 operability).  The round-74 wave found three further A12
+survivors outside the frozen ten classes (`home_under`/`tmpdir_under`
+identity checked with `is True` but every fixture boolean; duplicate kernel
+samples of one shim name dropped by `_name_samples`; `lie_clean`'s exact key
+list replaceable by a superset test) and one cross-binding: dropping the
+`canary_present` field also failed `a12-kernel-multiple-samples`.  This round
+flattens the witness so a name may carry several samples, makes the
+multi-sample case read only count and identity, and binds the three classes
+with `a12-genuine-field-identity`, `a12-sample-name-merge` and
+`a12-lie-clean-keys-exact`.  `_parse_shims` no longer serialises the raw shim
+environment values (round-72 QUALITY #128 class, carried from round 73).
+`tools/round-75/probe-mutation.py` scores the extended class set.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+import tempfile
+import threading
+import time
+
+UPX_SHA256_PIN = "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969"
+UPX_VERSION_PIN = "upx 5.2.0"
+TMP_FALLBACK_PATTERN = 'os.environ.get("HOME", "/tmp")'
+CHILD_ENV_KEYS = ("HOME", "LANG", "PATH", "TMPDIR")
+
+
+def under(root, path) -> bool:
+    """Descendant test without the sibling-prefix false green (QUALITY #120)."""
+    try:
+        root_abs = os.path.abspath(str(root))
+        return os.path.commonpath([root_abs, os.path.abspath(str(path))]) == root_abs
+    except (TypeError, ValueError):
+        return False
+CHILD_ENV_CASES = ("child-env-allowlist", "child-env-home-in-work", "child-env-no-tmp")
+
+
+class Unevaluable(Exception):
+    """Exit-2 class: the probe cannot score, so it claims nothing."""
+
+
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def load_module(blob_path: str):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("r70_seam_probe_target", blob_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def blob_to(root: str, rev: str, tool: str, scratch: str) -> tuple[str, str]:
+    proc = subprocess.run(["git", "-C", root, "show", f"{rev}:{tool}"],
+                          capture_output=True)
+    if proc.returncode != 0:
+        raise Unevaluable(f"git show {rev}:{tool} failed rc={proc.returncode}")
+    path = os.path.join(scratch, os.path.basename(tool))
+    with open(path, "wb") as fh:
+        fh.write(proc.stdout)
+    os.chmod(path, 0o755)
+    # A blob can import a sibling module from its own directory (round-72's
+    # packed-elf imports capsule_audit.py); the scratch copy must carry it, or
+    # every black-box invocation dies at import.  Only lane modules are copied.
+    srcdir = os.path.join(os.path.abspath(root), os.path.dirname(tool))
+    for mod in ("capsule_audit.py",):
+        src = os.path.join(srcdir, mod)
+        if os.path.isfile(src):
+            shutil.copy(src, os.path.join(scratch, mod))
+    return path, sha256_bytes(proc.stdout)
+
+
+def parse_unevaluable(stdout: str, stderr: str) -> dict | None:
+    for text in (stdout, stderr):
+        for chunk in [text.strip()] + text.splitlines()[::-1]:
+            chunk = chunk.strip()
+            if not chunk.startswith("{"):
+                continue
+            try:
+                payload = json.loads(chunk)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict) and "unevaluable" in payload:
+                return payload
+    return None
+
+
+def parse_json_out(stdout: str) -> dict | None:
+    stripped = stdout.strip()
+    if stripped.startswith("{"):
+        try:
+            payload = json.loads(stripped)
+            if isinstance(payload, dict):
+                return payload
+        except json.JSONDecodeError:
+            pass
+    for chunk in stdout.splitlines()[::-1]:
+        chunk = chunk.strip()
+        if not chunk.startswith("{"):
+            continue
+        try:
+            payload = json.loads(chunk)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict):
+            return payload
+    return None
+
+
+def binding_verdict(checker: dict | None) -> dict:
+    """A10's binding verdict comes from the checker's JSON, never the probe.
+
+    The round-71 wave's MutReaders survivor i forced a probe-side
+    `binding_ok = True`; it survived the probe's own test because the arm's
+    boolean was re-derived from the receipt's own fields.  The verdict is now
+    the checker's emitted clause; a missing clauses object is fail-closed
+    (R72-C2).
+    """
+    clauses = (checker or {}).get("clauses")
+    present = isinstance(clauses, dict)
+    clauses = clauses if present else {}
+    nonce_ok = clauses.get("run_nonce") is True and present
+    binding_ok = clauses.get("run_binding") is True and present
+    return {"present": present, "nonce_ok": bool(nonce_ok),
+            "binding_ok": bool(binding_ok)}
+
+
+def checker_met(checker: dict | None) -> bool:
+    """The checker's own `met` and its clause block's `met` must agree (true).
+
+    A checker that returns rc 0 with `met false` while its clauses read true is
+    self-contradictory; A10 must not accept that (round-72 CriticClaims C2).
+    """
+    checker = checker if isinstance(checker, dict) else {}
+    clauses = checker.get("clauses")
+    return (checker.get("met") is True
+            and isinstance(clauses, dict) and clauses.get("met") is True)
+
+
+def parse_environ_file(path: str) -> dict | None:
+    """A `/proc/self/environ` byte dump as a dict (NUL-separated, exact)."""
+    try:
+        with open(path, "rb") as fh:
+            raw = fh.read()
+    except OSError:
+        return None
+    env = {}
+    for entry in raw.split(b"\0"):
+        if not entry:
+            continue
+        key, _, value = entry.partition(b"=")
+        env[key.decode("utf-8", "replace")] = value.decode("utf-8", "replace")
+    return env
+
+
+def read_jsonl(path: str) -> tuple[list[dict], list[str]]:
+    """Records and parse errors from a JSON Lines capsule (never a summary)."""
+    records: list[dict] = []
+    errors: list[str] = []
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for lineno, line in enumerate(fh, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    payload = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    errors.append(f"line {lineno}: {exc.__class__.__name__}")
+                    continue
+                if isinstance(payload, dict):
+                    records.append(payload)
+                else:
+                    errors.append(f"line {lineno}: not an object")
+    except OSError as exc:
+        errors.append(f"unreadable: {exc.__class__.__name__}")
+    return records, errors
+
+
+def checker_log_verdict(records: list[dict]) -> dict:
+    """A11's own reading of the checker's log: allowlist, canary, census.
+
+    The checker's JSON summary is a claim; this derives the same facts from
+    the raw records, so a checker (or a fake) that emits a clean summary
+    without a matching log cannot pass (round-72 ReviewerGates).
+    """
+    envs = [rec.get("env") if isinstance(rec.get("env"), dict) else {}
+            for rec in records]
+    census: dict[str, int] = {}
+    for rec in records:
+        name = os.path.basename(str((rec.get("argv") or ["?"])[0]))
+        census[name] = census.get(name, 0) + 1
+    keys_exact = bool(envs) and all(sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs)
+    ok = (bool(records) and keys_exact
+          and not any("KAIDOKU_ENV_CANARY" in e for e in envs)
+          and census.get("git", 0) >= 1 and census.get("readelf", 0) >= 1)
+    return {"ok": ok, "records": len(records), "keys_exact": keys_exact,
+            "canary_present": any("KAIDOKU_ENV_CANARY" in e for e in envs),
+            "children": census}
+
+
+def invoke(instrument: str, root: str, rev: str, pkg: str, work: str,
+           extra: list[str], path: str | None = None,
+           keep_home: bool = True, with_pkg: bool = True,
+           extra_env: dict | None = None) -> dict:
+    env = {"PATH": path or os.environ.get("PATH", "/usr/bin"),
+           "LANG": os.environ.get("LANG", "C")}
+    if keep_home and os.environ.get("HOME"):
+        env["HOME"] = os.environ["HOME"]
+    if extra_env:
+        env.update(extra_env)
+    argv = [sys.executable, "-I", "-B", instrument,
+            "--root", root, "--rev", rev]
+    if with_pkg:
+        argv += ["--pkg", pkg]
+    argv += ["--work", work, *extra]
+    proc = subprocess.run(argv,
+                          capture_output=True, text=True, timeout=1800, env=env)
+    return {"rc": proc.returncode, "env_keys": sorted(env),
+            "unevaluable": (parse_unevaluable(proc.stdout, proc.stderr) or {}).get("unevaluable"),
+            "stdout": proc.stdout[-60000:], "stderr_tail": proc.stderr[-2000:],
+            "traceback": "Traceback" in proc.stderr}
+
+
+def checker_env_arm(instrument: str, root: str, rev: str, pkg: str,
+                    work: str, receipt_path: str,
+                    nonce_commitment: str) -> dict:
+    """A11: every checker-mode child runs under the four-key allowlist.
+
+    Two independent witnesses: a `git` and a `readelf` shim first on PATH
+    record the exact `/proc/self/environ` bytes they receive before exec'ing
+    the real tool, and the checker's own capture log is read back from its
+    JSON.  The caller's environment carries an exported canary; neither the
+    shim bytes nor the checker log may show it.
+    """
+    scratch = tempfile.mkdtemp(prefix="a11-", dir=os.path.abspath(work))
+    shim_dir = os.path.join(scratch, "shims")
+    log_dir = os.path.join(scratch, "logs")
+    os.makedirs(shim_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
+    canary = "KAIDOKU_ENV_CANARY"
+    # SS74-4: the A11 shims reuse the fixed-source/sidecar writer.  No scratch
+    # path is interpolated into executable perl; the record and real-tool
+    # paths live in `<shim>.cfg`.
+    records = _write_shims(shim_dir, log_dir, TRUTHFUL_SHIM, {})
+    checker_log = os.path.join(log_dir, "checker.jsonl")
+    path_env = shim_dir + os.pathsep + (os.environ.get("PATH") or "/usr/bin")
+    res = invoke(instrument, root, rev, pkg, work,
+                 ["--check-receipt", receipt_path,
+                  "--child-env-log", checker_log,
+                  "--nonce-commitment", nonce_commitment],
+                 path=path_env, keep_home=True,
+                 extra_env={canary: "probe-canary-r72",
+                            "TMPDIR": os.path.join(log_dir, "tmp")})
+    work_abs = os.path.abspath(work)
+    shims = {}
+    for name, record in records.items():
+        env = parse_environ_file(record)
+        shims[name] = {
+            "recorded": env is not None,
+            "keys": sorted(env) if env else None,
+            "keys_exact": bool(env) and sorted(env) == sorted(CHILD_ENV_KEYS),
+            "canary_present": bool(env) and canary in env,
+            "home_under_work": bool(env) and under(work_abs, env.get("HOME", "")),
+            "tmpdir_under_work": bool(env) and under(work_abs, env.get("TMPDIR", "")),
+        }
+    payload = parse_json_out(res["stdout"]) or {}
+    observed = payload.get("checker_child_env") or {}
+    # Read the checker's log OURSELVES: the JSON summary is the checker's
+    # claim, and a fake checker that emits a clean summary without a log (or
+    # with a zero-count census) must fail (round-72 ReviewerGates).
+    log_records, log_errors = read_jsonl(checker_log)
+    log_verdict = checker_log_verdict(log_records)
+    verdict = a11_verdict(res["rc"], observed, log_verdict, shims, work_abs)
+    return {"ok": verdict["ok"], "rc": res["rc"], "shims": verdict["shim_rows"],
+            "checker_child_env": observed, "log_derived": log_verdict,
+            "log_errors": log_errors, "observed_ok": verdict["observed_ok"],
+            "checker_stdout_tail": (res["stdout"] or "")[-600:],
+            "work": work_abs, "contain_root": verdict["contain_root"],
+            "log": checker_log}
+
+
+def a11_verdict(rc: int, observed: dict, log_verdict: dict, shims: dict,
+                work_abs: str) -> dict:
+    """A11's decision as a pure function over the witnesses (selftest-bound).
+
+    Every conjunct the wave's mutation probe could delete lives here, so a
+    mutant that drops one fails `a11-arm-cases` in --selftest (R72-C2's rule
+    applied to C1's arm).
+    """
+    observed = observed if isinstance(observed, dict) else {}
+    run_root = observed.get("run_root")
+    contain_root = run_root if isinstance(run_root, str) and run_root else work_abs
+    shim_rows = {}
+    for name, rec in (shims or {}).items():
+        values = rec.get("values") or {}
+        shim_rows[name] = {
+            "recorded": bool(rec.get("recorded")),
+            "keys_exact": bool(rec.get("keys_exact")),
+            "canary_present": bool(rec.get("canary_present")),
+            "home_under_run_root": bool(values)
+            and under(contain_root, values.get("HOME", "")),
+            "tmpdir_under_run_root": bool(values)
+            and under(contain_root, values.get("TMPDIR", "")),
+        }
+    observed_ok = (log_verdict.get("ok") is True
+                   and observed.get("records") == log_verdict.get("records")
+                   and observed.get("all_allowlisted") is True
+                   and observed.get("canary_present") is False
+                   and observed.get("home_under_run") is True
+                   and observed.get("tmpdir_under_run") is True
+                   and observed.get("children") == log_verdict.get("children")
+                   and isinstance(run_root, str) and bool(run_root)
+                   and under(work_abs, run_root))
+    ok = (rc == 0 and observed_ok
+          and bool(shim_rows)
+          and all(s["recorded"] and s["keys_exact"] and not s["canary_present"]
+                  and s["home_under_run_root"] and s["tmpdir_under_run_root"]
+                  for s in shim_rows.values()))
+    return {"ok": ok, "observed_ok": observed_ok,
+            "contain_root": contain_root, "shim_rows": shim_rows}
+
+
+def _proc_argv(pid: int) -> list[str] | None:
+    try:
+        with open("/proc/%d/cmdline" % pid, "rb") as fh:
+            raw = fh.read()
+    except OSError:
+        return None
+    return [p.decode("utf-8", "replace") for p in raw.split(b"\x00") if p]
+
+
+def _proc_env(pid: int) -> dict | None:
+    try:
+        with open("/proc/%d/environ" % pid, "rb") as fh:
+            raw = fh.read()
+    except OSError:
+        return None
+    env = {}
+    for item in raw.split(b"\x00"):
+        if not item or b"=" not in item:
+            continue
+        key, value = item.split(b"=", 1)
+        env[key.decode("utf-8", "replace")] = value.decode("utf-8", "replace")
+    return env
+
+
+def _proc_ppid(pid: int) -> int | None:
+    try:
+        with open("/proc/%d/stat" % pid, "rb") as fh:
+            stat = fh.read().decode("utf-8", "replace")
+    except OSError:
+        return None
+    try:
+        tail = stat.rsplit(")", 1)[1].split()
+        return int(tail[1])
+    except (IndexError, ValueError):
+        return None
+
+
+def list_proc_pids(root: str = "/proc") -> list[int]:
+    """The numeric pids under `root` (injectable: a harness scans a fixture)."""
+    try:
+        names = os.listdir(root)
+    except OSError:
+        return []
+    return sorted(int(name) for name in names if name.isdigit())
+
+
+def _descends_from(pid: int, ancestors: set[int], hops: int = 4,
+                   read_ppid=None) -> bool:
+    """True when the process's parent chain reaches one of `ancestors`."""
+    read_ppid = read_ppid or _proc_ppid
+    current = pid
+    for _ in range(hops):
+        parent = read_ppid(current)
+        if parent is None or parent <= 1:
+            return False
+        if parent in ancestors:
+            return True
+        current = parent
+    return False
+
+
+def kernel_witness(shim_dir: str, stop, parents: set[int] | None = None,
+                   work_root: str | None = None,
+                   timeout: float = 180.0, read_argv=None, read_env=None,
+                   read_ppid=None, list_pids=None) -> list[dict]:
+    """The KERNEL's record of each shim process's environment (R73-C1).
+
+    Producer-independent by construction: the child's own dump is a claim, and
+    `/proc/<pid>/environ` is the kernel's record of what that process actually
+    received.  A wrapper that writes a clean dump while running under a dirty
+    environment is visible here and nowhere else.
+
+    Two guards close the observer's own trust hole (round-73 SentinelScope S1,
+    CriticClaims' decoy attack): a candidate must name the shim dir AND its
+    parent chain must reach a process this arm started (`parents`), so a decoy
+    process elsewhere on the host cannot be sampled instead of the child; and
+    the record keeps booleans, never HOME/TMPDIR values (QUALITY row 128).
+
+    The readers and the pid enumerator are injectable seams (round-74): a
+    harness that injects `list_pids` gets ONE deterministic pass over a
+    synthetic /proc with no polling and no sleep, so the acquisition path
+    (unreadable environ, a second sample, the field schema) is selftest-bound
+    without starting a live process.
+    """
+    read_argv = read_argv or _proc_argv
+    read_env = read_env or _proc_env
+    read_ppid = read_ppid or _proc_ppid
+    deterministic = list_pids is not None
+    prefix = os.path.abspath(shim_dir)
+    seen: dict[int, dict] = {}
+    end = time.time() + timeout
+    while True:
+        for pid in (list_pids() if deterministic else list_proc_pids()):
+            if pid in seen:
+                continue
+            argv = read_argv(pid)
+            if not argv or not any(str(a).startswith(prefix) for a in argv):
+                continue
+            if parents and not _descends_from(pid, parents,
+                                              read_ppid=read_ppid):
+                continue
+            env = read_env(pid)
+            if env is None:
+                continue
+            seen[pid] = {
+                "pid": pid, "argv": argv, "keys": sorted(env),
+                "canary_present": "KAIDOKU_ENV_CANARY" in env,
+                "home_under": bool(work_root)
+                and under(work_root, env.get("HOME", "")),
+                "tmpdir_under": bool(work_root)
+                and under(work_root, env.get("TMPDIR", "")),
+            }
+        if deterministic:
+            break
+        if stop.is_set() or time.time() >= end:
+            break
+        time.sleep(0.004)
+    return list(seen.values())
+
+
+def _samples(kernel: dict) -> list[dict]:
+    """Every witness sample of a kernel block, whether keyed singly or in a
+    list (round 75: a shim launched twice keeps both samples, so a dirty first
+    launch cannot be hidden by a clean second one)."""
+    out: list[dict] = []
+    for value in (kernel or {}).values():
+        if isinstance(value, list):
+            out.extend(value)
+        else:
+            out.append(value)
+    return out
+
+
+def a12_verdict(genuine: dict, forged: dict, allow_keys) -> dict:
+    """A12's decision as a pure function over the two witnesses (selftest-bound).
+
+    `genuine` is the route's own checker under truthful shims; `forged` is a
+    producer that inherits the caller environment under shims that write a
+    clean dump.  The arm passes only when the kernel witness is clean on the
+    first and dirty on the second, while the forged run's child-side dumps
+    still read clean -- i.e. the arm is falsified by its own lie.
+    """
+    allow = sorted(allow_keys)
+    genuine_kernel = genuine.get("kernel") or {}
+    forged_kernel = forged.get("kernel") or {}
+    forged_shims = forged.get("shims") or {}
+    genuine_ok = (genuine.get("rc") == 0
+                  and {"git", "readelf"} <= set(genuine_kernel)
+                  and all(sorted(s.get("keys") or []) == allow
+                          and not s.get("canary_present")
+                          and s.get("home_under") is True
+                          and s.get("tmpdir_under") is True
+                          for s in _samples(genuine_kernel)))
+    lie_clean = bool(forged_shims) and all(
+        sorted(s.get("keys") or []) == allow and not s.get("canary_present")
+        for s in forged_shims.values())
+    forged_detected = bool(forged_kernel) and any(
+        sorted(s.get("keys") or []) != allow or s.get("canary_present")
+        for s in _samples(forged_kernel))
+    return {"ok": bool(genuine_ok and lie_clean and forged_detected),
+            "genuine_ok": bool(genuine_ok), "lie_clean": bool(lie_clean),
+            "forged_detected": bool(forged_detected),
+            "allow": allow}
+
+
+# The shim reads every path from a sidecar `<shim>.cfg` (one key per line)
+# rather than from interpolated source: a scratch path containing a quote or a
+# newline must never become perl code (round-73 SentinelScope S2).
+SHIM_PRELUDE = """#!/usr/bin/perl
+open(my $cfg, '<', $0 . '.cfg') or exit 127;
+my (%c, $line);
+while (defined($line = <$cfg>)) { chomp $line; my ($k, $v) = split(/=/, $line, 2); $c{$k} = $v; }
+close $cfg;
+my $record = $c{'record'}; my $real = $c{'real'};
+"""
+
+TRUTHFUL_SHIM = SHIM_PRELUDE + """
+open(my $in, '<', '/proc/self/environ') or exit 127;
+binmode $in; local $/; my $data = <$in>; close $in;
+open(my $out, '>', $record) or exit 127;
+binmode $out; print $out $data; close $out;
+select(undef, undef, undef, 0.4);
+exec $real, @ARGV;
+"""
+
+LYING_SHIM = SHIM_PRELUDE + """
+open(my $out, '>', $record) or exit 127;
+binmode $out;
+print $out "HOME=" . $c{'home'} . "\\0LANG=C\\0PATH=" . $c{'path'} . "\\0TMPDIR=" . $c{'tmp'} . "\\0";
+close $out;
+select(undef, undef, undef, 0.4);
+exec $real, @ARGV;
+"""
+
+DIRTY_PRODUCER = """import subprocess, sys
+subprocess.run([sys.argv[1], "--version"], env=None, timeout=120)
+"""
+
+
+def _write_shims(shim_dir: str, log_dir: str, template: str, fill: dict) -> dict:
+    os.makedirs(shim_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
+    records = {}
+    for name in ("git", "readelf"):
+        trusted = os.path.join("/usr/bin", name)
+        real = trusted if os.path.exists(trusted) else shutil.which(name)
+        if not real:
+            raise Unevaluable(f"host tool absent: {name}")
+        record = os.path.join(log_dir, name + ".environ")
+        shim = os.path.join(shim_dir, name)
+        with open(shim, "w", encoding="utf-8") as fh:
+            fh.write(template)
+        cfg = {name2: str(value).replace("\n", " ")
+               for name2, value in {"record": record, "real": real, **fill}.items()}
+        with open(shim + ".cfg", "w", encoding="utf-8") as fh:
+            for name2, value in cfg.items():
+                fh.write(f"{name2}={value}\n")
+        os.chmod(shim, 0o755)
+        records[name] = record
+    return records
+
+
+def _parse_shims(records: dict, allow_keys) -> dict:
+    out = {}
+    for name, record in records.items():
+        env = parse_environ_file(record)
+        out[name] = {"recorded": env is not None, "keys": sorted(env) if env else None,
+                     "canary_present": bool(env) and "KAIDOKU_ENV_CANARY" in env,
+                     "keys_exact": bool(env) and sorted(env) == sorted(allow_keys)}
+    return out
+
+
+def _name_samples(samples: list[dict], shim_dir: str) -> dict:
+    """Key every kernel sample by the shim it names (its argv path's basename).
+
+    Round 75: a name keeps ALL its samples.  A shim launched twice yields two
+    samples, and dropping either direction (first-wins or last-wins) can hide a
+    dirty launch behind a clean one.
+    """
+    prefix = os.path.abspath(shim_dir)
+    out: dict[str, list[dict]] = {}
+    for sample in samples:
+        name = None
+        for arg in sample.get("argv") or []:
+            if str(arg).startswith(prefix):
+                name = os.path.basename(str(arg))
+                break
+        out.setdefault(name or "?", []).append(sample)
+    return out
+
+
+def assemble_arm(genuine_producer, forged_producer, verdict_fn, allow) -> dict:
+    """A12's wiring: the genuine sub-run, then the forged one, then the verdict.
+
+    Named so the order and the arguments are testable (round-73 MutProbe
+    survivor `c-swap-verdict-inputs`): a swap of the two witnesses fails the
+    selftest's arm-wiring case.
+    """
+    genuine = genuine_producer()
+    forged = forged_producer()
+    verdict = verdict_fn(genuine, forged, allow)
+    return {"genuine": genuine, "forged": forged, "verdict": verdict}
+
+
+def forged_subrun(scratch: str, canary: str = "KAIDOKU_ENV_CANARY", spawn=None,
+                  witness=None, allow_keys=None,
+                  work_root: str | None = None) -> dict:
+    """A12's forged sub-run: a dirty producer under shims that write a lie.
+
+    Separate from the arm so its launches and its witness call are testable: a
+    harness injects `spawn` and `witness`, executes the sub-run and requires
+    the git and readelf producers to be launched and the kernel polled before
+    any verdict exists (round-73 MutProbe survivor `c-skip-forged-subrun`).
+    """
+    spawn = spawn or subprocess.Popen
+    witness = witness or kernel_witness
+    allow = tuple(allow_keys or CHILD_ENV_KEYS)
+    f_dir = os.path.join(scratch, "forged")
+    f_home = os.path.join(f_dir, "claimed", "home")
+    f_tmp = os.path.join(f_dir, "claimed", "tmp")
+    os.makedirs(f_home, exist_ok=True)
+    os.makedirs(f_tmp, exist_ok=True)
+    f_shims = _write_shims(
+        os.path.join(f_dir, "shims"), os.path.join(f_dir, "logs"), LYING_SHIM,
+        {"home": f_home, "tmp": f_tmp,
+         "path": os.environ.get("PATH") or "/usr/bin"})
+    producer = os.path.join(f_dir, "dirty-producer.py")
+    with open(producer, "w", encoding="utf-8") as fh:
+        fh.write(DIRTY_PRODUCER)
+    f_env = dict(os.environ)
+    f_env[canary] = "probe-canary-r73"
+    f_stop = threading.Event()
+    f_samples: list[dict] = []
+    f_procs = []
+    for name in ("git", "readelf"):
+        f_procs.append(spawn(
+            [sys.executable, "-I", "-B", producer,
+             os.path.join(f_dir, "shims", name)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=f_env))
+
+    def _poll_forged():
+        f_samples.extend(witness(os.path.join(f_dir, "shims"), f_stop,
+                                 parents={p.pid for p in f_procs},
+                                 work_root=work_root))
+
+    f_thread = threading.Thread(target=_poll_forged, daemon=True)
+    f_thread.start()
+    f_rcs = [p.wait(timeout=600) for p in f_procs]
+    f_stop.set()
+    f_thread.join(timeout=10)
+    return {"rc": f_rcs, "shims": _parse_shims(f_shims, allow),
+            "kernel": _name_samples(f_samples, os.path.join(f_dir, "shims"))}
+
+
+def kernel_witness_arm(instrument: str, root: str, rev: str, pkg: str,
+                       work: str, receipt_path: str, nonce_commitment: str,
+                       work_abs: str) -> dict:
+    """A12: the kernel's record of the shim children, against a lying shim.
+
+    Two sub-runs, one witness channel each.  Genuine: the route's own checker
+    under truthful shims; the kernel must show the four-key allowlist.  Forged:
+    a fixture producer that inherits the caller environment under shims that
+    write a clean fabricated dump; the child-side witness reads clean while the
+    kernel witness must read dirty.  The arm is true only when both hold.
+    """
+    scratch = tempfile.mkdtemp(prefix="a12-", dir=os.path.abspath(work))
+    canary = "KAIDOKU_ENV_CANARY"
+    out = {"work": scratch, "allow": sorted(CHILD_ENV_KEYS)}
+    # -- genuine: the route's checker, truthful shims ------------------------
+    g_dir = os.path.join(scratch, "genuine")
+    g_shims = _write_shims(os.path.join(g_dir, "shims"),
+                           os.path.join(g_dir, "logs"), TRUTHFUL_SHIM, {})
+    g_log = os.path.join(g_dir, "logs", "checker.jsonl")
+    g_env = dict(os.environ)
+    g_env[canary] = "probe-canary-r73"
+    g_env["PATH"] = os.path.join(g_dir, "shims") + os.pathsep + (
+        os.environ.get("PATH") or "/usr/bin")
+    g_env["TMPDIR"] = os.path.join(g_dir, "logs", "tmp")
+    g_proc = subprocess.Popen(
+        [sys.executable, "-I", "-B", instrument, "--root", root, "--rev", rev,
+         "--pkg", pkg, "--work", os.path.join(g_dir, "run"),
+         "--check-receipt", receipt_path, "--child-env-log", g_log,
+         "--nonce-commitment", nonce_commitment],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=g_env)
+    stop = threading.Event()
+    g_samples: list[dict] = []
+
+    def _poll_genuine():
+        g_samples.extend(kernel_witness(os.path.join(g_dir, "shims"), stop,
+                                        parents={g_proc.pid},
+                                        work_root=work_abs))
+
+    g_thread = threading.Thread(target=_poll_genuine, daemon=True)
+    g_thread.start()
+    g_out, g_err = g_proc.communicate(timeout=1800)
+    stop.set()
+    g_thread.join(timeout=10)
+    genuine = {"rc": g_proc.returncode, "stderr_tail": (g_err or "")[-400:],
+               "shims": _parse_shims(g_shims, CHILD_ENV_KEYS),
+               "kernel": _name_samples(g_samples, os.path.join(g_dir, "shims"))}
+
+    def _genuine_producer():
+        return genuine
+
+    def _forged_producer():
+        return forged_subrun(scratch, canary=canary, work_root=work_abs)
+
+    wired = assemble_arm(_genuine_producer, _forged_producer, a12_verdict,
+                         CHILD_ENV_KEYS)
+    verdict = wired["verdict"]
+    out.update({"ok": verdict["ok"], "verdict": verdict,
+                "genuine": wired["genuine"], "forged": wired["forged"],
+                "channels": {
+                    "keys_exact": "child dump + kernel /proc/<pid>/environ",
+                    "canary": "child dump + kernel /proc/<pid>/environ",
+                    "checker_summary": "checker JSON (producer-side, not used here)"}})
+    return out
+
+
+def arm(aid: str, ok: bool, observed: dict) -> dict:
+    return {"id": aid, "ok": bool(ok), "observed": observed}
+
+
+def bind_producer(receipt_path: str, root: str, rev: str, tool: str,
+                  blob_sha: str) -> tuple[dict | None, list[str]]:
+    """QUALITY #114: bind the measured receipt to its producer before reading it."""
+    defects = []
+    try:
+        with open(receipt_path, encoding="utf-8") as fh:
+            receipt = json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        return None, [f"receipt unreadable: {exc}"]
+    instrument = receipt.get("instrument")
+    if not isinstance(instrument, dict) or not instrument:
+        defects.append("receipt.instrument absent")
+    else:
+        if instrument.get("path") != tool:
+            defects.append(f"instrument.path {instrument.get('path')} != {tool}")
+        if instrument.get("sha256") != blob_sha:
+            defects.append(f"instrument.sha256 {instrument.get('sha256')} != blob at {rev}")
+    if receipt.get("rev") != rev:
+        defects.append(f"receipt.rev {receipt.get('rev')} != {rev}")
+    return receipt, defects
+
+
+def check(root: str, rev: str, tool: str, pkg: str, work: str,
+          battery_tool: str, receipt_path: str | None,
+          expect_upx: str | None, nonce_commitment: str | None = None,
+          legacy_receipt: str | None = None,
+          receipt_rev: str | None = None) -> dict:
+    if not os.path.isdir(work):
+        raise Unevaluable(f"--work is not a directory: {work}")
+    scratch = tempfile.mkdtemp(prefix="seam-probe-", dir=work)
+    instrument, blob_sha = blob_to(root, rev, tool, scratch)
+    battery, battery_sha = blob_to(root, rev, battery_tool, scratch)
+    # The receipt binds its producer at the revision it was produced at, which
+    # may predate the instrument's own supersession commits; the checker reads
+    # carrier sources at that revision too.  Default: the measured revision.
+    rrev = receipt_rev or rev
+    rblob_sha = blob_sha
+    if rrev != rev:
+        proc = subprocess.run(["git", "-C", root, "show", f"{rrev}:{tool}"],
+                              capture_output=True)
+        rblob_sha = (sha256_bytes(proc.stdout) if proc.returncode == 0
+                     else None)
+        if rblob_sha is None:
+            raise Unevaluable(f"git show {rrev}:{tool} failed")
+    mod = load_module(instrument)
+    arms = []
+
+    # A1 - hash before execution: impostor prints the pinned version, hashes
+    # differently, and logs its own execution if it is ever run.
+    a1_dir = tempfile.mkdtemp(prefix="a1-", dir=work)
+    log = os.path.join(a1_dir, "executed.log")
+    impostor = os.path.join(a1_dir, "upx-impostor")
+    with open(impostor, "w", encoding="utf-8") as fh:
+        fh.write(f"#!/bin/sh\necho '{UPX_VERSION_PIN}'\n"
+                 f"touch {log}\nexit 0\n")
+    os.chmod(impostor, 0o755)
+    a1 = invoke(instrument, root, rev, pkg, a1_dir, ["--upx", impostor])
+    executed = os.path.exists(log)
+    arms.append(arm("A1_hash_before_exec",
+                    a1["rc"] == 2 and "packer" in str(a1["unevaluable"] or "")
+                    and "sha256" in str(a1["unevaluable"] or "") and not executed,
+                    {**a1, "impostor_executed": executed}))
+
+    # A2 - the threaded path: the producer-bound receipt's upx argv all name the
+    # pinned copy the run was given, never the module default.
+    if receipt_path and expect_upx:
+        receipt, defects = bind_producer(receipt_path, root, rrev, tool, rblob_sha)
+        argv0s, missing = [], []
+        if receipt is not None:
+            if not os.path.exists(expect_upx) or sha256_bytes(
+                    open(expect_upx, "rb").read()) != UPX_SHA256_PIN:
+                defects.append("--expect-upx is not the pinned packer bytes")
+            if os.path.abspath(expect_upx) == os.path.abspath(mod.UPX):
+                defects.append("--expect-upx equals the module default path")
+            for c in receipt.get("carriers") or []:
+                for name in ("pack", "unpack"):
+                    argv = ((c.get("runs") or {}).get(name) or {}).get("argv") or []
+                    if argv:
+                        argv0s.append(argv[0])
+                    else:
+                        missing.append(f"{c.get('id')}:{name}")
+            threaded = not defects and not missing and argv0s \
+                and all(a == expect_upx for a in argv0s)
+        else:
+            threaded = False
+        arms.append(arm("A2_threaded_path", threaded,
+                        {"defects": defects, "argv0s": argv0s, "missing": missing,
+                         "expect_upx": expect_upx, "module_default": mod.UPX}))
+    else:
+        arms.append(arm("A2_threaded_path", False,
+                        {"missing": "no --receipt or no --expect-upx"}))
+
+    # A3 - the child-env cases exist in the committed case inventory and the
+    # blob's own selftest is green at that case count.
+    selftest = invoke(instrument, root, rev, pkg, work, ["--selftest"])
+    st = parse_json_out(selftest["stdout"]) or {}
+    names_in_registry = all(n in getattr(mod, "REGISTERED_CASES", []) for n in CHILD_ENV_CASES)
+    a3_ok = (selftest["rc"] == 0 and st.get("ok") is True and st.get("failed") == []
+             and names_in_registry
+             and st.get("cases") == len(getattr(mod, "REGISTERED_CASES", [])))
+    arms.append(arm("A3_child_env_allowlist", a3_ok,
+                    {"selftest_rc": selftest["rc"], "cases": st.get("cases"),
+                     "failed": st.get("failed"),
+                     "cases_in_registry": names_in_registry,
+                     "registry_cases": len(getattr(mod, "REGISTERED_CASES", []))}))
+
+    # A4 - a node that exists but cannot run is a typed broken_tool.
+    a4_dir = tempfile.mkdtemp(prefix="a4-", dir=work)
+    bin4 = os.path.join(a4_dir, "bin")
+    os.makedirs(bin4)
+    for name in ("git", "readelf", "upx"):
+        found = shutil.which(name)
+        if not found:
+            raise Unevaluable(f"host tool absent: {name}")
+        os.symlink(found, os.path.join(bin4, name))
+    broken_node = os.path.join(bin4, "node")
+    with open(broken_node, "w", encoding="utf-8") as fh:
+        fh.write("#!/bin/sh\nexit 7\n")
+    os.chmod(broken_node, 0o755)
+    a4 = invoke(instrument, root, rev, pkg, a4_dir, [], path=bin4)
+    a4_clause = str(a4["unevaluable"] or "")
+    arms.append(arm("A4_broken_node_typed",
+                    a4["rc"] == 2 and "broken_tool" in a4_clause
+                    and "node" in a4_clause and not a4["traceback"],
+                    {**a4, "stderr_tail": a4["stderr_tail"][-400:]}))
+
+    # A5 - an exec-format-less packer is a typed refusal, never a traceback.
+    a5_dir = tempfile.mkdtemp(prefix="a5-", dir=work)
+    notelf = os.path.join(a5_dir, "not-an-elf")
+    with open(notelf, "wb") as fh:
+        fh.write(b"DEFINITELY-NOT-AN-ELF-OR-SCRIPT\x00\x01\x02\x03garbage")
+    os.chmod(notelf, 0o755)
+    a5 = invoke(instrument, root, rev, pkg, a5_dir, ["--upx", notelf])
+    arms.append(arm("A5_packer_exec_format",
+                    a5["rc"] == 2 and "packer" in str(a5["unevaluable"] or "")
+                    and not a5["traceback"],
+                    {**a5, "stderr_tail": a5["stderr_tail"][-400:]}))
+
+    # A6 - with HOME unset the child env still never falls back to /tmp.
+    a6_dir = tempfile.mkdtemp(prefix="a6-", dir=work)
+    a6 = invoke(instrument, root, rev, pkg, a6_dir, ["--skip-run"], keep_home=False)
+    payload = parse_json_out(a6["stdout"]) or {}
+    cenv = payload.get("child_env") or {}
+    home_ok = bool(cenv) and str(cenv.get("home", "")).startswith(os.path.abspath(a6_dir)) \
+        and str(cenv.get("home", "")) != "/tmp"
+    blob_text = open(instrument, encoding="utf-8", errors="replace").read()
+    no_tmp_fallback = TMP_FALLBACK_PATTERN not in blob_text
+    arms.append(arm("A6_home_no_tmp", a6["rc"] == 1 and home_ok and no_tmp_fallback,
+                    {"rc": a6["rc"], "child_env": cenv,
+                     "tmp_fallback_in_source": not no_tmp_fallback,
+                     "work": os.path.abspath(a6_dir)}))
+
+    # A7 - per-run work: two battery runs sharing --work record distinct dirs.
+    run_a = invoke(battery, root, rev, pkg, work,
+                   ["--patch-set", "r70", "--tool", tool,
+                    "--min-pristine-cases", "0"], with_pkg=False)
+    run_b = invoke(battery, root, rev, pkg, work,
+                   ["--patch-set", "r70", "--tool", tool,
+                    "--min-pristine-cases", "0"], with_pkg=False)
+    ra = parse_json_out(run_a["stdout"]) or {}
+    rb = parse_json_out(run_b["stdout"]) or {}
+    wa, wb = ra.get("work_dir"), rb.get("work_dir")
+    a7_ok = (run_a["rc"] == 0 and run_b["rc"] == 0
+             and isinstance(wa, str) and isinstance(wb, str)
+             and wa != wb and wa.startswith(os.path.abspath(work))
+             and wb.startswith(os.path.abspath(work)))
+    arms.append(arm("A7_per_run_work", a7_ok,
+                    {"rc_a": run_a["rc"], "rc_b": run_b["rc"],
+                     "work_dir_a": wa, "work_dir_b": wb,
+                     "distinct": isinstance(wa, str) and wa != wb}))
+
+    # A8 - the OBSERVED child environment (round-70 M70-6): a one-carrier run
+    # records each child's own environ; the probe parses the raw JSONL itself,
+    # never the builder's returned dict.
+    a8_dir = tempfile.mkdtemp(prefix="a8-", dir=work)
+    a8_log = os.path.join(a8_dir, "env.jsonl")
+    a8_out = os.path.join(a8_dir, "a8.json")
+    a8 = invoke(instrument, root, rev, pkg, a8_dir,
+                ["--carriers", "jq", "--child-env-log", a8_log,
+                 "--json-out", a8_out],
+                extra_env={"KAIDOKU_ENV_CANARY": "probe-canary"})
+    a8_receipt = None
+    try:
+        with open(a8_out, encoding="utf-8") as fh:
+            a8_receipt = json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        a8_receipt = None
+    raw_records = []
+    raw_ok = False
+    try:
+        with open(a8_log, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if line:
+                    raw_records.append(json.loads(line))
+        raw_ok = bool(raw_records)
+    except (OSError, json.JSONDecodeError):
+        raw_ok = False
+    run_root = (a8_receipt or {}).get("run_root")
+    obs = (a8_receipt or {}).get("child_env_observed") or {}
+    envs = [r.get("env") or {} for r in raw_records]
+    children = sorted({os.path.basename(str((r.get("argv") or ["?"])[0]))
+                       for r in raw_records})
+    raw_allow = bool(envs) and all(sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs)
+    raw_home = bool(envs) and all(under(run_root, e.get("HOME", "")) for e in envs)
+    raw_tmp = bool(envs) and all(under(run_root, e.get("TMPDIR", "")) for e in envs)
+    raw_canary = any("KAIDOKU_ENV_CANARY" in e for e in envs)
+    a8_ok = (a8["rc"] == 0 and raw_ok and raw_allow and raw_home and raw_tmp
+             and not raw_canary and isinstance(run_root, str) and bool(run_root)
+             and obs.get("records") == len(raw_records)
+             and obs.get("all_allowlisted") is True
+             and obs.get("canary_present") is False
+             and obs.get("keys") == sorted(CHILD_ENV_KEYS)
+             and {"upx", "node", "readelf"} <= set(children))
+    arms.append(arm("A8_child_env_observed", a8_ok,
+                    {"rc": a8["rc"], "records": len(raw_records),
+                     "children": children, "raw_allowlisted": raw_allow,
+                     "raw_home_under_run": raw_home,
+                     "raw_tmpdir_under_run": raw_tmp,
+                     "raw_canary_present": raw_canary,
+                     "receipt_observed": obs, "run_root": run_root}))
+
+    # A9 - concurrent scratch isolation: three batteries and three route
+    # preflights started together on one --work parent never collide.
+    a9_dir = tempfile.mkdtemp(prefix="a9-", dir=work)
+    base_env = {"PATH": os.environ.get("PATH", "/usr/bin"),
+                "LANG": os.environ.get("LANG", "C"),
+                "HOME": os.environ.get("HOME", "/nonexistent")}
+    bat_procs = []
+    for _ in range(3):
+        bat_procs.append(subprocess.Popen(
+            [sys.executable, "-I", "-B", battery, "--root", root, "--rev", rev,
+             "--tool", tool, "--work", a9_dir, "--patch-set", "r70",
+             "--min-pristine-cases", "0"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            env=base_env))
+    bat_results = []
+    for proc in bat_procs:
+        out, _err = proc.communicate(timeout=1800)
+        payload = None
+        for chunk in [out.strip()] + [x.strip() for x in out.splitlines()[::-1]]:
+            if not chunk:
+                continue
+            try:
+                payload = json.loads(chunk)
+                break
+            except json.JSONDecodeError:
+                continue
+        bat_results.append({"rc": proc.returncode,
+                            "work_dir": (payload or {}).get("work_dir")})
+    route_procs = []
+    route_paths = []
+    for i in range(3):
+        log_name = "env-%d.jsonl" % i
+        out_i = os.path.join(a9_dir, "route-%d.json" % i)
+        route_paths.append((log_name, out_i))
+        route_procs.append(subprocess.Popen(
+            [sys.executable, "-I", "-B", instrument, "--root", root, "--rev", rev,
+             "--pkg", pkg, "--work", a9_dir, "--skip-run",
+             "--child-env-log", log_name, "--json-out", out_i],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            env=base_env))
+    route_results = []
+    for proc, (log_name, out_i) in zip(route_procs, route_paths):
+        proc.communicate(timeout=1800)
+        payload = None
+        try:
+            with open(out_i, encoding="utf-8") as fh:
+                payload = json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            payload = None
+        rr = (payload or {}).get("run_root")
+        obs_i = (payload or {}).get("child_env_observed") or {}
+        log_path = obs_i.get("log")
+        records = []
+        try:
+            with open(log_path, encoding="utf-8") as fh:
+                records = [json.loads(line) for line in fh if line.strip()]
+        except (OSError, TypeError, json.JSONDecodeError):
+            records = []
+        envs_i = [r.get("env") or {} for r in records]
+        route_results.append({
+            "rc": proc.returncode, "run_root": rr, "records": len(records),
+            "log": log_path,
+            "log_under_run": (isinstance(rr, str) and isinstance(log_path, str)
+                              and under(rr, log_path)),
+            "own_home": bool(envs_i) and isinstance(rr, str) and all(
+                under(rr, e.get("HOME", "")) for e in envs_i),
+            "own_tmp": bool(envs_i) and isinstance(rr, str) and all(
+                under(rr, e.get("TMPDIR", "")) for e in envs_i),
+            "own_keys": bool(envs_i) and all(
+                sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs_i),
+            "verdict_claimed": (payload or {}).get("verdict_claimed")})
+    bat_dirs = [r["work_dir"] for r in bat_results]
+    route_roots = [r["run_root"] for r in route_results]
+    a9_ok = (all(r["rc"] == 0 for r in bat_results)
+             and all(isinstance(d, str) and d.startswith(os.path.abspath(a9_dir))
+                     for d in bat_dirs)
+             and len(set(bat_dirs)) == 3
+             and all(r["rc"] == 1 and r["verdict_claimed"] is False
+                     and r["records"] >= 1 and r["own_home"] and r["own_tmp"]
+                     and r["own_keys"] and r["log_under_run"]
+                     and isinstance(r["run_root"], str)
+                     and r["run_root"].startswith(os.path.abspath(a9_dir))
+                     for r in route_results)
+             and len(set(route_roots)) == 3)
+    arms.append(arm("A9_concurrent_collision", a9_ok,
+                    {"battery": bat_results, "route": route_results,
+                     "distinct_battery_dirs": len(set(bat_dirs)),
+                     "distinct_run_roots": len(set(route_roots))}))
+
+    # A10 - pre-committed run binding, verdict read from the CHECKER's JSON
+    # (R72-C2: the probe no longer re-derives binding_ok from the receipt).
+    if receipt_path and nonce_commitment:
+        receipt, defects = bind_producer(receipt_path, root, rrev, tool, rblob_sha)
+        genuine = invoke(instrument, root, rrev, pkg, work,
+                         ["--check-receipt", receipt_path,
+                          "--nonce-commitment", nonce_commitment])
+        genuine_json = parse_json_out(genuine["stdout"])
+        genuine_verdict = binding_verdict(genuine_json)
+        genuine_met = checker_met(genuine_json)
+        fail_modes = {}
+        base_dir = tempfile.mkdtemp(prefix="a10-", dir=work)
+        wrong = json.loads(json.dumps(receipt or {}))
+        if isinstance(wrong.get("run_nonce"), str) and len(wrong["run_nonce"]) == 64:
+            flip = "0" if wrong["run_nonce"][0] != "0" else "1"
+            wrong["run_nonce"] = flip + wrong["run_nonce"][1:]
+        wrong_path = os.path.join(base_dir, "wrong-nonce.json")
+        with open(wrong_path, "w", encoding="utf-8") as fh:
+            json.dump(wrong, fh)
+        broke = json.loads(json.dumps(receipt or {}))
+        broke["run_binding"] = "00" * 32
+        broke_path = os.path.join(base_dir, "broken-binding.json")
+        with open(broke_path, "w", encoding="utf-8") as fh:
+            json.dump(broke, fh)
+        for label, path in (("wrong_nonce", wrong_path),
+                            ("broken_binding", broke_path)):
+            res = invoke(instrument, root, rrev, pkg, work,
+                         ["--check-receipt", path,
+                          "--nonce-commitment", nonce_commitment])
+            verdict = binding_verdict(parse_json_out(res["stdout"]))
+            fail_modes[label] = {"rc": res["rc"], **verdict}
+        if legacy_receipt:
+            res = invoke(instrument, root, rrev, pkg, work,
+                         ["--check-receipt", legacy_receipt,
+                          "--nonce-commitment", nonce_commitment])
+            fail_modes["legacy"] = {"rc": res["rc"],
+                                    **binding_verdict(
+                                        parse_json_out(res["stdout"]))}
+        a10_ok = (not defects
+                  and genuine_met is True
+                  and genuine_verdict["present"] is True
+                  and genuine_verdict["nonce_ok"] is True
+                  and genuine_verdict["binding_ok"] is True
+                  and genuine["rc"] == 0
+                  and fail_modes.get("wrong_nonce", {}).get("rc") == 1
+                  and fail_modes.get("wrong_nonce", {}).get("nonce_ok") is False
+                  and fail_modes.get("broken_binding", {}).get("rc") == 1
+                  and fail_modes.get("broken_binding", {}).get("binding_ok") is False
+                  and (not legacy_receipt
+                       or (fail_modes.get("legacy", {}).get("rc") == 1
+                           and fail_modes.get("legacy", {}).get("nonce_ok") is False)))
+        arms.append(arm("A10_run_binding", a10_ok,
+                        {"defects": defects,
+                         "genuine_met": genuine_met,
+                         "genuine_verdict": genuine_verdict,
+                         "genuine_rc": genuine["rc"],
+                         "fail_modes": fail_modes,
+                         "commitment": nonce_commitment}))
+        # A11 - the checker-mode children run under the same allowlist
+        # (R72-C1: this was the round-71 note's Frontier line).
+        a11 = checker_env_arm(instrument, root, rrev, pkg, work,
+                              receipt_path, nonce_commitment)
+        arms.append(arm("A11_checker_env", a11["ok"], a11))
+        # A12 - the kernel's record of the shim children (R73-C1): the
+        # child-side dump is a claim; /proc/<pid>/environ is the record.
+        a12 = kernel_witness_arm(instrument, root, rrev, pkg, work,
+                                 receipt_path, nonce_commitment,
+                                 os.path.abspath(work))
+        arms.append(arm("A12_kernel_witness", a12["ok"], a12))
+    else:
+        arms.append(arm("A10_run_binding", False,
+                        {"missing": "no --receipt or no --nonce-commitment"}))
+        arms.append(arm("A11_checker_env", False,
+                        {"missing": "no --receipt or no --nonce-commitment"}))
+        arms.append(arm("A12_kernel_witness", False,
+                        {"missing": "no --receipt or no --nonce-commitment"}))
+
+    failed = [a["id"] for a in arms if not a["ok"]]
+    return {"instrument": tool, "rev": rev, "battery": battery_tool,
+            "receipt": receipt_path, "expect_upx": expect_upx,
+            "instrument_sha256": blob_sha, "battery_sha256": battery_sha,
+            "arms": arms, "arms_passed": len(arms) - len(failed),
+            "target": len(arms), "failed": failed, "ok": not failed,
+            "scratch": scratch}
+
+
+def validate_defects(receipt: dict) -> list[str]:
+    defects = []
+    arms = receipt.get("arms")
+    if not isinstance(arms, list) or not arms:
+        defects.append("arms absent or empty")
+        arms = []
+    for a in arms:
+        if not isinstance(a.get("id"), str):
+            defects.append("an arm has no id")
+        if not isinstance(a.get("ok"), bool):
+            defects.append(f"{a.get('id')}: ok not a bool")
+        if not isinstance(a.get("observed"), dict) or not a.get("observed"):
+            defects.append(f"{a.get('id')}: no observation")
+    derived = [a.get("id") for a in arms if a.get("ok") is True]
+    if receipt.get("arms_passed") != len(derived):
+        defects.append("arms_passed disagrees with the arm rows")
+    if receipt.get("target") != len(arms):
+        defects.append(f"target {receipt.get('target')} != arm rows {len(arms)}")
+    if sorted(receipt.get("failed") or []) != sorted(
+            a.get("id") for a in arms if a.get("ok") is not True):
+        defects.append("failed disagrees with the arm rows")
+    return defects
+
+
+def validate(path: str) -> int:
+    try:
+        with open(path, encoding="utf-8") as fh:
+            receipt = json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(json.dumps({"validate": "seam-probe-receipt", "unevaluable": str(exc)}))
+        return 2
+    if not isinstance(receipt, dict):
+        print(json.dumps({"validate": "seam-probe-receipt",
+                          "unevaluable": f"receipt root is {type(receipt).__name__}, "
+                                        f"not an object"}))
+        return 2
+    defects = validate_defects(receipt)
+    arms = receipt.get("arms") if isinstance(receipt.get("arms"), list) else []
+    out = {"validate": "seam-probe-receipt", "path": path, "ok": not defects,
+           "defects": defects, "arms": len(arms)}
+    print(json.dumps(out, indent=1, sort_keys=True))
+    return 0 if not defects else 1
+
+
+def selftest() -> int:
+    cases = {}
+
+    def receipt(ids, ok_flags, observed=True):
+        return {"arms": [{"id": i, "ok": f,
+                          "observed": ({"x": 1} if observed else {})}
+                         for i, f in zip(ids, ok_flags)],
+                "arms_passed": sum(1 for f in ok_flags if f),
+                "target": len(ids),
+                "failed": [i for i, f in zip(ids, ok_flags) if not f]}
+
+    good = receipt(["A1", "A2"], [True, False])
+    cases["validate-clean"] = validate_defects(good) == []
+    cases["validate-no-observation"] = (
+        validate_defects(receipt(["A1"], [True], observed=False))
+        == ["A1: no observation"])
+    bad_pass = dict(good)
+    bad_pass["arms_passed"] = 2
+    cases["validate-pass-mismatch"] = (
+        "arms_passed disagrees with the arm rows" in validate_defects(bad_pass))
+    bad_failed = dict(good)
+    bad_failed["failed"] = []
+    cases["validate-failed-mismatch"] = (
+        "failed disagrees with the arm rows" in validate_defects(bad_failed))
+    bad_target = dict(good)
+    bad_target["target"] = 7
+    cases["validate-target-mismatch"] = (
+        "target 7 != arm rows 2" in validate_defects(bad_target))
+    cases["parse-unevaluable"] = (
+        parse_unevaluable("", '{"unevaluable": "missing_tool: upx"}')
+        == {"unevaluable": "missing_tool: upx"})
+    cases["parse-json-out"] = parse_json_out('{"ok": true}\n') == {"ok": True}
+    cases["containment-descendant"] = under("/w/run", "/w/run/home") is True
+    cases["containment-sibling-prefix"] = under("/w/run", "/w/run-outside/home") is False
+    cases["a10-binding-from-checker"] = (
+        binding_verdict({"clauses": {"run_nonce": True, "run_binding": True}})
+        == {"present": True, "nonce_ok": True, "binding_ok": True}
+        and binding_verdict({"clauses": {"run_nonce": True,
+                                         "run_binding": False}})["binding_ok"] is False
+        and binding_verdict({})["present"] is False
+        and binding_verdict({"clauses": {"run_nonce": True}})["binding_ok"] is False)
+    clean = {"HOME": "/r/home", "LANG": "C", "PATH": "/usr/bin", "TMPDIR": "/r/tmp"}
+    git = {"argv": ["/usr/bin/git", "show"], "env": dict(clean)}
+    readelf = {"argv": ["/usr/bin/readelf", "-h"], "env": dict(clean)}
+    cases["a11-log-census"] = (
+        checker_log_verdict([])["ok"] is False
+        and checker_log_verdict([git])["ok"] is False
+        and checker_log_verdict([git, readelf])["ok"] is True
+        and checker_log_verdict([git, readelf])["children"] == {"git": 1, "readelf": 1}
+        and checker_log_verdict(
+            [git, {**readelf, "env": {**clean, "KAIDOKU_ENV_CANARY": "x"}}])["ok"] is False
+        and checker_log_verdict(
+            [git, {**readelf, "env": {**clean, "EXTRA": "1"}}])["ok"] is False)
+    run_home = {"HOME": "/w/root/home", "LANG": "C", "PATH": "/usr/bin",
+                "TMPDIR": "/w/root/tmp"}
+    log_v = {"ok": True, "records": 2, "children": {"git": 1, "readelf": 1}}
+    obs_v = {"records": 2, "all_allowlisted": True, "canary_present": False,
+             "home_under_run": True, "tmpdir_under_run": True,
+             "children": {"git": 1, "readelf": 1}, "run_root": "/w/root"}
+
+    def shim(values, keys_exact=True, canary=False):
+        return {"recorded": True, "keys_exact": keys_exact,
+                "canary_present": canary, "values": values}
+
+    good_shims = {"git": shim(run_home), "readelf": shim(run_home)}
+    cases["a11-arm-cases"] = (
+        a11_verdict(0, obs_v, log_v, good_shims, "/w")["ok"] is True
+        and a11_verdict(1, obs_v, log_v, good_shims, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, {**log_v, "children": {"git": 0, "readelf": 1}},
+                        good_shims, "/w")["ok"] is False
+        and a11_verdict(0, {**obs_v, "children": {"git": 0, "readelf": 1}},
+                        log_v, good_shims, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim(run_home, keys_exact=False),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim(run_home, canary=True),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim({**run_home, "HOME": "/w/root-out/home"}),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, obs_v, log_v,
+                        {"git": shim({**run_home, "TMPDIR": "/elsewhere"}),
+                         "readelf": shim(run_home)}, "/w")["ok"] is False
+        and a11_verdict(0, {}, log_v, good_shims, "/w")["ok"] is False)
+    allow = ("HOME", "LANG", "PATH", "TMPDIR")
+    clean = {"keys": list(allow), "canary_present": False,
+             "home_under": True, "tmpdir_under": True}
+    dirty = {"keys": list(allow) + ["KAIDOKU_ENV_CANARY", "X"],
+             "canary_present": True, "home_under": False, "tmpdir_under": False}
+    genuine_ok = {"rc": 0, "kernel": {"git": clean, "readelf": clean}}
+    lying = {"git": {"keys": list(allow), "canary_present": False,
+                     "keys_exact": True},
+             "readelf": {"keys": list(allow), "canary_present": False,
+                         "keys_exact": True}}
+    forged_dirty = {"kernel": {"git": dirty, "readelf": dirty}, "shims": lying}
+    cases["a12-kernel-cases"] = (
+        a12_verdict(genuine_ok, forged_dirty, allow)["ok"] is True
+        and a12_verdict(genuine_ok, forged_dirty, allow)["forged_detected"] is True
+        and a12_verdict(genuine_ok,
+                        {"kernel": {"git": clean, "readelf": clean}, "shims": lying},
+                        allow)["ok"] is False
+        and a12_verdict(genuine_ok,
+                        {"kernel": {"git": dirty}, "shims": lying},
+                        allow)["ok"] is True
+        and a12_verdict(genuine_ok,
+                        {"kernel": {}, "shims": lying}, allow)["ok"] is False
+        and a12_verdict({"rc": 0, "kernel": {
+            "git": {**clean, "home_under": False}, "readelf": clean}},
+            forged_dirty, allow)["ok"] is False
+        and a12_verdict({"rc": 0, "kernel": {
+            "git": {**clean, "tmpdir_under": False}, "readelf": clean}},
+            forged_dirty, allow)["ok"] is False
+        and a12_verdict({"rc": 0, "kernel": {"git": dirty, "readelf": clean}},
+                        forged_dirty, allow)["ok"] is False
+        and a12_verdict({"rc": 1, "kernel": {"git": clean, "readelf": clean}},
+                        forged_dirty, allow)["ok"] is False
+        and a12_verdict(genuine_ok,
+                        {"kernel": {"git": dirty}, "shims": {}}, allow)["ok"] is False)
+    # -- round-74: one case per A12 conjunct round-73's mutation probe left
+    # unbound (MutProbe survivors a/b/c).  Each feeds its seam a false input
+    # and requires the distinguishing outcome.
+    canary_only = {"keys": list(allow), "canary_present": True,
+                   "home_under": True, "tmpdir_under": True}
+    cases["a12-genuine-canary-only"] = (
+        a12_verdict({"rc": 0, "kernel": {"git": canary_only, "readelf": clean}},
+                    forged_dirty, allow)["ok"] is False
+        and a12_verdict({"rc": 0, "kernel": {"git": canary_only,
+                                             "readelf": clean}},
+                        forged_dirty, allow)["genuine_ok"] is False
+        and a12_verdict(genuine_ok, forged_dirty, allow)["ok"] is True)
+    shim_root = tempfile.mkdtemp(prefix="a12-scan-")
+    try:
+        shim_dir = os.path.join(shim_root, "shims")
+        os.makedirs(shim_dir, exist_ok=True)
+        shim_path = os.path.join(shim_dir, "git")
+        base_env = {"HOME": os.path.join(shim_root, "home"), "LANG": "C",
+                    "PATH": "/usr/bin", "TMPDIR": os.path.join(shim_root, "tmp")}
+        scan = {10: dict(base_env),
+                11: {**base_env, "KAIDOKU_ENV_CANARY": "x"}}
+        scan_stop = threading.Event()
+        samples = kernel_witness(
+            shim_dir, scan_stop,
+            read_argv=lambda pid: [shim_path, "show"],
+            read_env=lambda pid: scan.get(pid),
+            read_ppid=lambda pid: 1,
+            list_pids=lambda: sorted(scan),
+            work_root=shim_root)
+        cases["a12-kernel-multiple-samples"] = (
+            len(samples) == 2
+            and {s["pid"] for s in samples} == {10, 11}
+            and {os.path.basename(s["argv"][0]) for s in samples} == {"git"})
+        cases["a12-kernel-canary-field"] = (
+            all(isinstance(s.get("canary_present"), bool) for s in samples)
+            and all(isinstance(s.get("home_under"), bool) for s in samples)
+            and all(isinstance(s.get("tmpdir_under"), bool) for s in samples))
+        unreadable = kernel_witness(
+            shim_dir, scan_stop,
+            read_argv=lambda pid: [shim_path, "show"],
+            read_env=lambda pid: None if pid == 11 else dict(base_env),
+            read_ppid=lambda pid: 1,
+            list_pids=lambda: sorted(scan),
+            work_root=shim_root)
+        cases["a12-proc-environ-unreadable"] = (
+            _proc_env(2 ** 31 - 1) is None
+            and len(unreadable) == 1 and unreadable[0]["pid"] == 10)
+        # -- round-75: the three A12 conjuncts the round-74 wave found unbound,
+        # plus the witness-merge seam.  Each feeds the distinguishing input.
+        cases["a12-genuine-field-identity"] = (
+            a12_verdict({"rc": 0, "kernel": {
+                "git": {**clean, "home_under": 1}, "readelf": clean}},
+                forged_dirty, allow)["genuine_ok"] is False
+            and a12_verdict({"rc": 0, "kernel": {
+                "git": {**clean, "tmpdir_under": 1}, "readelf": clean}},
+                forged_dirty, allow)["genuine_ok"] is False
+            and a12_verdict({"rc": 0, "kernel": {
+                "git": {**clean, "home_under": "true"}, "readelf": clean}},
+                forged_dirty, allow)["genuine_ok"] is False
+            and a12_verdict(genuine_ok, forged_dirty, allow)["ok"] is True)
+        live_clean = {"pid": 21, "argv": [shim_path, "show"],
+                      "keys": list(allow), "canary_present": False,
+                      "home_under": True, "tmpdir_under": True}
+        live_dirty = {**live_clean, "pid": 22, "keys": list(allow) + ["X"],
+                      "canary_present": True}
+        named = _name_samples([live_clean, live_dirty], shim_dir)
+        cases["a12-sample-name-merge"] = (
+            sorted(named) == ["git"]
+            and len(named.get("git") or []) == 2
+            and a12_verdict({"rc": 0, "kernel": {"git": [live_clean],
+                                                 "readelf": [live_clean]}},
+                            {"kernel": {"git": [live_clean, live_dirty]},
+                             "shims": lying}, allow)["forged_detected"] is True
+            and a12_verdict({"rc": 0, "kernel": {"git": [live_clean],
+                                                 "readelf": [live_clean]}},
+                            {"kernel": {"git": [live_dirty, live_clean]},
+                             "shims": lying}, allow)["forged_detected"] is True)
+        lie_extra = {"git": {"keys": list(allow) + ["EXTRA"],
+                             "canary_present": False},
+                     "readelf": {"keys": list(allow), "canary_present": False}}
+        cases["a12-lie-clean-keys-exact"] = (
+            a12_verdict(genuine_ok, {"kernel": {"git": dirty, "readelf": dirty},
+                                     "shims": lie_extra},
+                        allow)["lie_clean"] is False
+            and a12_verdict(genuine_ok, {"kernel": {"git": dirty,
+                                                    "readelf": dirty},
+                                         "shims": lie_extra}, allow)["ok"] is False
+            and a12_verdict(genuine_ok, forged_dirty, allow)["lie_clean"] is True)
+        order: list[str] = []
+        seen_verdict: list[tuple] = []
+
+        def _g():
+            order.append("genuine")
+            return {"side": "genuine"}
+
+        def _f():
+            order.append("forged")
+            return {"side": "forged"}
+
+        def _v(gd, fd, keys):
+            seen_verdict.append((gd, fd))
+            return {"ok": True}
+
+        wired = assemble_arm(_g, _f, _v, allow)
+        cases["a12-arm-wiring"] = (
+            order == ["genuine", "forged"]
+            and seen_verdict == [({"side": "genuine"}, {"side": "forged"})]
+            and wired["verdict"] == {"ok": True}
+            and wired["genuine"] == {"side": "genuine"})
+        launches: list[list[str]] = []
+
+        class _FakeProc:
+            def __init__(self, argv, **_kwargs):
+                launches.append(list(argv))
+                self.pid = 9000 + len(launches)
+
+            def wait(self, timeout=None):
+                return 0
+
+        witness_calls: list[dict] = []
+
+        def _fake_witness(dirpath, stop_event, parents=None, work_root=None):
+            witness_calls.append({"parents": sorted(parents or [])})
+            return [{"pid": 9001, "argv": [os.path.join(dirpath, "git")],
+                     "keys": list(allow), "canary_present": False,
+                     "home_under": True, "tmpdir_under": True}]
+
+        forged_run = forged_subrun(shim_root, spawn=_FakeProc,
+                                   witness=_fake_witness, work_root=shim_root)
+        cases["a12-arm-forged-executed"] = (
+            [os.path.basename(argv[-1]) for argv in launches] == ["git", "readelf"]
+            and len(witness_calls) == 1
+            and witness_calls[0]["parents"] == [9001, 9002]
+            and forged_run["rc"] == [0, 0]
+            and list(forged_run["kernel"]) == ["git"])
+    finally:
+        shutil.rmtree(shim_root, ignore_errors=True)
+    # -- round-75 security items (SS74-3/4): no raw shim values in a receipt,
+    # no scratch path interpolated into the A11 perl source.
+    redact_root = tempfile.mkdtemp(prefix="a12-redact-")
+    try:
+        red_rec = os.path.join(redact_root, "shim.environ")
+        with open(red_rec, "wb") as fh:
+            fh.write(b"HOME=/w/home\0LANG=C\0PATH=/usr/bin\0TMPDIR=/w/tmp\0")
+        parsed = _parse_shims({"git": red_rec}, allow)["git"]
+        sidecar = _write_shims(os.path.join(redact_root, "shims"),
+                               os.path.join(redact_root, "logs"),
+                               TRUTHFUL_SHIM, {})
+        with open(os.path.join(redact_root, "shims", "git"),
+                  encoding="utf-8") as fh:
+            shim_src = fh.read()
+        cases["a12-shim-values-redacted"] = (
+            "values" not in parsed and parsed["keys"] == sorted(allow)
+            and parsed["keys_exact"] is True)
+        cases["a11-shim-sidecar"] = (
+            redact_root not in shim_src
+            and os.path.exists(os.path.join(redact_root, "shims", "git.cfg"))
+            and sorted(sidecar) == ["git", "readelf"])
+    finally:
+        shutil.rmtree(redact_root, ignore_errors=True)
+    cases["a10-met-consistency"] = (
+        checker_met({"met": True, "clauses": {"met": True}}) is True
+        and checker_met({"met": False, "clauses": {"met": True}}) is False
+        and checker_met({"met": True, "clauses": {"run_binding": True}}) is False
+        and checker_met({}) is False)
+    print(json.dumps({"selftest": "tools/round-75/seam-probe.py",
+                      "cases": len(cases),
+                      "case_names": sorted(cases),
+                      "failures": [k for k, v in cases.items() if not v]},
+                     indent=1, sort_keys=True))
+    return 0 if all(cases.values()) else 1
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--root")
+    ap.add_argument("--rev")
+    ap.add_argument("--tool")
+    ap.add_argument("--battery")
+    ap.add_argument("--pkg")
+    ap.add_argument("--work")
+    ap.add_argument("--receipt")
+    ap.add_argument("--expect-upx")
+    ap.add_argument("--nonce-commitment")
+    ap.add_argument("--legacy-receipt")
+    ap.add_argument("--receipt-rev")
+    ap.add_argument("--json-out")
+    ap.add_argument("--validate")
+    ap.add_argument("--selftest", action="store_true")
+    args = ap.parse_args(argv)
+    if args.selftest:
+        return selftest()
+    if args.validate:
+        return validate(args.validate)
+    if not (args.root and args.rev and args.tool and args.battery
+            and args.pkg and args.work):
+        print("seam-probe: --root, --rev, --tool, --battery, --pkg and --work "
+              "are required", file=sys.stderr)
+        return 2
+    try:
+        receipt = check(args.root, args.rev, args.tool, args.pkg, args.work,
+                        args.battery, args.receipt, args.expect_upx,
+                        args.nonce_commitment, args.legacy_receipt,
+                        args.receipt_rev)
+    except Unevaluable as exc:
+        print(json.dumps({"schema": "kaidoku-r72-seam-probe-v1",
+                          "unevaluable": str(exc)}), file=sys.stderr)
+        return 2
+    text = json.dumps(receipt, indent=1, sort_keys=True)
+    if args.json_out:
+        with open(args.json_out, "w", encoding="utf-8") as fh:
+            fh.write(text + "\n")
+    print(text)
+    return 0 if receipt["ok"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
