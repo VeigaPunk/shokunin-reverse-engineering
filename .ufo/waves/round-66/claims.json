@@ -1,0 +1,48 @@
+{
+ "schema": 1,
+ "round": "round-66",
+ "base": "311079d869f068bc083a8d180977e49634120fdf",
+ "declaration_pointer": "plans/round-66-claims.md (no amendments). Both instruments were committed BEFORE this claims file at 78fa96666ce48e510d83673d61e951e4dbbd64c0 - the QUALITY #33 order - with their do-nothing controls; the carry-in LOG entry b5b02e1f03fdc360577faaac26bb291e659882bf is an ancestor of this freeze (QUALITY #34, the M65-3 order check). The operative freeze is the commit that first adds this file: git log --diff-filter=A --format=%H -- .ufo/waves/round-66/claims.json. No amendment series.",
+ "instruments": {
+  "tools/round-66/closure-boundary.py": "3c5cfb038d86cdde03fb659e1d42a44ffa5f42ccd019ab7ea9b52710d071045b",
+  "tools/round-66/coverage-selfcheck.py": "1be9d046cea38a96a4b62d038f7dbc76e8ea611000af4aee3b91a6def86555aa",
+  ".ufo/waves/round-66/l1/controls/c1-do-nothing.py": "3abcfe0d1417edafcefe00f7879f168c5387bd436c4d33358a53cfd1f18f2a6f",
+  ".ufo/waves/round-66/l1/controls/c2-do-nothing.py": "1787cd29c6097b1da12916fa150f7de5aa0ba42a053547401400ea9b625e63ec"
+ },
+ "claims": {
+  "R66-C1": {
+   "axis": "depth",
+   "type": "counter repair (new freeze of the r65 closure counter's boundaries)",
+   "predicate": "R66-C1 is verified iff the repaired closure counter passes all five of its boundary arms: a1 the guarded fixture probe leaves closure.ok true with an empty cache; a2 the same probe without -B or the bytecode env makes closure.ok false and names a .pyc path; a3 the frozen 30-entry toolchain manifest verifies with count_ok true; a4 a manifest one entry short reports entries 29 != 30 and closure.ok false; a5 --skip-run emits no closure object claiming ok.",
+   "target": "5 of 5 arms pass, exit 0, at the measured revision",
+   "counter": "python3 -I -B tools/round-66/closure-boundary.py --verify --repo <lane> --out <receipt>",
+   "kill_rule": "any arm false, an arm that could not be evaluated, a drifted or absent r65 instrument, a post-freeze counter edit, or a run that needs the predicate changed -> not verified, reported, never re-predicted"
+  },
+  "R66-C2": {
+   "axis": "calibration",
+   "type": "counter repair (new freeze of the coverage self-assessment ground)",
+   "predicate": "R66-C2 is verified iff the coverage self-check counter at the measured revision reports recipe_a_equivalent true, a non-empty recipe_a_hidden list, and mismatches 0 across its two self-assessment atoms, where at the base revision the same counter reports the cited fraction atom as a mismatch.",
+   "target": "recipe_a_equivalent true, recipe_a_hidden non-empty, mismatches 0, exit 0 at the measured revision; mismatches 1 with the cited-fraction atom false at the base",
+   "counter": "python3 -I -B tools/round-66/coverage-selfcheck.py --selfcheck --rev <rev> --out <receipt>",
+   "kill_rule": "an equivalence difference, an empty hidden list, any false atom at the measured revision, an Owned-axes row whose declared shape cannot be parsed, a post-freeze counter edit, or an atom list other than the two declared -> not verified, never narrowed"
+  }
+ },
+ "frozen_atoms": {
+  "A0": "declaration order: instruments and controls committed before this container at 78fa9666 (QUALITY #33); the carry-in LOG entry b5b02e1f is an ancestor of the freeze commit (git merge-base --is-ancestor b5b02e1f <freeze> exit 0, receipt l1/records/r66-order.txt); no prompt amendment and no claim amendment after this file",
+  "A1": "base: 311079d869f068bc083a8d180977e49634120fdf; recipe A verbatim at the base = knowledge_files 145, mapped 142, missing the three non-October names, coverage_score 9.79, depth_score 10.0, citation_resolved_rules 27, rule_blocks 27 (l1/pre/dryrun-c2-selfcheck-at-base.json, recipe_a sub-object)",
+  "A2": "before-arms: l1/controls/c1-do-nothing.json (1 of 5 arms) and l1/controls/c2-do-nothing.json (0 of 3 conditions); the r65 instrument's truncated-manifest arm runs its own --manifest at entries 29, ok true, exit 0 (the C1-F2 defect reproduced) and its --skip-run emits closure.ok true (Q5 reproduced)",
+  "A3": "pre-freeze dry runs: l1/pre/dryrun-c1-verify.json (5 of 5 arms, exit 0) and l1/pre/dryrun-c2-selfcheck-at-base.json (recipe_a_equivalent true, recipe_a_hidden 3, mismatches 1, exit 1); selftests l1/pre/selftest-c1.txt (30 cases, 0 failures) and l1/pre/selftest-c2.txt (26 cases, 0 failures)",
+  "A4": "R66-C1 counter closure: --repo is the lane root; the r65 instrument is loaded by path and refused on any sha256 drift from 79a4dca40d2b37dc8d88711e9a95ec25e7d2e099bfd3ed52bb38bab77ff922c6; the frozen count constant is 30 (len(CLOSURE) 27 + probe + node + interpreter); the toolchain root is /home/vgpnk/.local/share/kaidoku-jsc and is never written by this counter (fixtures live under --work)",
+  "A5": "R66-C1 arm set is exactly the five names in ARMS; a1 and a2 use a fixture root built by write_fixture under --work; a3 and a4 use the real frozen toolchain manifest, a4 dropping the lexicographically first entry; a5 evaluates skip_run_receipt's emitted closure/closure_claimed fields",
+  "A6": "R66-C2 counter: recipe A is transcribed from the committed SCORECARD block (banner '**A - source-derived controls.**') and its nine keys are RECIPE_A_KEYS; --equiv extracts that block's heredoc at --rev, runs it as a subprocess at the same rev and compares field for field; recipe_a_hidden is the sorted list of knowledge stems the date-token numerator cannot map; the stem recipe population is every corpus/knowledge/*.md at --rev",
+  "A7": "R66-C2 atoms: A1-head-score compares the '## Owned axes' coverage row's head score (after the arrow) with round(10*stem.mapped/stem.files, 2); A2-cited-fraction compares the row's first '<n>/<n> knowledge files' with stem mapped/files; mismatches = the number of false atoms; a row whose declared shape is unparseable is could-not-evaluate, never clean",
+  "A8": "sourced claim: the C1 knowledge entry corpus/knowledge/2026-11-03-r66-closure-boundary.md cites the SOURCES row opened this round (the CPython sys.dont_write_bytecode page, scope = the environment variable sets the flag -B sets); the row's Gate block carries this round's access date and a located quote of at most 25 words",
+  "A9": "no-harm: PROVINCE.md unchanged base -> landing; the owned-axes rows other than the coverage row's head sentence unchanged; LOG additions only; the two counter files added; the SKILL delta is exactly the two registry rows plus the round's own append-only sections"
+ },
+ "frozen_paths": [
+  "tools/round-66/closure-boundary.py",
+  "tools/round-66/coverage-selfcheck.py",
+  ".ufo/waves/round-66/l1/controls/c1-do-nothing.py",
+  ".ufo/waves/round-66/l1/controls/c2-do-nothing.py"
+ ]
+}
