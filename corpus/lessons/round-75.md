@@ -55,6 +55,10 @@ existing row's `used-by` changes (S277).
   so the receipt's runner field is honest about what executed but does not match the freeze pin.
   Recorded as a known skew, not repaired (re-generating it with the frozen blob would write a
   `null` runner and lose the binding the atom checks).
+- **L1 determinism check.** Two independent battery runs at the tip (separate `--work` roots)
+  produced identical mutant rows (`name, verdict, failed`) with pristine 25 and sole true; the
+  receipt pair is `l1/scores/c1-at-tip.json` and the scratch re-run (not committed — a re-run
+  receipt of the same counters).
 - **ScoutSource** re-opened both pages (fresh GETs, digests identical to the registry snapshots) and
   located eight passages on `proc_pid_cmdline(5)`: argv mutability, the zombie empty read, NUL
   separation, and the `PR_SET_MM_ARG_START` relocation. Its conclusion: the pages support the
