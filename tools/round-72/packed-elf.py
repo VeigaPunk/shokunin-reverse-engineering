@@ -372,6 +372,7 @@ def observed_env(log_path: str | None, run_root: str) -> dict | None:
         name = os.path.basename(str(argv[0]))
         children[name] = children.get(name, 0) + 1
     return {"log": log_path, "run_root": root, "records": len(records),
+            "log_sha256": sha256_file(log_path) if os.path.exists(log_path) else None,
             "keys": sorted({k for e in envs for k in e}),
             "all_allowlisted": bool(envs) and all(
                 sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs),
@@ -821,14 +822,25 @@ def check_receipt(path: str, root: str, rev: str,
     observed = receipt.get("child_env_observed")
     capsule_path = capsule
     capsule_out = None
+    capsule_absent = None
     if capsule_path is None and isinstance(observed, dict) \
             and isinstance(observed.get("log"), str):
         cand = observed["log"]
         if not os.path.isabs(cand):
+            # A lane-relative capsule is filed evidence: its absence is a
+            # named failure, never a silent pass (round-72 ReviewerGates).
             cand = os.path.join(os.path.abspath(root), cand)
-        if os.path.exists(cand):
+            if os.path.exists(cand):
+                capsule_path = cand
+            else:
+                capsule_absent = cand
+        elif os.path.exists(cand):
             capsule_path = cand
-    capsule_verdict = None
+        # An absolute pointer outside the lane is a run pointer (dead scratch),
+        # recorded as not evaluated - it makes no committed-evidence claim.
+    if capsule_absent is not None:
+        failing.append(f"receipt_capsule: named capsule absent ({capsule_absent})")
+    capsule_verdict = False if capsule_absent is not None else None
     if capsule_path is not None:
         capsule_out = capsule_audit.audit(capsule_path, observed or {},
                                           run_root=None)

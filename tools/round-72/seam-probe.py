@@ -202,6 +202,52 @@ def parse_environ_file(path: str) -> dict | None:
     return env
 
 
+def read_jsonl(path: str) -> tuple[list[dict], list[str]]:
+    """Records and parse errors from a JSON Lines capsule (never a summary)."""
+    records: list[dict] = []
+    errors: list[str] = []
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for lineno, line in enumerate(fh, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    payload = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    errors.append(f"line {lineno}: {exc.__class__.__name__}")
+                    continue
+                if isinstance(payload, dict):
+                    records.append(payload)
+                else:
+                    errors.append(f"line {lineno}: not an object")
+    except OSError as exc:
+        errors.append(f"unreadable: {exc.__class__.__name__}")
+    return records, errors
+
+
+def checker_log_verdict(records: list[dict]) -> dict:
+    """A11's own reading of the checker's log: allowlist, canary, census.
+
+    The checker's JSON summary is a claim; this derives the same facts from
+    the raw records, so a checker (or a fake) that emits a clean summary
+    without a matching log cannot pass (round-72 ReviewerGates).
+    """
+    envs = [rec.get("env") if isinstance(rec.get("env"), dict) else {}
+            for rec in records]
+    census: dict[str, int] = {}
+    for rec in records:
+        name = os.path.basename(str((rec.get("argv") or ["?"])[0]))
+        census[name] = census.get(name, 0) + 1
+    keys_exact = bool(envs) and all(sorted(e) == sorted(CHILD_ENV_KEYS) for e in envs)
+    ok = (bool(records) and keys_exact
+          and not any("KAIDOKU_ENV_CANARY" in e for e in envs)
+          and census.get("git", 0) >= 1 and census.get("readelf", 0) >= 1)
+    return {"ok": ok, "records": len(records), "keys_exact": keys_exact,
+            "canary_present": any("KAIDOKU_ENV_CANARY" in e for e in envs),
+            "children": census}
+
+
 def invoke(instrument: str, root: str, rev: str, pkg: str, work: str,
            extra: list[str], path: str | None = None,
            keep_home: bool = True, with_pkg: bool = True,
@@ -276,6 +322,7 @@ def checker_env_arm(instrument: str, root: str, rev: str, pkg: str,
         env = parse_environ_file(record)
         shims[name] = {
             "recorded": env is not None,
+            "values": env,
             "keys": sorted(env) if env else None,
             "keys_exact": bool(env) and sorted(env) == sorted(CHILD_ENV_KEYS),
             "canary_present": bool(env) and canary in env,
@@ -284,24 +331,37 @@ def checker_env_arm(instrument: str, root: str, rev: str, pkg: str,
         }
     payload = parse_json_out(res["stdout"]) or {}
     observed = payload.get("checker_child_env") or {}
-    children = observed.get("children") or {}
-    observed_ok = (isinstance(observed.get("records"), int)
-                   and observed["records"] >= 2
+    # Read the checker's log OURSELVES: the JSON summary is the checker's
+    # claim, and a fake checker that emits a clean summary without a log (or
+    # with a zero-count census) must fail (round-72 ReviewerGates).
+    log_records, log_errors = read_jsonl(checker_log)
+    log_verdict = checker_log_verdict(log_records)
+    run_root = observed.get("run_root") if isinstance(observed, dict) else None
+    contain_root = run_root if isinstance(run_root, str) and run_root else work_abs
+    observed_ok = (log_verdict["ok"]
+                   and observed.get("records") == log_verdict["records"]
                    and observed.get("all_allowlisted") is True
                    and observed.get("canary_present") is False
                    and observed.get("home_under_run") is True
                    and observed.get("tmpdir_under_run") is True
-                   and all(name in children for name in ("git", "readelf"))
-                   and isinstance(observed.get("run_root"), str)
-                   and under(work_abs, observed["run_root"]))
+                   and observed.get("children") == log_verdict["children"]
+                   and isinstance(run_root, str) and bool(run_root)
+                   and under(work_abs, run_root))
+    for name, rec in shims.items():
+        rec["home_under_run_root"] = bool(
+            rec.get("values") and under(contain_root, rec["values"].get("HOME", "")))
+        rec["tmpdir_under_run_root"] = bool(
+            rec.get("values") and under(contain_root, rec["values"].get("TMPDIR", "")))
+        rec.pop("values", None)
     ok = (res["rc"] == 0 and observed_ok
           and all(s["recorded"] and s["keys_exact"] and not s["canary_present"]
-                  and s["home_under_work"] and s["tmpdir_under_work"]
+                  and s["home_under_run_root"] and s["tmpdir_under_run_root"]
                   for s in shims.values()))
     return {"ok": ok, "rc": res["rc"], "shims": shims,
-            "checker_child_env": observed, "observed_ok": observed_ok,
+            "checker_child_env": observed, "log_derived": log_verdict,
+            "log_errors": log_errors, "observed_ok": observed_ok,
             "checker_stdout_tail": (res["stdout"] or "")[-600:],
-            "work": work_abs, "log": checker_log}
+            "work": work_abs, "contain_root": contain_root, "log": checker_log}
 
 
 def arm(aid: str, ok: bool, observed: dict) -> dict:
@@ -333,12 +393,25 @@ def bind_producer(receipt_path: str, root: str, rev: str, tool: str,
 def check(root: str, rev: str, tool: str, pkg: str, work: str,
           battery_tool: str, receipt_path: str | None,
           expect_upx: str | None, nonce_commitment: str | None = None,
-          legacy_receipt: str | None = None) -> dict:
+          legacy_receipt: str | None = None,
+          receipt_rev: str | None = None) -> dict:
     if not os.path.isdir(work):
         raise Unevaluable(f"--work is not a directory: {work}")
     scratch = tempfile.mkdtemp(prefix="seam-probe-", dir=work)
     instrument, blob_sha = blob_to(root, rev, tool, scratch)
     battery, battery_sha = blob_to(root, rev, battery_tool, scratch)
+    # The receipt binds its producer at the revision it was produced at, which
+    # may predate the instrument's own supersession commits; the checker reads
+    # carrier sources at that revision too.  Default: the measured revision.
+    rrev = receipt_rev or rev
+    rblob_sha = blob_sha
+    if rrev != rev:
+        proc = subprocess.run(["git", "-C", root, "show", f"{rrev}:{tool}"],
+                              capture_output=True)
+        rblob_sha = (sha256_bytes(proc.stdout) if proc.returncode == 0
+                     else None)
+        if rblob_sha is None:
+            raise Unevaluable(f"git show {rrev}:{tool} failed")
     mod = load_module(instrument)
     arms = []
 
@@ -361,7 +434,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     # A2 - the threaded path: the producer-bound receipt's upx argv all name the
     # pinned copy the run was given, never the module default.
     if receipt_path and expect_upx:
-        receipt, defects = bind_producer(receipt_path, root, rev, tool, blob_sha)
+        receipt, defects = bind_producer(receipt_path, root, rrev, tool, rblob_sha)
         argv0s, missing = [], []
         if receipt is not None:
             if not os.path.exists(expect_upx) or sha256_bytes(
@@ -609,8 +682,8 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
     # A10 - pre-committed run binding, verdict read from the CHECKER's JSON
     # (R72-C2: the probe no longer re-derives binding_ok from the receipt).
     if receipt_path and nonce_commitment:
-        receipt, defects = bind_producer(receipt_path, root, rev, tool, blob_sha)
-        genuine = invoke(instrument, root, rev, pkg, work,
+        receipt, defects = bind_producer(receipt_path, root, rrev, tool, rblob_sha)
+        genuine = invoke(instrument, root, rrev, pkg, work,
                          ["--check-receipt", receipt_path,
                           "--nonce-commitment", nonce_commitment])
         genuine_verdict = binding_verdict(parse_json_out(genuine["stdout"]))
@@ -630,13 +703,13 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
             json.dump(broke, fh)
         for label, path in (("wrong_nonce", wrong_path),
                             ("broken_binding", broke_path)):
-            res = invoke(instrument, root, rev, pkg, work,
+            res = invoke(instrument, root, rrev, pkg, work,
                          ["--check-receipt", path,
                           "--nonce-commitment", nonce_commitment])
             verdict = binding_verdict(parse_json_out(res["stdout"]))
             fail_modes[label] = {"rc": res["rc"], **verdict}
         if legacy_receipt:
-            res = invoke(instrument, root, rev, pkg, work,
+            res = invoke(instrument, root, rrev, pkg, work,
                          ["--check-receipt", legacy_receipt,
                           "--nonce-commitment", nonce_commitment])
             fail_modes["legacy"] = {"rc": res["rc"],
@@ -662,7 +735,7 @@ def check(root: str, rev: str, tool: str, pkg: str, work: str,
                          "commitment": nonce_commitment}))
         # A11 - the checker-mode children run under the same allowlist
         # (R72-C1: this was the round-71 note's Frontier line).
-        a11 = checker_env_arm(instrument, root, rev, pkg, work,
+        a11 = checker_env_arm(instrument, root, rrev, pkg, work,
                               receipt_path, nonce_commitment)
         arms.append(arm("A11_checker_env", a11["ok"], a11))
     else:
@@ -765,6 +838,18 @@ def selftest() -> int:
                                          "run_binding": False}})["binding_ok"] is False
         and binding_verdict({})["present"] is False
         and binding_verdict({"clauses": {"run_nonce": True}})["binding_ok"] is False)
+    clean = {"HOME": "/r/home", "LANG": "C", "PATH": "/usr/bin", "TMPDIR": "/r/tmp"}
+    git = {"argv": ["/usr/bin/git", "show"], "env": dict(clean)}
+    readelf = {"argv": ["/usr/bin/readelf", "-h"], "env": dict(clean)}
+    cases["a11-log-census"] = (
+        checker_log_verdict([])["ok"] is False
+        and checker_log_verdict([git])["ok"] is False
+        and checker_log_verdict([git, readelf])["ok"] is True
+        and checker_log_verdict([git, readelf])["children"] == {"git": 1, "readelf": 1}
+        and checker_log_verdict(
+            [git, {**readelf, "env": {**clean, "KAIDOKU_ENV_CANARY": "x"}}])["ok"] is False
+        and checker_log_verdict(
+            [git, {**readelf, "env": {**clean, "EXTRA": "1"}}])["ok"] is False)
     print(json.dumps({"selftest": "tools/round-72/seam-probe.py",
                       "cases": len(cases),
                       "failures": [k for k, v in cases.items() if not v]},
@@ -784,6 +869,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--expect-upx")
     ap.add_argument("--nonce-commitment")
     ap.add_argument("--legacy-receipt")
+    ap.add_argument("--receipt-rev")
     ap.add_argument("--json-out")
     ap.add_argument("--validate")
     ap.add_argument("--selftest", action="store_true")
@@ -800,7 +886,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         receipt = check(args.root, args.rev, args.tool, args.pkg, args.work,
                         args.battery, args.receipt, args.expect_upx,
-                        args.nonce_commitment, args.legacy_receipt)
+                        args.nonce_commitment, args.legacy_receipt,
+                        args.receipt_rev)
     except Unevaluable as exc:
         print(json.dumps({"schema": "kaidoku-r72-seam-probe-v1",
                           "unevaluable": str(exc)}), file=sys.stderr)

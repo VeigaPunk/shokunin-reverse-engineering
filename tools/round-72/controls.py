@@ -214,7 +214,12 @@ def main(argv: list[str] | None = None) -> int:
         "defects": (res["json"] or {}).get("defects"),
         "met": res["rc"] == 1 and (res["json"] or {}).get("ok") is False}
 
-    ok = all(a["met"] is True for a in arms.values())
+    # The c3 arm carries two verdicts: `met` is the base checker's acceptance
+    # (true by design) and `met_control` is the full arm (checker accepts AND
+    # the audit rejects).  Only the strict one may gate the control
+    # (round-72 ReviewerGates).
+    ok = all((a.get("met_control") if "met_control" in a else a.get("met")) is True
+             for a in arms.values())
     out = {"instrument": "tools/round-72/controls.py",
            "base_rev": args.base_rev, "decl_rev": args.decl_rev,
            "receipt": args.receipt, "commitment": args.commitment,
