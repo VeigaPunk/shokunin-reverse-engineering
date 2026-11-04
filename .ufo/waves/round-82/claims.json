@@ -1,0 +1,28 @@
+{
+ "schema": "kaidoku-r82-claims-v1",
+ "round": 82,
+ "base": "9cc8fbbc893d4f76ced1ac8cf66a6239cde91770",
+ "declaration_pointer": "42c78912733357dabe8fcaf513a09c4a3c4ba2aa",
+ "claims": [
+  {
+   "id": "R82-C1",
+   "axis": "calibration",
+   "predicate": "`tools/round-82/conjunction-gate.py --battery` at the measured revision exits 0 with `forged_total 3`, `refused 3`, refusal reasons exactly `pristine_cases_below_floor`, `pristine_failures_nonzero`, `binder_digest_mismatch` (one per forged state, named by its first declared defect), `genuine_ok true`, `frozen_rule_accepts_forged 3`, `counter_sha256_matches true`, `binder_sha256_matches true`, and a defect-free `validate`. The forged states are the retained round-81 false greens: `.ufo/waves/round-81/w1/ExecCounter/undersized-pristine.json` (pristine summary `[1,0]`), `.ufo/waves/round-81/w1/ExecCounter/dirty-pristine-summary.json` (pristine summary `[11,3]`) and a binder-swapped copy of the genuine landing receipt. The genuine `.ufo/waves/round-81/l1/scores/c2-at-landing.json` passes every conjunct: pristine at least 11 cases and zero failures with exit 0, killed 1 and survivors 0, exactly one `record-fixture-committed-clean` detector with pass false, binder digest equal to the frozen `a5755ba1884f0c8d695d16289edbf5dff420e72d7552d424c2cc2df7bb94a438`, and all nine original case names present in the pristine case list.",
+   "kill_rule": "Any named conjunct unmet; no predicate changes after scoring."
+  },
+  {
+   "id": "R82-C2",
+   "axis": "operability",
+   "predicate": "`tools/round-82/printed-command.py --battery` at the measured revision exits 0 with `arms_ok 6`, `arms_total 6` and a defect-free `validate`: (1) the round's own C1 counting-command block executes as printed under a four-key child environment with work-root containment \u2014 executability only, rc in {0,1} and an integer receipt field, never C1's value; (2) a fixture whose block invokes the instrument's own `--selftest` executes at rc 0 as a pinned script, so the instrument runs as printed without self-recursion (the round's C2 counting-command block is executed as printed by the L1 outside this battery and retained with its argv and receipt); (3) an unbound-placeholder fixture is refused with `PLACEHOLDER_UNBOUND` and nothing executed; (4) a missing-required-argument fixture executes and fails at rc 2 with `EXECUTION_FAILED`; (5) the frozen `tools/round-76/plan-command.py` refuses the round's C1 block with `script outside tools/round-76/` \u2014 the routed dead end (round-81 outside defect 4) named, not repaired; and (6) the sourced arm binds the round's new source row `S299`: present and `mined` in `corpus/SOURCES.md` at the measured revision, absent at base, named in this plan, and cited by the round knowledge entry's `source:` line. Any script outside the claims container's pinned `instruments` keys is refused (`SCRIPT_NOT_PINNED`), and a script whose bytes at the revision do not hash to its pin is refused (`SCRIPT_PIN_MISMATCH`); both refusals plus the sourced-arm red shapes carry isolated selftest cases, and a red selftest case refuses a sourced entry that cites a different new row.",
+   "kill_rule": "Any named conjunct unmet; no predicate changes after scoring."
+  }
+ ],
+ "instruments": {
+  "tools/round-82/conjunction-gate.py": "6155a1ffa7564acffc755caeafbe450f5b080d00526edf4bef247444ad04e1af",
+  "tools/round-82/printed-command.py": "d447f6b487f2f9b39e0585ddf48f41cf4068cb5da6f64a299cf7be3066aacd8c",
+  "tools/round-81/record-integration.py": "52c829c604a5aac9306458cc6291b8cc648d3999ccf2eec0348666e582d524d6",
+  "tools/round-80/pointer-bind.py": "a5755ba1884f0c8d695d16289edbf5dff420e72d7552d424c2cc2df7bb94a438",
+  "tools/round-76/plan-command.py": "c169d670013858c3af9789f2f7f47cc73d9360a09f1436daff7436bca26179e1"
+ },
+ "instrument_supersessions": []
+}
