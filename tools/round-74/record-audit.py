@@ -488,8 +488,12 @@ def audit(root: str, rev: str) -> dict:
     for fn in ATOMS:
         atoms.append(fn(root, rev))
     mismatches = [a["id"] for a in atoms if not a["ok"]]
+    runner_blob = show(root, rev, "tools/round-74/record-audit.py")
+    runner = {"path": "tools/round-74/record-audit.py",
+              "sha256": (sha256_bytes(runner_blob.encode())
+                         if runner_blob is not None else None)}
     return {"schema": "kaidoku-r74-record-audit-v2", "rev": rev,
-            "root": os.path.abspath(root),
+            "root": os.path.abspath(root), "runner": runner,
             "population": {"document": SPOTCHECK,
                            "present": spotcheck is not None,
                            "atoms": len(atoms)},
@@ -570,7 +574,7 @@ def selftest() -> int:
     cases["newline-check"] = (("a\n".endswith("\n") is True)
                               and ("a".endswith("\n") is False))
     print(json.dumps({"selftest": "tools/round-74/record-audit.py",
-                      "cases": len(cases),
+                      "cases": len(cases), "case_names": sorted(cases),
                       "failures": [k for k, v in cases.items() if not v]},
                      indent=1, sort_keys=True))
     return 0 if all(cases.values()) else 1

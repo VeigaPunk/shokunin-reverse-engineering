@@ -346,7 +346,7 @@ def selftest() -> int:
         classify(1, [], "c") == "killed_wrong_case")
     cases["classify-base-kill"] = classify(1, ["a12-kernel-cases"], None) == "killed"
     print(json.dumps({"selftest": "tools/round-74/probe-mutation.py",
-                      "cases": len(cases),
+                      "cases": len(cases), "case_names": sorted(cases),
                       "failures": [k for k, v in cases.items() if not v]},
                      indent=1, sort_keys=True))
     return 0 if all(cases.values()) else 1

@@ -100,7 +100,7 @@ def selftest() -> int:
     cases["blob-at-worktree"] = blob is not None and len(blob) > 0
     cases["blob-absent"] = blob_at(root, None, "no/such/path") is None
     print(json.dumps({"selftest": "tools/round-74/freeze-pins.py",
-                      "cases": len(cases),
+                      "cases": len(cases), "case_names": sorted(cases),
                       "failures": [k for k, v in cases.items() if not v]},
                      indent=1, sort_keys=True))
     return 0 if all(cases.values()) else 1

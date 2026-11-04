@@ -72,6 +72,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", default=".")
     ap.add_argument("--base-rev", required=True)
+    ap.add_argument("--audit-rev")
     ap.add_argument("--work", required=True)
     ap.add_argument("--json-out")
     args = ap.parse_args(argv)
@@ -116,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
                  "expects": {"killed_wrong_case": expect, "killed": 4}})
 
     # -- c2_do_nothing -----------------------------------------------------
-    receipt = audit.audit(args.root, args.base_rev)
+    receipt = audit.audit(args.root, args.audit_rev or args.base_rev)
     mismatches = receipt["mismatches"]
     arms.append({"arm": "c2_do_nothing",
                  "met": all(atom in mismatches for atom in NEW_ATOMS),
@@ -125,8 +126,11 @@ def main(argv: list[str] | None = None) -> int:
                  "expects": {"every_new_atom_false": list(NEW_ATOMS)}})
 
     # -- c2_selftest_reds --------------------------------------------------
-    proc = subprocess.run([sys.executable, "-I", "-B",
-                           os.path.join(HERE, "record-audit.py"), "--selftest"],
+    selftest_copy = os.path.join(tempfile.mkdtemp(prefix="ctl-selftest-", dir=work),
+                                 "record-audit.py")
+    with open(selftest_copy, "w", encoding="utf-8") as fh:
+        fh.write(git_show(args.root, args.base_rev, "tools/round-74/record-audit.py"))
+    proc = subprocess.run([sys.executable, "-I", "-B", selftest_copy, "--selftest"],
                           capture_output=True, text=True,
                           env={**os.environ, "TMPDIR": work})
     reds = ("selection-two-arms-red", "used-by-wrong-entry-red")
@@ -135,8 +139,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         payload = json.loads(proc.stdout)
         ok = (proc.returncode == 0 and payload.get("failures") == []
-              and all(case in payload.get("cases") for case in reds))
-        observed["cases"] = payload.get("cases")
+              and all(case in (payload.get("case_names") or [])
+                      for case in reds))
+        observed["case_names"] = payload.get("case_names")
     except json.JSONDecodeError:
         pass
     arms.append({"arm": "c2_selftest_reds", "met": bool(ok),
