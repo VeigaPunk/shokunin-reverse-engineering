@@ -1,0 +1,42 @@
+{
+ "base": "29d2ca30b83a6a0d85b0aa979de0138fde1660e6",
+ "claim_row": "plans/round-79-claims.md",
+ "claims": [
+  {
+   "after": "landing: exit 0, mutants_total 8, killed 8, survivors 0, declared_case_hits 8, target_pin.matched true, pristine 29 cases 0 failures, validate defect-free; m03/m05/m08 sole-detector (l1/scores/c1-at-landing.json)",
+   "axis": "calibration",
+   "before": "base 29d2ca30: the frozen battery reports mutants_total 8, killed 5, survivors 3 naming m03-near-miss-re-dead, m05-atom-absent-bound and m08-validate-no-refusal-guard; declared_case_hits 5 (pre/c1-at-base.json)",
+   "counter": "survivors",
+   "counting_command": "python3 -I -B tools/round-79/gate-mutation.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>",
+   "id": "R79-C1",
+   "kill_rule": "a mutant counted killed while its declared case is absent from the selftest output or passes there; a mutant killed by a case other than its declared one counted in declared_case_hits; an anchor applied at 0 or >1 occurrences counted as a mutant; a copy without a SELFTEST summary counted as killed; a pristine selftest that is not green; a receipt admitted without re-deriving its own target pin; a --validate defect; an empty mutant set meeting survivors 0 without mutants_total 8; a declared case that exists only in the battery's own text rather than in the target's selftest",
+   "predicate": "R79-C1 is verified iff `python3 -I -B tools/round-79/gate-mutation.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `mutants_total 8`, `killed 8`, `survivors 0`, `declared_case_hits 8`, `target_pin.matched true`, a pristine selftest of 29 cases and 0 failures, and a defect-free `validate`; each mutant's declared case is present and fails in that mutant's selftest and the three mutants `m03`, `m05` and `m08` (the two round-78 survivors plus the atom-absent conjunct) are detected by that one case alone, while at base `29d2ca30` the same battery exits 1 with `survivors 3` naming `m03`, `m05` and `m08`.",
+   "surface": "tools/round-78/attack-gate.py's own selftest cases and the eight mutation classes in tools/round-79/gate-mutation.py's MUTANTS table; each mutant is one exact single-occurrence edit applied to the target blob at --rev",
+   "type": "capability acquisition"
+  },
+  {
+   "after": "landing: exit 0, checks_total 5, matched 5, mismatches 0, unparsed 0, validate defect-free (l1/scores/c2-at-landing.json)",
+   "axis": "freshness",
+   "before": "base 29d2ca30: exit 1, checks_total 5, matched 3, mismatches 2 naming omp-pin (record :8, pin at :12) and kimi-pin (record :4126, pin at :4722); the path-only control reports mismatches 0 on the same record (pre/c2-at-base.json, pre/controls/c2-path-only.json)",
+   "counter": "mismatches",
+   "counting_command": "python3 -I -B tools/round-79/pointer-bind.py --root . --rev <measured> --json-out <receipt>",
+   "id": "R79-C2",
+   "kill_rule": "a recorded value that does not parse counted as matched; a pointer path compared without reading its line; a line number treated as 0-based; a range compared as its first line only; a file read outside the pointer's declared path; a mismatch suppressed by normalising it away; a receipt without its checked_at; the path-only control used as the claim's counter instead of the line-bound rule",
+   "predicate": "R79-C2 is verified iff `python3 -I -B tools/round-79/pointer-bind.py --root . --rev <measured> --json-out <receipt>` exits 0 with `checks_total 5`, `matched 5`, `mismatches 0`, `unparsed 0` and a defect-free `validate`, every pointer bound at the line and range it names, while at base `29d2ca30` the same command exits 1 with `mismatches 2` naming `omp-pin` (record `:8`, the pin at `:12`) and `kimi-pin` (record `:4126`, the pin at `:4722`), and the control `--control path-only` reports `mismatches 0` on that same stale record.",
+   "surface": "PROVINCE.md's five drift-prone pointer cells (three REA pins, the Ghidra application.version line, the .bashrc export range) and the live files they name",
+   "type": "capability acquisition"
+  }
+ ],
+ "declaration_pointer": "a1f9b81cf0cd5065df3a9b25b30ce2eb184d012d",
+ "instrument_supersessions": [],
+ "instruments": {
+  "tools/round-79/gate-mutation.py": "682f1e7873dcc6ee47355c2cee3aa9359ef519ace6ef0eda5dd8f7135709c86d",
+  "tools/round-79/pointer-bind.py": "91d23dade98d831f8a709e50b8b9925ccb8930f74956993e058c143f24e80a90"
+ },
+ "loaded_by_counter": {
+  "tools/round-29/prefile-check.sh": "9a403dc11594a78a23629034bced6b6e0b33160f08a30d00a53d4bd860c1390d",
+  "tools/round-78/attack-gate.py": "4e4baf00ef0cb34c5615155abd0a746b7e12a6a997340d32ce72c5402d32d2bf"
+ },
+ "round": 79,
+ "schema": "kaidoku-r79-claims-v1"
+}
