@@ -655,6 +655,8 @@ Retired: none.
 | `exact-grammar record audit` | parses the record cells it checks — used-by path lists, search-note fields and integer counts, rejected-row reason+flip, erratum values bound to a measured receipt — with one committed red fixture per grammar in its selftest | `.ufo/waves/round-75/l1/scores/c2-at-tip.json` (0 mismatches, validate defect-free) | 75 |
 | `capability-row binding` | re-derives every round section that claims capability rows entered against the SCORECARD `## Capabilities` table: the named row must exist with a real description, a resolving evidence pointer and its claiming round, and six red fixtures show each failure shape detectable | `.ufo/waves/round-76/l1/scores/c1-at-tip.json` (D24 true, mismatch_count 0, nine atoms) | 76 |
 | `executable printed counting command` | extracts a plan's `counting-command` block, refuses every unbound placeholder, executes the argv with no shell under a four-key child environment inside the work root, and scores the receipt's counter — the round-75 printed command is refused statically and, with its digest bound, fails at rc 2 | `.ufo/waves/round-76/l1/scores/c2-at-landing.json` (arms_ok 3 of 3) | 76 |
+| `evidence-cell verdict binding` | re-derives a parenthesised verdict written beside an evidence path from the JSON receipt the cell names, through a closed eight-form grammar with type-strict comparison, and reports unbindable clauses rather than guessing | `tools/round-77/verdict-bind.py`; `.ufo/waves/round-77/pre/selftest-c1.json` (15 cases, 0 failures) | 77 |
+| `prefile gate receipt` | runs the round-29 prefile gate under a four-key child environment and retains a receipt binding argv, revision, exit, verdict line and stdout digest, re-derivable by `--check-receipt` | `tools/round-77/prefile-receipt.py`; `.ufo/waves/round-77/pre/selftest-c2.json` (13 cases, 0 failures) | 77 |
 
 Rows entered through rounds that demonstrated each capability running (`AXES.md` §Capabilities); the conformance rollout itself entered none.
 
@@ -5939,3 +5941,51 @@ document (the round-75 non-author spot-check) and its atom set is that document'
 chose; the pre-freeze control defect (a control that removed a defaulted argument and could not fail) was caught
 by the instrument's own selftest and repaired before the freeze, at `58316c92`.
 
+## 2026-11-04 — round 77: a claimed verdict is re-derived from its receipt, and the prefile gate keeps one
+
+Base `188562d43e3cc58b217ad7aa763fb296c5b8a0b7`; declaration `819cf30e2fc35d91a69df1b2a42a025741c7d0ef`;
+freeze `6767a879c6a3f386a9c3fc9d332c794f2d9ea914` — the round-29 gate audits it **CLEAN** with no findings and
+three instrument paths (`l1/scores/gate-at-freeze.json`). Two claims on two distinct axes, both capability
+acquisitions, causally separable: C1 reads annotation cells and the receipts they name; C2 runs the prefile gate
+and the receipts that retain it. Neither counter reads the other's value.
+
+**lowest-axis: calibration** (coverage/depth/calibration tied at 10.0 behind different proxies; R77-C1 works a
+tied-lowest axis). No nudge waiver is claimed — capability rows entered in rounds 73–76, inside the window.
+
+| claim | axis | type | predicate (frozen) | before → after | verdict |
+|---|---|---|---|---|---|
+| R77-C1 | calibration | capability acquisition (evidence-cell verdict binding) | `tools/round-77/verdict-bind.py` at the measured revision exits 0 with `mismatch_count 0`, `population.bound_clauses >= 18`, `population.in_scope_rows >= 11` and a defect-free `validate`, every bound clause re-derived from the JSON receipt its cell names — while at base `188562d4` the same command exits 1 with `mismatch_count 4` naming exactly the `capability-row binding` row and PROVINCE.md line 585 (`D24 true` vs `false`, `mismatch_count 0` vs `1`), and the 15-case selftest carries one red fixture per failure shape plus its legitimate look-alikes | base `pre/c1-at-base.json`: 4 mismatches over 21 bound clauses and 9 in-scope rows → measured at the record, see `### Round-77 measured records` | improved |
+| R77-C2 | operability | capability acquisition (prefile gate receipt) | `tools/round-77/prefile-receipt.py --battery` at the measured revision exits 0 with `arms_ok 6`, `arms_total 6`, `ok true` and a defect-free `validate`, each arm carrying its expected observation — while at base `188562d4` the same command exits 1 with `arms_ok 4` of 6 (the filing receipt absent, three round-76 gate receipts without `exit`), and the 13-case selftest carries both red fixtures and their legitimate look-alikes | base `pre/c2-at-base.json`: `arms_ok 4` → measured at the record, see `### Round-77 measured records` | improved |
+
+**Capabilities entered.** (1) an evidence-cell verdict binding — the record's annotation surface (the
+`## Capabilities` rows with first-working round at least 73 and the PROVINCE `- **Core — ` bullets) is parsed
+with a closed eight-form grammar and each bound clause is re-derived from the JSON receipt the cell names;
+unparsable clauses and absent fields are unbound, never passes, and a bound clause with no JSON pointer is a
+defect; the selftest carries one red fixture per failure shape. (2) a prefile gate receipt — the round-29 gate
+runs under a four-key child environment inside a private work root and its receipt binds argv, revision, exit,
+verdict line and stdout digest, so the filing verdict is re-checkable by the next reader.
+
+**Capabilities rows appended** in the table above (`## Capabilities`): `evidence-cell verdict binding` and
+`prefile gate receipt`, each with its selftest receipt.
+
+**Name by surface.** R77-C1's surface is the record's annotation cells and the receipts they name, not the
+capabilities table as such; R77-C2's surface is the filing gate invocation and the evidence it leaves, not the
+gate's own checks.
+
+**Record corrections — round 77 (append-only).**
+- *Routed defect 1 (the landing receipt cited as green in three files).* Three cells said
+  `c1-at-landing.json (D24 true, mismatch_count 0)`; that receipt records `rev 821d9eb6`, `exit 1`,
+  `mismatch_count 1`, `D24_capability_rows false` — its two evidence paths first appear in the commit it
+  measures. All three now cite `c1-at-tip.json` (rev `1ab1e164`, `mismatch_count 0`, nine atoms) and state the
+  landing value as 1 by construction: the R76-C1 before→after cell, the `capability-row binding` evidence cell,
+  and the PROVINCE round-76 evidence line. The filed round-76 report stays byte-identical; R77-C1's counter
+  re-derives both in-scope cells at the landing.
+- *Routed defect 2 (tip-receipt revision prose).* The filed round-76 report says C1 was measured "at `875e6488`",
+  C2 "at `da41dfba`", and "Both claims are measured against committed bytes at `875e6488`". The receipts record
+  `rev 1ab1e164` for both `*-at-tip.json`, and `gate-at-tip.txt` records `862c48a8`; the values stand because the
+  measured surface is byte-identical from `1ab1e164` to the tip. The correction is appended in `LOG.md`
+  (round-77 entry); the filed report stays as filed.
+- *Routed defect 3 (a gate receipt without its exit).* Round-77's gate receipts are JSON carrying `exit`, and
+  R77-C2's `gate-exits` arm requires every `l1/scores/gate-*` receipt in the newest round directory to carry one.
+- *Routed defect 4 (the prefile check retains no receipt).* `tools/round-77/prefile-receipt.py --filing` writes
+  `l1/scores/prefile-at-filing.json` and the report cites it.
