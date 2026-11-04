@@ -4417,3 +4417,56 @@ fractions — and requires zero mismatches with at least two corrections that ea
   (round-71 grammar); the lesson `corpus/lessons/round-73.md`.
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r73` removed after the close; no pacman transaction
   and no tool install ran this round.
+
+## 2026-11-04 — round 74: the selftest's six survivors close, and the record binds its routed set
+
+- **Claims.** Two, one per axis, both capability acquisitions, causally separable and scored by
+  their own instrument (`plans/round-74-claims.md`; frozen container
+  `.ufo/waves/round-74/claims.json`, freeze `021914c0`, audited **CLEAN** by the round-29 gate at
+  the record revision — planned item (d) demonstrated). `lowest-axis: calibration` — a tied-lowest
+  axis, no nudge waiver claimed.
+- **R74-C1 (operability; probe-mutation closure).** The ten defect classes round-73's MutProbe
+  used, re-expressed per blob: `r73probe` on the landed round-73 probe reports the six named
+  survivors and four kills (`pre/c1-base-arm.json`), `r74probe` on `tools/round-74/seam-probe.py`
+  reports 0 survivors with each of the ten killed by its declared case, pristine 20 cases green
+  and the target pinned (`l1/scores/c1-at-landing.json`). The six new cases need and use named
+  seams: `kernel_witness`'s injectable `/proc` readers with one deterministic pass,
+  `forged_subrun`'s injected spawner and witness, `assemble_arm`'s genuine→forged→verdict wiring.
+- **R74-C2 (calibration; record audit v2).** Sixteen atoms (D1–D7 retained; D7b plus D8–D15 added
+  from the round-73 non-author routed-defect population and this round's planned items b/d):
+  11 mismatches at base `04fdc2c4` (`pre/c2-at-base.json`) → 0 at the record revision
+  `5cea760e` (`l1/scores/c2-at-landing.json`). The repairs: three round-73 and two round-74
+  capability rows, the R73-C1 before-arm selection block, S275's used-by, S278 plus four
+  rejected registry rows, the round-73/74 search-log notes, the census erratum, the README
+  newline, a runner-bound before receipt and the freeze-pin check.
+- **Runtime preservation.** The refactored probe re-runs A1–A12 at the record revision: 12 of 12
+  with `A12_kernel_witness` true (`l1/scores/c1-runtime-at-landing.json`); ExecArm's earlier
+  11/12 was a harness path mismatch (`--expect-upx` must be the route receipt's own recorded
+  argv0 path), recorded as planned item (e).
+- **Controls.** Four arms met (`l1/scores/controls-at-landing.json`): base world six survivors,
+  renamed cases scored `killed_wrong_case` with no kill, base audit with every new atom false,
+  and the audit's red parser cases.
+- **Gate.** Freeze `021914c0` CLEAN, findings [], disclosures 49 of 49 exact, missing [], stray
+  [] (`l1/scores/gate-at-record.json`). The round-73 freeze's `INSTRUMENT_PIN_MISMATCH` row stays
+  as its own record; the round-74 row is `CLEAN -`.
+- **Wave.** `r74-w1`: 15 seats (5 executor, 3 scribe, 2 reviewer, 1 critic, 1 mutation-tester,
+  1 sentinel, 1 scout, 1 connector), attack roles 4/15 = 27%, one connector; all 15 settled
+  (`r74-w1-results.json`). Findings that bound the claims: ExecProbeCases independently
+  reproduced five one-case bindings and one cross-binding (`a12-kernel-multiple-samples` also
+  fails under the canary-field mutant); CriticClaims' three further A12 survivors outside the
+  frozen ten classes and four cosmetic-passes for D9–D12; ExecAuditRun's D14/D15 coverage notes;
+  MutationTester's D8/D11/D14 atom survivors; SentinelScope's path-containment, pin-before-exec,
+  child-cleanup and A11 interpolation items.
+- **Sources.** `corpus/SOURCES.md` 184 → 189 rows: S278 (`ptrace(2)`, the
+  `PTRACE_MODE_READ_FSCREDS` read check, opened this round, snapshot 104 833 B, sha256
+  `69cd309e…`, 15-word located quote), S279–S282 the four round-73 opened-and-rejected pages as
+  `rejected` rows with reasons and flips, S275's used-by extended, and the round-73/74 search-log
+  notes. Census start `l1/census-start.txt` (exit 0, 184 rows) and end (exit 0, 189 rows, 23 W04
+  lines both sides).
+- **Record.** `SCORECARD.md` capability rows and the round-74 section (with the round-73 census
+  erratum naming 24 reported and 23 measured); `PROVINCE.md` `## Round-74 additions to Core`;
+  `corpus/README.md` newline; `SKILL.md` registry rows for the five round-74 instruments; the
+  entry `corpus/knowledge/2026-11-04-r74-probe-mutation-closure.md`; the lesson
+  `corpus/lessons/round-74.md`.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r74` removed after the close; no pacman transaction
+  and no tool install ran this round.
