@@ -1,0 +1,11 @@
+Seat: ScoutSurface (scout, read-only). Map the insertion surface for the executors; change nothing in the lane.
+
+# Do
+1. For each of `tools/round-82/printed-command.py`, `tools/round-83/source-bind.py`, `tools/round-82/conjunction-gate.py` at rev 91eeb72f (`git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin show 91eeb72f:<path>`): list the top-level functions, the selftest entry point and how cases are registered (the `guarded` helper, the case tuple list, or other), the fixture helper functions, and the line where `selftest` returns.
+2. For each row in `.ufo/waves/round-85/mutants.json` (21 rows): confirm that `find` occurs EXACTLY ONCE in its target at 91eeb72f (`python3` string count over the bytes from `git show`), and record the line number of the occurrence. Report any row whose anchor count is not 1 (that would be a defect in the frozen table: report it, do not edit the table).
+3. For each declared case name in the table: report whether it already appears in the pristine target's selftest source (`grep -n -F`), and whether it appears in the pristine selftest's printed case-name inventory (run `python3 -I -B <file> --selftest` from a scratch copy with TMPDIR set to your scratch dir and report rc and case names; the copy must be your own file copy, the lane is read-only).
+4. Frozen r84 regression surface: the 13 rows in `.ufo/waves/round-84/mutants.json` target the same files; report each target's selftest rc at 91eeb72f.
+5. Census: run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` from the lane root (read-only; it validates the lane's registry) and report its exit code and the first two lines; then count rows at 91eeb72f with the frozen manual command `grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md` (use `git show 91eeb72f:corpus/SOURCES.md > $S/SOURCES.md` first) and the malformed-row command from CORPUS.md (NF must be 13).
+
+# Deliverables (wave dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-85/w1/ScoutSurface/)
+`map.md` (≤ 200 lines: per-file structure, insertion points with line numbers, anchor-count table for 21 rows, per-case presence table, frozen-13 rc, census numbers with commands), `DONE` marker last.

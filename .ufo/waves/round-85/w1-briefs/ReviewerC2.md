@@ -1,0 +1,10 @@
+Seat: ReviewerC2 (reviewer, attack seat). Attack R85-C2 (depth: the 21-row frozen table and its declared cases).
+
+# Do
+1. For each of the 21 rows in `.ufo/waves/round-85/mutants.json`, read the mutant (`find`→`replace`) and the declared case name. Before any candidate exists, decide for each row what a SOUND declared case must assert (the outcome the mutant flips) and what a FABRICATED case would look like (passes under the mutant, or asserts nothing about the production function). Record this as a table in your attack.md.
+2. Check the frozen kill rule in `tools/round-84/mutation-closure.py` (read it at 91eeb72f): a kill requires the declared case in the mutant's failing-case list AND in the pristine inventory, with pristine green. Attack the scorer: can a candidate reach 16/21 by (a) a case that always fails (pristine red → must be caught by pristine_failed), (b) a case that inspects the mutated source text (fabricated), (c) renaming a case so the name matches a different existing failure? For each, state whether the frozen counter catches it and how.
+3. Wait for `DONE` markers in `.ufo/waves/round-85/w1/ExecPrintedCmd/`, `.ufo/waves/round-85/w1/ExecPrintedRun/` and `.ufo/waves/round-85/w1/ExecSourceBind/`. Poll with at most 30 calls of `sleep 60` then `test -e`. When present, read each candidate and each `per-row.md`; for each of the 21 rows give a verdict SOUND (the case asserts the flipped outcome via the production function), FABRICATED (the case would pass or assert nothing about the production function), or WEAK (sound but misses variants). Run the candidate's own selftest once in your scratch copy with TMPDIR set. If the markers never appear, attack the plan only and say so.
+4. Check that no executor weakened a pre-existing case: diff each candidate's pre-existing case bodies against 91eeb72f (`git show 91eeb72f:<path>`).
+
+# Deliverables (wave dir /home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-85/w1/ReviewerC2/)
+`attack.md` (the table of 21 verdicts with evidence paths; the scorer attack results; weakened-case check result; the count of SOUND rows); `DONE` marker last.
