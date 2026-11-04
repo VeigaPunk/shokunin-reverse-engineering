@@ -4571,3 +4571,59 @@ tied-lowest axis). No nudge waiver is claimed.
 - **Scratch.** `/fast/scratch/hyaku/kaidoku-r76` is removed after the close; no pacman transaction and no tool
   install ran this round.
 
+## 2026-11-04 — round 77: a claimed verdict is re-derived from its receipt, and the prefile gate keeps one
+
+- **Claims.** R77-C1 calibration (evidence-cell verdict binding) and R77-C2 operability (prefile gate receipt),
+  both capability acquisitions, frozen at `6767a879` with their predicates byte-identical in the claim file, the
+  instruments' `PREDICATE` constants and the receipts; the round-29 gate audits the freeze **CLEAN** with three
+  instrument paths (`l1/scores/gate-at-freeze.json`) and the record **CLEAN** with 52 of 52 disclosures
+  (`l1/scores/gate-at-record.json`). Lowest axis: calibration (coverage/depth/calibration tied at 10.0; no nudge
+  waiver — capability rows entered in rounds 73–76).
+- **Instruments.** `tools/round-77/verdict-bind.py` (15-case selftest) binds a parenthesised verdict written
+  beside an evidence path to the JSON receipt the cell names, with a closed eight-form grammar, type-strict
+  comparison (S289) and unbindable clauses reported as unbound; `tools/round-77/prefile-receipt.py` (13-case
+  selftest) runs the round-29 gate under a four-key child environment inside a private work root and retains a
+  receipt binding argv, rev, exit, verdict line and stdout digest (S290); `tools/round-77/gen-controls.py`
+  derives and scores C1's two do-nothing controls. All three registered in `SKILL.md`.
+- **Before.** `pre/c1-at-base.json`: exit 1, `mismatch_count 4` over 21 bound clauses and 9 in-scope rows — the
+  `capability-row binding` row and `PROVINCE.md` line 585, each claiming `D24 true, mismatch_count 0` against a
+  receipt recording `false` and `1`. `pre/c2-at-base.json`: `arms_ok 4` of 6 (filing receipt absent, five round-76
+  gate receipts without `exit`). Controls re-taken after the wave: `pre/controls-c1.json` (`no-binding`
+  `bound_clauses 0`, `all-false` `mismatch_count 24`, neither meets the target, both diverge from pristine),
+  `pre/controls/c2-gate-alone.json` (the gate alone prints PASS and retains nothing), `pre/controls/c2-forged-arms.json`
+  (`--validate-battery` refuses a forged `arms_ok`).
+- **After (measured at the record).** `l1/scores/c1-at-record.json`: exit 0, `mismatch_count 0`,
+  `bound_clauses 25`, `in_scope_rows 11`, `validate` defect-free. `l1/scores/c2-at-record.json`: exit 0,
+  `arms_ok 6` of 6, `validate` defect-free. The filing receipt `l1/scores/prefile-at-filing.json` records argv,
+  `rev`, `exit 0`, `prefile: PASS`, the four-key child environment and its stdout digest.
+- **Wave.** `r77-w1`: 12 seats in one v1 wave (3 executor, 2 reviewer, 1 scout, 1 connector, 1 critic,
+  1 mutation-tester, 1 sentinel, 1 scribe, 1 revenger), attack roles 6/12 = 50%, one connector; the L1 holds
+  the planner seat. 10 seats returned evidence (all files under `.ufo/waves/round-77/w1/`), 2 died with
+  zero-byte output and no evidence dir (`ExecC2Receipt`, `ReviewerC1`; `r77-w1-results.json` carries
+  `note: null`, so their last error text is not retained); no replacement, no residual call.
+- **Sources.** 194 → 197 rows: S289 (RFC 8259 §3, mined, tier A, 28 360 B, sha256 `61a5378f…`, 14-word quote at
+  `grep -n` line 298 — the text carries 16 form feeds, so `str.splitlines()` would count 303), S290 (GNU Bash
+  manual §3.7.5, mined, tier A, 1 040 954 B, sha256 `78d0eefb…`, 10-word quote at line 4435), S291 (`ast.literal_eval`,
+  rejected, tier C, 362 493 B, sha256 `8cacd731…`, 13-word quote at line 2760, consumer search
+  `grep -c 'literal_eval' tools/round-77/verdict-bind.py` → 0). No existing row's status/recheck/used-by changed.
+  Census start `l1/census-start.txt` (exit 0, 194 rows, 23 W04) and end `l1/census-end.txt`.
+- **Record.** The round-77 section and two capability rows in `SCORECARD.md`; the four record corrections of the
+  round-76 routed defects 1–4 (three citations moved to `c1-at-tip.json` with the landing value restated as 1 by
+  construction; the revision-prose correction appended here; the gate receipts now carry `exit`; the filing
+  receipt retained); the two knowledge entries `corpus/knowledge/2026-11-04-r77-{verdict-binding,prefile-receipt}.md`;
+  the lesson `corpus/lessons/round-77.md` (three mistakes, the before-prose erratum, the five routed-defect
+  dispositions); QUALITY row 135; the coverage-map row and frontier note; the `PROVINCE.md` round-77 additions;
+  the three `SKILL.md` registry rows; the `corpus/claim-freezes-v2.tsv` round-77 row.
+- **Correction to the round-76 report's revision prose** (routed defect 2). The filed report says C1 was measured
+  "at the measured revision `875e6488`", C2 "at `da41dfba`", and closes "Both claims are measured against committed
+  bytes at `875e6488`". The receipts record `rev 1ab1e164` for both `*-at-tip.json`; `gate-at-tip.txt` records
+  `rev 862c48a8`; and the landing receipt `c1-at-landing.json` records `rev 821d9eb6`, `exit 1`, `mismatch_count 1`,
+  `D24 false` because its two evidence paths first appear in the commit it measures. The values stand because the
+  measured surface is byte-identical from `1ab1e164` to the tip; the filed report stays byte-identical and this
+  entry is the correction.
+- **Erratum.** R77-C2's frozen before-prose says "three round-76 gate receipts without exit"; the `gate-exits` arm
+  measures five (`gate-at-freeze.txt`, `gate-at-record.txt`, `gate-at-tip.txt`, `gate-disclosures.txt`,
+  `gate-selftest-at-tip.json`). The counter conditions (`arms_ok 4`, `arms_total 6`) reproduce; only the prose
+  count is wrong, and the frozen predicate file stays byte-identical.
+- **Scratch.** `/fast/scratch/hyaku/kaidoku-r77` is removed after the close; no pacman transaction and no tool
+  install ran this round.

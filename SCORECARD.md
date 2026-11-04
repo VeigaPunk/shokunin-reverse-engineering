@@ -5989,3 +5989,41 @@ gate's own checks.
   R77-C2's `gate-exits` arm requires every `l1/scores/gate-*` receipt in the newest round directory to carry one.
 - *Routed defect 4 (the prefile check retains no receipt).* `tools/round-77/prefile-receipt.py --filing` writes
   `l1/scores/prefile-at-filing.json` and the report cites it.
+
+### Round-77 measured records
+
+**R77-C1 at `ff561504e2080ee39c76274b8d1af3831ef70fec`** (`l1/scores/c1-at-record.json`): exit 0,
+`mismatch_count 0`, `population {bound_clauses 25, in_scope_rows 11, groups 24, unbound_clauses 2}`,
+`validate {defects [], bound_clauses 25}`; base `188562d4` (`pre/c1-at-base.json`): exit 1, `mismatch_count 4`,
+`bound_clauses 21`, `in_scope_rows 9`. The four base defects are the `capability-row binding` row and
+`PROVINCE.md` line 585, each with `D24 true` against `false` and `mismatch_count 0` against `1`; both cells now
+cite `c1-at-tip.json` and restate the landing value as 1 by construction.
+
+**R77-C2 at `ff561504`** (`l1/scores/c2-at-record.json`): exit 0, `arms_ok 6`, `arms_total 6`, `validate`
+defect-free. The filing receipt `l1/scores/prefile-at-filing.json` records `rev 88e73357`,
+`exit 0`, `prefile: PASS`, `env_keys [HOME, LANG, PATH, TMPDIR]` and its stdout digest; `--check-receipt
+--expect-rev 88e73357` accepts it (`prefile-rev-binding-at-filing.json`, exit 0) and the same check with a stale
+revision refuses it (`prefile-rev-binding-stale.json`, exit 1, naming the revision). Base `188562d4`
+(`pre/c2-at-base.json`): `arms_ok 4` of 6.
+
+**Controls (re-taken after the wave's F1).** `pre/controls-c1.json`: `no-binding` → `bound_clauses 0`,
+`mismatch_count 0` (fails the `>= 18` floor) and `all-false` → `mismatch_count 24`; neither meets the target and
+both record `diverges true`. `pre/controls/c2-gate-alone.json`: the gate alone prints `prefile: PASS` at exit 0
+and retains no receipt. `pre/controls/c2-forged-arms.json`: `--validate-battery` refuses a forged `arms_ok`.
+
+**Mutation battery (wave seat, unclaimed).** `w1/MutationTester-4/mutation-receipt.json`: 10 mutants, 8 killed by
+their declared cases, 2 survivors — `c1-rev-show-to-worktree` (no selftest case exercises `show()`, so reading the
+working tree instead of the `--rev` blob is undetected) and `c2-nonint-exit-accepted` (the selftest refuses a
+missing `exit`, not a string/bool one). Both are routed to round 78: closing them needs new selftest cases, and the
+frozen predicates name the case counts (15 and 13), so the fix cannot land inside this freeze.
+
+**Limits named by the wave (not falsifications).** The closed grammar makes a re-punctuated false annotation a
+no-claim: `(D24: true)` scores as prose and `(mismatch 0)` as an unknown field (unbound, counted in
+`unbound_clauses`), so a record that re-punctuates its verdicts escapes the binder while making no claim — the
+counter reports the unbound clauses, and round 78 should reject near-miss field names. C2's `record-receipt` arm
+checks the filing receipt's internal consistency; the revision binding is imposed by the kill rule and demonstrated
+above (`prefile-rev-binding-*`), and `gate-exits` accepts any integer `exit` key, not a full gate receipt.
+
+**Seats.** `r77-w1`: 12 seats dispatched in one v1 wave, 10 returned evidence, 2 died with zero-byte output
+(`ExecC2Receipt`, `ReviewerC1`; `results.json` carries no error text and neither wrote an evidence dir); no
+replacements, no residual call.
