@@ -122,11 +122,16 @@ def selftest_json(out: str, err: str) -> dict | None:
 def run_selftest(path: str) -> dict:
     proc = subprocess.run([sys.executable, "-I", "-B", path, "--selftest"],
                           capture_output=True, text=True, timeout=300)
-    payload = selftest_json(proc.stdout, proc.stderr)
+    payload = selftest_json(proc.stdout, proc.stderr) or {}
+    # Two selftest schemas in this lane: the route prints `failed`, the probe
+    # prints `failures` and no `ok`.  Normalise both (R72-C2 needs the probe).
+    failed = payload["failed"] if "failed" in payload else payload.get("failures")
+    ok = payload["ok"] if "ok" in payload else (
+        isinstance(failed, list) and not failed)
     return {"rc": proc.returncode,
-            "cases": (payload or {}).get("cases"),
-            "failed": (payload or {}).get("failed"),
-            "ok": (payload or {}).get("ok"),
+            "cases": payload.get("cases"),
+            "failed": failed,
+            "ok": ok,
             "stderr_tail": proc.stderr[-400:] if proc.returncode not in (0, 1) else ""}
 
 
