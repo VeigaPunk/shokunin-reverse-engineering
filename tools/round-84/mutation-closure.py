@@ -9,9 +9,11 @@ present in the target's own output; an absent declared case is inconclusive, nev
 
 Per mutant status:
   killed        the declared case failed in the mutant run and passed in the pristine run
-  survived      the mutant run did not fail the declared case
-  inconclusive  the anchor does not occur exactly once, or the declared case is absent from
-                the pristine case inventory, or the pristine tool is not green
+  survived      the mutant run did not fail the declared case, including the case where the
+                declared case is absent from the pristine inventory (QUALITY 138: an absent
+                detector is a survivor, never a pass)
+  inconclusive  an anchor does not occur exactly once, the id is not a leaf name, or the
+                pristine tool is not green
 The table never edits the lane tree: pristine and mutant copies live under --work and the
 pristine bytes are written back after each mutant to prove exact restoration.
 

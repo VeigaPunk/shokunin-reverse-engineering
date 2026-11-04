@@ -113,3 +113,19 @@ the integrated measurement are appended below at settlement.
   old-counter outer-selftest, the receipt-auth/gate-exits and r63 record-section sweeps, and the
   concurrent-replacement race remain named debt; the round-80/81 freeze rows stay FLAGGED as
   filed.
+
+## Wave (appended at settlement)
+
+`r84-w1`: 14 seats in one v1 wave — 5 executor (ExecPcDetectors, ExecSbDetectors, ExecMutantBase,
+ExecNested, ExecGateForge), 2 scribe (ScribeKnowledge, ScribeSources), 1 scout (ScoutLoci), 2
+reviewer (ReviewerC1, ReviewerC3), 1 critic (CriticClaims), 1 mutation-tester (MutationTester), 1
+sentinel (SentinelScope), 1 connector (ConnectorScope); attack roles 4/14 = 28.6 %; one connector;
+the L1 held the planner seat. All 14 settled and all 14 left a report (`l1/wave-accounting.json`);
+no seat was replaced and no seat died. The dispatcher's results artifact records every `output` as
+null with its own note that the orchestrator kernel restarted mid-wave, so the seat *report files*
+are the evidence and the accounting records that limit instead of inventing outputs. Attack yields
+integrated before landing: the sentinel's id-escape probe (M84-5), the reviewer's absent-key probe
+(M84-6), the critic's control-order refutation (per-container control), its table-drop refutation
+(frozen-table identity) and its depth-4 vacuity refutation (deepest-level arm). The scout's F12
+(registry case counts) and F7 (docstring wording) are corrected in the final commit; its F8/F9
+(round-82 and round-83 target revisions) are disclosed in those containers' supersessions.
