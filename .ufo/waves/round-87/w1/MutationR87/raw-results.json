@@ -1,0 +1,3978 @@
+{
+ "after": {
+  "tools/round-87/upx-magic-repair.py": "f4ebd152495dc832180fff3d1ca3447937a7dad121ba63d57872003ffcc49723",
+  "tools/round-87/upx-tamper-battery.py": "0f2d2bd80108ded5282dbb8cbf79044357538458143c97ee591cc78e8e5384b0"
+ },
+ "before": {
+  "tools/round-87/upx-magic-repair.py": "f4ebd152495dc832180fff3d1ca3447937a7dad121ba63d57872003ffcc49723",
+  "tools/round-87/upx-tamper-battery.py": "0f2d2bd80108ded5282dbb8cbf79044357538458143c97ee591cc78e8e5384b0"
+ },
+ "meta": {
+  "C01": {
+   "desc": "windows_only always True",
+   "kind": "counter",
+   "new": "    \"\"\"Every differing byte lies inside a 4-byte window that now reads UPX!.\"\"\"\n    return True, \"\"\n",
+   "old": "    \"\"\"Every differing byte lies inside a 4-byte window that now reads UPX!.\"\"\"\n",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C01.py",
+   "sha256": "e08f88992454e966dc379f81432f370c94ff9acefc0fe87fdf746f15bfb1d48a"
+  },
+  "C02": {
+   "desc": "N2 control check removed",
+   "kind": "counter",
+   "new": "\"N2-corrupt-payload\": True,",
+   "old": "\"N2-corrupt-payload\": not any(x[\"recovered\"] for x in controls[\"N2-corrupt-payload\"]),",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C02.py",
+   "sha256": "2597fb9e99f00badd549049f386c793b701814b6163acc605335376afaaa2474"
+  },
+  "C03": {
+   "desc": "identity arm compares packed sha",
+   "kind": "counter",
+   "new": "arms[\"identity\"] = usha == sha256_bytes(pbytes)",
+   "old": "arms[\"identity\"] = usha == c[\"sha256\"]",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C03.py",
+   "sha256": "db4abadc74bfb19c92c80b335bb490d0d38095ab522bfb2974595f236b27dd18"
+  },
+  "C04": {
+   "desc": "identity arm accepts any successful unpack",
+   "kind": "counter",
+   "new": "arms[\"identity\"] = usha is not None",
+   "old": "arms[\"identity\"] = usha == c[\"sha256\"]",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C04.py",
+   "sha256": "4d87ea800ae04d8cceff9563218076249a54f3170be1521f000eb2b46734d7ee"
+  },
+  "C05": {
+   "desc": "met ignores controls",
+   "kind": "counter",
+   "new": "met = recovered == TARGET",
+   "old": "met = recovered == TARGET and all(ctl_ok.values())",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C05.py",
+   "sha256": "e722735591109b9d0b4d2366092a6734b40b5aebd73ca88ea85b53c4ac07d13c"
+  },
+  "C06": {
+   "desc": "tamper leaves the last magic word",
+   "kind": "counter",
+   "new": "return packed.replace(MAGIC, value, max(packed.count(MAGIC) - 1, 0))",
+   "old": "return packed.replace(MAGIC, value)",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C06.py",
+   "sha256": "40089a1f56cbb301b8c8b1a17bd44699befe1cee0e06a7c4b908bffe2b3faa3d"
+  },
+  "C07": {
+   "desc": "precondition (upx -t fails on tampered) skipped",
+   "kind": "counter",
+   "new": "if False:",
+   "old": "if pre_t[\"rc\"] == 0:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C07.py",
+   "sha256": "f368ccc0d00a0c5c0b12e7d85ea420e09364e7c0d8ce7e5dc8e7d2dd84755dc6"
+  },
+  "C08": {
+   "desc": "test_ok arm always True",
+   "kind": "counter",
+   "new": "arms[\"test_ok\"] = True",
+   "old": "arms[\"test_ok\"] = t[\"rc\"] == 0",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C08.py",
+   "sha256": "f3d5755da440166b1fbfec2f7c22def27fb46ee887aa80b4e9e913b40fe1430b"
+  },
+  "C09": {
+   "desc": "repair_rc0 ignores exit code",
+   "kind": "counter",
+   "new": "arms[\"repair_rc0\"] = os.path.isfile(outp)",
+   "old": "arms[\"repair_rc0\"] = rr[\"rc\"] == 0 and os.path.isfile(outp)",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C09.py",
+   "sha256": "6b2508951efe6876b8c14b5093dcc4fa62ab5d4bfdba0295d6ca3bdad1ab680f"
+  },
+  "C10": {
+   "desc": "N1 refuse always True",
+   "kind": "counter",
+   "new": "\"refused\": True",
+   "old": "\"refused\": n1[\"rc\"] != 0",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C10.py",
+   "sha256": "7a0cab78f24bf7af2b8e1ae8699d2236161b53a4412704fe29e7cd2986280a7b"
+  },
+  "C11": {
+   "desc": "N3 ignores bytes (rc only)",
+   "kind": "counter",
+   "new": "same = n3[\"rc\"] == 0",
+   "old": "same = n3[\"rc\"] == 0 and os.path.isfile(n3o) and sha256_file(n3o) == sha256_bytes(pbytes)",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C11.py",
+   "sha256": "9487b51e1e6bce47a82534e12b4d7a38b52b791ba3753855ba89f167dac77014"
+  },
+  "C12": {
+   "desc": "recovered ignores the rea arm",
+   "kind": "counter",
+   "new": "case[\"recovered\"] = all(v for k, v in arms.items() if k != \"rea_recover\")",
+   "old": "case[\"recovered\"] = all(arms.values())",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C12.py",
+   "sha256": "57962a33c511a3883dbc8eda50fb3379d3bf5df11ce2da3904a034a3b1d4ff23"
+  },
+  "C13": {
+   "desc": "N2 flips no byte",
+   "kind": "counter",
+   "new": "tb[mid] ^= 0x00",
+   "old": "tb[mid] ^= 0xFF",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C13.py",
+   "sha256": "f524e697ba4c3c86fa7d5be4b64c4acab2d2088b5b7ad3cc9672ce4a02739f96"
+  },
+  "C14": {
+   "desc": "T2 tamper value equals T1 (zero)",
+   "kind": "counter",
+   "new": "TAMPERS = {\"T1-zero\": b\"\\x00\\x00\\x00\\x00\", \"T2-foreign\": b\"\\x00\\x00\\x00\\x00\"}",
+   "old": "TAMPERS = {\"T1-zero\": b\"\\x00\\x00\\x00\\x00\", \"T2-foreign\": b\"KDK!\"}",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/C14.py",
+   "sha256": "b05f4d5c4f19440425fcf5b2d068c1ac777fe5e238e20eb4eee6dbe107383d41"
+  },
+  "R01": {
+   "desc": "checksum mod 251 -> 256",
+   "kind": "repair",
+   "new": "% 256",
+   "old": "% 251",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R01.py",
+   "sha256": "f71c743f29f4efaab171f60eead28de62a059d47ea04fdffd4b81b6f86abd711"
+  },
+  "R02": {
+   "desc": "checksum includes magic (buf[0:31])",
+   "kind": "repair",
+   "new": "sum(buf[0:PH_SIZE - 1])",
+   "old": "sum(buf[4:PH_SIZE - 1])",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R02.py",
+   "sha256": "6d75739a693b0078bd1233eebbff663e094b494cce034c06588d16cd3c940a20"
+  },
+  "R03": {
+   "desc": "p_filesize offset 12 -> 8",
+   "kind": "repair",
+   "new": "m = p - 8",
+   "old": "m = p - 12",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R03.py",
+   "sha256": "287fd43d934c696f54f064aac768d4e5b9f0c480185e9cd25662bb7458eebaa7"
+  },
+  "R04": {
+   "desc": "drop l_info version/format cross-check",
+   "kind": "repair",
+   "new": "if True:",
+   "old": "if d[m + 6] == ph[\"version\"] and d[m + 7] == ph[\"format\"]:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R04.py",
+   "sha256": "c04a187b0499f455fbb0c9fd682cf4cf16b0d925cdc1ae1409310086de07d4f9"
+  },
+  "R05": {
+   "desc": "sentinel accepts nonzero word3 (method/ftid/cto8/unused)",
+   "kind": "repair",
+   "new": "",
+   "old": " and d[s + 8:s + 12] == b\"\\0\\0\\0\\0\"",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R05.py",
+   "sha256": "de4a7e8f75357dbe664e654b5713ae09bde05ed06203d0bac4dc52d5b92a5987"
+  },
+  "R06": {
+   "desc": "resume scan starts at stop instead of stop+1",
+   "kind": "repair",
+   "new": "range(stop, ph_off - 12)",
+   "old": "range(stop + 1, ph_off - 12)",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R06.py",
+   "sha256": "23e0846d8af5ba089142e264ad54d98cd9c57638f9042c13b1cf2d18d380b549"
+  },
+  "R07": {
+   "desc": "walk_chain method-match check removed",
+   "kind": "repair",
+   "new": "elif False:",
+   "old": "elif meth != method:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R07.py",
+   "sha256": "f01c09f18f337dff8a3f32a6262506d17bc566f0d05c232e1a5f42b2f928144c"
+  },
+  "R08": {
+   "desc": "resume-candidate method check removed",
+   "kind": "repair",
+   "new": " or",
+   "old": " or d[s + 8] != method or",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R08.py",
+   "sha256": "584643565abf4eb3384e0845f5a190835ba8df4cd5616088212ed34a9a9baef9"
+  },
+  "R09": {
+   "desc": "PackHeader scan from the front (first, not last)",
+   "kind": "repair",
+   "new": "range(lo, n - PH_SIZE + 1)",
+   "old": "range(n - PH_SIZE, lo - 1, -1)",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R09.py",
+   "sha256": "6bdec48dc26be28506edbfdc26c89b1e8288b12d559edd0c61b9a3221d184d20"
+  },
+  "R10": {
+   "desc": "write UPX! at sentinel instead of sentinel+4",
+   "kind": "repair",
+   "new": "\"b_info_end\": sentinel",
+   "old": "\"b_info_end\": sentinel + 4",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R10.py",
+   "sha256": "28efaf841a3f39c6f5f531942323706612cfd34f41e6f771e5ab41fc505b1d0d"
+  },
+  "R11": {
+   "desc": "intact check inverted (rewrite only anchors already UPX!)",
+   "kind": "repair",
+   "new": "if out[off:off + 4] == MAGIC:",
+   "old": "if out[off:off + 4] != MAGIC:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R11.py",
+   "sha256": "ff07d509beeb1fee0efb0ce1f77d9d8c6e169de842af90d10f6a1b656996c3fe"
+  },
+  "R12": {
+   "desc": "drop the ELF/endianness gate",
+   "kind": "repair",
+   "new": "if len(d) < 64:",
+   "old": "if d[:4] != b\"\\x7fELF\" or len(d) < 64 or d[5] != 1:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R12.py",
+   "sha256": "f32d7361cdff2f49792600a8429fa77d5e255052d7f8d891b8e721500ec36096"
+  },
+  "R13": {
+   "desc": "drop the l_info anchor",
+   "kind": "repair",
+   "new": "",
+   "old": "\"l_info\": l_magic, ",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R13.py",
+   "sha256": "9b91cc8068930064ce671cb5d4930cd22ceb3592547ec4035daa52da9039a789"
+  },
+  "R14": {
+   "desc": "PackHeader version gate dropped",
+   "kind": "repair",
+   "new": "if fmt >= 128",
+   "old": "if version < 10 or fmt >= 128",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R14.py",
+   "sha256": "58ee08787d2defe7fe00b57587f8d97fdc4d1df86f41a0aa667fc500d57b231f"
+  },
+  "R15": {
+   "desc": "PackHeader length sanity dropped",
+   "kind": "repair",
+   "new": "if False:",
+   "old": "if not (0 < c_len <= n and 0 < u_len and 0 < u_file_size):",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R15.py",
+   "sha256": "de959792003b9645656636dd6e19b78d0b4860127ff6e2167a8b0faa21e89944"
+  },
+  "R16": {
+   "desc": "TAIL_WINDOW 512 -> 32",
+   "kind": "repair",
+   "new": "TAIL_WINDOW = 32",
+   "old": "TAIL_WINDOW = 512",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R16.py",
+   "sha256": "1cff23274b10d6408367508a527b2eef13418210b38ece406684e65a321d3646"
+  },
+  "R17": {
+   "desc": "resume candidate allows sz_cpr == sz_unc",
+   "kind": "repair",
+   "new": "if not (0 < sz_cpr <= sz_unc)",
+   "old": "if not (0 < sz_cpr < sz_unc)",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R17.py",
+   "sha256": "fc50e9cfcc8ba4c73e2219650e68753be327e0e206f4b25c49d3d073247caaa6"
+  },
+  "R18": {
+   "desc": "walk_chain drops sz_cpr > sz_unc bound",
+   "kind": "repair",
+   "new": " or",
+   "old": " or sz_cpr > sz_unc or",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R18.py",
+   "sha256": "3030d22942196a5e57b5bbf1e63df9f88259f9dac002d57b4894da8fbbbc2422"
+  },
+  "R19": {
+   "desc": "refuse when first walk finds 0 blocks dropped",
+   "kind": "repair",
+   "new": "if False:",
+   "old": "if n1 == 0:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R19.py",
+   "sha256": "4f012c30adca827231c65e3621c8a9510a501018fc54c46f59272df553816760"
+  },
+  "R20": {
+   "desc": "selftest exit forced 0",
+   "kind": "repair",
+   "new": "return 0",
+   "old": "return 0 if not fails else 1",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R20.py",
+   "sha256": "74a6e6b08b847c66fdcc36454bc83c741e36c0399fe74aaa170528eb4dbbd246"
+  },
+  "R21": {
+   "desc": "intact flag inverted",
+   "kind": "repair",
+   "new": "\"intact\": bool(restored)",
+   "old": "\"intact\": not restored",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R21.py",
+   "sha256": "4f3932953d7c5344a92837474e8f6a109068a6fb0ea2e0f1ecb865d716d235bd"
+  },
+  "R22": {
+   "desc": "l_info search from offset 0 and allows m<4",
+   "kind": "repair",
+   "new": "if m + 20 <= ph_off:",
+   "old": "if m >= 4 and m + 20 <= ph_off:",
+   "path": "/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R22.py",
+   "sha256": "b31b0019bd043dcfee417962900a16aa8c769169309a319c4f32bcbdfbccc426"
+  }
+ },
+ "pristine_copies_after": {
+  "C00": "0f2d2bd80108ded5282dbb8cbf79044357538458143c97ee591cc78e8e5384b0",
+  "R00": "f4ebd152495dc832180fff3d1ca3447937a7dad121ba63d57872003ffcc49723"
+ },
+ "results": {
+  "B-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "B-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "B-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.7,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C01-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C01-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C01-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C02-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C02-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.1,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C02-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.7,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C03-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.1,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C03-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.9,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C03-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C04-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C04-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C04-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.8,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C05-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C05-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.1,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C05-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.8,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C06-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C06-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.1,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C06-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C07-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C07-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C07-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C08-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C08-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C08-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C09-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C09-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C09-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.7,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C10-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C10-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C10-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 3.1,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C11-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C11-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C11-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.7,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C12-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C12-naive": {
+   "out": "recovered 4 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 4 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 4,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C12-repair": {
+   "out": "recovered 8 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=True exit=0",
+   "rc": 0,
+   "secs": 2.7,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 0,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 8 of 8",
+    "met": true,
+    "nonrea_recovered": 8,
+    "recovered": 8,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C13-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C13-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 4,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C13-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': False, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": false,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "C14-identity": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C14-naive": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': False, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 1.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": false,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "C14-repair": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R01": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': False} met=False exit=1",
+   "rc": 1,
+   "secs": 2.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": false
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R02": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': False} met=False exit=1",
+   "rc": 1,
+   "secs": 2.9,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": false
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R03": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': False} met=False exit=1",
+   "rc": 1,
+   "secs": 2.2,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": false
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R04": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R05": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': False} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": false
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 2,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R06": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R07": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R08": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.7,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R09": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R10": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': False} met=False exit=1",
+   "rc": 1,
+   "secs": 2.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": false
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R11": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R12": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R13": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "test_ok"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R14": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R15": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R16": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': False} met=False exit=1",
+   "rc": 1,
+   "secs": 2.1,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": false
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "dinit/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "jq/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "jq/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "libz/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "libz/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "xxd/T1-zero": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ],
+     "xxd/T2-foreign": [
+      "identity",
+      "rea_recover",
+      "repair_rc0",
+      "test_ok",
+      "windows_only"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 0,
+    "recovered": 0,
+    "repaired_equals_packed": 0
+   }
+  },
+  "R17": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R18": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.8,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R19": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.5,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R20": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.6,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R21": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.3,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  },
+  "R22": {
+   "out": "recovered 0 of 8 controls_ok={'N1-refuse-plain': True, 'N2-corrupt-payload': True, 'N3-intact-idempotent': True} met=False exit=1",
+   "rc": 1,
+   "secs": 2.4,
+   "summary": {
+    "controls_ok": {
+     "N1-refuse-plain": true,
+     "N2-corrupt-payload": true,
+     "N3-intact-idempotent": true
+    },
+    "exit": 1,
+    "false_arms": {
+     "dinit/T1-zero": [
+      "rea_recover"
+     ],
+     "dinit/T2-foreign": [
+      "rea_recover"
+     ],
+     "jq/T1-zero": [
+      "rea_recover"
+     ],
+     "jq/T2-foreign": [
+      "rea_recover"
+     ],
+     "libz/T1-zero": [
+      "rea_recover"
+     ],
+     "libz/T2-foreign": [
+      "rea_recover"
+     ],
+     "xxd/T1-zero": [
+      "rea_recover"
+     ],
+     "xxd/T2-foreign": [
+      "rea_recover"
+     ]
+    },
+    "label": "recovered 0 of 8",
+    "met": false,
+    "nonrea_recovered": 8,
+    "recovered": 0,
+    "repaired_equals_packed": 4
+   }
+  }
+ },
+ "selftests": {
+  "C00": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C01": {
+   "out": "SELFTEST cases=8 failures=2 windows-only-refuses-outside-byte windows-only-refuses-length",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "C02": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C03": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C04": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C05": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C06": {
+   "out": "SELFTEST cases=8 failures=2 tamper-removes-all-magic naive-global-fixes-foreign",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "C07": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C08": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C09": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C10": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C11": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C12": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C13": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "C14": {
+   "out": "SELFTEST cases=8 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R00": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R01": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R02": {
+   "out": "ku/kaidoku-r87/MutationR87/m/R02.py\", line 221, in main\n    return selftest()\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R02.py\", line 188, in selftest\n    out, info = repair(_fixture(val))\n                ~~~~~~^^^^^^^^^^^^^^^\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R02.py\", line 148, in repair\n    ph_off, ph = find_packheader(d)\n                 ~~~~~~~~~~~~~~~^^^\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R02.py\", line 72, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nRefused: no validated PackHeader in the tail window",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R03": {
+   "out": "ch/hyaku/kaidoku-r87/MutationR87/m/R03.py\", line 221, in main\n    return selftest()\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R03.py\", line 188, in selftest\n    out, info = repair(_fixture(val))\n                ~~~~~~^^^^^^^^^^^^^^^\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R03.py\", line 149, in repair\n    l_magic, sentinel, walk = find_linfo(d, ph_off, ph)\n                              ~~~~~~~~~~^^^^^^^^^^^^^^^\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R03.py\", line 142, in find_linfo\n    raise Refused(last)\nRefused: no l_info/p_info matching the PackHeader",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R04": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R05": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R06": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R07": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R08": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R09": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R10": {
+   "out": "SELFTEST cases=9 failures=5 restores-zero restores-foreign restores-ff intact-idempotent partial-linfo",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R11": {
+   "out": "SELFTEST cases=9 failures=5 restores-zero restores-foreign restores-ff intact-idempotent partial-linfo",
+   "rc": 1,
+   "secs": 0.0
+  },
+  "R12": {
+   "out": "SELFTEST cases=9 failures=1 refuses-not-elf",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R13": {
+   "out": "SELFTEST cases=9 failures=4 restores-zero restores-foreign restores-ff partial-linfo",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R14": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R15": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.0
+  },
+  "R16": {
+   "out": "ku/kaidoku-r87/MutationR87/m/R16.py\", line 221, in main\n    return selftest()\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R16.py\", line 188, in selftest\n    out, info = repair(_fixture(val))\n                ~~~~~~^^^^^^^^^^^^^^^\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R16.py\", line 148, in repair\n    ph_off, ph = find_packheader(d)\n                 ~~~~~~~~~~~~~~~^^^\n  File \"/fast/scratch/hyaku/kaidoku-r87/MutationR87/m/R16.py\", line 72, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nRefused: no validated PackHeader in the tail window",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R17": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R18": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R19": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  },
+  "R20": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.0
+  },
+  "R21": {
+   "out": "SELFTEST cases=9 failures=1 intact-idempotent",
+   "rc": 1,
+   "secs": 0.1
+  },
+  "R22": {
+   "out": "SELFTEST cases=9 failures=0",
+   "rc": 0,
+   "secs": 0.1
+  }
+ }
+}

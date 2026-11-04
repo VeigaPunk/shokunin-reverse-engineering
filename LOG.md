@@ -4883,3 +4883,13 @@ Final instrument revision `16be078adae62713c7e166bdbd642b222edcaca0`: C1 and C2 
 ## Round-86 lesson and continuing defects
 
 The round-86 lesson is `corpus/lessons/round-86.md`. Defects routed to the next steered round are listed in the SCORECARD round-86 record.
+
+## 2026-11-04 — round 87: UPX magic-tamper repair (R87-C1, coverage, capability)
+
+- **Declared claim.** R87-C1 coverage: a UPX-packed ELF whose `UPX!` words are overwritten (it still runs; `upx -t/-l/-d` answer `NotPackedException`) is repaired from the PackHeader, `l_info` and end-of-chain `b_info` structures. Declaration `f0ebf611`; measured `73c3a297`. Plan `plans/round-87-claims.md`.
+- **Motivating evidence.** Round-86 spot-check: SHONEN box 2 untouched (no end-to-end domain task) and V86-1 (claims on unowned axes); `PROVINCE.md`/`corpus/README.md` round-68 Frontier line "anti-UPX stub whose magic or entry is altered". Before-state run (`.ufo/waves/round-87/w1/ExecReaBefore/before.json`): tampered jq/xxd/docker-init run unchanged, REA sees only the stub (3 procedures) or a partial `.so` (98/184), identically on intact and tampered files.
+- **Wave `r87-w1` (eleven seats).** scout 1, executor 3, scribe 2, reviewer 1, critic 1, mutation-tester 1, sentinel 1, connector 1; attack 3/11; the L1 held the planner seat.
+- **Measured.** `recovered 8 of 8`, controls true, exit 0 (`.ufo/waves/round-87/l1/scores/c1-at-73c3a297.json`); do-nothing 0/8, naive-global 4/8 at the declaration.
+- **Attacks that landed.** Decoy-sentinel steering and a quadratic resume scan (fixed before measurement); a chain-walk-free heuristic also reaches 8/8 (named limit, M87-3); `p_filesize` tampering not repaired (limit).
+- **Sources.** S306–S308 opened and admitted; `p_unix.cpp` rejected. Census exit 0 before and after.
+- **Mistakes mined.** M87-1 (precheck `.json`→`.js`), M87-2 (V86-2 registry row without an opened document), M87-3, M87-4 — `corpus/lessons/round-87.md`.

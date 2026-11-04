@@ -52,7 +52,19 @@ untampered packed file in those 4 bytes while libz and docker-init are byte-iden
 
 ## The measurement
 
-MEASURED_TABLE
+Measured at `73c3a29740884b0c134bbe50e3c9b13f141daccf` (repair sha256 `96da7d8e…bec24`, counter sha256 `0f2d2bd8…4b0`), receipt
+`.ufo/waves/round-87/l1/scores/c1-at-73c3a297.json`, REA envelopes `.ufo/waves/round-87/l1/scores/rea-73c3a297/`:
+
+| carrier | declared original procedures | T1-zero (REA procs/segs/strings after) | T2-foreign | before (REA on tampered file) |
+|---|---|---|---|---|
+| jq | 167 | recovered, 167/30/190 | recovered, 167/30/190 | 3/3/3 |
+| xxd | 99 | recovered, 99/29/103 | recovered, 99/29/103 | 3/3/6 |
+| libz.so.1.3.2 | 184 | recovered, 184/29/199 | recovered, 184/29/199 | 98/6/136 |
+| docker-init | 1268 | recovered, 1268/29/1111 | recovered, 1268/29/1111 | 3/3/5 |
+
+`recovered 8 of 8` (target 8); controls N1 refuse-plain 4/4, N2 corrupt-payload recovered 0/4,
+N3 intact-idempotent 4/4; exit 0. `repaired_equals_packed` is true for libz and docker-init and false
+for jq and xxd (the loader `cmp` word, above).
 
 Before (committed with the declaration `f0ebf61161d08279dca98841461330ad442d3023`): the do-nothing
 control (`--repair-cmd identity`) scores `recovered 0 of 8`, exit 1; the cheap rule
@@ -73,6 +85,25 @@ four carriers with `-1`, `--lzma` and `--best --brute`, tampered T1/T2 and repai
 reviewer's probe on the committed pre-integration repair refused libz `--lzma` (single-method chain
 walk); the integrated repair accepts the PackHeader's method for later blocks.
 
+## Hardening after the wave (integrated before measurement)
+
+SentinelR87 showed that a 25-byte decoy chain planted in loader bytes steered the first-hit resume
+scan to a wrong sentinel (jq/docker-init: rc 0, output still failing `upx -t`; intact+decoy: 4 loader
+bytes mutated), and that the resume scan was quadratic on crafted chains. The integrated repair scores
+every resume candidate (a sentinel already reading `UPX!` wins, else the one nearest the PackHeader),
+memoises walk ends, and refuses non-regular or > 256 MiB input with rc 2. Re-run of the seat's decoy
+probe on the integrated repair: all four decoy cases restore the real sentinel (`upx -t` 0;
+intact+decoy unchanged) — `.ufo/waves/round-87/l1/decoy-probe-after-hardening.txt`. A decoy placed
+between the real sentinel and the PackHeader (room exists only in a shared object's appended data,
+1815 bytes on libz) is not excluded.
+
+CriticClaim built a chain-walk-free repair (checksum PackHeader, version/format `l_info`, zero-surround
+sentinel) that also scores `recovered 8 of 8` with REA and byte-identical outputs
+(`.ufo/waves/round-87/w1/CriticClaim/receipts/cheap-v4-checksum-lite-rea.json`): the frozen counter
+forces the checksum and `l_info` anchors but not the chain walk. The plan's sentence "only a
+structural repair reaches" the zeroed class holds only in that sense; the chain walk is a robustness
+choice the counter does not discriminate.
+
 ## Limits (stated, never claimed covered)
 
 - Core scope: four carriers (`jq`, `xxd`, `libz.so.1.3.2`, `docker-init`), UPX 5.2.0 (`/usr/bin/upx`
@@ -89,5 +120,6 @@ walk); the integrated repair accepts the PackHeader's method for later blocks.
   four-carrier population never exercises (PackHeader sanity bounds, `l_info` version/format
   cross-check, method checks) survive the frozen counter — they are defences against plain-ELF false
   matches, covered in part by the integrated selftest's chance-window cases, not by the population.
-- [unknown] Whether a tamperer who also rewrites the PackHeader checksum, `p_filesize` or the chain
-  sizes can be repaired: none was measured; the repair refuses rather than guesses.
+- Measured negative (CriticClaim T5): T2 plus `p_info.p_filesize` zeroed — the repair exits 0 but `upx -t`
+  still fails; tampering of fields beyond the magic is not repaired. Whether a tamperer who also rewrites
+  the PackHeader checksum or chain sizes can be repaired was not measured.

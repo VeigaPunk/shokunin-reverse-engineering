@@ -1,0 +1,42 @@
+ReviewerRepair out-of-population probe (round 87; NOT part of the frozen population, NOT a score).
+Repair: tools/round-87/upx-magic-repair.py sha256 f4ebd152495dc832180fff3d1ca3447937a7dad121ba63d57872003ffcc49723
+Packer: /usr/bin/upx 5.2.0. Per carrier x pack option, three tampers: t1 (every UPX! -> 00000000),
+ff (every UPX! -> ffffffff), rnd (each UPX! -> independent random 4 bytes, seed 87).
+Columns: repair rc, `upx -t` rc on the repair output, ID = `upx -d` output sha256 equals the carrier source sha256.
+(xxd rows failed to pack in this probe only: /usr/bin/xxd is a symlink to /usr/bin/tinyxxd and upx skips symlinks;
+the counter copies with shutil.copy2, which follows the link, so the counter is unaffected. A separate --best T2
+probe on the resolved /usr/bin/tinyxxd: repair rc 0, restored anchors packheader 19524 / l_info 556 / b_info_end 19513.)
+
+jq--best t1 repair=0 test=0 ID
+jq--best ff repair=0 test=0 ID
+jq--best rnd repair=0 test=0 ID
+jq--lzma t1 repair=0 test=0 ID
+jq--lzma ff repair=0 test=0 ID
+jq--lzma rnd repair=0 test=0 ID
+jq-1 t1 repair=0 test=0 ID
+jq-1 ff repair=0 test=0 ID
+jq-1 rnd repair=0 test=0 ID
+libz.so.1.3.2--best t1 repair=0 test=0 ID
+libz.so.1.3.2--best ff repair=0 test=0 ID
+libz.so.1.3.2--best rnd repair=0 test=0 ID
+libz.so.1.3.2--lzma t1 repair=2 test=1 NO refused: b_info chain does not reach an end-of-chain sentinel
+libz.so.1.3.2--lzma ff repair=2 test=1 NO refused: b_info chain does not reach an end-of-chain sentinel
+libz.so.1.3.2--lzma rnd repair=2 test=1 NO refused: b_info chain does not reach an end-of-chain sentinel
+libz.so.1.3.2-1 t1 repair=0 test=0 ID
+libz.so.1.3.2-1 ff repair=0 test=0 ID
+libz.so.1.3.2-1 rnd repair=0 test=0 ID
+docker-init--best t1 repair=0 test=0 ID
+docker-init--best ff repair=0 test=0 ID
+docker-init--best rnd repair=0 test=0 ID
+docker-init--lzma t1 repair=0 test=0 ID
+docker-init--lzma ff repair=0 test=0 ID
+docker-init--lzma rnd repair=0 test=0 ID
+docker-init-1 t1 repair=0 test=0 ID
+docker-init-1 ff repair=0 test=0 ID
+docker-init-1 rnd repair=0 test=0 ID
+
+The repair also refuses the INTACT libz --lzma packed file (rc 2, same message), so it fails safe there rather than
+emitting wrong bytes. Cause: libz --lzma b_info chain (offsets): 9304 sz_unc 680 sz_cpr 201 method 0x02;
+9517 63157/30483 method 0x0e; 40012 23584/14471 method 0x0e. walk_chain (repair:87-90) stops when the method
+changes from the first block's, and the resume scan (repair:118) only accepts the first block's method (0x02).
+Totals: 24 of 27 probe cases ID; the 3 misses are the libz --lzma refusals.
