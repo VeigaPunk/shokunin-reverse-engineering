@@ -4869,3 +4869,17 @@ tied-lowest axis). No nudge waiver is claimed.
 ## Final committed-byte replay
 
 Final instrument revision `16be078adae62713c7e166bdbd642b222edcaca0`: C1 and C2 exit0 (`l1/scores/c1-at-final.json`, `c2-at-final.json`). C3 initially exits1 in the Eval subprocess because REA_UNBLOB_COMMAND is absent; the typed capability_unavailable envelope is retained (`c3-at-final.json`). With explicit `REA_UNBLOB_COMMAND=/home/vgpnk/.local/bin/unblob` and PATH prefixed by `/home/vgpnk/.local/bin`, the same committed counter exits0, A1-A9 true, control fires (`c3-at-final-with-provider.json`, producing execution record retains overrides). No failed run is discarded. Final freeze/disclosure and source census commands exit0. Mutation-closure's final documentation-only revision is disclosed at 4419abf6 in the round84 container; its final pin is e5cfd2ed…. WAVE-DONE received from Main, all14 settled; results retain null outputs after orchestrator restart, but all14 report files exist.
+
+## 2026-11-04 — round 86: record cells are re-derived where they state a value (C1 missed on a misspecified atom); a gate row is registered, not yet admitted (C2 axis unowned)
+
+- **Declared claims.** R86-C1 calibration (three record cells re-derived from the bytes they describe) and R86-C2 operability (the round-85 gate's SKILL row re-derived by running it). Declaration `b205bb8b`; container `ec9963eb`; integration `4cc03025` (measured). Plan `plans/round-86-claims.md`.
+- **Outside assessment carried in.** `corpus/lessons/round-85-verifier-spotcheck.md` §8 routed R85-2 (missing registry row), R85-3 (S303 count), R85-5 (docstring status) and R85-6 (coverage receipt pointer). R85-2, R85-3 and R85-5 are addressed; R85-6 stays open (see the SCORECARD round-86 record).
+- **Wave `r86-w1` (twelve seats, one v1 wave).** Scout, three executors, two scribes, two reviewers, one critic, one mutation-tester, one sentinel, one connector; attack 5/12; the L1 held the planner seat.
+- **Measured.** C1 at `4cc03025`: agreed 2/3, exit 1 (`l1/scores/c1-at-integration.json`); BASE 0/3. A3 mismatches because the frozen rule requires exactly one `| coverage |` row and the card has 23. C2 at `4cc03025`: agreed 5/5, exit 0 (`l1/scores/c2-at-integration.json`); BASE 0/5. Both controls accept the defective records, as designed.
+- **Attacks that landed.** The gate counter accepts a foreign command as the tool's self-test, a verdict-map substring, a silent six-cell row drop and a wrong-round pin; its G2 and G3 run the worktree tool under `--rev`. The record counter's "newest" is last-in-file. Mutation: 7 of 20 mutants killed.
+- **Sources and frontier.** S305 (correction row for S303's scope count; S303 stays rejected and untouched); S255 re-opened 2026-11-04 and used by the round-86 knowledge entry. Census exit 0 before and after.
+- **Verdict.** C1 missed under the frozen rule (honest stop; no calibration move). C2 met its frozen measure but is not admitted: operability is not an owned lane axis, and the counter's false greens are named limits. The round is not admitted; no owned score changes; no axis is harmed.
+
+## Round-86 lesson and continuing defects
+
+The round-86 lesson is `corpus/lessons/round-86.md`. Defects routed to the next steered round are listed in the SCORECARD round-86 record.
