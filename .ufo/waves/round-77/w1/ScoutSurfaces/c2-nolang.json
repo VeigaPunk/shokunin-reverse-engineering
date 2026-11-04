@@ -1,0 +1,77 @@
+{
+ "arms": [
+  {
+   "arm": "clone-run",
+   "detail": {
+    "argv": [
+     "bash",
+     "/fast/scratch/hyaku/kaidoku-r77/ScoutSurfaces/nolang/clone-run/lane/tools/round-29/prefile-check.sh",
+     "/fast/scratch/hyaku/kaidoku-r77/ScoutSurfaces/nolang/clone-run/lane"
+    ],
+    "env_keys": [
+     "HOME",
+     "PATH",
+     "TMPDIR"
+    ],
+    "exit": 1,
+    "lane": "/fast/scratch/hyaku/kaidoku-r77/ScoutSurfaces/nolang/clone-run/lane",
+    "passed": false,
+    "prefile_line": "prefile: FAIL",
+    "rev": "6767a879c6a3f386a9c3fc9d332c794f2d9ea914",
+    "schema": "kaidoku-r77-prefile-receipt-v1",
+    "stderr_tail": "",
+    "stdout": "prefile: tree clean\nprefile: ledger1 retired (erratum r68-1) \u2014 legacy ledger byte-identical to its retirement pin\nprefile: round-29 gate --disclosures corpus/claim-freezes-v2.tsv at 6767a879c6a3f386a9c3fc9d332c794f2d9ea914 exit=1\nprefile: FAIL\n",
+    "stdout_lines": 4,
+    "stdout_sha256": "74759868ebca82136e0954179bac2e3d64b5e81276e2dcca5e7df4fbc2161f16"
+   },
+   "met": false,
+   "observed": "rc 1, prefile: FAIL, receipt_defects [\"env_keys ['HOME', 'PATH', 'TMPDIR'] is not the four-key allowlist\"]"
+  },
+  {
+   "arm": "record-receipt",
+   "detail": {},
+   "met": false,
+   "observed": ".ufo/waves/round-77/l1/scores/prefile-at-filing.json absent at 6767a879"
+  },
+  {
+   "arm": "gate-exits",
+   "detail": {},
+   "met": false,
+   "observed": "round-77: 0 gate receipts, missing []"
+  },
+  {
+   "arm": "red-no-exit",
+   "detail": {},
+   "met": true,
+   "observed": "defects ['missing key exit']"
+  },
+  {
+   "arm": "red-verdict",
+   "detail": {},
+   "met": true,
+   "observed": "defects [\"passed True disagrees with exit 1 and verdict 'FAIL'\", \"env_keys ['HOME', 'PATH', 'TMPDIR'] is not the four-key allowlist\"]"
+  },
+  {
+   "arm": "red-rev",
+   "detail": {},
+   "met": true,
+   "observed": "defects [\"env_keys ['HOME', 'PATH', 'TMPDIR'] is not the four-key allowlist\", \"rev '0000000000000000000000000000000000000000' is not the expected '440ee0414622acd7f9ec192059e5934ce554cf4a'\"]"
+  }
+ ],
+ "arms_ok": 3,
+ "arms_total": 6,
+ "exit": 1,
+ "instrument": {
+  "path": "tools/round-77/prefile-receipt.py",
+  "sha256": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd"
+ },
+ "ok": false,
+ "predicate": "R77-C2 is verified iff `python3 -I -B tools/round-77/prefile-receipt.py --root . --rev <measured> --work <scratch> --battery --json-out <receipt>` exits 0 with `arms_ok 6`, `arms_total 6`, `ok true` and a defect-free `validate`, each arm carrying its expected observation (clone-run a clean clone run whose receipt passes --check-receipt; record-receipt the filing receipt at exit 0; gate-exits every gate receipt in the newest round dir carrying its exit; red-no-exit, red-verdict and red-rev each refused), while the same command at base 188562d4 exits 1 with `arms_ok 4` (the filing receipt absent and three round-76 gate receipts without exit), and the selftest's 13 cases carry both red fixtures and their legitimate look-alikes.",
+ "rev": "6767a879",
+ "root": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin",
+ "schema": "kaidoku-r77-prefile-battery-v1",
+ "validate": {
+  "arms": 6,
+  "defects": []
+ }
+}

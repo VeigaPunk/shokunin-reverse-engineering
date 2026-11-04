@@ -1,0 +1,918 @@
+{
+ "base_run": {
+  "defects": [
+   {
+    "actual": false,
+    "claimed": true,
+    "field": "D24",
+    "group": "D24 true, mismatch_count 0",
+    "label": "## Capabilities row 'capability-row binding' (first-working round 76)",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   },
+   {
+    "actual": 1,
+    "claimed": 0,
+    "field": "mismatch_count",
+    "group": "D24 true, mismatch_count 0",
+    "label": "## Capabilities row 'capability-row binding' (first-working round 76)",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   },
+   {
+    "actual": false,
+    "claimed": true,
+    "field": "D24",
+    "group": "D24 true, mismatch_count 0",
+    "label": "PROVINCE.md line 585",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   },
+   {
+    "actual": 1,
+    "claimed": 0,
+    "field": "mismatch_count",
+    "group": "D24 true, mismatch_count 0",
+    "label": "PROVINCE.md line 585",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   }
+  ],
+  "exit": 1,
+  "mismatch_count": 4,
+  "ok": false,
+  "population": {
+   "bound_clauses": 21,
+   "capability_rows": 39,
+   "groups": 18,
+   "in_scope_rows": 9,
+   "unbound_clauses": 3
+  },
+  "rev": "188562d43e3cc58b217ad7aa763fb296c5b8a0b7",
+  "validate_defects": []
+ },
+ "fixture_failures": [],
+ "fixtures": [
+  {
+   "expected": "clause 'mismatch_count 0' binds to .ufo/x.json and defects (value_mismatch); 'no defects' matches no grammar clause and is dropped from the parsed set (escapes as prose)",
+   "id": "a-negation-with-false-claim",
+   "input": "`.ufo/x.json` (no defects, mismatch_count 0)",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "no defects, mismatch_count 0",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective: mismatch_count 1, D24 ok false"
+   },
+   "token_predicate": "sees tokens 'no defects' and 'mismatch_count 0'; never reads the receipt -> accepts"
+  },
+  {
+   "expected": "no grammar clause: FIELD_RE needs `<field> <lit>` and 'no mismatch_count 0' is not `<field> <true|false|int>'; group scores as prose, makes no claim, never a pass",
+   "id": "a2-negation-fused",
+   "input": "`.ufo/x.json` (no mismatch_count 0)",
+   "observed": {
+    "bound": 0,
+    "clauses": [],
+    "defects": [],
+    "groups": 1,
+    "prose": 1,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective"
+   },
+   "token_predicate": "sees substring 'mismatch_count 0' -> accepts"
+  },
+  {
+   "expected": "GROUP_RE finds no parenthesised group; the cell binds nothing and makes no claim",
+   "id": "b-outside-group",
+   "input": "`.ufo/x.json` mismatch_count 0",
+   "observed": {
+    "bound": 0,
+    "clauses": [],
+    "defects": [],
+    "groups": 0,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective"
+   },
+   "token_predicate": "sees 'mismatch_count 0' with a JSON path in the cell -> accepts"
+  },
+  {
+   "expected": "only (D24 true) is a group: it binds and defects on D24; the trailing 'mismatch_count 0' is outside every group and makes no claim",
+   "id": "b2-outside-group-hybrid",
+   "input": "`.ufo/x.json` (D24 true) mismatch_count 0",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": false,
+      "claimed": true,
+      "clause": "D24 true",
+      "field": "D24",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": false,
+      "claimed": true,
+      "field": "D24",
+      "group": "D24 true",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective (D24 ok false)"
+   },
+   "token_predicate": "sees 'D24 true' and 'mismatch_count 0' -> accepts"
+  },
+  {
+   "expected": "each group binds to the path immediately preceding it: group 1 -> good.json (D24 true, ok), group 2 -> bad.json ('mismatch_count 0' vs actual 1 -> value_mismatch)",
+   "id": "c-second-group-other-path",
+   "input": "`.ufo/good.json` (D24 true); also `.ufo/bad.json` (mismatch_count 0)",
+   "observed": {
+    "bound": 2,
+    "clauses": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "field": "D24",
+      "path": ".ufo/good.json",
+      "reason": null,
+      "status": "bound"
+     },
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/bad.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "mismatch_count 0",
+      "label": "fixture",
+      "path": ".ufo/bad.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 2,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/bad.json": "defective",
+    ".ufo/good.json": "clean"
+   },
+   "token_predicate": "keyed on the cell's first path: scores both clauses against good.json -> 'mismatch_count 0' matches -> accepts"
+  },
+  {
+   "expected": "first twin binds ok; second twin binds and defects (claimed False vs actual True) - every bound clause must hold, not just one",
+   "id": "d-contradictory-twins",
+   "input": "`.ufo/x.json` (D24 true, D24 false)",
+   "observed": {
+    "bound": 2,
+    "clauses": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "field": "D24",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "bound"
+     },
+     {
+      "actual": true,
+      "claimed": false,
+      "clause": "D24 false",
+      "field": "D24",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": true,
+      "claimed": false,
+      "field": "D24",
+      "group": "D24 true, D24 false",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "clean (D24 ok true)"
+   },
+   "token_predicate": "finds 'D24 true' matching the receipt -> accepts (one matching twin is enough)"
+  },
+  {
+   "expected": "GROUP_RE cannot match across parentheses: only the inner '(D24 true)' is a group and binds ok; 'mismatch_count 0' sits outside every group, makes no claim, and is NOT accepted as a bound verdict",
+   "id": "e-nested-parens-escaped-remainder",
+   "input": "`.ufo/x.json` ((D24 true), mismatch_count 0)",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": false,
+      "claimed": true,
+      "clause": "D24 true",
+      "field": "D24",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": false,
+      "claimed": true,
+      "field": "D24",
+      "group": "D24 true",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective (mismatch_count 1, D24 ok true)"
+   },
+   "token_predicate": "sees both 'D24 true' and 'mismatch_count 0' tokens inside the double parentheses -> accepts"
+  },
+  {
+   "expected": "nesting does not hide the clause: the inner group '(mismatch_count 0)' still binds to .ufo/x.json and defects (0 vs 1)",
+   "id": "e2-nested-parens-fully-wrapped",
+   "input": "`.ufo/x.json` ((mismatch_count 0))",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "mismatch_count 0",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective (mismatch_count 1)"
+   },
+   "token_predicate": "accepts on the 'mismatch_count 0' token"
+  },
+  {
+   "expected": "nearest_path prefers backticked paths in the text before the group: binds the defective .ufo/x.json -> value_mismatch",
+   "id": "f-bare-path-after-backtick",
+   "input": "`.ufo/x.json` see .ufo/y.json (mismatch_count 0)",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "mismatch_count 0",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective (mismatch_count 1)",
+    ".ufo/y.json": "clean (mismatch_count 0)"
+   },
+   "token_predicate": "a substring/path-token predicate that grabs any '.json' token can bind the flattering bare .ufo/y.json -> 'mismatch_count 0' matches -> accepts"
+  },
+  {
+   "expected": "order does not matter: the backticked .ufo/x.json is still the only backticked path and wins -> binds defective receipt -> value_mismatch",
+   "id": "f2-bare-path-before-backtick",
+   "input": ".ufo/y.json per `.ufo/x.json` (mismatch_count 0)",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "mismatch_count 0",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective (mismatch_count 1)",
+    ".ufo/y.json": "clean (mismatch_count 0)"
+   },
+   "token_predicate": "first '.json' token in the cell is the flattering bare .ufo/y.json -> accepts"
+  },
+  {
+   "expected": "province_bullets appends continuation lines to the bullet text, so the group on line 2 is parsed and binds both clauses against .ufo/x.json -> two value_mismatch defects",
+   "id": "g-province-continuation-group-second-line",
+   "input": "province bullet: '- **Core \u2014 row one** `.ufo/x.json`' + continuation line '  (D24 true, mismatch_count 0)'",
+   "observed": {
+    "line": 5,
+    "result": {
+     "bound": 2,
+     "clauses": [
+      {
+       "actual": false,
+       "claimed": true,
+       "clause": "D24 true",
+       "field": "D24",
+       "path": ".ufo/x.json",
+       "reason": null,
+       "status": "defect"
+      },
+      {
+       "actual": 1,
+       "claimed": 0,
+       "clause": "mismatch_count 0",
+       "field": "mismatch_count",
+       "path": ".ufo/x.json",
+       "reason": null,
+       "status": "defect"
+      }
+     ],
+     "defects": [
+      {
+       "actual": false,
+       "claimed": true,
+       "field": "D24",
+       "group": "D24 true, mismatch_count 0",
+       "label": "fixture",
+       "path": ".ufo/x.json",
+       "reason": "value_mismatch"
+      },
+      {
+       "actual": 1,
+       "claimed": 0,
+       "field": "mismatch_count",
+       "group": "D24 true, mismatch_count 0",
+       "label": "fixture",
+       "path": ".ufo/x.json",
+       "reason": "value_mismatch"
+      }
+     ],
+     "groups": 1,
+     "prose": 0,
+     "unbound": 0
+    }
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective"
+   },
+   "token_predicate": "a first-line-only scanner sees only the bare pointer on line 1 (no parenthesised claim) -> treats the row as pointer-only -> accepts"
+  },
+  {
+   "expected": "nearest_path falls back to the first path after the group: binds .ufo/x.json -> D24 value_mismatch defect; putting the path below the group does not escape",
+   "id": "g2-province-path-after-group",
+   "input": "bullet line '- **Core \u2014 row three**', group on line 2 '(D24 true)', path on line 3 '`.ufo/x.json`'",
+   "observed": {
+    "line": 7,
+    "result": {
+     "bound": 1,
+     "clauses": [
+      {
+       "actual": false,
+       "claimed": true,
+       "clause": "D24 true",
+       "field": "D24",
+       "path": ".ufo/x.json",
+       "reason": null,
+       "status": "defect"
+      }
+     ],
+     "defects": [
+      {
+       "actual": false,
+       "claimed": true,
+       "field": "D24",
+       "group": "D24 true",
+       "label": "fixture",
+       "path": ".ufo/x.json",
+       "reason": "value_mismatch"
+      }
+     ],
+     "groups": 1,
+     "prose": 0,
+     "unbound": 0
+    }
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective (D24 ok false)"
+   },
+   "token_predicate": "no path on the group's line or above it -> a per-line predicate finds no receipt -> accepts/skips"
+  },
+  {
+   "expected": "no parenthesised group in the bullet -> no claim is parsed; the bare clause makes no claim and is not accepted as a verdict",
+   "id": "g3-province-bare-clause-continuation",
+   "input": "bullet line '- **Core \u2014 row four** `.ufo/x.json`' + bare continuation line '  mismatch_count 0' (no parentheses)",
+   "observed": {
+    "line": 10,
+    "result": {
+     "bound": 0,
+     "clauses": [],
+     "defects": [],
+     "groups": 0,
+     "prose": 0,
+     "unbound": 0
+    }
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective"
+   },
+   "token_predicate": "sees 'mismatch_count 0' on the continuation line -> accepts"
+  },
+  {
+   "expected": "capability_rows finds the row (first_round 72) but audit() filters to first_round >= 73: the false annotation is never scored, contributes no clause and no defect; the round-73 row binds normally",
+   "id": "h-scope-floor-round-72",
+   "input": "SCORECARD.md row '| `legacy row` | ... | `.ufo/x.json` (mismatch_count 0) | 72 |' in fixture repo /fast/scratch/hyaku/kaidoku-r77/ExecC1Grammar/fixturerepo.Uzqstp",
+   "observed": {
+    "defects": [],
+    "exit": 0,
+    "in_scope_cell_clauses": [
+     {
+      "actual": true,
+      "claimed": true,
+      "clause": "D24 true",
+      "field": "D24",
+      "path": ".ufo/y.json",
+      "qualifier": null,
+      "status": "bound"
+     }
+    ],
+    "mismatch_count": 0,
+    "population": {
+     "bound_clauses": 1,
+     "capability_rows": 2,
+     "groups": 1,
+     "in_scope_rows": 1,
+     "unbound_clauses": 0
+    },
+    "same_cell_scored_standalone": {
+     "bound": 1,
+     "clauses": [
+      {
+       "actual": 1,
+       "claimed": 0,
+       "clause": "mismatch_count 0",
+       "field": "mismatch_count",
+       "path": ".ufo/x.json",
+       "reason": null,
+       "status": "defect"
+      }
+     ],
+     "defects": [
+      {
+       "actual": 1,
+       "claimed": 0,
+       "field": "mismatch_count",
+       "group": "mismatch_count 0",
+       "label": "fixture",
+       "path": ".ufo/x.json",
+       "reason": "value_mismatch"
+      }
+     ],
+     "groups": 1,
+     "prose": 0,
+     "unbound": 0
+    }
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective",
+    ".ufo/y.json": "clean"
+   },
+   "token_predicate": "a token predicate with no scope floor scores the round-72 row's 'mismatch_count 0' -> sees the token -> accepts (it never opens the receipt)"
+  },
+  {
+   "expected": "in scope, the identical annotation binds and defects - the round-72 row passed only because the declared scope floor excludes it, not because the grammar was fooled",
+   "id": "h2-same-cell-in-scope",
+   "input": "the same false cell moved to a round-73 row: '| `current row` | ... | `.ufo/x.json` (mismatch_count 0) | 73 |'",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "mismatch_count 0",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "defective"
+   },
+   "token_predicate": "accepts on the token"
+  },
+  {
+   "expected": "SURVIVOR_RE needs '<N> survivors'; 'survivor 1' falls through to FIELD_RE as field 'survivor' = 1; the receipt has no such field -> unbound (unknown_field), never a guessed pass",
+   "id": "i-unknown-field-survivor-1",
+   "input": "`.ufo/x.json` (survivor 1)",
+   "observed": {
+    "bound": 0,
+    "clauses": [
+     {
+      "actual": null,
+      "claimed": null,
+      "clause": "survivor 1",
+      "field": "survivor",
+      "path": ".ufo/x.json",
+      "reason": "unknown_field",
+      "status": "unbound"
+     }
+    ],
+    "defects": [],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 1
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "clean but carries no 'survivor' field"
+   },
+   "token_predicate": "sees 'survivor' and '1' -> accepts"
+  },
+  {
+   "expected": "the legitimate survivor clause binds against survivor_count and passes",
+   "id": "i2-legitimate-look-alike",
+   "input": "`.ufo/x.json` (0 survivors)",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 0,
+      "claimed": 0,
+      "clause": "0 survivors",
+      "field": "survivor_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "bound"
+     }
+    ],
+    "defects": [],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "clean (survivor_count 0)"
+   },
+   "token_predicate": "n/a"
+  },
+  {
+   "expected": "FIELD_RE binds 'mismatch_count true' with literal True; typed_equal(True, 1) is False (bool is not int) -> bound and defect value_mismatch, claimed True actual 1",
+   "id": "j-typed-true-vs-int-1",
+   "input": "`.ufo/x.json` (mismatch_count true)",
+   "observed": {
+    "bound": 1,
+    "clauses": [
+     {
+      "actual": 1,
+      "claimed": true,
+      "clause": "mismatch_count true",
+      "field": "mismatch_count",
+      "path": ".ufo/x.json",
+      "reason": null,
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": 1,
+      "claimed": true,
+      "field": "mismatch_count",
+      "group": "mismatch_count true",
+      "label": "fixture",
+      "path": ".ufo/x.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "mismatch_count is the integer 1"
+   },
+   "token_predicate": "a coercing predicate equates true with 1 (or matches the 'true' token) -> accepts"
+  },
+  {
+   "expected": "typed equality is symmetric, not a blanket boolean refusal: int matches int, bool matches bool",
+   "id": "j2-legitimate-look-alikes",
+   "input": "'mismatch_count 1' vs int 1; 'mismatch_count true' vs bool true",
+   "observed": {
+    "bool_claim": {
+     "bound": 1,
+     "clauses": [
+      {
+       "actual": true,
+       "claimed": true,
+       "clause": "mismatch_count true",
+       "field": "mismatch_count",
+       "path": ".ufo/x.json",
+       "reason": null,
+       "status": "bound"
+      }
+     ],
+     "defects": [],
+     "groups": 1,
+     "prose": 0,
+     "unbound": 0
+    },
+    "int_claim": {
+     "bound": 1,
+     "clauses": [
+      {
+       "actual": 1,
+       "claimed": 1,
+       "clause": "mismatch_count 1",
+       "field": "mismatch_count",
+       "path": ".ufo/x.json",
+       "reason": null,
+       "status": "bound"
+      }
+     ],
+     "defects": [],
+     "groups": 1,
+     "prose": 0,
+     "unbound": 0
+    }
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/x.json": "typed receipts"
+   },
+   "token_predicate": "n/a"
+  },
+  {
+   "expected": "both clauses re-derive from the named receipt: D24 true vs ok false -> value_mismatch; mismatch_count 0 vs 1 -> value_mismatch (this is the base-predicate defect pair)",
+   "id": "r76-real-false-annotation-at-base",
+   "input": "`.ufo/waves/round-76/l1/scores/c1-at-landing.json` (D24 true, mismatch_count 0)",
+   "observed": {
+    "bound": 2,
+    "clauses": [
+     {
+      "actual": false,
+      "claimed": true,
+      "clause": "D24 true",
+      "field": "D24",
+      "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+      "status": "defect"
+     },
+     {
+      "actual": 1,
+      "claimed": 0,
+      "clause": "mismatch_count 0",
+      "field": "mismatch_count",
+      "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+      "status": "defect"
+     }
+    ],
+    "defects": [
+     {
+      "actual": false,
+      "claimed": true,
+      "field": "D24",
+      "group": "D24 true, mismatch_count 0",
+      "label": "r76-real",
+      "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+      "reason": "value_mismatch"
+     },
+     {
+      "actual": 1,
+      "claimed": 0,
+      "field": "mismatch_count",
+      "group": "D24 true, mismatch_count 0",
+      "label": "r76-real",
+      "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+      "reason": "value_mismatch"
+     }
+    ],
+    "groups": 1,
+    "prose": 0,
+    "receipt_d24_ok": false,
+    "receipt_exit": 1,
+    "receipt_mismatch_count": 1,
+    "unbound": 0
+   },
+   "pass": true,
+   "receipts": {
+    ".ufo/waves/round-76/l1/scores/c1-at-landing.json": "the real round-76 landing receipt at base 188562d4: exit 1, mismatch_count 1, D24_capability_rows ok false"
+   },
+   "token_predicate": "this is the exact annotation the round-76 D24 atom admitted: token presence sees 'D24 true' and 'mismatch_count 0' beside a resolving path -> green (routed defect 5)"
+  }
+ ],
+ "freeze_run": {
+  "defects": [
+   {
+    "actual": false,
+    "claimed": true,
+    "field": "D24",
+    "group": "D24 true, mismatch_count 0",
+    "label": "## Capabilities row 'capability-row binding' (first-working round 76)",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   },
+   {
+    "actual": 1,
+    "claimed": 0,
+    "field": "mismatch_count",
+    "group": "D24 true, mismatch_count 0",
+    "label": "## Capabilities row 'capability-row binding' (first-working round 76)",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   },
+   {
+    "actual": false,
+    "claimed": true,
+    "field": "D24",
+    "group": "D24 true, mismatch_count 0",
+    "label": "PROVINCE.md line 585",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   },
+   {
+    "actual": 1,
+    "claimed": 0,
+    "field": "mismatch_count",
+    "group": "D24 true, mismatch_count 0",
+    "label": "PROVINCE.md line 585",
+    "path": ".ufo/waves/round-76/l1/scores/c1-at-landing.json",
+    "reason": "value_mismatch"
+   }
+  ],
+  "exit": 1,
+  "mismatch_count": 4,
+  "ok": false,
+  "population": {
+   "bound_clauses": 21,
+   "capability_rows": 39,
+   "groups": 18,
+   "in_scope_rows": 9,
+   "unbound_clauses": 3
+  },
+  "rev": "6767a879c6a3f386a9c3fc9d332c794f2d9ea914",
+  "validate_defects": []
+ },
+ "instrument_pin_matches_claims_json": true,
+ "instrument_sha256": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7",
+ "method": "in-process import of a scratch copy of the instrument (python3 -I -B); synthetic receipts built in scratch; the real round-76 c1-at-landing.json read at base 188562d4 via the module's own Resolver; one fixture git repo under the scratch root for the scope-floor case",
+ "schema": "kaidoku-r77-ExecC1Grammar-receipt-v1",
+ "seat": "ExecC1Grammar",
+ "selftest": {
+  "case_names": [
+   "green-pointer-only",
+   "green-prose",
+   "green-same-cell-true",
+   "green-vocabulary",
+   "qualifier-strip",
+   "receipt-red",
+   "red-absent-receipt",
+   "red-atom-count",
+   "red-false-annotation",
+   "red-no-json-pointer",
+   "red-of-total",
+   "red-type-mismatch",
+   "red-validate",
+   "scope-floor",
+   "unbound-unknown-field"
+  ],
+  "cases": 15,
+  "failures": [],
+  "selftest": "tools/round-77/verdict-bind.py"
+ },
+ "target": "tools/round-77/verdict-bind.py"
+}

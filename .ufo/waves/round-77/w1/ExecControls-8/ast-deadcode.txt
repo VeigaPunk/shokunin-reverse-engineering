@@ -1,0 +1,13 @@
+# AST tail of the derived control copy (verdict-bind-no-binding.py), produced by:
+#   python3 -c "import ast; tree = ast.parse(open(<control>).read());
+#               [print(type(n).__name__, 'line', n.lineno) for n in tree.body[-4:]]"
+FunctionDef line 592 def audit_for_selftest() -> dict: ...
+FunctionDef line 599 def main(argv: list[str] | None = None) -> int: ...
+If line 629        if __name__ == '__main__': sys.exit(main())
+FunctionDef line 634 def parse_clause(clause): return None
+# The override lands AFTER the __main__ guard: `sys.exit(main())` raises SystemExit before the
+# appended def executes. Same for verdict-bind-all-false.py (def bind(clause, receipt) appended after the guard).
+# Behavioral confirmation: `diff <(jq -S 'del(.instrument)' real-at-base.json) <(jq -S 'del(.instrument)' ctrl-no-binding.json)`
+#   -> IDENTICAL_EXCEPT_INSTRUMENT_SHA (both at rev 188562d4: exit 1, mismatch_count 4, population.bound_clauses 21, defects
+#      [D24, mismatch_count] x2 = the `capability-row binding` row and PROVINCE.md line 585).
+# If the no-binding mutation had applied, population.bound_clauses would be 0; if all-false had applied, mismatch_count would be 21.

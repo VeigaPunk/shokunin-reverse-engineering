@@ -1,0 +1,238 @@
+{
+ "base": "188562d43e3cc58b217ad7aa763fb296c5b8a0b7",
+ "generated_utc": "2026-11-04T10:58:11+00:00",
+ "instruments": {
+  "c1": {
+   "path": "tools/round-77/verdict-bind.py",
+   "sha256_pristine": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7"
+  },
+  "c2": {
+   "path": "tools/round-77/prefile-receipt.py",
+   "sha256_pristine": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd"
+  }
+ },
+ "mutants": [
+  {
+   "cases": 15,
+   "change": "typed_equal drops the type() strictness: True == 1 and 0 == False now bind",
+   "decision": "P1 field equality is type-strict",
+   "instrument": "c1",
+   "killed_by": [
+    "red-type-mismatch"
+   ],
+   "mutant_sha256": "d249b8d45182620a0bfa04e8e7affbbe550fecde256e9353f8bb98e1b038450c",
+   "name": "c1-drop-typed-check",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "red-type-mismatch"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 15,
+   "change": "atom-id fields are never looked up in receipt.atoms; every field resolves top-level",
+   "decision": "atom id (D24) binds against the atoms list",
+   "instrument": "c1",
+   "killed_by": [
+    "red-false-annotation",
+    "green-same-cell-true"
+   ],
+   "mutant_sha256": "53abac97650605c31e0ecbb922218a2e81ddefecbbf00938a2439f45f0e39418",
+   "name": "c1-drop-atom-lookup",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "green-same-cell-true",
+    "red-false-annotation"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 15,
+   "change": "show() reads the working tree file instead of `git show <rev>:<path>`",
+   "decision": "--rev byte resolution goes through git show",
+   "instrument": "c1",
+   "killed_by": [],
+   "mutant_sha256": "cb5fb7d69d7a883a48b414a54ffbaf63eb5e350bc6f16dfe8b127f43a6a4213b",
+   "name": "c1-rev-show-to-worktree",
+   "probe": {
+    "divergent": true,
+    "fixture_top": "/fast/scratch/hyaku/kaidoku-r77/MutationTester-4/m3probe-x63d14h2",
+    "mutant_show": "working-tree-bytes\n",
+    "pristine_show": "committed-bytes\n"
+   },
+   "selftest_exit": 0,
+   "sole_detector": [],
+   "survivors": [
+    "c1-rev-show-to-worktree"
+   ],
+   "verdict": "SURVIVOR"
+  },
+  {
+   "cases": 15,
+   "change": "`<field> N of M` only checks receipt[field]==N; the _total key is ignored",
+   "decision": "of-form binds both the count and the total",
+   "instrument": "c1",
+   "killed_by": [
+    "red-of-total"
+   ],
+   "mutant_sha256": "d0fc85a6aaf699a29b7e6389be762b0b559de8b8948a8f7ed26a6de220807a20",
+   "name": "c1-of-ignore-total",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "red-of-total"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 15,
+   "change": "a field the receipt does not carry is scored as a bound pass instead of unbound",
+   "decision": "unknown field is unbound, never a guessed pass",
+   "instrument": "c1",
+   "killed_by": [
+    "unbound-unknown-field"
+   ],
+   "mutant_sha256": "52839eb27b0515cc27ed3bc3ec7cd8a94219001fd3a3899f88140cb12703fa20",
+   "name": "c1-unknown-field-pass",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "unbound-unknown-field"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 15,
+   "change": "a named receipt absent at --rev is skipped silently; no absent_receipt defect",
+   "decision": "absent_receipt defect is raised",
+   "instrument": "c1",
+   "killed_by": [
+    "red-absent-receipt"
+   ],
+   "mutant_sha256": "8b65445433a45964c1183aa2c096a7576a46883f0c1d5a26f6a9f8fdf8addd19",
+   "name": "c1-absent-receipt-clean",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "red-absent-receipt"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 13,
+   "change": "check_receipt no longer refuses a receipt whose exit is a str/bool/None",
+   "decision": "exit must be a non-bool integer",
+   "instrument": "c2",
+   "killed_by": [],
+   "mutant_sha256": "8e2870887847c5da2c13917741d6da95ed978e0baae552b954c8e38d3f61b693",
+   "name": "c2-nonint-exit-accepted",
+   "probe": {
+    "forgery_accepted": true,
+    "mutant_defects": [],
+    "pristine_defects": [
+     "exit is not an integer: '1'"
+    ],
+    "receipt_exit": "1"
+   },
+   "selftest_exit": 0,
+   "sole_detector": [],
+   "survivors": [
+    "c2-nonint-exit-accepted"
+   ],
+   "verdict": "SURVIVOR"
+  },
+  {
+   "cases": 13,
+   "change": "stdout_sha256 is never re-derived from stdout; any digest is accepted",
+   "decision": "stdout digest is bound to the retained stdout",
+   "instrument": "c2",
+   "killed_by": [
+    "red-digest"
+   ],
+   "mutant_sha256": "90eb187fa5006ecffeb8f4dee8dfd94dc74cd035b4cd744b7b1efcbfc3bb3b26",
+   "name": "c2-skip-stdout-digest",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "red-digest"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 13,
+   "change": "the passed/verdict-vs-exit agreement check is disabled",
+   "decision": "passed must agree with exit and the verdict token",
+   "instrument": "c2",
+   "killed_by": [
+    "red-verdict"
+   ],
+   "mutant_sha256": "f5af8532f21af25f24a36eda5eb59eeecc7fb96d207d78bd9884c9bb6da5fd29",
+   "name": "c2-verdict-exit-disagreement-ok",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "red-verdict"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  },
+  {
+   "cases": 13,
+   "change": "env_keys is not compared to the four-key allowlist",
+   "decision": "child environment is the four-key allowlist",
+   "instrument": "c2",
+   "killed_by": [
+    "red-env"
+   ],
+   "mutant_sha256": "ac824bca7fc69c1e3d17960ec5044117502c98f259255dca181214215beedbcb",
+   "name": "c2-skip-env-keys-check",
+   "selftest_exit": 1,
+   "sole_detector": [
+    "red-env"
+   ],
+   "survivors": [],
+   "verdict": "killed"
+  }
+ ],
+ "pristine": {
+  "c1": {
+   "cases": 15,
+   "exit": 0,
+   "failures": []
+  },
+  "c2": {
+   "cases": 13,
+   "exit": 0,
+   "failures": []
+  }
+ },
+ "probes": {
+  "c1-rev-show-to-worktree": {
+   "divergent": true,
+   "fixture_top": "/fast/scratch/hyaku/kaidoku-r77/MutationTester-4/m3probe-x63d14h2",
+   "mutant_show": "working-tree-bytes\n",
+   "pristine_show": "committed-bytes\n"
+  },
+  "c2-nonint-exit-accepted": {
+   "forgery_accepted": true,
+   "mutant_defects": [],
+   "pristine_defects": [
+    "exit is not an integer: '1'"
+   ],
+   "receipt_exit": "1"
+  }
+ },
+ "restoration": {
+  "lane_bytes_restored": true,
+  "lane_c1_sha256_after": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7",
+  "lane_c1_sha256_before": "45280392ff6c59e4c96041544720f055952a11a088769e24cb04207db932a9e7",
+  "lane_c2_sha256_after": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+  "lane_c2_sha256_before": "174eedb56369414f5e4310afa9fe5ee6400e5145e4801452c9d21a7abac2d3fd",
+  "note": "mutants ran on scratch copies under /fast/scratch/hyaku/kaidoku-r77/MutationTester-4; the lane instruments were never written"
+ },
+ "round": "77",
+ "seat": "MutationTester-4",
+ "sole_detector_conflict": [],
+ "survivor_count": 2
+}
