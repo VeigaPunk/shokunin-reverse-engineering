@@ -563,3 +563,19 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   pristine 20 cases, target pinned).
 - **Still Frontier:** a wrapper that never runs a sampled process,
   `PR_SET_MM_ENV_START` relocation, non-Linux substrates, and signed receipts.
+
+## Round-75 additions to Core
+
+- **Core — witness sample multiplicity and sole-detector closure:** the A12 witness keeps every
+  sample a shim name produces (`_name_samples` accumulates, `_samples` flattens), the multi-sample
+  case reads count/pid/argv only, and the canary-field mutant is killed by exactly its declared
+  case (`sole_detector`). Retained evidence:
+  `.ufo/waves/round-75/pre/c1-post-at-declaration.json` (r75probe: 0 survivors, pristine 25,
+  canary field sole) and `.ufo/waves/round-75/l1/scores/c1-at-tip.json`.
+- **Core — exact record-cell grammars:** `tools/round-75/record-audit.py` parses the used-by path
+  list, search-note fields and integer counts, rejected-row reason+flip and the census erratum's
+  bound values, and its selftest carries one red fixture per grammar. Retained evidence:
+  `.ufo/waves/round-75/l1/scores/c2-at-tip.json` (0 mismatches, `validate` defect-free).
+- **Still Frontier:** a process that overrides its argv region after exec (the page says it may;
+  this lane does not measure it), `PR_SET_MM_ARG_START`-moved command lines, non-Linux substrates,
+  and signed receipts.
