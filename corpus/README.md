@@ -252,11 +252,13 @@ A row is written when its file exists, never before.
 | `2026-10-28-r44-squashfs-v1v2-core` | SquashFS v1/v2 measured through REA on four standard fixtures (4/4 counter result); not promoted because the frozen R44-C1 claim and counter disagree on output-directory provenance; no Core claim | S112, S138, S139; receipts `corpus/evidence/round-44/c1/`; counter `tools/round-44/c1-counter.py` | 2026-10-28 |
 | `2026-10-28-r49-squashfs-v1v2-core` | SquashFS v1/v2 through REA on four frozen fixtures, Core (R49-C1 under a predicate stated once; supersedes the round-44 not-promoted entry) | S112, S138, S139; receipts `corpus/evidence/round-49/c1/`; counter `tools/round-49/c1-counter.py` | 2026-10-28 |
 | `2026-10-28-r50-avm-le-squashfs-core` | genuine AVM-marker LE SquashFS v4 (`hsqs`) through REA on four pinned vendor members — measured, not promoted (R50-C1 miss: the frozen gap rule's char-device accounting) | S243, S244, S245, S249; receipts `corpus/evidence/round-50/c1/`; counter `tools/round-50/c1-counter.py` | 2026-10-29 |
+| `2026-11-04-r83-positive-source-attribution` | positive source attribution versus lexical presence; bounded existing evidence apparatus, no new artifact surface | S255; round83 frozen real-entry mismatch | 2026-11-04 |
 | `2026-10-30-r51-avm-le-squashfs-core` | source-grounded accounting prerequisites; filename is the declared slot, not Core promotion | S250/S251; round-51 lesson and wave-1 receipts | 2026-10-30 |
 
 ## Lessons
 | entry | round | gist |
 |---|---|---|
+| `round-83` | 83 | positive attribution differs from withdrawal commentary; two real queries, finite controls, frozen-counter identity limits and preserved historical failure |
 | `round-82` | 82 | retained false-green pristine summaries, old-helper prefix refusal, sourced pinned-command execution and explicit post-freeze disclosures |
 | `round-81` | 81 | malformed registry columns and stale tallies; fake worktree reader survives omitted commit; real committed-record integration, source reuse and carried errata |
 | `2026-10-13-round-1` | 1 | rejects-as-calibration; `--schema`>`--help`; doctor healthy≠usable; ASAR/extract-file/tmpdir gotchas; snapshot≠DB cache; verify-then-disassemble |
