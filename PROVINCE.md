@@ -447,6 +447,14 @@ Recorded 2026-10-29 after scoring: the frozen counter `tools/round-50/c1-counter
 
 Round-50 frontier note, 2026-10-29: the LE-AVM clause of the round-40/41/42/44/49 notes' Still-Frontier lists is unchanged by this round — `LE AVM members (hsqs)` stays Frontier after the measured attempt (`2026-10-28-r50-avm-le-squashfs-core`; 2/4 under the frozen gap-accounting rule). Still Frontier: LE AVM members (`hsqs`), LE AVM rootfs of ~13k files under REA's 120 s limit (FRITZ!Box 7530/7590, observed), AVM kernels, nested sub-images below depth 1.
 
+## Round-67 additions to Core
+
+| Surface | Ports / keys | Probe | Verified evidence |
+|---|---|---|---|
+| AVM-marker little-endian SquashFS v4 (`squashfs_v4_le`) members (`hsqs`, v4.0 xz, `mkfs_time == bytes_used`) of the same four chain-pinned public FRITZ!OS images (7581/7582 07.18, 6490 Cable 07.57, 6430 Cable 07.30 x86 members) — the surface round 50 measured but did not promote | no new REA key — unblob 26.6.4 runs plain `sasquatch -le` for every LE v4 chunk (S245 :53-54); `extract-firmware --max-depth 1` with the frozen `rea_parameters` budgets; the round-67 gap rule classes `char-device` as not-publishable-by-design (an extractor that writes regular files cannot create a device node) while symlinks stay per-row required | `tools/round-67/avm-le-counter.py` (pins `tools/round-50/c1-counter.py` by sha256) 4 of 4 carriers, `met_target true`; the same four envelopes under the round-50 rule 2 of 4 | entry `corpus/knowledge/2026-11-03-r67-avm-le-squashfs-core.md`; receipts `corpus/evidence/round-67/c1/`; rule `tools/round-67/gap-rule-v2.json` |
+
+Round-67 frontier note, 2026-11-03: LE AVM members (`hsqs`) move from Frontier to Core for these four pinned carriers under the class rule (`2026-11-03-r67-avm-le-squashfs-core`), superseding the round-50 `measured, not promoted` status and the LE-AVM clause of the round-50 frontier note above for this carrier set and nothing else. Still Frontier: LE AVM kernel images, LE AVM rootfs of ~13k files under REA's 120 s limit, nested sub-images below depth 1, vendor-mangled bodies, `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard`, gzip v3, v4 Broadcom.
+
 ## Host migration — 2026-10-31 (Windows host, recorded under the round-53 absent-surface rule)
 
 The Linux host every Core row above names (the `/home/vgpnk/...` trees) is gone from

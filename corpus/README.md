@@ -110,9 +110,12 @@ A row is written when its file exists, never before.
 | SquashFS triage v6 and the fixture-level reader census (round 53) | `2026-10-31-r53-triage-v6-reader-census` | depth over the scored corpus — the v5 before-arm audit (1 executability violation naming dmg_Z3, 7 clean residue) closed by table v6 as rule block 27; no reader rerun, no extraction, no promotion claim |
 | Closure-counter boundaries and the coverage self-assessment (round 66) | `2026-11-03-r66-closure-boundary` | held as instrument repair, not capability — two new frozen counters decide their predicates on emitted fields: R66-C1 passes 5 of 5 boundary arms at the freeze (guarded fixture probe green with an empty cache, unguarded probe red naming a `.pyc`, the 30-entry toolchain manifest `count_ok` with a one-entry-short copy red at `count 29 != 30`, and `--skip-run` emitting no closure), while R66-C2 reports recipe A equivalent true with the three hidden stems named and one stale self-assessment atom at the base and at the freeze (`142/142` cited against `145/145` measured), so its after-arm waits on the landing's Owned-axes repair |
 
+| SquashFS LE AVM members (round 67) | `2026-11-03-r67-avm-le-squashfs-core` | **Core** — the same four chain-pinned vendor carriers as round 50, re-scored under the round-67 class rule: `extract-firmware --max-depth 1` publishes every oracle regular file at its exact path with handler `squashfs_v4_le`, no failed chunk, and the gap rule accounts for every non-regular entry (char devices as a not-publishable class, symlinks per-row required) — 4/4 carriers, `met_target true`, against 2/4 under the round-50 rule; the surface is the four carriers only, and LE AVM kernels, nested sub-images and vendor-mangled bodies stay Frontier |
+
 ## Knowledge
 | entry | topic | source | verified-at |
 |---|---|---|---|
+| `2026-11-03-r67-avm-le-squashfs-core` | LE AVM-marker SquashFS v4 through REA under a class-level gap rule — Frontier → Core on four pinned carriers | S268, S250, S245, S244, S249; counter `tools/round-67/avm-le-counter.py`; receipts `corpus/evidence/round-67/c1/` | 2026-11-03 |
 | `2026-10-13-rea-cli-surface` | 127-command CLI inventory, global options, argument shapes | `npx rea-agents@6.4.0 --help` ×16 | 2026-10-13 |
 | `2026-10-13-rea-self-documentation` | `--llms`/`--llms-full`/`--schema` doc tiers, README matrix | live CLI output | 2026-10-13 |
 | `2026-10-13-doctor-taxonomy` | doctor check classes, health verdict mechanics, registrations | `doctor --json` + `dist/application/` source | 2026-10-13 |
@@ -285,6 +288,8 @@ A row is written when its file exists, never before.
 - Blocked-on-operator: IDA (`REA_IDA_MCP_CONFIG`), Hopper (`HOPPER_LAUNCHER_PATH`), JEB — all absent.
 - sasquatch — 2026-10-28 round 44: SquashFS v1/v2 was measured on four standard fixtures but **remains Frontier** (R44-C1 honest stop: frozen-claim/counter output-directory provenance mismatch; `2026-10-28-r44-squashfs-v1v2-core`). Still frontier: `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard`, gzip v3, v4 Broadcom, LE AVM members, AVM kernels and nested sub-images below depth 1.
 - sasquatch — 2026-10-28 round 49: SquashFS v1/v2 (`squashfs_v1`, `squashfs_v2`, four standard fixtures) is **Core** (`2026-10-28-r49-squashfs-v1v2-core`), superseding the round-44 line above. Scope: the four standard v1.0/v2.0 fixtures only. Supersedes the round-42 and round-44 lines above for v1/v2. Still frontier: `squashfs_v2_nonstandard`, `squashfs_v3_broadcom`/`_nonstandard` (and the DD-WRT no-pad/4k-pad v3 images), gzip v3, v4 Broadcom, v2.1 images, LE AVM members (`hsqs`), AVM kernels and nested sub-images below depth 1.
+
+Round-67 frontier note, 2026-11-03: LE AVM members (`hsqs`) are **Core** for the four pinned carriers under the class rule (`2026-11-03-r67-avm-le-squashfs-core`), superseding the round-50 `measured, not promoted` line above for this carrier set and nothing else; still Frontier: LE AVM kernel images, LE AVM rootfs of ~13k files under REA's 120 s limit, nested sub-images below depth 1, vendor-mangled bodies.
 
 ## Known gaps
 
