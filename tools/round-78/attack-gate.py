@@ -920,6 +920,66 @@ def selftest() -> int:
     }
     case("red-validate-refused-no-reason", validate_receipt(no_reason)["defects"],
          [f"{ATTACKS[0]['id']}: refused without a reason"])
+    # round 80 (R80-C3): one isolating case per remaining validate_receipt
+    # clause.  Each forged receipt is built from this module's own ATTACKS
+    # table and trips exactly one clause, so deleting that clause's
+    # defects.append turns exactly its declared case red; every assertion
+    # names the whole defect list, so a sibling clause cannot keep it green.
+    def healthy(**kw) -> dict:
+        fixtures = kw.pop("fixtures", None)
+        if fixtures is None:
+            fixtures = [{"id": a["id"], "fixture": a["fixture"],
+                         "base": {"accepted": True}, "refused": True,
+                         "rule": a["rule"], "reasons": [{"rule": a["rule"]}]}
+                        for a in ATTACKS]
+        receipt = {
+            "fixtures": fixtures,
+            "base_accepted": kw.pop("base_accepted", sum(
+                1 for f in fixtures
+                if (f.get("base") or {}).get("accepted"))),
+            "refused": kw.pop("refused", sum(
+                1 for f in fixtures if f.get("refused"))),
+            "instrument": {"path": "tools/round-78/attack-gate.py",
+                           "sha256": kw.pop("sha256", sha256_bytes(
+                               pathlib.Path(__file__).read_bytes()))},
+        }
+        receipt.update(kw)
+        return receipt
+
+    first_id = ATTACKS[0]["id"]
+    duplicate = healthy()
+    duplicate["fixtures"].append(dict(duplicate["fixtures"][0]))
+    duplicate["base_accepted"] += 1
+    duplicate["refused"] += 1
+    short = healthy()
+    short["fixtures"].pop()
+    short["base_accepted"] -= 1
+    short["refused"] -= 1
+    moved = healthy()
+    moved["fixtures"][0]["fixture"] = "a9-moved-fixture"
+    bad_bool = healthy()
+    bad_bool["fixtures"][0]["base"] = {"accepted": "true"}
+    other_rule = healthy()
+    other_rule["fixtures"][0]["reasons"] = [{"rule": "some_other_rule"}]
+    case("red-validate-duplicate-fixture-id",
+         validate_receipt(duplicate)["defects"], ["duplicate fixture id"])
+    case("red-validate-fixture-id-set", validate_receipt(short)["defects"],
+         ["fixture ids %r differ from the declared set" % [ATTACKS[-1]["id"]]])
+    case("red-validate-fixture-dir", validate_receipt(moved)["defects"],
+         [f"{first_id}: fixture dir mismatch"])
+    case("red-validate-base-accepted-bool", validate_receipt(bad_bool)["defects"],
+         [f"{first_id}: base.accepted is not a bool"])
+    case("red-validate-refused-other-rule", validate_receipt(other_rule)["defects"],
+         [f"{first_id}: refused by some_other_rule, not its declared rule"])
+    case("red-validate-base-accepted-count",
+         validate_receipt(healthy(base_accepted=len(ATTACKS) - 1))["defects"],
+         ["base_accepted does not re-derive from the fixture list"])
+    case("red-validate-refused-count",
+         validate_receipt(healthy(refused=len(ATTACKS) - 1))["defects"],
+         ["refused does not re-derive from the fixture list"])
+    case("red-validate-instrument-digest",
+         validate_receipt(healthy(sha256="0" * 64))["defects"],
+         ["instrument sha256 is not this file's digest"])
     failures = [c for c in cases if not c["pass"]]
     for case_ in cases:
         print(json.dumps(case_, sort_keys=True))
