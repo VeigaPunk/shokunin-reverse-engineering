@@ -120,6 +120,14 @@ def blob_to(root: str, rev: str, tool: str, scratch: str) -> tuple[str, str]:
     with open(path, "wb") as fh:
         fh.write(proc.stdout)
     os.chmod(path, 0o755)
+    # A blob can import a sibling module from its own directory (round-72's
+    # packed-elf imports capsule_audit.py); the scratch copy must carry it, or
+    # every black-box invocation dies at import.  Only lane modules are copied.
+    srcdir = os.path.join(os.path.abspath(root), os.path.dirname(tool))
+    for mod in ("capsule_audit.py",):
+        src = os.path.join(srcdir, mod)
+        if os.path.isfile(src):
+            shutil.copy(src, os.path.join(scratch, mod))
     return path, sha256_bytes(proc.stdout)
 
 
