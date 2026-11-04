@@ -103,6 +103,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--decl-rev", required=True)
     ap.add_argument("--receipt", required=True)
     ap.add_argument("--commitment", required=True)
+    ap.add_argument("--expect-upx", required=True)
     ap.add_argument("--work", required=True)
     ap.add_argument("--json-out")
     args = ap.parse_args(argv)
@@ -121,9 +122,10 @@ def main(argv: list[str] | None = None) -> int:
     if missing:
         print(json.dumps({"unevaluable": f"missing input: {missing}"}), file=sys.stderr)
         return 2
-    upx = os.path.join(scratch, "upx-pinned-copy")
-    shutil.copy("/usr/bin/upx", upx)
-    os.chmod(upx, 0o755)
+    upx = os.path.abspath(args.expect_upx)
+    if not os.path.isfile(upx):
+        print(json.dumps({"unevaluable": f"--expect-upx absent: {upx}"}), file=sys.stderr)
+        return 2
     rebased = os.path.join(scratch, "receipt-rebased.json")
     rebase(args.receipt, capsule, rebased)
     polluted = os.path.join(scratch, "capsule-polluted.jsonl")
