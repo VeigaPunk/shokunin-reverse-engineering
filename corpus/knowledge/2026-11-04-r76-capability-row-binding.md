@@ -52,6 +52,24 @@ round's counter, and its failure mode would be "the capability is weak", not "th
 not exist". The weaker check is the one this defect class needs, and the record's own counters carry the stronger
 claims.
 
+## The red fixture that was not load-bearing
+
+The first cut's `cap-absent-row-red` fixture used an **empty** capability table, so the
+`if not table: return ["the ## Capabilities table holds no data rows"]` guard fired on the pristine
+instrument and on the mutant alike: the case could not tell them apart, and a mutation that made the
+per-name absent-row check a no-op survived the whole selftest. The wave's mutation-tester found it
+(`.ufo/waves/round-76/w1/MutationTester.md`, mutant `d24-a`, "guard-masked"). The fixture now
+populates the table with a *different* row, so the only path to a defect is the per-name check, and
+`tools/round-76/mutation-check.py` scores that mutant as killed by exactly `cap-absent-row-red`.
+
+The same wave found that no case exercised the paragraph grammar on a **wrapped** claim: every
+fixture was a single line, so a line-level parser passed the selftest while producing a false defect
+on the round-75 record. `cap-wrapped-claim-accepts` is the fixture whose name straddles a newline.
+
+The general rule this adds to the lane's practice: a red fixture must be built so that the *only*
+code path to the expected defect is the check under test — a second guard that also fires is a mask,
+and a mask is a survivor with a green face.
+
 ## Limits
 
 - Only the `Capabilities rows appended` claim shape is seen. A round that says "a new capability" in prose without
