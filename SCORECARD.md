@@ -5233,3 +5233,27 @@ not needed; (c) the r63 planned record-section sweep stays open; (d) the standin
 lands receipts; (e) the ExecPins F1 reading (supersessions vs the kill rule) is routed to the closure for a ruling;
 (f) the r66 routed defects 1–3 are closed this round (LOG correction entry, receipts carry `rev`, per-seat status
 table `l1/records/r67-wave-status.json`).
+
+## 2026-11-03 — round-67 non-author closure recorded: `rejected-harmed` (quality)
+
+The integrator closure (`corpus/lessons/round-67-verifier-spotcheck.md`, lane commit `fcbe200f` by the
+protocol identity) rules `CLOSURE kaidoku r67 status=ok admitted=false` — both claims verified, no owned
+axis harmed, and the round **not admitted** because the quality trend is harmed: the promoted entry
+`corpus/knowledge/2026-11-03-r67-avm-le-squashfs-core.md:33` states the round-67 rule's sha256 as
+`b55d5e87…` and names a `removed.silent.char-device` row; at the record and at the tip the rule is
+`e66ba022…` with no `silent` key. `b55d5e87…` existed only between `7cfe83e4` and the revert `3e7b59db`,
+and the entry blob is unchanged since `2dd5f2cd`, so the sentence is a stale self-identity that the
+record's own correction obligation should have caught (`SCORECARD.md` craft rule; QUALITY #65).
+
+Recorded here before round 68's claims are measured (QUALITY #34). Routed defects and their targets:
+the entry correction block (round 68, appended); the two missing `tools/round-67/*` registry rows (round
+68, plus a census); the QUALITY #100 companion row for the round-64 findings cell; the prefile receipt and
+the superseded `corpus/claim-freezes.tsv`; the C2 kill rule's *undisclosed* wording; receipt `rev`
+provenance for an instrument absent at the base revision; the report's prompt-hash erratum (`b8507c60`
+is the round-66 prompt; the round-67 prompt is `754f9074`). The closure's §2 ruling accepts the lane's
+QUALITY #33 reading of the kill rule (a disclosed supersession is not the finding) and confirms the frozen
+predicate under the freeze-era bytes (`score-dryrun-at-base.json` at `3663e6b2`, counter `cabc0a0b…`).
+
+No axis score changes on this record: the closure rules coverage and depth **improved**, calibration
+**unchanged**; the admission bar is the trend trade, not an axis move. `SHONEN.md` untouched by the
+closure and by this round.
