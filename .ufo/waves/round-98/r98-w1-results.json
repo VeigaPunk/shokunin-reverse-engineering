@@ -1,0 +1,86 @@
+{
+ "lane": "kaidoku",
+ "round": 98,
+ "wave": "r98-w1",
+ "seats": 13,
+ "results": [
+  {
+   "name": "ExecReproC1",
+   "agent": "executor",
+   "output": "{\n  \"seat\": \"ExecReproC1\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-98/w1/ExecReproC1.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"R98-C1 reproduced at 7234689a: candidate exit 0 'recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18'; identity and r87 controls match pre receipts (labels, exits, repair sha256s; only rev differs as expected); hand-derived oracle 3/3 (t32/magic, w64/names, winhello/both) recovered.\"\n}",
+   "note": null
+  },
+  {
+   "name": "ExecHeldOut",
+   "agent": "executor",
+   "output": "{\n  \"seat\": \"ExecHeldOut\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-98/w1/ExecHeldOut.md\",\n  \"findings\": 6,\n  \"verdict_line\": \"Out-of-population probe of tools/round-98/upx-pe-repair.py @ 72346895: 48/48 tamper cells effective+recovered and 12/12 intact across WallaceSrc/WallaceVersion2/fastlist-x86 x {--best,-1,--lzma,--best --brute} with battery oracle; ELF and raw-ARM64 refusals correct (exit 2, no --out); UPX 5.2.0 cannot pack win64/arm64 (CantPackException, all modes); new minor finding: truncated-PE false accept (repair exit 0 'ok intact' at >= c_len, boundary exact, upx -t catches it) - findings only, no claim change.\"\n}",
+   "note": null
+  },
+  {
+   "name": "ExecReproC2",
+   "agent": "executor",
+   "output": "{\n  \"seat\": \"ExecReproC2\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-98/w1/ExecReproC2.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"R98-C2 reproduced: frozen v8 command exit 0 with target label 4-of-4, v7 control exit 1 with refusal label, selftests 24/0 and 23/0, v8 delta confined to allow-list+TOOL+fixture+docstrings, no anomaly\"\n}",
+   "note": null
+  },
+  {
+   "name": "ScoutSources",
+   "agent": "scout",
+   "output": "{\n  \"report\": \".ufo/waves/round-98/w1/ScoutSources.md\",\n  \"seat\": \"ScoutSources\",\n  \"verdict_line\": \"S324 anchors verified byte-identical (gate 3167-3170, naming 2643-2645); PackHeader PE size 32 at packhead.cpp:100 (row S325); canUnpack inherited from PeFile64::canUnpack -> canUnpack0(3,...) at pefile.cpp:3312-3316 via PackW64PeAmd64 p_w64pe_amd64.h:34 (rows S326/S327); JPCERT ELF-scoped tamper write-up admitted tier B (S328), hardlyprogramming dynamic-only walkthrough rejected (S329); next free registry id is S325, not S324 \u2014 sibling drafts renumber at integration.\",\n  \"findings\": 6\n}",
+   "note": null
+  },
+  {
+   "name": "ScribeEntry",
+   "agent": "scribe",
+   "output": "{\n  \"seat\": \"ScribeEntry\",\n  \"report\": \".ufo/waves/round-98/w1/ScribeEntry.md\",\n  \"findings\": \"8\",\n  \"verdict_line\": \"Round-98 knowledge entry drafted (not written into corpus/) at .ufo/waves/round-98/w1/ScribeEntry/; both frozen claims re-run green (C1 recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18 exit 0; C2 legs passed 4 of 4 exit 0) with both do-nothing controls red as committed; 8 findings, the sharpest being that the committed corpus entry states one refusal message where measurement gives two split by PE architecture.\"\n}",
+   "note": null
+  },
+  {
+   "name": "ConnectorOverlap",
+   "agent": "connector",
+   "output": "{\n  \"seat\": \"ConnectorOverlap\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-98/w1/ConnectorOverlap.md\",\n  \"findings\": 7,\n  \"verdict_line\": \"No sibling overlap or contradiction with R98-C1 (zero UPX-PE knowledge outside the lane); v8's COUNT_KEYS equals v3.score's fourteen-key emission and the committed v6-public receipt, v7/v6 carry the nine-key M97-j defect (v7 as the intentional failing control, v6 retired); the r98 note's supersession pointer names only 3 of 8 packed-PE clause lines (r68:341, r87:343, r70:374, r72:376, r73:379 un-named) \u2014 proposed record move: widen the supersession sentence 'for this class only' over all six notes; r92 clause drifted F/L:393 -> tree:395.\"\n}",
+   "note": null
+  },
+  {
+   "name": "ReviewerRepair",
+   "agent": "reviewer",
+   "output": "Scratch didn't exist yet when I passed it as cwd. Re-running with the fleet root as cwd (the commands do the `mkdir -p` themselves):Clone ready (HEAD `72346895a\u2026`, toplevel verified, clean tree), UPX 5.2.0 sources fetched, host has upx 5.2.0. Now reading the repair script and the two UPX sources:rawbytes path was wrong; locating it:Scratch intact (different parent tree than the one the peer removed). `InputFile::read` confirms `raw_bytes(buf,len)` truncation semantics \u2014 `len` is reassigned to the actual short-read size, so a truncated window can reach `decodePackHeaderFromBuf` with `blen<20` \u2192 C++ throws `header corrupted 1` while the Python tool stays exception-free. That's a real departures note to log.\n\nNow the decisive end-to-end probes: repair output must be byte-identical to the pristine UPX pack (repair rewrites exactly the tampered bytes), plus a multi-header uniqueness probe:`upx -d` even on the pristine pack reproduces a *different* sha locally than the original \u2014 a known environmental skew, so my ad-hoc oracle doesn't hold in this sandbox. The decisive evidence is in the frozen battery's own pack/tamper/oracle code \u2014 let me read it, then mirror its exact procedure in-process:Found it \u2014 my fixture inverted `u_len`/`c_len` (the layout is u_len@16, c_len@20; I wrote 17@16, 2000@20 \u2192 `c_len > u_len` correctly rejected). Refixing and re-running the handcrafted positives + uniqueness cases:My fixture placed the header at 0x104, *before* window-1 start 0x110. Real UPX puts it inside. Placing headers at 0x128 and re-testing:My fixture header omitted a valid checksum byte (sum(4..30)%251 = 3, stored 0). Tool correctly refuses; fixing the fixture:**F1 confirmed** \u2014 the duplicate case was misgenerated (second header overlapped the first), the checksum-straddling scan also stores sum-mod-17, output says `changes: [magic@544, name0, n\u2026` so RENAMES DID happen in fixA/fixE/fixF/fixG, yet the `rep` files carry the ORIGINAL names \u2014 an atomic-write anomaly. Inspecting the output path state:My fixture never wrote the optional-header size, so the tool honestly parsed a (zero-filled) `opt=0` section table at 0x58 instead of 0xe8 \u2014 the magic fix-up did apply; my readback was wrong. This is my fixture's bug. Rewriting the generator correctly (`opt=0xE0`, PE32 magic) once and re-running all probes:K2 confirmed: the negative-start window is entered (a header at file offset 0x70 was found from window start -0x8 \u2014 a linear index a C++ `Span::subspan` cannot express), scanned to\u2026",
+   "note": null
+  },
+  {
+   "name": "ReviewerV8",
+   "agent": "reviewer",
+   "output": "{\n  \"seat\": \"ReviewerV8\",\n  \"report\": \".ufo/waves/round-98/w1/ReviewerV8.md\",\n  \"findings\": 4,\n  \"verdict_line\": \"R98-C2 verified: v8 COUNT_KEYS is set-equal to the 14 keys v3.score emits (code v3:291-306 + clone run at L whose public-receipt counts matched both), frozen command exit 0 with label 'legs passed 4 of 4; public 1; real14 1; stub9 1; extra 1' at 72346895a, v7 control exit 1 'legs passed 1 of 4; public 0; real14 0; stub9 0; extra 1' matching the frozen pre receipt field-level, selftest 24/0 incl nine-key-stub; routed defect 1 closed, defects 2-7 open (defect 2 unacknowledged in plans/round-98-claims.md), plus F1 fallback-masking against a stdout-lying candidate routed for a future round.\"\n}",
+   "note": null
+  },
+  {
+   "name": "CriticC1",
+   "agent": "critic",
+   "output": "{\n  \"seat\": \"CriticC1\",\n  \"report\": \".ufo/waves/round-98/w1/CriticC1.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"R98-C1 real candidate reproduces 18/18 (exit 0, met), but the frozen predicate admits three forgeries (f2 size-keyed cache, f7 lazy anchor, f1h fixed-offset with validation); the claim holds only for the 1024-byte-header layout of the 12 frozen and held-out carriers.\"\n}",
+   "note": null
+  },
+  {
+   "name": "CriticC2",
+   "agent": "critic",
+   "output": "{\n  \"seat\": \"CriticC2\",\n  \"report\": \".ufo/waves/round-98/w1/CriticC2.md\",\n  \"findings\": 4,\n  \"verdict_line\": \"R98-C2 reproduces on honest v8 (exit 0, frozen label) and v7 control (exit 1), but the frozen predicate admits 3 of 7 forgeries (F2 verify_receipt hollowed, F3 public-lie with no battery or receipt, F5 length-only count check) because the public leg trusts a self-printed 'selfverify ok=True' string and falls back to committed counts; C2 measures count-level behaviour, not the public-run defect.\"\n}",
+   "note": null
+  },
+  {
+   "name": "MutationC1",
+   "agent": "mutation-tester",
+   "output": "{\n  \"seat\": \"MutationC1\",\n  \"report\": \".ufo/waves/round-98/w1/MutationC1.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"upx-pe-repair.py @7234689 under frozen C1 battery: 12 single-point mutants, 7 killed, 5 survived (m04 version-range, m06 window-reach, m07 multi-candidate-uniqueness, m08 partial-prefix-name, m09 rsrc/UPX2-branch) \u2014 all 5 battery blind spots, none equivalent; baseline and restored runs both exit 0 with the frozen target label, clone sha256 unchanged (2fa1102d...)\"\n}",
+   "note": null
+  },
+  {
+   "name": "MutationC2",
+   "agent": "mutation-tester",
+   "output": "{\n  \"seat\": \"MutationC2\",\n  \"report\": \".ufo/waves/round-98/w1/MutationC2.md\",\n  \"findings\": 3,\n  \"verdict_line\": \"Frozen C2 predicate is not sensitive to its own semantics: 8 of 13 kills come from the byte-pin confound, and an inverted verify_receipt (M6) passes 'legs passed 4 of 4; public 1' with exit 0.\"\n}",
+   "note": null
+  },
+  {
+   "name": "SentinelInputs",
+   "agent": "sentinel",
+   "output": "{\n  \"seat\": \"SentinelInputs\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-98/w1/SentinelInputs.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"Fuzz leg PASS (756/756 malformed inputs: only exit 0 or 2, no traceback, max 0.44 s); write-path mostly safe (planted symlink victim survives via os.replace rename semantics; tmp O_EXCL) but three uncaught crash lanes return rc=1 + traceback (missing --in, missing --out dir, pre-existing <out>.tmp-<pid>); FALSE-REPAIR CONFIRMED HIGH: corrupted container dd[1].RVA byte0/byte1 survives repair (exit 0, upx -t passes) and upx -d then emits a different program with import names zeroed (33-byte diff; 8 accepted variants across t32/w32/w64/fastlist64); smallest remediation = dd[1]-inside-UPX1 sanity gate in repair().\"\n}",
+   "note": null
+  }
+ ]
+}

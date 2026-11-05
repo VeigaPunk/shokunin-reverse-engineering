@@ -6728,3 +6728,23 @@ Freeze `e859a88d78567c44bc1ecfd211afe123755ae1c7` (`plans/round-97-claims.md`, `
 Honest stop: the round is not admitted; progression halts at round 97.
 
 Retired: none. Saturation 10.0 and stagnation window 10 unchanged; no capability entered this round.
+
+## 2026-11-05 — round 98: UPX-packed PE magic / section-name tamper repair (R98-C1, coverage, frontier → core; capability); the stop-boundary counter accepts its own honest verdict (R98-C2, calibration)
+
+Base `d0aebc288621b0072ac3eb2a79a62ad26bfa837a`; freeze `69c581c7ca0c4ea2b58303669aab3700797277f9` (`plans/round-98-claims.md`, frozen counters, do-nothing controls); candidate landing `72346895a35a74af18151b125934fa0c09fe1e3c`, the measured revision of both claims; knowledge landing `9cb930014a57c9b29d830739e0c4229f6e7e7016`. Every owned axis was recorded at 10.0 and the stagnation nudge applies (C1 is the frontier move).
+
+| claim / axis | before → after | counting command and receipt | verdict |
+|---|---|---|---|
+| R98-C1 / coverage (frontier "packed PE inputs" → Core for UPX 5.2.0 `--best` win32/pe, win64/pep; capability) | identity control `recovered 0 of 18; intact 6 of 6; refused 0 of 2; effective 18 of 18` exit 1; held ELF repair `recovered 0 of 18; intact 0 of 6; refused 2 of 2; effective 18 of 18` exit 1 (`.ufo/waves/round-98/pre/c1-identity-control.json`, `c1-r87-control.json`) → `recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18` exit 0 at `72346895` | `python3 -I -B tools/round-98/pe-upx-tamper-battery.py --repair-cmd tools/round-98/upx-pe-repair.py --work <scratch> --json-out <receipt> --rev 72346895a35a74af18151b125934fa0c09fe1e3c`; `.ufo/waves/round-98/l1/scores/c1-at-72346895a35a74af18151b125934fa0c09fe1e3c.json` | verified on the frozen predicate; named limit: the battery admits three forgeries (CriticC1 f2/f7/f1h) on a one-layout population |
+| R98-C2 / calibration (v8 allow-list = the verdict's fourteen keys; routed defect 1 of the round-97 closure) | v7: `legs passed 1 of 4; public 0; real14 0; stub9 0; extra 1` exit 1 (`.ufo/waves/round-98/pre/c2-v7-control.json`) → v8: `legs passed 4 of 4; public 1; real14 1; stub9 1; extra 1` exit 0 at `72346895` | `python3 -I -B tools/round-98/allowlist-check.py --counter tools/round-98/stop-boundary-repair-battery-v8.py --rev 72346895a35a74af18151b125934fa0c09fe1e3c --work <scratch> --json-out <receipt>`; `.ufo/waves/round-98/l1/scores/c2-at-72346895a35a74af18151b125934fa0c09fe1e3c.json` | verified on the frozen predicate; named limit: the public leg is self-attested (CriticC2 F2/F3), F5 length-only and MutationC2 M6 admitted |
+| harm check | coverage proxy (stem recipe, `tools/round-66/coverage-selfcheck.py --selfcheck`) 175/181 at base → 176/182 at `9cb93001` (both 9.67; the new entry is mapped); depth 36 rule blocks resolved at both; freshness not re-measured (no receipt corpus change) | `.ufo/waves/round-98/l1/scores/coverage-selfcheck-at-{d0aebc28…,9cb93001…}.json` | no axis harmed by this round |
+
+**Calibration finding (pre-existing, routed, not repaired here).** The `## Owned axes` coverage head says 10.0 with 168/168 mapped; the round-66 self-check at base observes 175 of 181 (9.67): the round-93 to round-97 knowledge entries (`2026-11-05-r93-citation-semantics`, `r93-fresh-pack-oracle`, `r94-receipt-path-json`, `r95-receipt-world-binding`, `r96-kill-rule-coverage`, `r97-receipt-byte-binding`) are indexed but have no coverage-map row. The head row is not rewritten; routed to round 99.
+
+**Capabilities.** One row enters: `UPX-packed PE magic / section-name tamper repair` (first working round 98; `## Capabilities`).
+
+**Planned (round 99, fresh declaration only).** (a) the six unmapped r93–r97 entries and the stale coverage head (calibration); (b) PE carrier population with PackHeader offsets other than 992, `UPX2`-named third sections and other UPX modes (with the wave's forgeries as committed red fixtures before freeze; the truncated-pack `ok intact` and the three rc-1 CLI crash paths); (c) round-97 routed defects 3–5 still open.
+
+Retired: none. Saturation 10.0 and stagnation window 10 unchanged.
+
+**Learning trends.** Expansion **improved**: packed PE enters the coverage map and the capabilities table (S324 admitted, S325 rejected). Quality **improved**: the stop-boundary counter's honest public run is accepted again (v7 exit 1 → v8 exit 0) and the PE repair generalizes out of population (48/48); both new counters carry named forgery-admission limits. Discernment **improved**: the lane's gate refused one third-party source and four duplicate/uncited drafts, and the round surfaced two of its own earlier false statements (M98-a; the stale coverage head).

@@ -1,0 +1,39 @@
+ExecReproC1 exact command lines (cwd as noted; S=/fast/scratch/hyaku/kaidoku-r98/ExecReproC1; TMPDIR=$S/tmp on every run)
+
+1. git clone --shared /home/vgpnk/Projects/shokunin/kaidoku-shokunin $S/clone
+   -> exit 0
+2. git -C $S/clone checkout --detach 72346895a35a74af18151b125934fa0c09fe1e3c
+   -> exit 0; HEAD=72346895a35a74af18151b125934fa0c09fe1e3c
+3. git -C $S/clone rev-parse --show-toplevel -> $S/clone (verified before any write)
+4. sha256 of clone:tools/round-98/pe-upx-tamper-battery.py at L
+   = a34d1253e75e98d4fbb66abe139d2c374a8332f8b6ca1bc8e4afea8dbf4feee8
+   == counter_sha256 in both .ufo/waves/round-98/pre/c1-*.json receipts
+
+cwd for 5-7: $S/clone
+
+5. TMPDIR=$S/tmp python3 -I -B tools/round-98/pe-upx-tamper-battery.py \
+     --repair-cmd tools/round-98/upx-pe-repair.py \
+     --work $S/c1 --json-out $S/c1.json \
+     --rev 72346895a35a74af18151b125934fa0c09fe1e3c
+   -> exit 0; "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18 met True"
+
+6. TMPDIR=$S/tmp python3 -I -B tools/round-98/pe-upx-tamper-battery.py \
+     --repair-cmd tools/round-98/controls/identity-copy.py \
+     --work $S/c1-identity --json-out $S/c1-identity.json \
+     --rev 72346895a35a74af18151b125934fa0c09fe1e3c
+   -> exit 1; "recovered 0 of 18; intact 6 of 6; refused 0 of 2; effective 18 of 18 met False"
+
+7. TMPDIR=$S/tmp python3 -I -B tools/round-98/pe-upx-tamper-battery.py \
+     --repair-cmd tools/round-87/upx-magic-repair.py \
+     --work $S/c1-r87 --json-out $S/c1-r87.json \
+     --rev 72346895a35a74af18151b125934fa0c09fe1e3c
+   -> exit 1; "recovered 0 of 18; intact 0 of 6; refused 2 of 2; effective 18 of 18 met False"
+
+8. TMPDIR=$S/tmp python3 -I -B $S/hand_cell.py $S/clone/tools/round-98/upx-pe-repair.py $S/hand
+   -> exit 0; HAND t32/magic ok=True; HAND w64/names ok=True; HAND winhello/both ok=True; HAND_ALL_OK=True
+   (hand_cell.py = my own tamper implementation: T1 zero first "UPX!" word; T2 rename first three
+    "UPX*" section headers positionally to .text/.data/.rdata; T3 both. Oracle:
+    sha256(upx -d repaired) == sha256(upx -d untampered pack), via /usr/bin/upx 5.2.0.)
+
+No tools installed or upgraded this session (upx 5.2.0 and python 3.14.8 already on host;
+no pacman, no sysctl, no writes outside $S and the two lane w1 paths).

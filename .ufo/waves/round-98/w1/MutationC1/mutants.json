@@ -1,0 +1,168 @@
+{
+ "seat": "MutationC1",
+ "date": "2026-11-05",
+ "target": "tools/round-98/upx-pe-repair.py",
+ "rev": "72346895a35a74af18151b125934fa0c09fe1e3c",
+ "pristine_sha256": "2fa1102d320acd8016a05721763c9d57f15a6b92894a67821187d8c825a1dfa4",
+ "detector": "python3 -I -B tools/round-98/pe-upx-tamper-battery.py --repair-cmd <mutant|pristine> --work <scratch> --json-out <receipt> --rev 72346895a35a74af18151b125934fa0c09fe1e3c",
+ "frozen_target_label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+ "kill_rule": "killed iff label != frozen target or battery exit != 0",
+ "baseline": {
+  "receipt": ".ufo/waves/round-98/w1/MutationC1/pristine-baseline.json",
+  "exit": 0,
+  "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18"
+ },
+ "restored": {
+  "receipt": ".ufo/waves/round-98/w1/MutationC1/restored.json",
+  "exit": 0,
+  "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+  "clone_sha256_after": "2fa1102d320acd8016a05721763c9d57f15a6b92894a67821187d8c825a1dfa4"
+ },
+ "score": "7 killed / 12; 5 survived (m04 m06 m07 m08 m09); survivors classified: 0 equivalent, 5 battery blind spots",
+ "mutants": [
+  {
+   "id": "m01",
+   "point": "ph_ok checksum range",
+   "change": "sum(h[4:31]) -> sum(h[4:32]) (checksum byte included in its own sum)",
+   "mutant_sha256": "78e01008d196ccbfc438da0853086330d3c95529224e8d15e8256789057060e7",
+   "battery_exit": 1,
+   "label": "recovered 0 of 18; intact 0 of 6; refused 2 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "checksum byte pulled into its own sum rejects every real header; all cells refuse",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m01.json"
+  },
+  {
+   "id": "m02",
+   "point": "ph_ok checksum modulus",
+   "change": "% 251 -> % 255",
+   "mutant_sha256": "902f1e47b25e14d244d985aa6c4c9162dc39d686f45c1ca18002009005f37915",
+   "battery_exit": 1,
+   "label": "recovered 0 of 18; intact 0 of 6; refused 2 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "mod 255 rejects real mod-251 checksums; all cells refuse",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m02.json"
+  },
+  {
+   "id": "m03",
+   "point": "format set",
+   "change": "PE_FORMATS drops 36:win64/pep (win32/pe only)",
+   "mutant_sha256": "f470bcfea66a147e0eb7eb5807bdf379aa08b802799d6da8f100930d9bb9b0f5",
+   "battery_exit": 1,
+   "label": "recovered 9 of 18; intact 3 of 6; refused 2 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "win64/pep cells (t64/w64/fastlist64 x 3 tampers) refuse: recovered 9/18, intact 3/6",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m03.json"
+  },
+  {
+   "id": "m04",
+   "point": "version range",
+   "change": "10 <= version <= 14 -> 10 <= version <= 13",
+   "mutant_sha256": "0e5bbbb35e61aec335a693795c57f2dcf020a1f2ee0b7ba17313ba1b2467841f",
+   "battery_exit": 0,
+   "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+   "met": true,
+   "verdict": "survived",
+   "why": "battery blind spot: UPX 5.2.0 packs version byte 13, no corpus cell probes the 14/15 boundary; mutant would refuse genuine v14 headers",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m04.json"
+  },
+  {
+   "id": "m05",
+   "point": "window start",
+   "change": "secs[1].rptr - 64 -> secs[1].rptr (skip -64 back-offset)",
+   "mutant_sha256": "36643c63cc1710ad91c40f52e438047fd27a11f649a569589fc734904ce25a54",
+   "battery_exit": 1,
+   "label": "recovered 0 of 18; intact 0 of 6; refused 2 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "real header at rptr-64..rptr-32 no longer in any window; packheader-candidates:0 everywhere",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m05.json"
+  },
+  {
+   "id": "m06",
+   "point": "window length",
+   "change": "scan 1024 -> 512 bytes",
+   "mutant_sha256": "5892ddedf13ae39a0275032a43ed75a332651bde42b4cbfec0a3ce77d6c44285",
+   "battery_exit": 0,
+   "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+   "met": true,
+   "verdict": "survived",
+   "why": "battery blind spot / domain-equivalent: PackHeader sits at window origin for every UPX 5.2.0-packed PE, so 512-byte reach is never distinguished from 1024",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m06.json"
+  },
+  {
+   "id": "m07",
+   "point": "uniqueness test",
+   "change": "len(found) != 1 -> len(found) < 1",
+   "mutant_sha256": "406f80378ec314171c0f586ca5833a60d28814549b470b8234cd0f595f56647a",
+   "battery_exit": 0,
+   "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+   "met": true,
+   "verdict": "survived",
+   "why": "battery blind spot: corpus always yields exactly 1 candidate, so ambiguity handling untested; mutant would call set.pop() on a multi-candidate set and may repair at a wrong anchor instead of refusing",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m07.json"
+  },
+  {
+   "id": "m08",
+   "point": "name prefix check",
+   "change": "startswith(b\"UPX\") -> startswith(b\"UP\")",
+   "mutant_sha256": "eef7af08864abda995932883adf750c745d34ec8e1c98b1fdc1d12a9265ad34c",
+   "battery_exit": 0,
+   "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+   "met": true,
+   "verdict": "survived",
+   "why": "battery blind spot: T2 only writes .text/.data/.rdata, never a partial UP-prefix name; mutant would skip renames for UP-prefixed non-UPX names and lose recovery on such tampers",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m08.json"
+  },
+  {
+   "id": "m09",
+   "point": ".rsrc/UPX2 choice",
+   "change": "want = .rsrc if rsrc_rva and inside else UPX2  ->  branches swapped",
+   "mutant_sha256": "6235b4eb35f3f1d8a5054405944fcc083d8069989b41eb211c45430a3c09c4c2",
+   "battery_exit": 0,
+   "label": "recovered 18 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+   "met": true,
+   "verdict": "survived",
+   "why": "dead branch under battery: pristine run emits name2 zero times (all six carriers keep section-2 name .rsrc through every tamper); no resource-less carrier (UPX2 path, rsrc_rva placement) in corpus",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m09.json"
+  },
+  {
+   "id": "m10",
+   "point": "magic write skipped",
+   "change": "if bytes(b[i:i+4]) != MAGIC: -> if False and ... (UPX! never rewritten)",
+   "mutant_sha256": "2eb136e7208db4e0eacf89e276083a2b7ffe2bec0bcb4a28991c473eec8b71fc",
+   "battery_exit": 1,
+   "label": "recovered 6 of 18; intact 6 of 6; refused 2 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "magic-bearing tampered cells unrepaired: recovered 6/18 (names-only cells still pass), intact 6/6",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m10.json"
+  },
+  {
+   "id": "m11",
+   "point": "refusal exit code",
+   "change": "return 2 -> return 0 on Refuse in main",
+   "mutant_sha256": "4be0bc3048f63249415f2b098b3979ae34848ce856ed0dbb2ad8a6a7d7a3cd66",
+   "battery_exit": 1,
+   "label": "recovered 18 of 18; intact 6 of 6; refused 0 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "refused arm needs rc==2, mutant returns 0: refused 0 of 2",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m11.json"
+  },
+  {
+   "id": "m12",
+   "point": "output write skipped",
+   "change": "os.replace(tmp, out) -> if False: os.replace (out never written)",
+   "mutant_sha256": "28a4b471bdb614c8fbffceb9ac31a0fceb45fec0bbd6bf83064d6667a47e3029",
+   "battery_exit": 1,
+   "label": "recovered 0 of 18; intact 0 of 6; refused 2 of 2; effective 18 of 18",
+   "met": false,
+   "verdict": "killed",
+   "why": "out file never written: recovered 0/18, intact 0/6",
+   "receipt": ".ufo/waves/round-98/w1/MutationC1/m12.json"
+  }
+ ]
+}

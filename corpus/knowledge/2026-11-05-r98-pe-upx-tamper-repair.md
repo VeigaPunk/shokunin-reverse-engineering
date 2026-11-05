@@ -13,8 +13,10 @@ recheck: on-release — the counting command below, re-run when UPX or a pinned 
 `fastlist-0.3.0-x64.exe`; sha256 pins in `tools/round-98/pe-upx-tamper-battery.py`) carry one `UPX!`
 word, the PackHeader at file offset 992, and the section names `UPX0`, `UPX1`, `.rsrc`. Zeroing the magic,
 renaming `UPX0`/`UPX1` to `.text`/`.data`, or both, makes `upx -t` exit 1 on all 18 tampered files
-(`effective 18 of 18`); the renamed files answer `CantUnpackException: file is (possibly)
-modified/hacked/protected`.
+(`effective 18 of 18`); the renamed files answer `CantUnpackException: file is modified/hacked/protected;
+take care!!!` on the three win32/pe carriers and `file is possibly modified/hacked/protected; take care!` on
+the three win64/pep carriers — the split is the gate's own x86-stub byte probe (S324 lines 3180-3203), not a
+difference in the tamper (wave seat ScribeEntry, finding 2).
 [source S324] The packer's PE gate `PeFile::canUnpack0` looks for a PackHeader only when section 0's name
 starts with `UPX`, first from `isection[1].rawdataptr - 64` over 1024 bytes, then from
 `isection[2].rawdataptr`; a file that looks packed without a found PackHeader throws the
@@ -33,7 +35,8 @@ files (exit 2): it reads ELF structures only.
 3. Rewrite that candidate's magic to `UPX!` if it differs; rename section 0 / 1 to `UPX0` / `UPX1` when
    they lack the `UPX` prefix; rename section 2 only when it is neither `.rsrc` nor `UPX2*` (to `.rsrc`
    when the resource directory lies in it, else `UPX2`). Nothing else changes. The output is written
-   through `O_EXCL|O_NOFOLLOW` + fsync + `os.replace`.
+   through `O_EXCL|O_NOFOLLOW` + fsync + `os.replace`. The section-2 branch is never exercised by the
+   frozen population (all six carriers name section 2 `.rsrc` at pack time).
 
 ## The measurement
 
@@ -55,10 +58,24 @@ controls in `.ufo/waves/round-98/pre/`.
 
 ## Limits (stated, never claimed covered)
 
-- All six carriers put the PackHeader at offset 992, so the population does not separate the structural
-  search from a fixed-offset patch; offset diversity is not measured by the frozen battery.
-- Only `--best`; `-1`, `--lzma`, `--brute`, other UPX versions, `UPX2`-named third sections, ARM64 PE,
-  .NET, DLLs, Mach-O and other packers are not in the frozen population.
+- All six carriers put the PackHeader at offset 992 (`isection[1].rawdataptr` 1024), so the population does
+  not separate the structural search from a fixed-offset patch. The wave's critic seat built three repairs the
+  frozen battery admits at the full target label: a size-keyed cache that never reads its input, a lazy
+  anchor that skips the checksum and uniqueness tests, and a validated fixed-offset patch
+  (`.ufo/waves/round-98/w1/CriticC1.md`, f2/f7/f1h). The frozen predicate therefore establishes that the
+  candidate meets it, not that only a structural repair can; a battery with held-out carriers, moved
+  PackHeader offsets and a checksum-valid decoy is routed to round 99.
+- Out of the frozen population, not scored: the same candidate recovered 48 of 48 tamper cells and 12 of 12
+  intact arms on three unpinned win32/pe carriers (Ghidra `WallaceSrc.exe`, `WallaceVersion2.exe`, pnpm
+  `fastlist-0.3.0-x86.exe`) under `--best`, `-1`, `--lzma` and `--best --brute`
+  (`.ufo/waves/round-98/w1/ExecHeldOut.md`); on a checksum-valid decoy at offset 960 it refuses (exit 2)
+  where the lazy-anchor forgery writes a broken file (CriticC1 V2).
+- A packed PE truncated to any length ≥ `c_len` is reported `ok intact` (exit 0) although `upx -t` then fails
+  (ExecHeldOut finding 2): the tool checks structure, not payload integrity. Routed.
+- Not in the frozen population: `UPX2`-named third sections, other UPX versions, DLLs, Mach-O and other
+  packers. ARM64 PE and .NET PE are not merely unmeasured: UPX 5.2.0 refuses to pack them (S324 lines 141-142
+  `win64/arm64 is not yet supported`, lines 2207-2208 `.NET files are not yet supported`), so no tampered pack
+  of either exists for this class.
 - Tampers beyond the magic and the `UPX0`/`UPX1` names (PackHeader fields, stub code, section sizes,
   the old-version `isection[2]` header location) are not repaired or measured.
 - The repaired file is accepted by the packer; whether it still runs on Windows is not tested.

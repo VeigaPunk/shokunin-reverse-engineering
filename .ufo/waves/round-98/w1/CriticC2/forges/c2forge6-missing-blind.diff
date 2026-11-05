@@ -1,0 +1,19 @@
+--- stop-boundary-repair-battery-v8.py	2026-11-05 18:05:13.400664668 -0300
++++ c2forge6-missing-blind.py	2026-11-05 18:10:36.686847346 -0300
+@@ -150,15 +150,10 @@
+ def count_problems(counts) -> list:
+     """Schema check: the fourteen verdict keys must be present ints; no key outside the
+     allow-list is accepted (a counts object with an extra key is a refusal, not a pass)."""
++    # FORGE C2-6 (critic): missing-key and type checks removed; extra-key check kept.
+     reasons = []
+     if not isinstance(counts, dict):
+         return reasons
+-    for k in COUNT_KEYS:
+-        v = counts.get(k)
+-        if v is None:
+-            reasons.append("counts-missing-key:%s" % k)
+-        elif isinstance(v, bool) or not isinstance(v, int):
+-            reasons.append("counts-type:%s" % k)
+     for k in sorted(counts.keys()):
+         if k not in COUNT_KEYS:
+             reasons.append("counts-extra-key:%s" % k)

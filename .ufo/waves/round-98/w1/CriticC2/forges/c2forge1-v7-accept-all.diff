@@ -1,0 +1,26 @@
+--- ../round-97/stop-boundary-repair-battery-v7.py	2026-11-05 18:05:13.400495039 -0300
++++ c2forge1-v7-accept-all.py	2026-11-05 18:10:36.645847235 -0300
+@@ -138,21 +138,8 @@
+ 
+ 
+ def count_problems(counts) -> list:
+-    """Schema check: the nine label keys must be present ints; no key outside the
+-    allow-list is accepted (a counts object with an extra key is a refusal, not a pass)."""
+-    reasons = []
+-    if not isinstance(counts, dict):
+-        return reasons
+-    for k in COUNT_KEYS:
+-        v = counts.get(k)
+-        if v is None:
+-            reasons.append("counts-missing-key:%s" % k)
+-        elif isinstance(v, bool) or not isinstance(v, int):
+-            reasons.append("counts-type:%s" % k)
+-    for k in sorted(counts.keys()):
+-        if k not in COUNT_KEYS:
+-            reasons.append("counts-extra-key:%s" % k)
+-    return reasons
++    """FORGE C2-1 (critic): count_problems accepts everything, always."""
++    return []
+ 
+ 
+ def verify_receipt(path: str, expect: str, rev_full, intact_total: int,
