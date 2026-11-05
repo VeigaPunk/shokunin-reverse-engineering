@@ -275,6 +275,12 @@ def main(argv=None) -> int:
     try:
         data = read_input(args.src)
         out, info = repair(data)
+        # Both targets are validated before the first write, so a refused
+        # `--info` cannot leave an `--out` on disk behind an rc 2 (wave-1
+        # SentinelWrite MED-2: the contract is "2 = typed refusal, no output").
+        checked_target(args.dst)
+        if args.info:
+            checked_target(args.info)
         write_atomic(args.dst, out)
         if args.info:
             write_atomic(args.info, json.dumps(

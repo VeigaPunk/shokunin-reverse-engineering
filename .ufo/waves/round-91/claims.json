@@ -59,7 +59,7 @@
   }
  ],
  "instruments": {
-  "tools/round-91/upx-stop-boundary-repair.py": "845013c4639b6ac604d6299b7e761a6374a17845b6f80e8e7f90168a533057e1",
+  "tools/round-91/upx-stop-boundary-repair.py": "3779d35fc8f57bc9f573b87b5b4e566e159ac58737b3942be6b840f649e3f238",
   "tools/round-91/stop-boundary-battery.py": "5998b6bd878534d62ca867def69f9da21a3bd1a6139f51c7fba196dcc6893ca9",
   "tools/round-91/depth-blocks-v3.py": "bcf6c4ea31047401d16ce47562e58bf1d76eec7b1c9da0ff5e222793aeeb052f",
   "tools/round-91/record-cells.py": "87ff58444315a76b944f93e9f4b8f6df19d29d1730a55dfeae6f830a4b6b669b",
@@ -86,6 +86,16 @@
    "reason": "the round-90 module's own `Refused` escaped `repair()` (which caught only the round-87 class) into `main()`'s `except Exception`, so an upstream typed refusal answered rc 1 ('error') where the tool's contract says rc 2 ('typed refusal'). The fix qualifies both refusal classes. A second, cosmetic change removes a dead `setdefault` (ReviewerRepair LOW-4). No branch that the frozen predicate scores changes; the scored cells and the intact arm are re-measured after the revision.",
    "repro_before": "block-0 `sz_unc` zeroed on packed xxd: rc 1 `{\"error\": \"Refused: round-89 refusal: ...\"}`",
    "repro_after": "rc 2 `{\"refused\": \"upstream refusal: round-89 refusal: ...\"}`, matching the round-90 repair's rc 2",
+   "retaken_receipts": []
+  },
+  {
+   "path": "tools/round-91/upx-stop-boundary-repair.py",
+   "supersedes": "tools/round-91/upx-stop-boundary-repair.py (845013c4639b6ac604d6299b7e761a6374a17845b6f80e8e7f90168a533057e1, the MED-1 revision)",
+   "superseding_sha256": "3779d35fc8f57bc9f573b87b5b4e566e159ac58737b3942be6b840f649e3f238",
+   "found_it": "the round-91 wave's SentinelWrite seat (`.ufo/waves/round-91/w1/SentinelWrite.md`, MED-2)",
+   "reason": "`main()` wrote `--out` before validating `--info`, so a refused `--info` answered rc 2 with the output file already on disk, contradicting the tool's own exit contract ('2 = typed refusal, no output written'). Both targets are now validated before the first write. No scored path changes.",
+   "repro_before": "`--in <intact packed xxd> --out ok.bin --info <missing dir>/i.json` -> rc 2 and `ok.bin` present",
+   "repro_after": "same command -> rc 2 and no output file",
    "retaken_receipts": []
   }
  ]
