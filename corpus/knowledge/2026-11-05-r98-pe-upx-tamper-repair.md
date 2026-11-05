@@ -79,3 +79,5 @@ controls in `.ufo/waves/round-98/pre/`.
 - Tampers beyond the magic and the `UPX0`/`UPX1` names (PackHeader fields, stub code, section sizes,
   the old-version `isection[2]` header location) are not repaired or measured.
 - The repaired file is accepted by the packer; whether it still runs on Windows is not tested.
+
+Later rounds (pointer appended round 100; the text above is unchanged): the "structure, not payload integrity" limit is narrowed by `2026-11-05-r99-pe-upx-truncation-refusal` (length truncation, refused) and `2026-11-05-r100-pe-upx-payload-checksum-refusal` (compressed data altered at intact length, refused by the packer's `c_adler` test, S327) for the pinned carriers.

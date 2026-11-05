@@ -80,3 +80,5 @@ its PackHeader at 992.
 - The static leg is a text screen for spawning and dynamic import, not a sandbox.
 - The candidate was drafted and dry-run once before the freeze commit (disclosed in
   `plans/round-99-claims.md`); the landed score reads the committed bytes through `git show`.
+
+Later rounds (pointer appended round 100; the text above is unchanged): the first limit ("a pack whose bytes are corrupted but whose length is intact is not detected") is narrowed by `2026-11-05-r100-pe-upx-payload-checksum-refusal`: a change inside the `c_len` compressed bytes that leaves `c_adler` unmatched is refused `checksum` on the ten pinned carriers (S327); a forged `c_adler` stays Frontier.
