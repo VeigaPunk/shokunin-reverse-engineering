@@ -1,0 +1,200 @@
+{
+ "version": "round-97 BEFORE table (the rule-kind mutants omitted: the pinned round-96 rule cannot express them)",
+ "forgery_reasons": {
+  "unlabelled": "counts-missing-key:fresh_scored",
+  "met-lying": "met-not-recomputed",
+  "met-null": "met-not-typed",
+  "met-str": "met-not-typed",
+  "head-mismatch": "head-not-bound",
+  "counter-pin": "byte-pin-not-bound:counter",
+  "verdict-pin": "byte-pin-not-bound:verdict",
+  "repair-pin": "byte-pin-not-bound:repair",
+  "counts-extra": "counts-extra-key:forged",
+  "repair-cmd": "repair-cmd-not-bound",
+  "imported-pin": "imported-pin-not-bound:imported_r92_battery_sha256",
+  "public-met": "public-met-not-bound",
+  "public-label": "public-label-not-bound"
+ },
+ "mutants": [
+  {
+   "name": "M0",
+   "kind": "identity",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "TOOL = \"tools/round-97/stop-boundary-repair-battery-v7.py\"",
+   "replace": "TOOL = \"tools/round-97/stop-boundary-repair-battery-v7.py\"",
+   "kill_class": "semantic",
+   "kills_via": "control: must NOT be killed"
+  },
+  {
+   "name": "M1",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    fd, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(path) + \".\", suffix=\".tmp\")",
+   "replace": "    tmp = path + \".tmp\"\n    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)",
+   "kill_class": "semantic",
+   "kills_via": "K-selftest planted-tmp case (r96 M1 carried)"
+  },
+  {
+   "name": "M2",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "            fh.flush()\n            os.fsync(fh.fileno())\n",
+   "replace": "            fh.flush()\n",
+   "kill_class": "semantic",
+   "kills_via": "K-durability pre-fsync clause (r95 M2 carried)"
+  },
+  {
+   "name": "M3",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    selfverify = verify_receipt(args.json_out, args.expect, rev_full,\n                                args.intact_total, pins, pins_at_rev,\n                                args.repair_cmd)",
+   "replace": "    selfverify = verify_receipt(args.json_out, args.expect, rev_full,\n                                args.intact_total, pins, pins_at_rev,\n                                args.repair_cmd)\n    selfverify = {\"ok\": True, \"reasons\": []}",
+   "kill_class": "semantic",
+   "kills_via": "K-dmain rewrite/notrecomp (r95 survivor carried)"
+  },
+  {
+   "name": "M4",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    if code == 0 and not selfverify[\"ok\"]:\n        code = 1",
+   "replace": "    if code == 0 and not selfverify[\"ok\"]:\n        pass",
+   "kill_class": "semantic",
+   "kills_via": "K-dmain negctl (r95 survivor carried)"
+  },
+  {
+   "name": "M5",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "        if met is True and expect is not None and label != expect:\n            reasons.append(\"label-not-frozen\")",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-selftest verify-catches-not-frozen (r95 M5 carried)"
+  },
+  {
+   "name": "M6",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    receipt[\"head\"] = resolve_rev(root, \"HEAD\")",
+   "replace": "    receipt[\"head\"] = resolve_rev(root, args.rev)",
+   "kill_class": "semantic",
+   "kills_via": "K-dmain revold scenario (round-96 M11 / M96-e closure)"
+  },
+  {
+   "name": "M-d1",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "        dfd = os.open(d, os.O_RDONLY)\n        try:\n            os.fsync(dfd)\n        finally:\n            os.close(dfd)\n",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-durability post-fsync clause (round-97 durability gate; v2 survivor)"
+  },
+  {
+   "name": "M-w1",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    fd, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(path) + \".\", suffix=\".tmp\")\n    try:\n        with os.fdopen(fd, \"w\", encoding=\"utf-8\") as fh:\n            json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)\n            fh.write(\"\\n\")\n            fh.flush()\n            os.fsync(fh.fileno())\n        os.replace(tmp, path)\n        dfd = os.open(d, os.O_RDONLY)\n        try:\n            os.fsync(dfd)\n        finally:\n            os.close(dfd)\n    except BaseException:\n        try:\n            os.remove(tmp)\n        except OSError:\n            pass\n        raise",
+   "replace": "    with open(path, \"w\", encoding=\"utf-8\") as fh:\n        json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)\n        fh.write(\"\\n\")",
+   "kill_class": "semantic",
+   "kills_via": "K-wlink planted victims + K-selftest (round-96 N7/M96-h class on the counter writer; v2 survivor)"
+  },
+  {
+   "name": "M-f1",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    if not isinstance(met, bool):\n        reasons.append(\"met-not-typed\")",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-forgeries forge-met-null / forge-met-str (round-96 M96-f closure; v2 survivor)"
+  },
+  {
+   "name": "M-f2",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    for k in sorted(counts.keys()):\n        if k not in COUNT_KEYS:\n            reasons.append(\"counts-extra-key:%s\" % k)",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-forgeries forge-counts-extra (round-96 unbound-counts closure; v2 survivor)"
+  },
+  {
+   "name": "M-f3",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    if repair_cmd is not None and rec.get(\"repair_cmd\") != repair_cmd:\n        reasons.append(\"repair-cmd-not-bound\")",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-forgeries forge-repair-cmd (round-96 limit-5 closure; v2 survivor)"
+  },
+  {
+   "name": "M-f4",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    for field in (\"imported_r92_battery_sha256\", \"imported_v2_sha256\"):\n        got = rec.get(field)\n        want = (pins or {}).get(field)\n        if not isinstance(got, str) or not re.fullmatch(r\"[0-9a-f]{64}\", got or \"\"):\n            reasons.append(\"receipt-missing-pin:%s\" % field)\n        elif want is not None and got != want:\n            reasons.append(\"imported-pin-not-bound:%s\" % field)",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-forgeries forge-imported-pin (round-96 limit-5 closure; v2 survivor)"
+  },
+  {
+   "name": "M-f5",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    if \"public_met\" not in rec or rec.get(\"public_met\") != met:\n        reasons.append(\"public-met-not-bound\")\n    if \"public_label\" not in rec or rec.get(\"public_label\") != label:\n        reasons.append(\"public-label-not-bound\")",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-forgeries forge-public-met / forge-public-label (round-96 limit-5 closure; v2 survivor)"
+  },
+  {
+   "name": "M-c1",
+   "kind": "counter",
+   "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+   "find": "    for k in COUNT_KEYS:\n        v = counts.get(k)\n        if v is None:\n            reasons.append(\"counts-missing-key:%s\" % k)\n        elif isinstance(v, bool) or not isinstance(v, int):\n            reasons.append(\"counts-type:%s\" % k)",
+   "replace": "    if not isinstance(counts, dict):\n        return reasons",
+   "kill_class": "crash",
+   "kills_via": "K-forgeries KeyError crash on forge-unlabelled (round-96 N9; declared crash class)"
+  },
+  {
+   "name": "M7",
+   "kind": "agreement",
+   "file": "tools/round-95/c1-agreement-v2.py",
+   "find": "    if (rec.get(\"verdict_sha256\") != exp_verdict\n            or rec.get(\"counter_sha256\") != exp_counter):\n        out[\"reasons\"].append(\"pins-not-bound\")",
+   "replace": "",
+   "kill_class": "semantic",
+   "kills_via": "K-agreement F3 (r95 M7 carried)"
+  },
+  {
+   "name": "M8",
+   "kind": "agreement",
+   "file": "tools/round-95/c1-agreement-v2.py",
+   "find": "            out[\"reasons\"].append(\"label-not-recomputed\")",
+   "replace": "            pass",
+   "kill_class": "semantic",
+   "kills_via": "K-agreement F1 (r95 M8 carried)"
+  },
+  {
+   "name": "M9",
+   "kind": "agreement",
+   "file": "tools/round-95/c1-agreement-v2.py",
+   "find": "            out[\"reasons\"].append(\"label-not-frozen\")",
+   "replace": "            pass",
+   "kill_class": "semantic",
+   "kills_via": "K-agreement pos (r95 M9 carried)"
+  },
+  {
+   "name": "M10",
+   "kind": "probe",
+   "file": "tools/round-96/symlink-probe-v2.py",
+   "find": "        \"verdict\": \"hardened\" if ok else \"followed-symlink\",\n        \"met\": ok,",
+   "replace": "        \"verdict\": \"hardened\",\n        \"met\": True,",
+   "kill_class": "semantic",
+   "kills_via": "K-probe receipt-content consistency (r95 survivor carried)"
+  },
+  {
+   "name": "M-p1",
+   "kind": "probe",
+   "file": "tools/round-96/symlink-probe-v2.py",
+   "find": "    fd, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(path) + \".\", suffix=\".tmp\")\n    try:\n        with os.fdopen(fd, \"w\", encoding=\"utf-8\") as fh:\n            json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)\n            fh.write(\"\\n\")\n            fh.flush()\n            os.fsync(fh.fileno())\n        os.replace(tmp, path)\n    except BaseException:\n        try:\n            os.remove(tmp)\n        except OSError:\n            pass\n        raise",
+   "replace": "    with open(path, \"w\", encoding=\"utf-8\") as fh:\n        json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)\n        fh.write(\"\\n\")",
+   "kill_class": "semantic",
+   "kills_via": "K-probe planted json-out victim (round-96 M96-h/N7 closure; v2 survivor)"
+  }
+ ]
+}
