@@ -15,8 +15,12 @@ derivation.  Scan every offset above `block + 12` for a plausible `b_info` whose
 own chain reaches the end-of-chain sentinel (directly or through the
 loader-resume step), take `derived = successor - (block + 12)` bounded by that
 block's `sz_unc`, and among the survivors prefer the candidate that accounts
-for the most declared bytes (the PackHeader `u_len` is a preference, never a
-filter -- QUALITY 171), ties to the smaller derived value.
+for the most declared bytes.  For this class the PackHeader's `u_len` is a **filter**, not a
+rank key: a candidate whose walk does not account for exactly `u_len` is refused,
+never ranked (QUALITY 171).  The `(total <= u_len, total, -derived)` key stays in
+the recorder for the shared shape, but it is inert here -- every survivor has
+`total == u_len`, so only `-derived` discriminates, and it breaks ties between
+candidates that account for the same total.
 
 Acceptance is measured, not asserted: a candidate is written only when it
 accounts for **strictly more** declared bytes than the stored-value chain does.
