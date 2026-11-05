@@ -1,0 +1,86 @@
+{
+ "attempt": 1,
+ "round": 94,
+ "lane": "kaidoku",
+ "base_revision": "8a40ceb6516bb38c19c37bcbff2bb3332f31c832",
+ "declaration": "plans/round-94-claims.md",
+ "sourced_claim": {
+  "row": "S319",
+  "source": "https://docs.python.org/3/library/json.html",
+  "opened": "2026-11-05",
+  "sha256": "8021264aedd0ae972ac10cc3ba950be85d95b62d4869289b4686bad62b9794c0",
+  "quote": "It should return a JSON encodable version of the object or raise a TypeError."
+ },
+ "claims": [
+  {
+   "id": "R94-C1",
+   "axis": "calibration",
+   "type": "measured",
+   "surface": "receipt writer of the frozen stop-boundary repair battery: the honest case crashes json.dump (round-93 M93-e); the receipt, stdout verdict and predicted verdict must agree on all four frozen runs",
+   "counter": "tools/round-94/stop-boundary-repair-battery-v4.py",
+   "counter_sha256": "c41d54d72257ad41db7da5c42bea9e8ebc66fea88257660edc6e20c147266272",
+   "agreement_counter": "tools/round-94/c1-receipt-agreement.py",
+   "agreement_counter_sha256": "dc384a4464c2cb045dea491d56855685e8058dc5567a6c3b6d6dc899875836c9",
+   "verdict_counter": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "verdict_counter_sha256": "60026511e54cdc1df71233c491392fafcc89705808fa5c187d96a85862cbd4e3",
+   "imports_sha256": {
+    "tools/round-92/stop-boundary-repair-battery.py": "63e9df431f5d7aeeca2bd5384efff36b4f2ebedfdc3ee71aaa250287fc9388bc",
+    "tools/round-92/stop-boundary-battery-v2.py": "f6ddb48b4d9cbd460002db68d834f909955e2c7d4e60d7ad85325ef4e66f1874"
+   },
+   "frozen_label": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2",
+   "runs": {
+    "pos": { "repair_cmd": "tools/round-92/upx-stop-boundary-search-repair.py", "predicted_met": true, "predicted_exit": 0 },
+    "F1": { "repair_cmd": ".ufo/waves/round-93/controls/table5-window.py", "predicted_met": false, "predicted_exit": 1 },
+    "F2": { "repair_cmd": ".ufo/waves/round-93/controls/carrierread5.py", "predicted_met": false, "predicted_exit": 1 },
+    "F3": { "repair_cmd": ".ufo/waves/round-93/controls/identity_noop.py", "predicted_met": false, "predicted_exit": 1 }
+   },
+   "frozen_command": "python3 -I -B tools/round-94/stop-boundary-repair-battery-v4.py --root . --repair-cmd <cmd> --work <scratch> --rev <measured> --expect '<frozen_label>' --json-out <wave>/c1-v4-<name>.json; then python3 tools/round-94/c1-receipt-agreement.py --dir <wave> --prefix c1-v4",
+   "upx_sha256_prefix": "cf2f6e7c6846a7c9",
+   "before": {
+    "revision": "8a40ceb6516bb38c19c37bcbff2bb3332f31c832",
+    "counter": "tools/round-93/stop-boundary-repair-battery-v3.py (frozen round-93 counter, do-nothing control)",
+    "receipt": ".ufo/waves/round-94/pre/c1-base-v3-agreement.json",
+    "expected": "counts_of_4 valid 2, agree 2, predicted 2; met false; pos stderr TypeError"
+   },
+   "target": "c1-receipt-agreement.py --prefix c1-v4: counts_of_4 valid 4, agree 4, predicted 4; met true; exit 0 at the measured revision",
+   "kill_rule": "positive not met; any of F1/F2/F3 met true; any receipt not valid JSON; any stdout line disagreeing with its receipt; any pinned sha256 differing; upx sha prefix differing"
+  },
+  {
+   "id": "R94-C2",
+   "axis": "depth",
+   "type": "measured",
+   "surface": "craft decision table for the receipt-path failure class (round-93 M93-e): block 33 with three rows whose criteria (QUALITY 189, 190) state the rule each row asserts, checked by the frozen keyword atoms",
+   "counter": "tools/round-93/craft-citation-semantic.py",
+   "counter_sha256": "34cf6579d7d0614336add1710912877492c68517331736fa5e4021ffedf05340",
+   "depth_counters": {
+    "tools/round-89/depth-blocks-v2.py": "359f15e1c87f5106aa3fcbef211568ab7a970564ea0d7ed877299ca706dcf18f",
+    "tools/round-91/depth-blocks-v3.py": "bcf6c4ea31047401d16ce47562e58bf1d76eec7b1c9da0ff5e222793aeeb052f"
+   },
+   "manifest": { "path": ".ufo/waves/round-94/manifests/block33-after.json", "sha256": "9d72f9951d7aadf12a335b2e2177bcb7a7300c5c8c4f481640f9c721751f40ae" },
+   "frozen_command_after": [
+    "python3 -I -B tools/round-93/craft-citation-semantic.py --root . --manifest .ufo/waves/round-94/manifests/block33-after.json --block 33 --rev <measured> --json-out <wave>/c2-after-block33.json",
+    "python3 -I -B tools/round-89/depth-blocks-v2.py --root . --rev <measured> --expect-blocks 33",
+    "python3 -I -B tools/round-91/depth-blocks-v3.py --root . --rev <measured> --expect-blocks 33 --shape-from 33"
+   ],
+   "before": {
+    "revision": "8a40ceb6516bb38c19c37bcbff2bb3332f31c832",
+    "receipts": [
+     ".ufo/waves/round-94/pre/c2-base-block33-after-manifest.json",
+     ".ufo/waves/round-94/pre/c2-base-depth-v2.txt",
+     ".ufo/waves/round-94/pre/c2-base-depth-v3.txt"
+    ],
+    "expected": "all three exit 1: block 33 missing (craft has 32 blocks); depth blocks 32 expect 33"
+   },
+   "target": "all three frozen commands exit 0 at the measured revision: block 33 ok; blocks 33 resolved 33; required-shaped 1/1",
+   "kill_rule": "any frozen command unmet at the measured revision; block 33 present at base; any pinned sha256 differing"
+  }
+ ],
+ "round_shape": {
+  "waves": [{ "id": "r94-w1", "policy": "v1 band 8-16", "planned_seats": 10 }],
+  "planner_seat": "held by the L1 (validator refuses planner)"
+ },
+ "fresh_pack_oracle_source": {
+  "path": "/usr/bin/env",
+  "sha256": "a9ba02dcad338ee7f0b03e58a1cf44009b2bd645b09c2b423242e9791d202301"
+ }
+}
