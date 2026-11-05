@@ -736,6 +736,22 @@ bullet is bounded by the lines it cites.
 
   Refs: `corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md` (the chain law and its matrix), `corpus/knowledge/2026-11-04-r87-upx-magic-tamper-repair.md` (the anchor class this table sits on), `corpus/knowledge/2026-11-04-r86-record-agreement.md` (a receipt cell is re-derived at the revision it names).
 
+- **30. A superseding instrument revision inherits the guard set, and each revision defect names the arm that answers it.** <!-- instrument-inheritance-table v1 --> Block 29 routed a tampered *field value*; this one routes a *revision*: when a repair or counter is rewritten in a new file for a new class, its predecessor's guards — input contract, isolation, carrier blindness, bound semantics — belong to the claim exactly as its derivation does. Round 89 rewrote its field repair twice before measuring (a `Refused` escaping as `rc 1`, a FIFO block, an arbitrary `--out` write) and the round-90 chain walk inherits the same surface, so the table below is read before the revision is frozen, each row naming the arm that turns red without it.
+
+| revision defect class | the guard the revision must inherit | arm that fails without it |
+|---|---|---|
+| the new path drops the class the previous round repaired (M89-1) | a regression arm over that class inside the frozen predicate on `corpus/knowledge/2026-11-04-r87-upx-magic-tamper-repair.md`'s anchor path | the `P2` and `P3` cells on `corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md`'s class |
+| the predecessor's input guards are not carried: a FIFO `--in` blocks, `/dev/zero` raises `MemoryError`, the upstream `Refused` escapes as a traceback (QUALITY 169) | `read_input()` — `lstat`, regular file, size cap — plus a wrapper that converts every upstream refusal to the revision's own typed refusal | `N1-refuse-plain` asserting `rc == 2`, never `rc != 0` |
+| the harness leaves the intact original, its outputs or a repaired sibling beside the input (QUALITY 163) | one private directory per invocation holding the tampered input alone | `isolation` |
+| the isolation listing is taken before the child runs (QUALITY 170) | list the directory after the child exits and diff it against the prepared listing | `isolation` with `box_after` recorded per invocation |
+| the repair can read the pinned carrier path itself (QUALITY 168) | a sandbox in which every pinned carrier path holds decoy bytes, plus a probe proving the blinding took effect | `carrier_blind` |
+| a bound claimed as a filter is implemented as a rank key (QUALITY 171) | state the bound as a preference with its fallback named, or implement the filter and report the refusal it produced | the per-cell `detail` in the receipt |
+| an exit code read as "the file is fixed" when it means "the field I own changed" (QUALITY 167) | the counter tests the output — `upx -t`, the `upx -d` pin and the REA counts — never the exit code | `test_ok`, `unpack_pin` and `rea_recover` |
+| the docstring states a rule the code does not apply (QUALITY 162) | check the docstring against the code at the revision being frozen, not at the one it was written for | the freeze precheck plus a reader pass |
+| a counter whose target lives in prose (QUALITY 157) | the target is a required argument and `met` is `counts == target` on every arm, base arm included | `--expect` / `--expect-blocks` |
+
+  Refs: `corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md` (the two in-round revisions and their re-taken receipts), `corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md` (the counter whose target rule this supersedes), `corpus/knowledge/2026-11-04-r87-upx-magic-tamper-repair.md` (the anchor path every revision must still compose), `corpus/knowledge/2026-11-04-r86-record-agreement.md` (a receipt cell is re-derived at the revision it names).
+
 ## Config custody for live-probe rounds (SOP)
 
 Binding for every future live-probe round. A zero-drift claim without its own

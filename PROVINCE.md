@@ -741,3 +741,23 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
 - **Frontier (unchanged by this round):** later-block `sz_cpr` values, `p_filesize`/`p_blocksize`/adler
   repairs, entry-altered stubs, other packers, big-endian and PE UPX carriers, 32-bit ELF carriers, and an
   overlay-carrying carrier whose chain does not account for `u_len`.
+
+## Round-90 additions to Core (verified 2026-11-04)
+
+- **Core — packed-ELF `b_info` interior later-block `sz_cpr` corruption:** the round-89 Frontier line
+  "later-block `sz_cpr` values" is now a repaired class for the three carriers whose chain accounts the
+  full `u_len`. `tools/round-90/upx-break-repair.py` composes the round-87 anchor path and the round-89
+  block-0 law (QUALITY 161), then applies the chain law at the walk's *break point*: scan the offsets
+  above `block + 12` for a plausible `b_info` whose own chain reaches the sentinel (directly or through
+  the loader-resume step), bound the derived value by `sz_unc`, write it and re-walk, and accept it only
+  when it accounts for strictly more declared bytes than the stored-value chain does — the PackHeader
+  `u_len` is a preference, never a filter (QUALITY 171). `tools/round-90/upx-later-block-battery.py`
+  scores `P1 6 of 6` (jq/xxd/docker-init x `stored - 7`/`stored + 7`), `P2 4 of 4` (round-89 class) and
+  `P3 4 of 4` (round-88 class) with refuse-plain, corrupt-payload, intact-idempotent, isolation,
+  carrier-blind, no-work and cheat-repack controls; the unchanged round-89 repair scores 0 of 6 on P1
+  with its own controls true.
+- **Out of this class (still Frontier):** the last block before a chain stop (under-determined — every
+  derived value that leaves the stop before the resume offset accounts for the same total), a suffix
+  that self-resumes after the tampered block, the shared object's 9,968-byte `u_len` gap, block 0 alone
+  on `libz`, `p_filesize`/`p_blocksize`/adler repairs, entry-altered stubs, other packers, big-endian
+  and PE carriers, 32-bit ELF carriers and `--lzma` output.
