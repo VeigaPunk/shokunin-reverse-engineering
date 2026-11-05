@@ -1,6 +1,6 @@
 # Round 94 — lesson: a frozen counter's receipt must be written by the public command, and a craft row must name the failure class it guards
 
-Declaration `dd4524916a0332bb65f83525532da1c1b8d709de` (`plans/round-94-claims.md`, `.ufo/waves/round-94/claims.json`); base `8a40ceb6516bb38c19c37bcbff2bb3332f31c832`. Wave `r94-w1` (ten seats, one v1 wave, band 8–16; see `## Wave r94-w1 — seat results`). Claims: R94-C1 (calibration, measured: the receipt, stdout and predicted verdict agree on four frozen runs) and R94-C2 (depth, measured: craft block 33 for the receipt-path failure class). Measured revisions: R94-C1 at `dd4524916a0332bb65f83525532da1c1b8d709de` (the declaration commit; its counter-read bytes are unchanged at the landing commit — see `## Measured`); R94-C2 at the landing commit (hash filled in the bookkeeping commit).
+Declaration `dd4524916a0332bb65f83525532da1c1b8d709de` (`plans/round-94-claims.md`, `.ufo/waves/round-94/claims.json`); base `8a40ceb6516bb38c19c37bcbff2bb3332f31c832`. Wave `r94-w1` (ten seats, one v1 wave, band 8–16; see `## Wave r94-w1 — seat results`). Claims: R94-C1 (calibration, measured: the receipt, stdout and predicted verdict agree on four frozen runs) and R94-C2 (depth, measured: craft block 33 for the receipt-path failure class). Measured revisions: R94-C1 at `dd4524916a0332bb65f83525532da1c1b8d709de` (the declaration commit; its counter-read bytes are unchanged at the landing commit `8a711726604688af399b2ed8b66c57178e4b6d8e` — receipt `.ufo/waves/round-94/l1/scores/c1-unchanged-bytes-at-8a711726.txt`); R94-C2 at the landing commit `8a711726604688af399b2ed8b66c57178e4b6d8e`.
 
 ## Motive
 
@@ -20,7 +20,7 @@ Round 93 closed with R93-C1 not verified: the frozen v3 counter crashed on `--js
 **R94-C2 (depth) — verified on the frozen predicate at the landing commit.**
 
 - Before (committed at the freeze, `.ufo/waves/round-94/pre/`): `craft-citation-semantic.py --manifest .ufo/waves/round-94/manifests/block33-after.json --block 33 --rev 8a40ceb6` exit 1, `block 33 missing (craft has 32 blocks)` (`pre/c2-base-block33-after-manifest.json`); `depth-blocks-v2.py --rev 8a40ceb6 --expect-blocks 33` exit 1, `blocks 32 resolved 32 expect 33` (`pre/c2-base-depth-v2.txt`); `depth-blocks-v3.py … --shape-from 33` exit 1 (`pre/c2-base-depth-v3.txt`).
-- After (worktree pre-commit check and landing receipts): craft-citation exit 0 `ok` (`l1/scores/c2-after-block33-worktree.json`, and `c2-after-block33-at-<landing>.json` in the bookkeeping commit); depth v2 `blocks 33 resolved 33 expect 33 … met=True exit 0`; depth v3 `blocks 33, resolved 33, required-shaped 1/1 … met=True exit 0`. Regression: the round-93 checker's selftest `SELFTEST cases=10 failures=0` exit 0 at `dd452491` (`l1/scores/c2-selftest-at-dd452491.txt`).
+- After (worktree pre-commit check and landing receipts): craft-citation exit 0 `ok` (`l1/scores/c2-after-block33-worktree.json`, and at the landing revision `l1/scores/c2-after-block33-at-8a711726.json`); depth v2 `blocks 33 resolved 33 expect 33 … met=True exit 0` (`l1/scores/c2-depth-v2-at-8a711726.txt`); depth v3 `blocks 33, resolved 33, required-shaped 1/1 … met=True exit 0` (`l1/scores/c2-depth-v3-at-8a711726.txt`). Regression: the round-93 checker's selftest `SELFTEST cases=10 failures=0` exit 0 at `dd452491` (`l1/scores/c2-selftest-at-dd452491.txt`).
 - The drafts were verified green by ScribeC2Block in its own scratch clone (with a stand-in knowledge file) before landing; the L1 landing re-measured with the real files.
 
 ## Gate
@@ -75,6 +75,11 @@ Each row: class · evidence pointer · captured-by · fix.
 5. The upx pin is enforced live by the imported battery during the public runs; no receipt carries it (CriticC1; the plan prose erratum is M94-d).
 6. R94-C2 is a vocabulary-level land (CriticC2 attack 1): the claim's named limit stands; a statement-level semantic check is a future declaration.
 7. PE and Mach-O remain unmeasured (round-92 limit 6 unchanged); the craft check's other limits (QUALITY 188 residual) are unchanged.
+
+## Census
+
+- Before: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` exit 0, 223 rows, 31 `W04` (`.ufo/waves/round-94/census-before.txt`, run at round start).
+- After (round end, final tree): exit 0, 224 rows, 32 `W04` (`.ufo/waves/round-94/census-after.txt`). The one new `W04` is S319's URL shared with S050 across scopes (expected; E04 does not fire because the scopes differ). Rows 223 → 224 (S319 appended); no row edited in place; S319's `used-by` names the two landing files, both present.
 
 ## Verdict (per claim)
 
