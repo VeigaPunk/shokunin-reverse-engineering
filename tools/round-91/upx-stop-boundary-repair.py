@@ -174,7 +174,6 @@ def repair(d: bytes) -> tuple[bytes, dict]:
         cls = classify(d, r90, rep, r88)
         if cls is None or len(cls[0]) < 2:
             out, info = r90._block0(d, rep, r89, pins)
-            info.setdefault("class", "block0-or-intact")
             info.update(pins)
             return out, info
         blocks, b0, ph, stored_ok, stored_total, method = cls
@@ -194,7 +193,11 @@ def repair(d: bytes) -> tuple[bytes, dict]:
             f"accounts for the declared u_len ({ph['u_len']}) and `upx -t` refuses "
             f"the input (prefix {len(blocks)} blocks, stored_total {stored_total}); "
             "this class is refused, not repaired")
-    except rep.Refused as exc:
+    except (rep.Refused, r90.Refused) as exc:
+        # Qualifying the composed module's own refusal class is the R91 wave-1
+        # MED-1 repair: an inner `Refused` used to escape to main()'s `except
+        # Exception` and answer rc 1 ("error") where this tool's contract says
+        # rc 2 ("typed refusal").
         raise Refused(f"upstream refusal: {exc}") from None
 
 

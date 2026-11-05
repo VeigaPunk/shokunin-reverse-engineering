@@ -17,7 +17,13 @@
    "counter": "tools/round-91/stop-boundary-battery.py",
    "regression_counter": "tools/round-90/upx-later-block-battery.py",
    "repair": "tools/round-91/upx-stop-boundary-repair.py",
-   "target": {"refused": 8, "cells": 8, "unsafe": 0, "intact": 4, "exit": 0},
+   "target": {
+    "refused": 8,
+    "cells": 8,
+    "unsafe": 0,
+    "intact": 4,
+    "exit": 0
+   },
    "before": {
     "do_nothing": ".ufo/waves/round-91/pre/c1-base-round90-repair.json (round-90 repair, refused 0 of 8, unsafe 2, intact 4 of 4, at 2135f6e1d)"
    },
@@ -35,7 +41,14 @@
    "kill_rule": "blocks != 31; resolved != 31; a block citing a path absent at the base revision; block 31's text changed after declaration; the prose control not killed",
    "counter": "tools/round-91/depth-blocks-v3.py",
    "predecessor": "tools/round-89/depth-blocks-v2.py",
-   "target": {"blocks": 31, "resolved": 31, "unresolved": 0, "required_shaped": 1, "exit": 0, "prose_control_killed": true},
+   "target": {
+    "blocks": 31,
+    "resolved": 31,
+    "unresolved": 0,
+    "required_shaped": 1,
+    "exit": 0,
+    "prose_control_killed": true
+   },
    "before": {
     "base": ".ufo/waves/round-91/pre/c2-depth-at-base.json (blocks 30 at 2135f6e1d, met false)",
     "prose_proof": ".ufo/waves/round-91/pre/c2-prose-proof.json"
@@ -46,7 +59,7 @@
   }
  ],
  "instruments": {
-  "tools/round-91/upx-stop-boundary-repair.py": "473bb3a937a60b0b785a6c814b0e25cacc67c97b85cc1cb9704985781d829b91",
+  "tools/round-91/upx-stop-boundary-repair.py": "845013c4639b6ac604d6299b7e761a6374a17845b6f80e8e7f90168a533057e1",
   "tools/round-91/stop-boundary-battery.py": "5998b6bd878534d62ca867def69f9da21a3bd1a6139f51c7fba196dcc6893ca9",
   "tools/round-91/depth-blocks-v3.py": "bcf6c4ea31047401d16ce47562e58bf1d76eec7b1c9da0ff5e222793aeeb052f",
   "tools/round-91/record-cells.py": "87ff58444315a76b944f93e9f4b8f6df19d29d1730a55dfeae6f830a4b6b669b",
@@ -64,5 +77,16 @@
   "rea_pkgjson_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c",
   "rea_package_dir": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents"
  },
- "instrument_supersessions": []
+ "instrument_supersessions": [
+  {
+   "path": "tools/round-91/upx-stop-boundary-repair.py",
+   "supersedes": "tools/round-91/upx-stop-boundary-repair.py (473bb3a937a60b0b785a6c814b0e25cacc67c97b85cc1cb9704985781d829b91, the declared bytes)",
+   "superseding_sha256": "845013c4639b6ac604d6299b7e761a6374a17845b6f80e8e7f90168a533057e1",
+   "found_it": "the round-91 wave's ReviewerRepair seat (`.ufo/waves/round-91/w1/ReviewerRepair.md`, finding MED-1)",
+   "reason": "the round-90 module's own `Refused` escaped `repair()` (which caught only the round-87 class) into `main()`'s `except Exception`, so an upstream typed refusal answered rc 1 ('error') where the tool's contract says rc 2 ('typed refusal'). The fix qualifies both refusal classes. A second, cosmetic change removes a dead `setdefault` (ReviewerRepair LOW-4). No branch that the frozen predicate scores changes; the scored cells and the intact arm are re-measured after the revision.",
+   "repro_before": "block-0 `sz_unc` zeroed on packed xxd: rc 1 `{\"error\": \"Refused: round-89 refusal: ...\"}`",
+   "repro_after": "rc 2 `{\"refused\": \"upstream refusal: round-89 refusal: ...\"}`, matching the round-90 repair's rc 2",
+   "retaken_receipts": []
+  }
+ ]
 }
