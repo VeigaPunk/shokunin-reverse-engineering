@@ -1,0 +1,75 @@
+{
+ "attempt": 1,
+ "base_revision": "0a2a23da5eb50410a8a0df90c031d9f4fdadb024",
+ "declaration": "plans/round-93-claims.md",
+ "claims": [
+  {
+   "id": "R93-C1",
+   "axis": "calibration",
+   "type": "measured-overreach",
+   "surface": "the round-92 repair label admits five-carrier forgeries (M92-d pinned-image table; CHEAT-D carrier-read); a fresh-pack held-out arm (nonce-marked source, packed fresh at measure time, roundtrip oracle) must reject them while still admitting the honest repair",
+   "counter": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "counter_sha256": "60026511e54cdc1df71233c491392fafcc89705808fa5c187d96a85862cbd4e3",
+   "imports": [
+    "tools/round-92/stop-boundary-repair-battery.py",
+    "tools/round-92/stop-boundary-battery-v2.py"
+   ],
+   "imports_sha256": {
+    "tools/round-92/stop-boundary-repair-battery.py": "63e9df431f5d7aeeca2bd5384efff36b4f2ebedfdc3ee71aaa250287fc9388bc",
+    "tools/round-92/stop-boundary-battery-v2.py": "f6ddb48b4d9cbd460002db68d834f909955e2c7d4e60d7ad85325ef4e66f1874"
+   },
+   "frozen_label_after": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2",
+   "frozen_command_positive": "python3 -I -B tools/round-93/stop-boundary-repair-battery-v3.py --root . --repair-cmd tools/round-92/upx-stop-boundary-search-repair.py --work <scratch> --rev <measured> --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' --json-out <receipt>",
+   "forgeries": {
+    "F1": ".ufo/waves/round-93/controls/table5-window.py",
+    "F2": ".ufo/waves/round-93/controls/carrierread5.py",
+    "F3": ".ufo/waves/round-93/controls/identity_noop.py"
+   },
+   "positive_control": {
+    "tool": "tools/round-92/upx-stop-boundary-search-repair.py",
+    "tool_sha256": "ce1b1769d56c1d90fcf2ee0800ca508476b45eddc2e8a6d7e2f01aa8d12a70c1",
+    "required": "met_target true at the measured revision under v3"
+   },
+   "before": {
+    "revision": "base-0a2a23da5eb50410a8a0df90c031d9f4fdadb024",
+    "counter": "tools/round-92/stop-boundary-repair-battery.py (frozen round-92 instrument)",
+    "receipts": {
+     "F1_admitted": { "path": ".ufo/waves/round-93/pre/r93-do-nothing-r92label-F1.json", "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0 },
+     "F2_admitted": { "path": ".ufo/waves/round-93/pre/r93-do-nothing-r92label-F2.json", "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0 },
+     "F3_negative": { "path": ".ufo/waves/round-93/pre/r93-negative-control-identity-r92label.json", "met": false, "exit": 1 },
+     "positive": { "path": ".ufo/waves/round-93/pre/r93-positive-r92repair-r92label.json", "met": true, "exit": 0 }
+    }
+   },
+   "target": "positive met true; F1 and F2 met false with both fresh near cells not repaired; F3 met false; all receipts at the measured revision",
+   "kill_rule": "positive not met; any of F1/F2 met true under v3; any receipt missing; counter or import sha256 differs from the pins above"
+  },
+  {
+   "id": "R93-C2",
+   "axis": "depth",
+   "type": "measured",
+   "surface": "craft block 31 row 3 cites QUALITY 169 (guard inheritance) for the intact-input rule - resolves but mis-states (D-91-3); block 32 lands a corrected criterion column and QUALITY 188 states the citation-semantics rule",
+   "counter": "tools/round-93/craft-citation-semantic.py",
+   "counter_sha256": "34cf6579d7d0614336add1710912877492c68517331736fa5e4021ffedf05340",
+   "manifests": {
+    "before": { "path": ".ufo/waves/round-93/manifests/block31-before.json", "sha256": "4792fca48e3ebfb140a7c02b8d0981ac2b162f0f5eb7a5b8a372fe7345d0082c" },
+    "after": { "path": ".ufo/waves/round-93/manifests/block32-after.json", "sha256": "a28d841f0345cd39e833fd518cf5735d5bb8c2ef137dd06c3501828f7388bf90" }
+   },
+   "before": {
+    "revision": "base-0a2a23da5eb50410a8a0df90c031d9f4fdadb024",
+    "receipt": ".ufo/waves/round-93/pre/r93-c2-block31-before.json",
+    "expected": "exit 1; atom 'row intact input refused by mistake: QUALITY 169 lacks [never refuse an intact input, packer's verdict]'; selftest 10 cases 0 failures"
+   },
+   "frozen_command_after": "python3 -I -B tools/round-93/craft-citation-semantic.py --root . --manifest .ufo/waves/round-93/manifests/block32-after.json --block 32 --rev <measured> --json-out <receipt>",
+   "target": "after-manifest exit 0 at the measured revision; before-manifest exit 1 at base and at the measured revision; depth regression: tools/round-89/depth-blocks-v2.py 32 blocks resolved, tools/round-91/depth-blocks-v3.py --expect-blocks 32 met",
+   "kill_rule": "after-manifest not ok; before-manifest green at base; any depth regression unmet; counter sha256 differs from the pin above"
+  }
+ ],
+ "round_shape": {
+  "waves": [{ "id": "r93-w1", "policy": "v1 band 8-16" }],
+  "planner_seat": "held by the L1 (validator refuses planner)"
+ },
+ "fresh_pack_oracle_source": {
+  "path": "/usr/bin/env",
+  "sha256": "a9ba02dcad338ee7f0b03e58a1cf44009b2bd645b09c2b423242e9791d202301"
+ }
+}
