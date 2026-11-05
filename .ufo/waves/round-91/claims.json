@@ -1,0 +1,68 @@
+{
+ "schema": "kaidoku-r91-claims-v1",
+ "round": 91,
+ "base": "2135f6e1d3f69a259b32cc5167c52ccb1a261c24",
+ "plan": "plans/round-91-claims.md",
+ "declaration": "the commit whose tree contains this file (recorded in SCORECARD round 91)",
+ "claims": [
+  {
+   "id": "R91-C1",
+   "axis": "coverage",
+   "type": "capability acquisition (stop-boundary refusal class enters Core)",
+   "class": "T7-chain-stop-boundary",
+   "predicate": "tools/round-91/stop-boundary-battery.py --repair-cmd tools/round-91/upx-stop-boundary-repair.py --expect 'refused 8 of 8; unsafe 0; intact 4 of 4' reports that label, every cell refused (rc nonzero, no output file), no unsafe write, the intact control identical on four carriers, exit 0; AND tools/round-90/upx-later-block-battery.py --repair-cmd tools/round-91/upx-stop-boundary-repair.py --expect 'P1 6 of 6; P2 4 of 4; P3 4 of 4' reports that label with every control true and exit 0",
+   "label": "refused 8 of 8; unsafe 0; intact 4 of 4",
+   "regression_label": "P1 6 of 6; P2 4 of 4; P3 4 of 4",
+   "kill_rule": "any label differing from the frozen label; unsafe > 0; intact < 4; the regression label differing; any control false; a counter or repair sha256 differing from the pins below; a receipt at a revision other than the measured one; the target narrowed after scoring",
+   "counter": "tools/round-91/stop-boundary-battery.py",
+   "regression_counter": "tools/round-90/upx-later-block-battery.py",
+   "repair": "tools/round-91/upx-stop-boundary-repair.py",
+   "target": {"refused": 8, "cells": 8, "unsafe": 0, "intact": 4, "exit": 0},
+   "before": {
+    "do_nothing": ".ufo/waves/round-91/pre/c1-base-round90-repair.json (round-90 repair, refused 0 of 8, unsafe 2, intact 4 of 4, at 2135f6e1d)"
+   },
+   "candidate_receipts": [
+    ".ufo/waves/round-91/l1/scores/c1-at-declaration.json",
+    ".ufo/waves/round-91/l1/scores/c1-regression-at-declaration.json"
+   ]
+  },
+  {
+   "id": "R91-C2",
+   "axis": "depth",
+   "type": "rule block (decision table, shape-floored from block 31)",
+   "predicate": "tools/round-91/depth-blocks-v3.py --root . --rev <declaration> --expect-blocks 31 --expect 'blocks 31, resolved 31, required-shaped 1/1' reports that label with exit 0, and --prose-proof reports control_killed true",
+   "label": "blocks 31, resolved 31, required-shaped 1/1",
+   "kill_rule": "blocks != 31; resolved != 31; a block citing a path absent at the base revision; block 31's text changed after declaration; the prose control not killed",
+   "counter": "tools/round-91/depth-blocks-v3.py",
+   "predecessor": "tools/round-89/depth-blocks-v2.py",
+   "target": {"blocks": 31, "resolved": 31, "unresolved": 0, "required_shaped": 1, "exit": 0, "prose_control_killed": true},
+   "before": {
+    "base": ".ufo/waves/round-91/pre/c2-depth-at-base.json (blocks 30 at 2135f6e1d, met false)",
+    "prose_proof": ".ufo/waves/round-91/pre/c2-prose-proof.json"
+   },
+   "candidate_receipts": [
+    ".ufo/waves/round-91/l1/scores/c2-at-declaration.json"
+   ]
+  }
+ ],
+ "instruments": {
+  "tools/round-91/upx-stop-boundary-repair.py": "473bb3a937a60b0b785a6c814b0e25cacc67c97b85cc1cb9704985781d829b91",
+  "tools/round-91/stop-boundary-battery.py": "5998b6bd878534d62ca867def69f9da21a3bd1a6139f51c7fba196dcc6893ca9",
+  "tools/round-91/depth-blocks-v3.py": "bcf6c4ea31047401d16ce47562e58bf1d76eec7b1c9da0ff5e222793aeeb052f",
+  "tools/round-91/record-cells.py": "87ff58444315a76b944f93e9f4b8f6df19d29d1730a55dfeae6f830a4b6b669b",
+  "tools/round-90/upx-later-block-battery.py": "5462ef134c680e4f811c59da5e8f17ff84159ed5a55bdd5e1fe5ad7226de3210",
+  "tools/round-90/upx-break-repair.py": "90dea08720a37e876e7f08eafe339a62c710baf402c1342924f9b41b44d5cd6a",
+  "tools/round-90/control-cheat-repack.py": "faafc982ca5c7fcf2e787a8f78f81c5eb687c74998d2552ddd8935d01759b826",
+  "tools/round-89/depth-blocks-v2.py": "359f15e1c87f5106aa3fcbef211568ab7a970564ea0d7ed877299ca706dcf18f",
+  "tools/round-87/upx-magic-repair.py": "96da7d8e981b04f5a598dc7eb8ec3f05eeae4b1498f769c83e72c67f6babec24",
+  "tools/round-88/upx-chain-repair.py": "59ee51b0e63d3e089c23cee066b637841133412cee50748d84d717d61f8a0b46",
+  "tools/round-89/upx-field-value-repair.py": "41f29f211fcaef9cb57fb1a03858c590711dc9c3d7e0f28d36335178485b1d5d"
+ },
+ "pins": {
+  "upx_version": "upx 5.2.0",
+  "upx_sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+  "rea_pkgjson_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c",
+  "rea_package_dir": "/home/vgpnk/.npm/_npx/ad9a3fdbcad992c6/node_modules/rea-agents"
+ },
+ "instrument_supersessions": []
+}
