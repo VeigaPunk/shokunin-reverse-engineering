@@ -1,0 +1,72 @@
+{
+ "schema": "kaidoku-r90-claims-v1",
+ "round": 90,
+ "base": "fc52cc9dc",
+ "plan": "plans/round-90-claims.md",
+ "claims": [
+  {
+   "id": "R90-C1",
+   "axis": "coverage",
+   "type": "capability acquisition (frontier to core)",
+   "class": "T5-chain-szcpr-wrong-later",
+   "predicate": "tools/round-90/upx-later-block-battery.py --repair-cmd tools/round-90/upx-break-repair.py --expect 'P1 6 of 6; P2 4 of 4; P3 4 of 4' reports P1 6 of 6, P2 4 of 4, P3 4 of 4, every control true (N1-refuse-plain, N2-corrupt-payload, N3-intact-idempotent, isolation, carrier_blind, no_work 0 of 6, cheat_repack live and blinded-killed) and exit 0, over the four pinned carriers packed by the pinned packer (upx 5.2.0 --best) and tampered in class T5-chain-szcpr-wrong-later (an interior first-segment block's sz_cpr overwritten with stored - 7 or stored + 7, in range), where a cell is recovered only when the repair exits 0, every differing byte lies inside the tampered 4-byte window, upx -t answers rc 0, upx -d reproduces the carrier pin and REA 6.5.0 reports the original's own counts",
+   "label": "P1 6 of 6; P2 4 of 4; P3 4 of 4",
+   "kill_rule": "any control false; any cell short of its arms; a label differing from --expect; a receipt whose instrument sha256 differs from the pins below; a counter, population, tamper, arm, control or carrier changed after this declaration; REA or packer pin drift",
+   "counter": "tools/round-90/upx-later-block-battery.py",
+   "repair": "tools/round-90/upx-break-repair.py",
+   "target": {
+    "P1": 6,
+    "P2": 4,
+    "P3": 4,
+    "exit": 0,
+    "controls": [
+     "N1-refuse-plain",
+     "N2-corrupt-payload",
+     "N3-intact-idempotent",
+     "isolation",
+     "carrier_blind",
+     "no_work",
+     "cheat_repack"
+    ]
+   },
+   "before": {
+    "no_work": ".ufo/waves/round-90/pre/c1-candidate-at-declaration.json (controls.no_work: round-89 repair, 0 of 6)",
+    "cheat": ".ufo/waves/round-90/pre/c1-candidate-at-declaration.json (controls.cheat_repack)"
+   }
+  },
+  {
+   "id": "R90-C2",
+   "axis": "depth",
+   "type": "rule block (decision table)",
+   "predicate": "tools/round-89/depth-blocks-v2.py --root . --rev <measured> --expect-blocks 30 reports blocks 30, resolved 30, unresolved [] and exit 0, where a block resolves only when every corpus/knowledge/<name>.md[:line[-line]] citation it carries exists at that revision, its range is inside the file, and the block carries at least 25 words and 2 backticked spans",
+   "label": "blocks 30, resolved 30",
+   "kill_rule": "blocks != 30; resolved != 30; any unresolved block; the base arm not red (blocks 29 vs target 30, exit 1 at .ufo/waves/round-90/pre/c2-depth-at-base.json); block 30 citing a corpus/knowledge document absent at the base revision; the block text changed after this declaration",
+   "counter": "tools/round-89/depth-blocks-v2.py",
+   "target": {
+    "blocks": 30,
+    "resolved": 30,
+    "unresolved": 0,
+    "expect_blocks": 30,
+    "exit": 0
+   },
+   "before": {
+    "base": ".ufo/waves/round-90/pre/c2-depth-at-base.json"
+   }
+  }
+ ],
+ "instruments": {
+  "tools/round-90/upx-later-block-battery.py": "84664f52afa0c03b38aca23552046fcf5e8e04056a597da7b2b06ef6d5eb8206",
+  "tools/round-90/upx-break-repair.py": "aaf3536ea2226ac8ec498603d50b7b1b4a57c5572c7edef4fcf0e2a91d35590b",
+  "tools/round-90/control-cheat-repack.py": "faafc982ca5c7fcf2e787a8f78f81c5eb687c74998d2552ddd8935d01759b826",
+  "tools/round-89/upx-field-value-repair.py": "41f29f211fcaef9cb57fb1a03858c590711dc9c3d7e0f28d36335178485b1d5d",
+  "tools/round-89/upx-field-battery.py": "f6f5ed61f47e055b7cfa6b58c2e29064d8e4eb31859ff1963a8e80393cd0b720",
+  "tools/round-89/depth-blocks-v2.py": "359f15e1c87f5106aa3fcbef211568ab7a970564ea0d7ed877299ca706dcf18f",
+  "tools/round-88/upx-chain-repair.py": "59ee51b0e63d3e089c23cee066b637841133412cee50748d84d717d61f8a0b46",
+  "tools/round-88/upx-chain-battery.py": "a01ed6227878db2a64c7274d6ad2f37aa7c2e3462629cbb1f8619094bc037160",
+  "tools/round-87/upx-magic-repair.py": "96da7d8e981b04f5a598dc7eb8ec3f05eeae4b1498f769c83e72c67f6babec24"
+ },
+ "pins": {
+  "upx_sha256": "cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969",
+  "rea_pkgjson_sha256": "a500302319c1214a8bb6c9a8b4a4a090806e95eef884204a9d9fbb4003050a6c"
+ }
+}
