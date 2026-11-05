@@ -716,3 +716,28 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
 - **Frontier (unchanged by this round):** `p_filesize`/`p_blocksize`/adler repairs, entry-altered stubs,
   other packers, big-endian and PE UPX carriers, 32-bit ELF carriers, and an overlay-carrying carrier whose
   chain does not account for `u_len`.
+
+## Round-89 additions to Core (verified 2026-11-04)
+
+- **Core — packed-ELF `b_info` value classes (a wrong-but-in-range first-block `sz_cpr`):** the round-88
+  limit "a non-zero but wrong `sz_cpr` is left alone" is now a repaired class.
+  `tools/round-89/upx-field-value-repair.py` runs the round-87 anchor path first, then derives block 0's
+  `sz_cpr` with the stored value taken out of the gate — the same chain law (contiguity `12 + sz_cpr`,
+  `sz_unc` bound, `u_len` accounting) — and decides `intact` (stored == derived, output byte-identical),
+  `chain-geometry` (stored 0) or `field-value` (any other stored value) only afterwards; the corrected
+  bytes are re-validated through the anchor path, so a correction that does not restore a plausible chain
+  is refused rather than written. The frozen counter `tools/round-89/upx-field-battery.py` scores
+  `recovered 4 of 4` on the four round-70 carriers with `N1`/`N2`/`N3` and the `isolation` control true
+  and the round-88 class regression arm met; the unchanged round-88 repair scores `0 of 4` on the same
+  class (`pre/c1-base-r88-repair.json`). The counter runs each repair invocation in a private directory
+  holding only the input (round-88 M88-8 / QUALITY 158). Entry:
+  `corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md` (S311, S312, S306, S309, S310).
+- **Held, not Core — the field-class refusal table:** nine single-field classes on two carriers
+  (`l1/scores/block29-cells.json`), landed as craft rule block 29: `sz_unc` has no redundancy and is
+  refused; every wrong-value `sz_cpr` class is recoverable; `sz_cpr = sz_unc + 1` answers
+  `header corrupted` rather than `b_info corrupted`; a tampered `l_info.version`/`format` is tolerated by
+  `upx -t` yet breaks the lane's locator, so it is refused. It routes a class to its move; it is not a
+  repair for the classes it only measures.
+- **Frontier (unchanged by this round):** later-block `sz_cpr` values, `p_filesize`/`p_blocksize`/adler
+  repairs, entry-altered stubs, other packers, big-endian and PE UPX carriers, 32-bit ELF carriers, and an
+  overlay-carrying carrier whose chain does not account for `u_len`.
