@@ -78,7 +78,7 @@
   },
   {
    "path": "tools/round-89/upx-field-value-repair.py",
-   "commit": "pending",
+   "commit": "7edab6ae5072778511ab76904e5758548518e251",
    "supersedes": "tools/round-89/upx-field-value-repair.py (332917f2b620da7a659b78db5bf498c8af2eba6ae529d872c2518b62ad6b1070, the declared bytes)",
    "reason": "the wave found three defects in the declared bytes and the repair was revised in-round, before any measured run: (a) the round-87 module's `Refused` escaped as an uncaught traceback (rc 1) because `derive()` called `find_packheader` outside the converting `except`, so the counter's `N1-refuse-plain` (which asserts `rc != 0`) accepted a crash as a refusal; (b) a FIFO `--in` blocked (exit 124 at 5 s) and `/dev/zero` raised `MemoryError` from an unbounded read, because the round-88 input guards were not inherited. The revision adds `read_input()` (`lstat`, regular file, size cap) and a `repair()` wrapper that converts every upstream `Refused` to this module's (rc 2); selftest 16 -> 22 cases, failures 0. The claim's predicate, counter, label, kill rule and target are unchanged; the kill rule's `repair_sha256` pin now resolves to the superseding bytes, whose receipts are `pre/c1-candidate-at-declaration.json` (4 of 4, met), `l1/scores/c1-r88class-regression.json` and `l1/scores/c1-r87class-regression.json`, all re-taken after the revision.",
    "retaken_before": ".ufo/waves/round-89/pre/c1-candidate-at-declaration.json at repair_sha256 664b973a (recovered 4 of 4, controls all true, regression arm met, exit 0) and the declared-bytes receipt kept as history (.ufo/waves/round-89/w1/ReviewerC1/receipts/c1-repro.json, repair_sha256 332917f2, same label)",
