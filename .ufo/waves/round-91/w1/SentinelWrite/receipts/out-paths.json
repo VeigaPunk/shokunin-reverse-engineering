@@ -1,0 +1,113 @@
+{
+ "T1_symlink_immediate_parent": {
+  "rc": 2,
+  "wall": 0.044,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"--out parent is a symlink: /fast/scratch/hyaku/kaidoku-r91/SentinelWrite/t/T1/link\"}",
+  "err": "",
+  "out_in_real": false
+ },
+ "T2_symlink_grandparent": {
+  "rc": 0,
+  "wall": 0.041,
+  "out": "{\"break_index\": null, \"class\": \"intact\", \"delta\": null, \"derived_sz_cpr\": null, \"stored_sz_cpr\": null}",
+  "err": "",
+  "out_in_real_sub": true
+ },
+ "T3_out_symlink_to_victim": {
+  "rc": 0,
+  "wall": 0.041,
+  "out": "{\"break_index\": null, \"class\": \"intact\", \"delta\": null, \"derived_sz_cpr\": null, \"stored_sz_cpr\": null}",
+  "err": "",
+  "victim": "VICTIM",
+  "out_is_link": false
+ },
+ "T4_dangling_symlink_out": {
+  "rc": 0,
+  "wall": 0.043,
+  "out": "{\"break_index\": null, \"class\": \"intact\", \"delta\": null, \"derived_sz_cpr\": null, \"stored_sz_cpr\": null}",
+  "err": "",
+  "ghost_created": false,
+  "out_is_link": false
+ },
+ "T5_out_is_dir": {
+  "rc": 2,
+  "wall": 0.044,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"--out is a directory: /fast/scratch/hyaku/kaidoku-r91/SentinelWrite/t/T5/adir\"}",
+  "err": ""
+ },
+ "T6_dotdot": {
+  "rc": 2,
+  "wall": 0.042,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"--out carries a '..' component: /fast/scratch/hyaku/kaidoku-r91/SentinelWrite/t/T6/sub/../x.bin\"}",
+  "err": "",
+  "x_created": false
+ },
+ "T7_parent_is_file": {
+  "rc": 2,
+  "wall": 0.041,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"--out parent is not a directory: /fast/scratch/hyaku/kaidoku-r91/SentinelWrite/t/T7/afile\"}",
+  "err": ""
+ },
+ "T8_info_fails_after_out_written": {
+  "rc": 2,
+  "wall": 0.043,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"--out parent is not a directory: /fast/scratch/hyaku/kaidoku-r91/SentinelWrite/t/T8/nodir\"}",
+  "err": "",
+  "out_written": true,
+  "out_bytes_match_input": true
+ },
+ "T9_info_symlink_victim": {
+  "rc": 0,
+  "wall": 0.041,
+  "out": "{\"break_index\": null, \"class\": \"intact\", \"delta\": null, \"derived_sz_cpr\": null, \"stored_sz_cpr\": null}",
+  "err": "",
+  "victim2": "V2",
+  "info_is_link": false
+ },
+ "T10_out_devnull": {
+  "rc": 1,
+  "wall": 0.043,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"error\": \"PermissionError: [Errno 13] Permission denied: '/dev/.r91-write-ja35qvtg'\"}",
+  "err": "",
+  "devnull_is_chardev": true
+ },
+ "T12_cap_256MiB_plus_1": {
+  "rc": 2,
+  "wall": 0.032,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"input exceeds 268435456 bytes\"}",
+  "err": ""
+ },
+ "T12b_exact_256MiB_zeros": {
+  "rc": 2,
+  "wall": 0.217,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"not a little-endian ELF\"}",
+  "err": ""
+ },
+ "T13a_input_symlink": {
+  "rc": 2,
+  "wall": 0.033,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"input is not a regular file\"}",
+  "err": ""
+ },
+ "T13b_input_fifo": {
+  "rc": 2,
+  "wall": 0.033,
+  "out": "{\"tool\": \"tools/round-91/upx-stop-boundary-repair.py\", \"class\": \"T7-chain-stop-boundary\", \"refused\": \"input is not a regular file\"}",
+  "err": ""
+ },
+ "T14_hostile_env_intact": {
+  "rc": 0,
+  "wall": 0.043,
+  "out": "{\"break_index\": null, \"class\": \"intact\", \"delta\": null, \"derived_sz_cpr\": null, \"stored_sz_cpr\": null}",
+  "err": "ERROR: ld.so: object '/nonexistent.so' from LD_PRELOAD cannot be preloaded (cannot open shared object file): ignored.",
+  "out_written": true,
+  "info": "{\n \"break_index\": null,\n \"class\": \"intact\",\n \"delta\": null,\n \"derived_sz_cpr\": null,\n \"stored_sz_cpr\": null,\n \"tool\": \"tools/round-91/upx-stop-boundary-repair.py\",\n \"uncompressed_accounted\": null\n}"
+ },
+ "T14_control_upx_t_with_hostile_env_direct": {
+  "rc": 1,
+  "tail": "om LD_PRELOAD cannot be preloaded (cannot open shared object file): ignored.\nupx: invalid option '-d'\n/usr/bin/upx: illegal option in environment variable 'UPX'"
+ },
+ "T14_control_upx_t_clean_env": {
+  "rc": 0
+ }
+}

@@ -1,0 +1,36 @@
+--- /fast/scratch/hyaku/kaidoku-r91/ExecCandidate/clone/tools/round-91/upx-stop-boundary-repair.py	2026-11-05 07:42:55.130536559 -0300
++++ /fast/scratch/hyaku/kaidoku-r91/ExecCandidate/clone/tools/round-91/variant-geometry-pure.py	2026-11-05 07:44:30.142844364 -0300
+@@ -172,6 +172,8 @@
+         pins = {"r90_sha256": hashlib.sha256(fh.read()).hexdigest()}
+     try:
+         cls = classify(d, r90, rep, r88)
++        if cls is not None and cls[3] and cls[4] < cls[2]["u_len"]:
++            raise Refused("geometry variant: walked stored total is below declared u_len")
+         if cls is None or len(cls[0]) < 2:
+             out, info = r90._block0(d, rep, r89, pins)
+             info.setdefault("class", "block0-or-intact")
+@@ -182,18 +184,12 @@
+         patched, rec = r90.derive_break(d, rep, r88, min_total, ph["u_len"])
+         if patched is not None:
+             return r90._patched(patched, rec, rep, pins)
+-        # No successor decides the walk.  Either the input is intact, or the
+-        # tampered block is the last before the stop.  Only the packer's verdict
+-        # on the input separates them; the output of this branch is the input
+-        # byte-identical, or a typed refusal with no output file.
+-        if upx_test(d):
+-            return d, {"class": "intact", "break_index": None, "pins": pins,
+-                       **pins}
+-        raise Refused(
+-            "stop-boundary: the walk's last storable block has no successor that "
+-            f"accounts for the declared u_len ({ph['u_len']}) and `upx -t` refuses "
+-            f"the input (prefix {len(blocks)} blocks, stored_total {stored_total}); "
+-            "this class is refused, not repaired")
++        # Pure-geometry arm: no successor decides the walk, so take the
++        # round-90 fall-through (the block-0 law), with no packer verdict.
++        out, info = r90._block0(d, rep, r89, pins)
++        info.setdefault("class", "block0-or-intact")
++        info.update(pins)
++        return out, info
+     except rep.Refused as exc:
+         raise Refused(f"upstream refusal: {exc}") from None
+ 

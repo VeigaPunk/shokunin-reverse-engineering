@@ -44,7 +44,22 @@ The round-90 non-author spot-check (`corpus/lessons/round-90-verifier-spotcheck.
 
 ## Wave `r91-w1` — seat results
 
-Pending: the wave is dispatched through the inline handoff (`.ufo/waves/round-91/r91-w1.ready`, dispatch `r91-w1-dispatch.json`, 12 spawn seats). The seat-by-seat results and the disposition of every attack finding are recorded here when `WAVE-DONE r91-w1` arrives.
+Wave `r91-w1`: one v1 wave, 12 spawn seats, dispatch `r91-w1-dispatch.json` written 00:58 and taken by the driver at 07:41:53 (`.ready.dispatched`); attack seats 4/12 (ReviewerRepair, ReviewerFalsify, CriticClaims, MutCounter), one connector, no planner (the L1 holds that seat). Results as they settle:
+
+- **ExecRegress (executor).** The regression arm at `deb2765a` prints `P1 6 of 6; P2 4 of 4; P3 4 of 4`, exit 0, all eight controls true, and both pinned instrument sha256 values match `claims.json` exactly. Receipt `w1/ExecRegress/receipt.json`.
+- **ExecCandidate (executor).** Reproduced the frozen counter on both arms at `deb2765a` (declaration and base identical to the L1's receipts, per-cell classes included) and scored the declared cheap rules plus one it added: blanket refusal `refused 8 of 8; intact 0 of 4`; geometry as specified `refused 8 of 8; intact 3 of 4`; geometry-pure `refused 3 of 8; intact 3 of 4`. None reaches the label. Receipts `w1/ExecCandidate/c1-variant-*.json`, variants and `SHA256SUMS` under `w1/ExecCandidate/variants/`.
+- **ExecSelftests (executor).** All eight selftest/compile commands exit 0 in the lane and again in a clone at the declaration commit; the lane's `git status` is unchanged by the run. Two deliberate deviations are recorded (`-X pycache_prefix` because `-I` ignores `PYTHON*`; `--work` on the battery).
+- **ReviewerRepair (reviewer).** No HIGH. MED-1: the round-90 module's typed `Refused` escaped to rc 1 where the tool's contract says rc 2 — **fixed in wave** (supersession 1; repro `b0zero` rc 1 → rc 2). LOW-1 (a second behaviour change beyond the declared fall-through, not reproducible), LOW-2 (write-failure exit mapping), LOW-3 (packer-absent coupling), LOW-4 (dead `setdefault`, removed).
+- **ReviewerFalsify (reviewer).** H holds on all eight cells: `upx -t` is a **decision procedure** — exactly one in-range `sz_cpr` value is green, and it is the pristine stored value; `upx -d` then reproduces the carrier pin. The class is therefore recoverable, and R91-C1's refusal is a policy choice, not an impossibility. Recorded as M91-8 and QUALITY 182; the refusal repair path is routed to round 92. The frozen label is untouched and still met.
+- **SentinelWrite (sentinel).** No HIGH. MED-1: the walk and successor scan cost is linear per candidate, so cost is ~quadratic in N (64 MiB with 10 successors 95 s; 256 MiB 2.8 GB RSS), and the input cap bounds size, not work — recorded as QUALITY 183 and routed. MED-2: `--info` was written after `--out`, so a refused info path answered rc 2 with the output on disk — **fixed in wave** (supersession 2; verified: rc 2, no output). LOW-1..6 recorded (symlinked ancestor, unbound upstream module hashes, symlink invocation rc 1, 0600 output mode, fd leak path, disk amplification).
+- **ScoutSource (scout).** S313 re-opened: HTTP 200, 24181 bytes, sha256 matches the row; the tag URL and the tag commit `034b6d0d…` serve identical bytes; `master` drift recorded for the row's recheck field. `w1/ScoutSource.md`.
+- **ScribeKnowledge (scribe).** Draft entry (97 lines) plus finding 3, which caught the landed entry's pointer to a then-nonexistent `w1/ExecCandidate/` directory and its "recorded in the lesson" sentence — M91-7, corrected.
+- **ScribeQuality (scribe).** Rows 178-181 drafted and checked against the frozen receipts; every cited path resolves at the declaration commit.
+- **ConnectorOverlap (connector).** No sibling lane claims the T7 class or any of the round's instrument names; the only shared name is `record-cells`, which tameshi's live round-87 connector read as a shared primitive (`git cat-file -t` == `blob`) — adjacency, not a duplicate claim. `w1/ConnectorOverlap.md`.
+- **CriticClaims (critic).** Report pending at the time of writing; its findings are folded in below when it lands.
+- **MutCounter (mutation-tester).** Report pending at the time of writing; its mutant table is folded in below when it lands.
+
+No seat was replaced; no seat is recorded dead at the time of writing.
 
 ## Census
 

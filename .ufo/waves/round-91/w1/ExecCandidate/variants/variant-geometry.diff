@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r91/ExecCandidate/clone/tools/round-91/upx-stop-boundary-repair.py	2026-11-05 07:42:55.130536559 -0300
++++ /fast/scratch/hyaku/kaidoku-r91/ExecCandidate/clone/tools/round-91/variant-geometry.py	2026-11-05 07:43:20.753641972 -0300
+@@ -172,6 +172,8 @@
+         pins = {"r90_sha256": hashlib.sha256(fh.read()).hexdigest()}
+     try:
+         cls = classify(d, r90, rep, r88)
++        if cls is not None and cls[3] and cls[4] < cls[2]["u_len"]:
++            raise Refused("geometry variant: walked stored total is below declared u_len")
+         if cls is None or len(cls[0]) < 2:
+             out, info = r90._block0(d, rep, r89, pins)
+             info.setdefault("class", "block0-or-intact")
