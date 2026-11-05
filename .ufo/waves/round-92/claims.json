@@ -1,0 +1,131 @@
+{
+ "attempt": 1,
+ "base_revision": "73a882712907606eba074377b536c6dd82517e25",
+ "claims": [
+  {
+   "axis": "coverage",
+   "before": {
+    "label": "repaired 0 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10",
+    "met": false,
+    "receipt": ".ufo/waves/round-92/pre/c1-control-do-nothing-round91-repair.json",
+    "revision": "73a882712907606eba074377b536c6dd82517e25 (do-nothing = round-91 repair)"
+   },
+   "candidate": "tools/round-92/upx-stop-boundary-search-repair.py (built in the round-92 wave; not yet present at declaration)",
+   "counter": "tools/round-92/stop-boundary-repair-battery.py",
+   "counter_sha256": "63e9df431f5d7aeeca2bd5384efff36b4f2ebedfdc3ee71aaa250287fc9388bc",
+   "frozen_command": "python3 -I -B tools/round-92/stop-boundary-repair-battery.py --root . --repair-cmd tools/round-92/upx-stop-boundary-search-repair.py --work <scratch> --rev <measured> --expect \"repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10\" --json-out <receipt>",
+   "frozen_label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10",
+   "id": "R92-C1",
+   "imports": "tools/round-92/stop-boundary-battery-v2.py",
+   "imports_sha256": "f6ddb48b4d9cbd460002db68d834f909955e2c7d4e60d7ad85325ef4e66f1874",
+   "kill_rule": "any of: repaired < 10; wrong > 0; unsafe > 0; intact < 5; far-refused < 10; a missing receipt; the counter's sha256 differs from the pin above",
+   "surface": "last-block stop-boundary class (packed UPX 5.2.0 --best ELF, last block sz_cpr moved by -7/+7): Core refusal (r91) -> measured repair inside a declared +/-16 window decided by the packer verdict",
+   "target": "met_target true at the measured commit",
+   "type": "capability"
+  },
+  {
+   "axis": "calibration",
+   "before": {
+    "admitted": 3,
+    "counter": "tools/round-91/stop-boundary-battery.py (frozen label refused 8 of 8; unsafe 0; intact 4 of 4)",
+    "of": 3,
+    "receipts": [
+     ".ufo/waves/round-92/pre/c2-do-nothing-v1-counterfeit-A.json",
+     ".ufo/waves/round-92/pre/c2-do-nothing-v1-counterfeit-B.json",
+     ".ufo/waves/round-92/pre/c2-do-nothing-v1-counterfeit-C.json"
+    ],
+    "revision": "73a882712907606eba074377b536c6dd82517e25"
+   },
+   "counter": "tools/round-92/stop-boundary-battery-v2.py",
+   "counter_sha256": "f6ddb48b4d9cbd460002db68d834f909955e2c7d4e60d7ad85325ef4e66f1874",
+   "counterfeits": [
+    "CHEAT-A carrier-read (.ufo/waves/round-92/controls/cheat_carrier_read.py)",
+    "CHEAT-B hash-table (.ufo/waves/round-92/controls/cheat_hash_table.py; table = sha256 of four freshly packed carriers)",
+    "CHEAT-C exit-1 typed refusal (.ufo/waves/round-92/controls/cheat_typed_only.py)"
+   ],
+   "frozen_label": "refused 10 of 10; typed 10; unsafe 0; intact 5 of 5",
+   "id": "R92-C2",
+   "kill_rule": "after admitted != 0; or the positive control is not met_target true at the measured commit; or any counterfeit receipt missing",
+   "positive_control": "round-91 refusal tool under v2: met_target true",
+   "surface": "R91-C1 label admitted counterfeit refusals: rc-1 exits and carrier/hash-table oracles passed `refused 8 of 8`. Count of declared counterfeits the frozen counter admits, before vs after",
+   "target": "admitted 0 of 3 with the positive control met_target true",
+   "type": "measured-overreach"
+  }
+ ],
+ "controls_summary": {
+  "c1-control-do-nothing-round91-repair": {
+   "exit": 1,
+   "label": "repaired 0 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10",
+   "met_target": false,
+   "repair": "tools/round-91/upx-stop-boundary-repair.py",
+   "revision": "base-73a882712"
+  },
+  "c2-counterfeit-A-v2": {
+   "exit": 1,
+   "label": "refused 10 of 10; typed 10; unsafe 0; intact 4 of 5",
+   "met_target": false,
+   "repair": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-92/controls/cheat_carrier_read.py",
+   "revision": "base-73a882712"
+  },
+  "c2-counterfeit-B-v2": {
+   "exit": 1,
+   "label": "refused 10 of 10; typed 10; unsafe 0; intact 4 of 5",
+   "met_target": false,
+   "repair": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-92/controls/cheat_hash_table.py",
+   "revision": "base-73a882712"
+  },
+  "c2-counterfeit-C-v2": {
+   "exit": 1,
+   "label": "refused 10 of 10; typed 0; unsafe 0; intact 5 of 5",
+   "met_target": false,
+   "repair": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-92/controls/cheat_typed_only.py",
+   "revision": "base-73a882712"
+  },
+  "c2-do-nothing-v1-counterfeit-A": {
+   "exit": 0,
+   "label": "refused 8 of 8; unsafe 0; intact 4 of 4",
+   "met_target": true,
+   "repair": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-92/controls/cheat_carrier_read.py",
+   "revision": "base-73a882712"
+  },
+  "c2-do-nothing-v1-counterfeit-B": {
+   "exit": 0,
+   "label": "refused 8 of 8; unsafe 0; intact 4 of 4",
+   "met_target": true,
+   "repair": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-92/controls/cheat_hash_table.py",
+   "revision": "base-73a882712"
+  },
+  "c2-do-nothing-v1-counterfeit-C": {
+   "exit": 0,
+   "label": "refused 8 of 8; unsafe 0; intact 4 of 4",
+   "met_target": true,
+   "repair": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-92/controls/cheat_typed_only.py",
+   "revision": "base-73a882712"
+  },
+  "c2-positive-v2-round91": {
+   "exit": 0,
+   "label": "refused 10 of 10; typed 10; unsafe 0; intact 5 of 5",
+   "met_target": true,
+   "repair": "tools/round-91/upx-stop-boundary-repair.py",
+   "revision": "base-73a882712"
+  }
+ },
+ "declaration_note": "Pre-declaration: counters and do-nothing controls built and scored by the L1 before freeze (PROTOCOL 'do-nothing control'); the candidate repair tool does not exist at declaration and is built in the round-92 wave.",
+ "instruments_sha256": {
+  ".ufo/waves/round-92/controls/cheat_carrier_read.py": "018ae7caf27b6b4ae3f927d7eb999d4d76b040992c268231a57209b9729b34a3",
+  ".ufo/waves/round-92/controls/cheat_hash_table.py": "4abd318b9b1512865f29bbf6ba591c85bd3b10fe30137bd4e714f3fba47a11a5",
+  ".ufo/waves/round-92/controls/cheat_typed_only.py": "7ef7f9e01b0e4f72becc5222fb4120138febc590d91d804056ce0ef7de1d1a7a",
+  "tools/round-91/stop-boundary-battery.py": "5998b6bd878534d62ca867def69f9da21a3bd1a6139f51c7fba196dcc6893ca9",
+  "tools/round-91/upx-stop-boundary-repair.py": "3779d35fc8f57bc9f573b87b5b4e566e159ac58737b3942be6b840f649e3f238",
+  "tools/round-92/stop-boundary-battery-v2.py": "f6ddb48b4d9cbd460002db68d834f909955e2c7d4e60d7ad85325ef4e66f1874",
+  "tools/round-92/stop-boundary-repair-battery.py": "63e9df431f5d7aeeca2bd5384efff36b4f2ebedfdc3ee71aaa250287fc9388bc"
+ },
+ "lane": "kaidoku",
+ "round": 92,
+ "unseen_carrier": {
+  "id": "xz-unseen",
+  "note": "not in round-91 carrier list, cheat tables or hash table",
+  "path": "/usr/bin/xz",
+  "sha256": "24c477492f40fd8b1b6eca2d6cc020e47d4c9c11ee1bfb9ba57fb8e2f6a11bda"
+ }
+}
