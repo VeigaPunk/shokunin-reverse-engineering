@@ -6560,6 +6560,8 @@ S315 rejected; the `src/p_unix.cpp` rejection is kept for `PackUnix::unpack` and
 `## Round-90 additions to Core`; README coverage row, index row, frontier note; QUALITY 172-173.
 Assimilation: none.
 
+**Wave and round shape.** One v1 wave `r90-w1`, 13 seats (executor 4, scribe 2, scout 1, reviewer 2, critic 1, mutation-tester 1, sentinel 1, connector 1; attack 5/13 = 38.5 %; the L1 held the planner seat). Ten seats delivered a report or a drafted artifact; the three that did not are recorded in the report. Round total 13 seats; no residual call, no second wave.
+
 **Planned (next steered round only).** (a) score the last block before a chain stop, and a suffix that
 self-resumes, as their own refused classes with a receipt; (b) `p_filesize`/`p_blocksize`/adler repairs
 stay Frontier; (c) the 32-bit and `--lzma` carrier classes; (d) the round-90 wave's routed defects; (e)

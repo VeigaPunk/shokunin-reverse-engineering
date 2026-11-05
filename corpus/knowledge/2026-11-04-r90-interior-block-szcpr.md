@@ -5,7 +5,7 @@ source: S312 (existing, round 89) — UPX v5.2.0 `src/p_unix.h` — the NE32 `pa
 source: S311 (existing, round 89) — UPX v5.2.0 `src/p_lx_elf.cpp` — the `un_shlib_1` peek that reports a desynchronised shared object as `corrupt b_info` and the executables' range-checked `unpackExtent` calls.
 source: S309 (existing, round 88) — UPX v5.2.0 `src/packhead.h` — the PackHeader `u_len` the accounting preference reads.
 source: S314 — UPX v5.2.0 `src/p_lx_elf.h`, https://raw.githubusercontent.com/upx/upx/v5.2.0/src/p_lx_elf.h — opened 2026-11-04, HTTP 200, 31147 bytes, sha256 `895da5cd72da32bf17846ef4b8088b1ed75dc35ac2506f694098bb30c90c7d89`; line 107 `unsigned o_binfo;  // offset to first b_info` — the packer names the first block's start (`o_binfo = sz_elf_hdrs + sizeof(l_info) + sizeof(p_info)`, `src/p_lx_elf.cpp` line 4000), so the walk starts at a layout boundary rather than at an arbitrary offset.
-verified-at: 2026-11-04 (round 90; measured revision and receipt in SCORECARD `## 2026-11-04 — round 90`)
+verified-at: 2026-11-04 (round 90; the landing measurements ran 2026-11-05 03:00-05:00 UTC — receipts in `.ufo/waves/round-90/l1/scores/` and the record in SCORECARD `## 2026-11-04 — round 90`)
 recheck: 180d — the counting command below and `python3 -I -B tools/round-90/upx-break-repair.py --selftest`.
 
 ## The class
