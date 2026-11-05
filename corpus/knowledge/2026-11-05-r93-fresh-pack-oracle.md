@@ -114,6 +114,20 @@ python3 -I -B tools/round-93/stop-boundary-repair-battery-v3.py --root . \
 
 Exit 0 means the label equals `--expect` and the counter's own conditions hold.
 
+### Measured at the landing commit `ca5aa6a2ca65ff14f11707c3a376a96879458248`
+
+Frozen command, run on a clone of that commit (`git -C <clone> rev-parse HEAD` = `ca5aa6a2…`); receipts `.ufo/waves/round-93/l1/scores/c1-{pos,F1,F2,F3}-stdout-at-ca5aa6a2.txt` (stdout form) and `c1-{pos,F1,F2,F3}-json-stdout-at-ca5aa6a2.txt` with `c1-{F1,F2}-json-at-ca5aa6a2.json` (the JSON receipts that were written).
+
+| arm | stdout form (no `--json-out`): label, met, exit | `--json-out` form |
+|---|---|---|
+| positive control (round-92 repair) | `repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2 met True exit 0` | exit 1, `TypeError`, no receipt |
+| F1 pinned-image table | `repaired 10 of 12; wrong 0; unsafe 0; intact 5 of 6; far-refused 12 of 12; fresh-roundtrip 0 of 2 met False exit 1` | exit 1 (met False); receipt written |
+| F2 carrier-read | `repaired 10 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 0 of 2 met False exit 1` | exit 1 (met False); receipt written |
+| F3 identity no-op | `repaired 0 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 0 of 12; fresh-roundtrip 0 of 2 met False exit 1` | exit 1, `TypeError`, no receipt |
+
+Reading: under v3 both round-92 forgeries fail the label and the no-op fails it; the honest repair meets the label on stdout. The positive control's receipt cannot be written by the frozen `--json-out` form (limit 1). That is why the R93-C1 verdict in the lesson is not verified.
+
+
 ## Limits (measured where stated; none is closed here)
 
 1. **The v3 counter cannot write its own receipt when a fresh near cell is repaired.** `score_fresh_cell` keeps the repair's raw output bytes in `row["output"]`, and `json.dump` cannot serialize `bytes`. The run therefore **crashes with `TypeError: Object of type bytes is not JSON serializable` when serializing dict item 'output'`**, after the score is computed but before the receipt is complete; the process exits 1 and the `--json-out` file is left as a truncated, unparseable JSON prefix. Measured: the honest repair under v3 with `--json-out` exits 1 with that traceback and a 706-byte unparseable file, while the identical run **without** `--json-out` prints `repaired 12 of 12; …; fresh-roundtrip 2 of 2 met True exit 0` and exits 0. The same crash hits F3 (`identity_noop.py`) and the oracle-swap probe, for the same reason (both produce output bytes). It does **not** hit F1 or F2, whose fresh cells are refusals with no output file — which is exactly why the committed probe receipt `.ufo/waves/round-93/pre/probe-v3-F1-unscored.json` parses cleanly while the positive control's does not. **The frozen counter's sha256 is `60026511…`, unchanged in this round; this entry does not edit it.** The after-receipt at the measured revision must therefore be taken without `--json-out` (stdout only), or the receipt must be recorded by a caller that writes the label and the counts itself — the L1's decision, not this seat's.
