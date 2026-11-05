@@ -130,3 +130,20 @@ regression), scout 2 (UPX source locators, host-class reconnaissance), scribe 2 
 SOURCES rows), reviewer 2 (C1, C2), critic 1, mutation-tester 1, sentinel 1, connector 1. Attack
 seats 5/14 = 36 % (≥ 25 %); one connector (≤ 2); the L1 holds the planner seat (the validator
 rejects `planner`).
+
+## Correction appended round 89 (round-88 spot-check D2 and D6; append-only, no earlier line rewritten)
+
+- **D2 — the superseded rule survives in this plan.** Lines 17-21 above state that the derivation takes
+  "the smallest offset above `block0 + 12`" and that "a candidate claiming more than `u_len` is
+  impossible". The first clause is wrong on docker-init (three candidates survive the structural bound —
+  136, 226, 440 — and the true value is 226; round-88 lesson M88-3), and the second is right but is not
+  what the code does: `tools/round-88/upx-chain-repair.py:136` keys on `(fits, total, -derived)` with
+  `fits = total <= u_len`, so a candidate that exceeds `u_len` is *deprioritised*, not discarded. The
+  measured rule is: prefer a candidate whose chain accounts for at most `u_len`, then the largest
+  accounted total, then the smallest derived value. The claim's predicate, counter, label, kill rule and
+  target are untouched by this correction.
+- **D6 — the attack-share arithmetic in the last paragraph above is mislabelled.** The run-15 attack set
+  is reviewer/critic/mutation-tester/labrat, so the round-88 wave's strict attack share is
+  reviewer 2 + critic 1 + mutation-tester 1 = 4 of 14 = 28.6 %, not 5/14 = 36 % (the fifth seat counted
+  was the sentinel, which is not an attack role). Both figures clear the ≥ 25 % floor; the label was
+  wrong, not the mix.
