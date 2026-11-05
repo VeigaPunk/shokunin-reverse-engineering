@@ -1,0 +1,14 @@
+--- tools/round-90/upx-later-block-battery.py (pristine)
++++ mutant f-field-only-dropped
+@@ -222,8 +222,9 @@
+                                        and got["counts"] == orig_counts)
+         row["detail"] = why
+     row["arms"] = arms
+-    row["recovered"] = all(v is True for v in arms.values() if v is not None) and \
+-        (arms["rea_recover"] in (True, None))
++    row["recovered"] = all(v is True for k, v in arms.items()
++                           if v is not None and k != "field_only") and \
++        (arms["rea_recover"] in (True, None))  # MUTANT-f: field_only dropped
+     return row
+ 
+ 

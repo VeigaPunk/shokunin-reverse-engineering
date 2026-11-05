@@ -1,0 +1,17 @@
+--- tools/round-90/upx-later-block-battery.py (pristine)
++++ mutant z-supplementary-bd
+@@ -433,12 +433,10 @@
+         "N2": all(x["not_recovered"] for x in controls["N2-corrupt-payload"]),
+         "N3": all(x["identical"] for x in controls["N3-intact-idempotent"]),
+         "isolation": all(x["ok"] for x in controls["isolation"]),
+-        "carrier_blind": bool(controls["carrier_blind"]["blind_ok"]) and
+-        all(x["recovered"] for x in controls["carrier_blind"]["cases"]) and
+-        len(controls["carrier_blind"]["cases"]) == len(p1),
++        "carrier_blind": True,  # MUTANT-z1: not required
+         "no_work": controls["no_work"]["recovered"] == 0,
+         "cheat_live": controls["cheat_repack"]["unblinded"] is True,
+-        "cheat_killed": controls["cheat_repack"]["blinded"] is False,
++        "cheat_killed": True,  # MUTANT-z2: not required
+     }
+     recovered = {"P1": sum(1 for x in p1 if x["recovered"]), "P2": sum(1 for x in p2 if x["recovered"]),
+                  "P3": sum(1 for x in p3 if x["recovered"])}

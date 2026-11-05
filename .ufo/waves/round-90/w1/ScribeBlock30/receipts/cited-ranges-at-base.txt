@@ -1,0 +1,42 @@
+== corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md:59-61 (at fc52cc9dc)
+| real repair | `recovered 4 of 4`, `controls_ok` all true (`N1-refuse-plain`, `N2-corrupt-payload`, `N3-intact-idempotent`, `isolation`), round-88 class regression `recovered 4 of 4`, exit 0 (`.ufo/waves/round-89/pre/c1-candidate-at-declaration.json`) |
+| tamper per carrier | jq 252→244, xxd 249→241, libz 201→193, dinit 226→218 (stored `true - 8`); derived values equal round 88's |
+| round-88 repair, unchanged (before) | `recovered 0 of 4`, all controls true, exit 1 (`.ufo/waves/round-89/pre/c1-base-r88-repair.json`) |
+== corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md:65-69 (at fc52cc9dc)
+Each recovered case passes five arms: the repair exits 0, the only changed bytes lie inside block 0's
+four-byte `sz_cpr` window, `upx -t` exits 0, `upx -d` restores the carrier pin, and REA 6.5.0 reports
+the declared round-70 procedure count (jq 167, xxd 99, libz 184, docker-init 1268). The counter runs
+every repair invocation in a private directory that holds the single input file, and the `isolation`
+control records the directory listing each invocation saw (round-88 M88-8 / QUALITY 158).
+== corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md:95-98 (at fc52cc9dc)
+[observation] The repair's exit code means "I changed the field I own", not "the file is fixed": on the
+`b0.method` and `p_info.p_blocksize` classes it exits 0 with the stored value already correct (nothing in
+its remit to change) while `upx -t` still fails, so a caller must test the output — the counter's
+`test_ok` and `identity` arms are the guard (QUALITY 167).
+== corpus/knowledge/2026-11-04-r88-binfo-chain-geometry.md:38-45 (at fc52cc9dc)
+2. **Accounting bound.** With the derived value written, walk the chain from `b0` (and its resumed
+   segment past the embedded loader) and sum the blocks' `sz_unc`. A candidate whose total exceeds the
+   PackHeader's `u_len` (S309) is impossible; among the survivors the one accounting for the most
+   declared bytes wins, ties broken by the smaller derived value.
+
+Measured effect of the accounting bound on docker-init: three candidates survive the structural bound
+(derived 136, 226, 440; true value 226). 136 accounts for 123,942,159 bytes against `u_len` 851,288 and
+is impossible; 440 accounts for 850,696; 226 accounts for exactly 851,288 and wins. On the shared
+== tools/round-89/depth-blocks-v2.py:31-34
+TOOL = "tools/round-89/depth-blocks-v2.py"
+PATTERN = r"corpus/knowledge/([a-z0-9-]+\.md)(?::(\d+)(?:-(\d+))?)?"
+MIN_WORDS = 25
+MIN_SPANS = 2
+== tools/round-89/depth-blocks-v2.py:41-52
+def read_at(root: str, rev: str | None, path: str) -> str:
+    if rev:
+        p = subprocess.run(["git", "-C", root, "show", f"{rev}:{path}"],
+                           capture_output=True, text=True)
+        if p.returncode != 0:
+            raise Unevaluable(f"absent at {rev}: {path}: {p.stderr.strip()[:120]}")
+        return p.stdout
+    full = os.path.join(root, path)
+    if not os.path.isfile(full):
+        raise Unevaluable(f"absent in worktree: {path}")
+    with open(full, encoding="utf-8") as fh:
+        return fh.read()

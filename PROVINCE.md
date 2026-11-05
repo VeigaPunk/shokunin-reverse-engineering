@@ -750,8 +750,9 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   block-0 law (QUALITY 161), then applies the chain law at the walk's *break point*: scan the offsets
   above `block + 12` for a plausible `b_info` whose own chain reaches the sentinel (directly or through
   the loader-resume step), bound the derived value by `sz_unc`, write it and re-walk, and accept it only
-  when it accounts for strictly more declared bytes than the stored-value chain does — the PackHeader
-  `u_len` is a preference, never a filter (QUALITY 171). `tools/round-90/upx-later-block-battery.py`
+  when it accounts for strictly more declared bytes than the stored-value chain does — for this class
+  the PackHeader `u_len` is a filter (`total != u_len` refuses, QUALITY 171), and the ranking key's
+  `u_len` component is inert because every survivor accounts exactly `u_len`. `tools/round-90/upx-later-block-battery.py`
   scores `P1 6 of 6` (jq/xxd/docker-init x `stored - 7`/`stored + 7`), `P2 4 of 4` (round-89 class) and
   `P3 4 of 4` (round-88 class) with refuse-plain, corrupt-payload, intact-idempotent, isolation,
   carrier-blind, no-work and cheat-repack controls; the unchanged round-89 repair scores 0 of 6 on P1

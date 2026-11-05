@@ -1,0 +1,13 @@
+--- tools/round-90/upx-later-block-battery.py (pristine)
++++ mutant g-rea-null-true
+@@ -218,8 +218,8 @@
+             arms["unpack_pin"] = sha256_file(up) == orig_sha
+             if rea_on and arms["unpack_pin"] and orig_counts is not None:
+                 got = rea_counts(pkg, up, env, up + ".rea.json")
+-                arms["rea_recover"] = (got["counts"] is not None
+-                                       and got["counts"] == orig_counts)
++                arms["rea_recover"] = (got["counts"] is None
++                                       or got["counts"] == orig_counts)  # MUTANT-g
+         row["detail"] = why
+     row["arms"] = arms
+     row["recovered"] = all(v is True for v in arms.values() if v is not None) and \

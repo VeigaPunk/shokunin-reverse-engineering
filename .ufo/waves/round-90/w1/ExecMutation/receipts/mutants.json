@@ -1,0 +1,531 @@
+[
+ {
+  "behaviour": "the exact-total filter (`total != require_total`) disabled",
+  "declared": "exact-total filter (repair derive_break; kill rule: candidate written only when it accounts exactly u_len)",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": true,
+    "class": "intact",
+    "stored_accounted": null,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "intact",
+    "unchanged": true
+   }
+  },
+  "id": "M01",
+  "killed": false,
+  "killed_by": [],
+  "line": 219,
+  "missing_case": "no selftest case exercises a carrier whose stored chain under-accounts u_len (the libz shape): the fixture's stored chain is broken when tampered and the single chain-valid candidate already equals u_len, so deleting the filter changes no answer. Missing case: a fixture with a chain gap vs u_len (candidate totals straddling require_total) that must be refused unchanged.",
+  "mutated_sha256": "49d7efa89668168b72d506b0a881a7942317daee7283bf2aa18e75ed30072a03",
+  "new": "        if False and total != require_total:\n            continue",
+  "old": "        if total != require_total:\n            continue",
+  "selftest_output": "SELFTEST cases=17 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "exact-total filter weakened to `total < require_total` (over-accounting candidates accepted)",
+  "declared": "exact-total filter",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": true,
+    "class": "intact",
+    "stored_accounted": null,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "intact",
+    "unchanged": true
+   }
+  },
+  "id": "M02",
+  "killed": false,
+  "killed_by": [],
+  "line": 219,
+  "missing_case": "same case as M01 on the over-accepting side: no fixture has a chain-valid candidate with total > u_len, and on the r89 fallback path the equal-derived refusal dominates. Missing case: an over-accounting-candidate fixture that must be refused.",
+  "mutated_sha256": "2dc4e38f805f89eb1861464ee080f8eb3daed66ffe94ee37d57503853fcd377f",
+  "new": "        if total < require_total:\n            continue",
+  "old": "        if total != require_total:\n            continue",
+  "selftest_output": "SELFTEST cases=17 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "strictly-greater acceptance weakened: `total <= min_total` -> `total < min_total` (equal-total candidates accepted)",
+  "declared": "strictly-greater acceptance",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": false,
+    "class": "break-point",
+    "stored_accounted": 400,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "break-point",
+    "unchanged": false
+   }
+  },
+  "id": "M03",
+  "killed": true,
+  "killed_by": [
+   "intact-idempotent",
+   "anchor-class-composed",
+   "last-block-before-stop-unrepaired"
+  ],
+  "line": 221,
+  "missing_case": null,
+  "mutated_sha256": "474661a59fe4cb7033ad4a54aa2c4f7da248e579f73a66408de3815b7d8a7268",
+  "new": "        if min_total is not None and total < min_total:\n            continue",
+  "old": "        if min_total is not None and total <= min_total:\n            continue",
+  "selftest_output": "SELFTEST cases=17 failures=3 intact-idempotent anchor-class-composed last-block-before-stop-unrepaired",
+  "selftest_rc": 1
+ },
+ {
+  "behaviour": "`derived == sc_p` skip removed (stored-value candidates enumerated)",
+  "declared": "derived == stored skip",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": true,
+    "class": "intact",
+    "stored_accounted": null,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "intact",
+    "unchanged": true
+   }
+  },
+  "id": "M04",
+  "killed": false,
+  "killed_by": [],
+  "line": 210,
+  "missing_case": "the stored-value candidate is always rejected downstream (tampered: its own chain_ok fails; intact: no stored-value candidate can both chain and pass the strictly-greater filter). Missing case: an assertion that rec['candidates'] never enumerates the stored value, or a fixture where the stored value itself chains.",
+  "mutated_sha256": "4cdc5dc11e7e7f8289105163e907126e3a0c54c6133160b16ddb9313302f3834",
+  "new": "        if not (0 < derived <= su_p):",
+  "old": "        if not (0 < derived <= su_p) or derived == sc_p:",
+  "selftest_output": "SELFTEST cases=17 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "sz_unc upper bound on derived removed (`derived <= su_p` -> `0 < derived`)",
+  "declared": "sz_unc bound",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": true,
+    "class": "intact",
+    "stored_accounted": null,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "intact",
+    "unchanged": true
+   }
+  },
+  "id": "M05",
+  "killed": false,
+  "killed_by": [],
+  "line": 210,
+  "missing_case": "the fixture has exactly one plausibility-passing successor and the r89 fallback for intact inputs absorbs the deleted bound (its own derive() refuses over-size candidates). Missing case: a fixture with a second chain-valid successor whose derived > block.sz_unc must be rejected.",
+  "mutated_sha256": "84e7987498cb970373bb9aada546ad749a1cf06c5285dc89853833da953d57be",
+  "new": "        if not (0 < derived) or derived == sc_p:",
+  "old": "        if not (0 < derived <= su_p) or derived == sc_p:",
+  "selftest_output": "SELFTEST cases=17 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "successor method-byte check removed from the candidate scan",
+  "declared": "successor method check",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": true,
+    "class": "intact",
+    "stored_accounted": null,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "intact",
+    "unchanged": true
+   }
+  },
+  "id": "M06",
+  "killed": false,
+  "killed_by": [],
+  "lines": "204-207",
+  "missing_case": "no size-plausible wrong-method b_info lies in the fixture's scan window, so the removed clause never prunes anything. Missing case: a fixture with a size-plausible, method-wrong decoy successor that chains to the sentinel.",
+  "mutated_sha256": "8111668ac3bae9d01b51045bd11cc6393705d6914f7251295b485f1489f4cd19",
+  "new": "        if not (0 < sc <= su) or s + 12 + sc > ph_off:",
+  "old": "        if not (0 < sc <= su) or s + 12 + sc > ph_off \\\n                or d[s + 8] not in (method, ph[\"method\"]):",
+  "selftest_output": "SELFTEST cases=17 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "block-0/undecidable handoff (stored-ok branch fallthrough) replaced by a refusal",
+  "declared": "block-0 handoff / P2-P3 composition",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "refused": "derive-break fallthrough: handoff disabled"
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "refused": "derive-break fallthrough: handoff disabled"
+   }
+  },
+  "id": "M07",
+  "killed": true,
+  "killed_by": [
+   "intact-idempotent (crash: Refused escaping repair(clean), selftest line 367)"
+  ],
+  "line": 280,
+  "missing_case": null,
+  "mutated_sha256": "d52bfeb42883d94fc647924842431cdfd6971eb1ec8e8d480b862eee23fa80f6",
+  "new": "            raise Refused(\"derive-break fallthrough: handoff disabled\")",
+  "old": "            return _block0(d, rep, r89, pins)   # fallthrough after derive_break, stored-ok branch",
+  "selftest_output": "Traceback (most recent call last):\n  File \"/fast/scratch/hyaku/kaidoku-r90/ExecMutation/mut/M07/tools/round-90/upx-break-repair.py\", line 445, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/fast/scratch/hyaku/kaidoku-r90/ExecMutation/mut/M07/tools/round-90/upx-break-repair.py\", line 423, in main\n    return selftest()\n  File \"/fast/scratch/hyaku/kaidoku-r90/ExecMutation/mut/M07/tools/round-90/upx-break-repair.py\", line 367, in selftest\n    out, info = repair(clean)\n                ~~~~~~^^^^^^^\n  File \"/fast/scratch/hyaku/kaidoku-r90/ExecMutation/mut/M07/tools/round-90/upx-break-repair.py\", line 280, in repair\n    raise Refused(\"derive-break fallthrough: handoff disabled\")\nRefused: derive-break fallthrough: handoff disabled",
+  "selftest_rc": 1
+ },
+ {
+  "behaviour": "no-l_info-candidate handoff replaced by a refusal",
+  "declared": "block-0 handoff (no-walkable-first-block arm)",
+  "file": "upx-break-repair.py",
+  "fixture_behaviour_probe": {
+   "intact": {
+    "byte_identical": true,
+    "class": "intact",
+    "stored_accounted": null,
+    "uncompressed_accounted": 400
+   },
+   "tamper0_wrong": {
+    "class": "field-value",
+    "recovered": true
+   },
+   "tamper0_zeroed": {
+    "class": "chain-geometry",
+    "recovered": true
+   },
+   "tamper1_minus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper1_plus": {
+    "ambiguous": false,
+    "candidates": 1,
+    "class": "break-point",
+    "derived": 24,
+    "recovered": true
+   },
+   "tamper2_last": {
+    "class": "intact",
+    "unchanged": true
+   }
+  },
+  "id": "M08",
+  "killed": false,
+  "killed_by": [],
+  "line": 270,
+  "missing_case": "no selftest input reaches longest_prefix -> None (not-elf/zero-length die at the ELF guard; no-packheader and the KDK! anchor refuse inside upstream find_packheader). Missing case: an input whose every l_info candidate has sz_unc0 == 0 must still hand off to the round-89 law, not refuse.",
+  "mutated_sha256": "4224e917e55876092cac96b697ce907382906ccb9f1dda6567547df0d8a7260f",
+  "new": "        if found is None:\n            raise Refused(\"no l_info candidate: handoff disabled\")",
+  "old": "        if found is None:\n            return _block0(d, rep, r89, pins)",
+  "selftest_output": "SELFTEST cases=17 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "post-exit isolation listing fabricated as constant [in, out]",
+  "declared": "post-exit isolation listing (QUALITY 170)",
+  "file": "upx-later-block-battery.py",
+  "id": "M09",
+  "killed": false,
+  "killed_by": [],
+  "line": 188,
+  "missing_case": "the battery selftest never calls invoke()/score() (its 8 cases cover layout, tamper, window_only and the static tables). Missing case: an invoke() against a stub repair that plants a stray file in its box, asserting box_after == ['in','out'] fails.",
+  "mutated_sha256": "712c040cff17cd24d6699fba06fc4e0b120dc7d0b2ea8265c8bd9a07920d41b0",
+  "new": "    after = [\"in\", \"out\"]                     # QUALITY 170: list after the child",
+  "old": "    after = sorted(os.listdir(box))           # QUALITY 170: list after the child",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "carrier_blind `blind_ok` proof dropped from arms_ok (cases-only)",
+  "declared": "carrier_blind requirement in met (QUALITY 168)",
+  "file": "upx-later-block-battery.py",
+  "id": "M10",
+  "killed": false,
+  "killed_by": [],
+  "lines": "435-437",
+  "missing_case": "same selftest gap: arms_ok and met live only in score(). Missing case: a score()-level harness with blind_ok=False and all-blind-cases-recovered asserting met stays False.",
+  "mutated_sha256": "c368bd72182b4e0557b4e31c6c84a37e7eea935292a7dc2d081893da75fc525f",
+  "new": "        \"carrier_blind\": all(x[\"recovered\"] for x in controls[\"carrier_blind\"][\"cases\"]) and\n        len(controls[\"carrier_blind\"][\"cases\"]) == len(p1),",
+  "old": "        \"carrier_blind\": bool(controls[\"carrier_blind\"][\"blind_ok\"]) and\n        all(x[\"recovered\"] for x in controls[\"carrier_blind\"][\"cases\"]) and\n        len(controls[\"carrier_blind\"][\"cases\"]) == len(p1),",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "no_work requirement weakened to `recovered >= 0`",
+  "declared": "no_work requirement (round-89 repair 0 of 6)",
+  "file": "upx-later-block-battery.py",
+  "id": "M11",
+  "killed": false,
+  "killed_by": [],
+  "line": 439,
+  "missing_case": "same selftest gap. Missing case: a score()-level harness with no_work recovery > 0 asserting met stays False.",
+  "mutated_sha256": "669c635dfda6a83e7d7516f2651f738fea47b4f80fc70832e9c84fefa74cd2d0",
+  "new": "        \"no_work\": controls[\"no_work\"][\"recovered\"] >= 0,",
+  "old": "        \"no_work\": controls[\"no_work\"][\"recovered\"] == 0,",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "cheat_live arm weakened to `is not False` (None passes)",
+  "declared": "cheat arm live-unblinded",
+  "file": "upx-later-block-battery.py",
+  "id": "M12",
+  "killed": false,
+  "killed_by": [],
+  "line": 440,
+  "missing_case": "same selftest gap. Missing case: a score()-level harness with cheat unblinded False/None asserting met stays False.",
+  "mutated_sha256": "d3e009b7c5ed11c0e97db491d98444afff2c2b4296727b0e7124bd1bec569752",
+  "new": "        \"cheat_live\": controls[\"cheat_repack\"][\"unblinded\"] is not False,",
+  "old": "        \"cheat_live\": controls[\"cheat_repack\"][\"unblinded\"] is True,",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "cheat_killed arm weakened to `is not True` (None passes)",
+  "declared": "cheat arm killed-blinded",
+  "file": "upx-later-block-battery.py",
+  "id": "M13",
+  "killed": false,
+  "killed_by": [],
+  "line": 441,
+  "missing_case": "same selftest gap. Missing case: a score()-level harness with cheat blinded True/None asserting met stays False.",
+  "mutated_sha256": "8d97576a09672d2d079e16bf62779e809ef2c178408df28910f4a5c508b47471",
+  "new": "        \"cheat_killed\": controls[\"cheat_repack\"][\"blinded\"] is not True,",
+  "old": "        \"cheat_killed\": controls[\"cheat_repack\"][\"blinded\"] is False,",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "`all(arms_ok.values())` dropped from met (all controls ignorable)",
+  "declared": "all controls required in met",
+  "file": "upx-later-block-battery.py",
+  "id": "M14",
+  "killed": false,
+  "killed_by": [],
+  "line": 448,
+  "missing_case": "same selftest gap. Missing case: a score()-level harness with any single control false asserting met stays False.",
+  "mutated_sha256": "d65d946957203372daa741e5c6d1a8d04eeab82a01c47052c3ae69e36a799fb4",
+  "new": "           and recovered[\"P3\"] == len(p3) == 4)",
+  "old": "           and recovered[\"P3\"] == len(p3) == 4 and all(arms_ok.values()))",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "--expect label binding replaced by a tautology",
+  "declared": "label/--expect binding",
+  "file": "upx-later-block-battery.py",
+  "id": "M15",
+  "killed": false,
+  "killed_by": [],
+  "line": 450,
+  "missing_case": "same selftest gap (selftest never exercises main()/args.expect). Missing case: a main()-level fixture run with a wrong --expect string asserting exit 1 and met_target False.",
+  "mutated_sha256": "f3d13dc554927bd071fe3eef27fe6b1e7e18cd764107dd4ffe455f58ea0afc12",
+  "new": "        met = met and len(label) > 0",
+  "old": "        met = met and label == args.expect",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "tampered sz_cpr window widened by 4 bytes (block+8 -> block+12; admits method/flags bytes)",
+  "declared": "field_only window arm",
+  "file": "upx-later-block-battery.py",
+  "id": "M16",
+  "killed": false,
+  "killed_by": [],
+  "line": 148,
+  "missing_case": "window_only selftests flip a byte at blocks[2] (far outside even the widened window) and test length mismatch, so widening block+8 to block+12 changes no verdict. Missing case: a repair output differing in the tampered b_info's method/flags byte (block+8..+11) that field_only must reject.",
+  "mutated_sha256": "97727610bb41e47b6e1ad9c5329b18277c20e6eb4724a0a2e2182f44e33d7d89",
+  "new": "    lo, hi = block[\"block\"] + 4, block[\"block\"] + 12",
+  "old": "    lo, hi = block[\"block\"] + 4, block[\"block\"] + 8",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ },
+ {
+  "behaviour": "hardcoded P1==6 relaxed to len(p1)",
+  "declared": "P1 6-of-6 hardcount",
+  "file": "upx-later-block-battery.py",
+  "id": "M17",
+  "killed": false,
+  "killed_by": [],
+  "line": 447,
+  "missing_case": "same selftest gap. Missing case: a score()-level harness asserting met=False when P1 recovers len(p1) != 6 - the hardcoded six is the declared population contract.",
+  "mutated_sha256": "a58003df35b34440ad4a172399702185b29b54aa889966fbbb24e54bba5651df",
+  "new": "    met = (recovered[\"P1\"] == len(p1) and recovered[\"P2\"] == len(p2) == 4",
+  "old": "    met = (recovered[\"P1\"] == len(p1) == 6 and recovered[\"P2\"] == len(p2) == 4",
+  "selftest_output": "SELFTEST cases=8 failures=0",
+  "selftest_rc": 0
+ }
+]

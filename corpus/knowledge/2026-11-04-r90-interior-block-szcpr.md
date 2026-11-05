@@ -34,9 +34,12 @@ The derivation is round 88's chain law applied at the walk's **break point** ins
 could still step, scan every offset above `block + 12` for a plausible `b_info` whose own chain
 reaches the end-of-chain sentinel (directly or through the loader-resume step), set `derived =
 successor - (block + 12)` bounded by `0 < derived <= sz_unc`, reject `derived == stored`, write it, and
-re-walk. Among survivors prefer the candidate that accounts for the most declared bytes; the
-PackHeader `u_len` is a **preference, never a filter** (QUALITY 171), ties to the smaller derived
-value.
+re-walk. Among survivors prefer the candidate that accounts for the most declared bytes; for this class the
+PackHeader `u_len` is enforced as a **filter** inside `derive_break` (`total != require_total`
+refuses, QUALITY 171 — the docstring said "preference" until the wave's critic measured the code and
+the instrument was superseded, `.ufo/waves/round-90/claims.json` `instrument_supersessions`), and the
+ranking key's `(total <= u_len, …)` component is inert here because every survivor accounts exactly
+`u_len`; ties go to the smaller derived value.
 
 The acceptance test is measured, not asserted: a candidate is written only when it accounts for
 **strictly more** declared bytes than the stored-value chain does. Everything else returns the input

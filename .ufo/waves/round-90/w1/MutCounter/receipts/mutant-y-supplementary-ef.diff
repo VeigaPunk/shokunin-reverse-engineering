@@ -1,0 +1,14 @@
+--- tools/round-90/upx-later-block-battery.py (pristine)
++++ mutant y-supplementary-ef (e+f)
+@@ -222,8 +222,9 @@
+                                        and got["counts"] == orig_counts)
+         row["detail"] = why
+     row["arms"] = arms
+-    row["recovered"] = all(v is True for v in arms.values() if v is not None) and \
+-        (arms["rea_recover"] in (True, None))
++    row["recovered"] = all(v is True for k, v in arms.items()
++                           if v is not None and k not in ("identity", "field_only")) and \
++        (arms["rea_recover"] in (True, None))  # MUTANT-y: both pixel arms dropped
+     return row
+ 
+ 
