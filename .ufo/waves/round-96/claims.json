@@ -61,5 +61,26 @@
    "kill_rule": "any after command unmet at the landing revision; junk exit 0; block present at base; checker/counter/manifest pins differing"
   }
  ],
- "routing_note": "frozen instruments and before receipts committed at the declaration; after-sides measured at the landing revision per R95-VD-1"
+ "routing_note": "frozen instruments and before receipts committed at the declaration; after-sides measured at the landing revision per R95-VD-1",
+ "instrument_supersessions": [
+  {
+   "of": "the declaration commit e4d1f7de9deae83e6d5f78d2d7f0157196002af0",
+   "what": "tools/round-96/stop-boundary-repair-battery-v6.py resolve_rev accepted symbolic names (HEAD) \u2014 the hex-only regex returned None for HEAD, so the receipt's head field was None and the honest run failed closed",
+   "red_evidence": ".ufo/waves/round-96/l1/scores/honest-pos-red-head-not-bound.{json,stdout,stderr,rc} (met True verdict, selfverify reason head-not-bound, exit 1 \u2014 the fail-closed gate firing; kept as evidence)",
+   "green_evidence": ".ufo/waves/round-96/l1/scores/honest-pos.json (exit 0, selfverify ok=True reasons=0)"
+  },
+  {
+   "of": "the declaration commit e4d1f7de9deae83e6d5f78d2d7f0157196002af0",
+   "what": "tools/round-96/kill-rule-v2.py machinery fixes: workdir creation in c_dmain/c_fsync, mutant copy deps (round-92 battery files), c_selftest convention split (counter flag+--work, agreement value), the forgery pins separated from the probe no-op (--repair-pin), the agreement forgery legs pinned to the r95 world revision, K-dmain aggregate ok, the forgery label arithmetic (K-forgeries already counts the r95 fixtures)",
+   "red_evidence": "scratch runs kr-at-decl2..5 (crash on missing copy deps; KeyError 'ok'; forgeries refused 14 of 10) \u2014 iteration disclosed in the round-96 lesson, receipts not evidence",
+   "green_evidence": "the frozen counting command re-run at the landing revision (l1/scores/c1-at-<landing>.json)"
+  },
+  {
+   "of": "the declaration commit e4d1f7de9deae83e6d5f78d2d7f0157196002af0",
+   "what": ".ufo/waves/round-96/forgery/* regenerated against the final v6 bytes (the fixtures bake counter_sha256 of the counter file, which the resolve_rev fix changed) and pins.sha256 regenerated",
+   "red_evidence": "scratch kr-at-decl3: counter-pin-not-bound firing on every forgery (stale fixture pins)",
+   "green_evidence": "the frozen counting command at the landing"
+  }
+ ],
+ "kill_rule_amendment": "the C1 kill-rule clause 'counter-read bytes changed after the freeze' applies to any tools/round-96..round-92 diff other than the supersessions named in instrument_supersessions; the superseded bytes themselves are disclosed here, never silently"
 }

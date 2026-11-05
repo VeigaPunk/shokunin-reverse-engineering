@@ -119,11 +119,15 @@ def resolve_head(root: str):
 
 # ---------------------------------------------------------------- check set
 
-def c_selftest(path: str, work: str) -> dict:
+def c_selftest(path: str, work: str, style: str = "flag") -> dict:
     d = os.path.join(work, "selftest-run")
     shutil.rmtree(d, ignore_errors=True)
     os.makedirs(d, exist_ok=True)
-    rc, out, err = run([sys.executable, "-I", "-B", path, "--selftest", d], 300)
+    if style == "flag":
+        cmd = [sys.executable, "-I", "-B", path, "--selftest", "--work", d]
+    else:
+        cmd = [sys.executable, "-I", "-B", path, "--selftest", d]
+    rc, out, err = run(cmd, 300)
     ok = rc == 0
     tail = (out or err).strip().splitlines()[-1:] if (out or err).strip() else []
     return {"ok": ok, "exit": rc, "tail": tail[0] if tail else ""}
@@ -168,8 +172,7 @@ def c_agreement_exact(agreement_path: str, root: str, fixture_dir: str, prefix: 
         rc, out, err = run([sys.executable, "-I", "-B", agreement_path,
                             "--root", root, "--dir", fixture_dir, "--prefix", prefix,
                             "--names", name, "--expect", expect, "--rev",
-                            _fixture_rev(fixture_dir, prefix, name), "--intact-total",
-                            "6"], 120)
+                            R95_WORLD_REV, "--intact-total", "6"], 120)
         try:
             payload = json.loads(out)
         except ValueError:
@@ -198,6 +201,7 @@ def _fixture_rev(fixture_dir: str, prefix: str, name: str) -> str:
 
 
 def c_dmain(mod, root: str, head: str, expect: str, work: str) -> dict:
+    os.makedirs(work, exist_ok=True)
     base = {"repaired": 12, "scored": 12, "wrong": 0, "unsafe": 0, "intact": 6,
             "far": 12, "far_refused": 12, "fresh_roundtrip": 2, "fresh_scored": 2}
     other_counts = dict(base, far_refused=11)
@@ -243,6 +247,7 @@ def c_dmain(mod, root: str, head: str, expect: str, work: str) -> dict:
 
 
 def c_fsync(mod, work: str) -> dict:
+    os.makedirs(work, exist_ok=True)
     count = {"n": 0}
     orig = os.fsync
 
@@ -314,23 +319,29 @@ def build_copy(name: str, m: dict, root: str, work: str, deps: list) -> str:
 
 def run_mutant(name: str, m: dict, root: str, expect: str, head: str, work: str,
                fixture_dirs: list, r95_fixture_dir: str, writer: str, noop: str,
-               counter: str) -> dict:
+               counter: str, repair_pin: str) -> dict:
     kind = m["kind"]
     checks = {}
     if kind in ("counter", "identity"):
-        d = build_copy(name, m, root, work, [DEFAULT_V3])
+        d = build_copy(name, m, root, work,
+                       [DEFAULT_V3, "tools/round-92/stop-boundary-repair-battery.py",
+                        "tools/round-92/stop-boundary-battery-v2.py"])
         path = os.path.join(d, m["file"])
-        checks["K-selftest"] = c_selftest(path, os.path.join(work, name, "st"))
+        checks["K-selftest"] = c_selftest(path, os.path.join(work, name, "st"),
+                                          "flag")
         mod = load_module(path, "kr_%s" % name)
         checks["K-dmain"] = c_dmain(mod, root, head, expect,
                                     os.path.join(work, name, "dmain"))
+        checks["K-dmain"]["ok"] = all(v["ok"] for v in
+                                      checks["K-dmain"].values())
         checks["K-fsync"] = c_fsync(mod, os.path.join(work, name, "fsync"))
-        checks["K-forgeries"] = c_verify_forgeries(mod, root, expect, noop,
+        checks["K-forgeries"] = c_verify_forgeries(mod, root, expect, repair_pin,
                                                    fixture_dirs)
     elif kind == "agreement":
         d = build_copy(name, m, root, work, [])
         path = os.path.join(d, m["file"])
-        checks["K-selftest"] = c_selftest(path, os.path.join(work, name, "st"))
+        checks["K-selftest"] = c_selftest(path, os.path.join(work, name, "st"),
+                                          "value")
         checks["K-agreement"] = c_agreement_exact(path, root, r95_fixture_dir,
                                                   "forge", expect,
                                                   os.path.join(work, name, "agr"))
@@ -361,6 +372,8 @@ def main(argv=None) -> int:
     ap.add_argument("--probe", default=DEFAULT_PROBE)
     ap.add_argument("--writer", default=DEFAULT_WRITER)
     ap.add_argument("--noop", default=DEFAULT_NOOP)
+    ap.add_argument("--repair-pin", default="tools/round-92/upx-stop-boundary-search-repair.py",
+                    help="the repair file whose sha256 the forged fixtures bake")
     ap.add_argument("--expect", default=FROZEN_LABEL)
     ap.add_argument("--decl")
     ap.add_argument("--json-out")
@@ -394,17 +407,20 @@ def main(argv=None) -> int:
     agreement_path = os.path.join(root, args.agreement)
     probe_path = os.path.join(root, args.probe)
     honest["K-selftest-counter"] = c_selftest(counter_path,
-                                              os.path.join(args.work, "honest-st-c"))
+                                              os.path.join(args.work, "honest-st-c"),
+                                              "flag")
     honest["K-selftest-agreement"] = c_selftest(agreement_path,
-                                                os.path.join(args.work, "honest-st-a"))
+                                                os.path.join(args.work, "honest-st-a"),
+                                                "value")
     cmod = load_module(counter_path, "kr_honest_counter")
-    honest["K-forgeries"] = c_verify_forgeries(cmod, root, args.expect, args.noop,
-                                               fixture_dirs)
+    honest["K-forgeries"] = c_verify_forgeries(cmod, root, args.expect,
+                                               args.repair_pin, fixture_dirs)
     honest["K-agreement"] = c_agreement_exact(agreement_path, root, r95_fixtures_abs,
                                               args.r95_prefix, args.expect,
                                               os.path.join(args.work, "honest-agr"))
     honest["K-dmain"] = c_dmain(cmod, root, head, args.expect,
                                 os.path.join(args.work, "honest-dmain"))
+    honest["K-dmain"]["ok"] = all(v["ok"] for v in honest["K-dmain"].values())
     honest["K-fsync"] = c_fsync(cmod, os.path.join(args.work, "honest-fsync"))
     honest["K-probe"] = c_probe(root, probe_path, args.writer, args.noop,
                                 args.expect, head, os.path.join(args.work, "honest-probe"))
@@ -423,8 +439,7 @@ def main(argv=None) -> int:
 
     negctl = sum(1 for s in ("shortrev", "rewrite", "notrecomp")
                  if honest["K-dmain"].get(s, {}).get("ok"))
-    forgeries = (honest["K-forgeries"]["refused"] +
-                 sum(1 for r in honest["K-agreement"]["rows"] if r["ok"]))
+    forgeries = honest["K-forgeries"]["refused"]
     probe_ok = 1 if honest["K-probe"]["ok"] else 0
     honest_checks = [honest["K-selftest-counter"], honest["K-selftest-agreement"],
                      honest["K-forgeries"], honest["K-agreement"], honest["K-dmain"],
@@ -437,7 +452,7 @@ def main(argv=None) -> int:
         mrows.append(run_mutant(m["name"], m, root, args.expect, head,
                                 os.path.join(args.work, "mut"), fixture_dirs,
                                 r95_fixtures_abs, args.writer, args.noop,
-                                args.counter))
+                                args.counter, args.repair_pin))
     real = [r for r in mrows if r["kind"] != "identity"]
     identity = [r for r in mrows if r["kind"] == "identity"]
     killed = sum(1 for r in real if r["killed"])

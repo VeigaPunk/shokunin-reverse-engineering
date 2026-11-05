@@ -110,8 +110,9 @@ def recompute_label(counts: dict, intact_total: int) -> str:
 
 
 def resolve_rev(root: str, rev: str):
-    """Full 40-hex resolution of `rev`, or None when it does not resolve."""
-    if not re.fullmatch(r"[0-9a-f]{6,64}", rev or ""):
+    """Full 40-hex resolution of `rev` (hex prefixes and symbolic names like HEAD),
+    or None when it does not resolve."""
+    if not rev or re.search(r"\s", rev):
         return None
     try:
         out = subprocess.run(["git", "-C", root, "rev-parse", "--verify", rev],
