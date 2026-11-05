@@ -63,4 +63,62 @@ frontier step); no package entry was opened. No `considerthese/` directory exist
 
 ## Wave `r89-w1` — seat results
 
-<!-- WAVE-SECTION -->
+## Wave `r89-w1` — seat results
+
+Fourteen seats in one v1 wave (dispatch 21:42, results `r89-w1-results.json`). What the delivered
+seats established:
+
+- **ExecGeomIndep** (independent derivation, stdlib only, no import of the round-87/88/89 tools):
+  derived block-0 `sz_cpr` = jq 252, xxd 249, libz 201, docker-init 226 — the round-88 record values —
+  and **16 of 16** cells agree with `upx-field-value-repair.py --info` across four inputs (intact,
+  `:= 0`, `:= true-8`, `:= 0xFFFFFFF0`). Ablation: the stored word is never read by any walk or gate; a
+  mutant that leaves it in place refuses two classes and returns the wrong candidate (136) on
+  docker-init, so reading it *would* change the result.
+- **ExecMatrix** (field-class matrix, 48 cells = 4 carriers × 12 classes, exit 0, 0 skipped): every
+  wrong-value `sz_cpr` class (zero, `true±8`, `0xFFFFFFF0`, `sz_unc+1`) is recovered on all four
+  carriers; `sz_unc := 0`, `p_filesize` and the PackHeader class are refused; `method` and
+  `p_blocksize` are out of the repair's remit (`repair rc 0`, `repaired_tests_clean false`). The
+  `sz_unc+1` message is carrier-dependent: `header corrupted` on jq/xxd/dinit, `corrupt b_info` on libz
+  (QUALITY 166).
+- **ExecMutation** (28 single-anchor mutants, 14 per instrument, on the declared bytes): the mutant
+  table and its survivors are the round's declared-case evidence for the instruments' guards.
+- **ExecRegress88** (no-harm): the round-88 class through the round-89 repair `recovered 4 of 4` with
+  its nested round-87 regression `8 of 8` (204.9 s); the round-87 class with the round-87 repair
+  `8 of 8` (135.2 s); four selftests green (33/11/6/22 cases, failures 0); the `--no-rea` ablation
+  differs only in the `rea_recover` arm.
+- **ScoutUpxSrc**: eleven URLs opened with HTTP status/bytes/sha256 and a release-tarball cross-check;
+  tier-A adjudication traced the carriers' class chain (`PackLinuxElf64amd : PackLinuxElf64Le :
+  PackLinuxElf64 : PackLinuxElf : PackUnix`) and showed that the **NE32** `p_unix.h` copy is the one in
+  force — which corrected S312's scope in-round — that `src/packhead.h` contains no `b_info` at all,
+  and that `src/headers.h` is a 404 at the tag.
+- **ReviewerC2** (attack on C2): re-derived both arms (base 28/28 expect 29 red, worktree 29/29 green at
+  the block-29 commit), added a negative target control (`--expect-blocks 28` → red), six red worlds
+  (stub, one-span, past-EOF, absent-doc, duplicate, fenced), the floor sweep (blocks 1-28: 39-2,902
+  words, 2-354 spans, none below the floor), and separability (block 29 cites only base-present
+  documents). Findings: duplicate and fence blindness (no live instance), `--worktree` trusts the moving
+  tree, and MED-1 (the container named a matrix path that did not exist at review time).
+- **ReviewerC1** (attack on C1): reproduced the frozen predicate at both repair revisions (`4 of 4`,
+  met, exit 0); scored seven cheap rules — the round-88 sibling copy 0 of 4 (N3 false), three packer
+  oracles 4 of 4 with the regression arm unmet except the full-range oracle with the round-88 locator,
+  which **meets** the predicate, `stored + 8` 4 of 4 with N3 false, a `stored`-reading hybrid gated by
+  `upx -t` which **meets** the predicate, and `u_len` arithmetic 0 of 4. Defects: the isolation
+  control snapshots before the run (D1), the repair pin is recorded but not compared (D2), the counter
+  does not force the technique (D4), the tamper population is one offset (D5), the repair reads the
+  stored value to *classify* (D6 — the derivation is blind, the classification is not).
+- **SentinelR89** (hostile inputs, cost, receipt integrity): twelve hostile-input classes; the
+  declared-bytes repair hung on a FIFO, raised `MemoryError` on `/dev/zero`, and let the round-87
+  `Refused` escape as a traceback on every plain LE ELF; `--out`/`--info` accepted `..` and absolute
+  paths, and a planted `<out>.tmp` symlink was followed. All of it is fixed in the two in-round
+  revisions. Cost: Θ(N · ph_off), measured 8.4 s at 800 candidates and 125.5 s at 3,200 (15× for 4×),
+  with the 12,800 point left as an unmeasured extrapolation at the seat's yield.
+- **ConnectorR89**: no sibling lane holds this ground (`sz_cpr`/`sz_unc`/`stored-value-blind`/`chain
+  geometry`: 0 hits across 20 sibling lanes).
+- **ScribeEntry / ScribeBlock29 / ScribeLesson**: the entry draft (101 lines, every number
+  receipt-backed), the block-29 revision candidate (399 words, 55 spans, base-present citations only),
+  and the QUALITY rows — three of which (the guard-set, the isolation snapshot and the rank-key rows)
+  were verified by that seat first-hand and are integrated as Rows 169-171.
+
+Unverified partial findings carried into the routed list, not admitted: CriticClaims and MutationR89
+wrote no report in this wave; their attack duty is covered by ReviewerC1, ReviewerC2, SentinelR89 and
+ExecMutation, and the two empty seats are reported as dead in the round report.
+

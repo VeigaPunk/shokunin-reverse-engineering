@@ -1,0 +1,87 @@
+{
+ "cases": [
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "bad_nonelf.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/ScribeEntry/out_T1-non-elf.bin"
+   ],
+   "case": "T1-non-elf",
+   "input": "bad_nonelf.bin",
+   "input_sha256": "0e29e2cb7c361cc7eb7f572f552d44c96b10294ffa442c04bafdf6d4133347f8",
+   "out_sha256": null,
+   "out_written": false,
+   "rc": 2,
+   "stderr": "refused: not a little-endian ELF\n",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/usr/bin/jq",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/ScribeEntry/out_T2-le-elf-no-packheader.bin"
+   ],
+   "case": "T2-le-elf-no-packheader",
+   "input": "/usr/bin/jq",
+   "input_sha256": "e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806",
+   "out_sha256": null,
+   "out_written": false,
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 250, in main\n    out, info = repair(data)\n                ~~~~~~^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 124, in repair\n    derived, info = derive(anchor_out, rep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py\", line 87, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nr87repair.Refused: no validated PackHeader in the tail window\n",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "bad_elf_noph.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/ScribeEntry/out_T3-le-elf-no-packheader-synthetic.bin"
+   ],
+   "case": "T3-le-elf-no-packheader-synthetic",
+   "input": "bad_elf_noph.bin",
+   "input_sha256": "6d79ebd15ac490f2db9280b82e3ba5e98d4b6788cb5b2e9ced5717171b9de3de",
+   "out_sha256": null,
+   "out_written": false,
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 250, in main\n    out, info = repair(data)\n                ~~~~~~^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 124, in repair\n    derived, info = derive(anchor_out, rep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py\", line 87, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nr87repair.Refused: no validated PackHeader in the tail window\n",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "bad_no_derive.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/ScribeEntry/out_no_derive.bin"
+   ],
+   "b0": 88,
+   "case": "T4-no-derivable-first-block",
+   "input": "bad_no_derive.bin",
+   "input_sha256": "9dd0b4b3e0cb567ec869cdf861cc15878f2f21db093fd67958574bfa942d4f40",
+   "out_written": false,
+   "rc": 2,
+   "stderr": "refused: no l_info candidate carries a derivable first block\n",
+   "stdout": ""
+  }
+ ],
+ "note": "ScribeEntry refusal probes, 2026-11-04; round-89 repair sha256 332917f2b620da7a659b78db5bf498c8af2eba6ae529d872c2518b62ad6b1070",
+ "tool": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+ "tool_sha256": "332917f2b620da7a659b78db5bf498c8af2eba6ae529d872c2518b62ad6b1070"
+}

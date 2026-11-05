@@ -1,0 +1,430 @@
+{
+ "matrix": [
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.fifo",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t1.out"
+   ],
+   "case": "T1-fifo",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "getsize": 0,
+   "new_paths_outside_expected_out": [],
+   "rc": null,
+   "stderr": "<no exit within 20s; process killed>",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/dev/zero",
+    "--out",
+    "t1b.out"
+   ],
+   "case": "T1b-dev-zero",
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "note": "ulimit -v 600000 (600 MB address space); no regular-file check",
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 245, in main\n    data = fh.read()\nMemoryError",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.link-jq",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t2.out"
+   ],
+   "case": "T2-symlink-to-carrier",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 250, in main\n    out, info = repair(data)\n                ~~~~~~^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 124, in repair\n    derived, info = derive(anchor_out, rep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgp",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.sparse300M",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t3.out"
+   ],
+   "case": "T3-sparse-300MiB",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "getsize": 314572800,
+   "new_paths_outside_expected_out": [],
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 243, in main\n    raise Refused(f\"input larger than {MAX_INPUT} bytes\")\nRefused: input larger than 268435456 bytes",
+   "stdout": ""
+  },
+  {
+   "case": "T3b-sparse-255MiB-under-cap",
+   "getsize": 267386880,
+   "rc": 2,
+   "stderr": "refused: not a little-endian ELF\nCommand exited with non-zero status 2\nmaxrss_kb=280424",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/fix/tampered.bin",
+    "--out",
+    "../escaped.bin",
+    "--info",
+    "../escaped.json"
+   ],
+   "case": "T4a-out-parent-relative",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/cwd-sub",
+   "escaped_info_exists": true,
+   "escaped_out_exists": true,
+   "new_paths_outside_expected_out": [
+    "escaped.bin",
+    "escaped.json"
+   ],
+   "rc": 0,
+   "stderr": "",
+   "stdout": "field-value: stored 32 -> derived 40 at block0 88"
+  },
+  {
+   "abs_out_exists": true,
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/fix/tampered.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/abs-outside.bin"
+   ],
+   "case": "T4b-out-absolute-outside",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/cwd-sub",
+   "new_paths_outside_expected_out": [
+    "abs-outside.bin"
+   ],
+   "rc": 0,
+   "stderr": "",
+   "stdout": "field-value: stored 32 -> derived 40 at block0 88"
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/a b\nc.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/o u\nt.bin"
+   ],
+   "case": "T5-space-newline-paths",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [
+    "o u\nt.bin"
+   ],
+   "rc": 0,
+   "stderr": "",
+   "stdout": "field-value: stored 32 -> derived 40 at block0 88",
+   "weird_out_exists": true
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.trunc40",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t6a.out"
+   ],
+   "case": "T6a-truncated-40",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 2,
+   "stderr": "refused: not a little-endian ELF",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.trunc200",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t6b.out"
+   ],
+   "case": "T6b-truncated-200",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 250, in main\n    out, info = repair(data)\n                ~~~~~~^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 124, in repair\n    derived, info = derive(anchor_out, rep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgp",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.bigendian",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t7.out"
+   ],
+   "case": "T7-big-endian",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 2,
+   "stderr": "refused: not a little-endian ELF",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.txt",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t8.out"
+   ],
+   "case": "T8-non-elf",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 2,
+   "stderr": "refused: not a little-endian ELF",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.dir",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t9.out"
+   ],
+   "case": "T9-dir-as-in",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 2,
+   "stderr": "refused: [Errno 21] Is a directory: '/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.dir'",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/fix/tampered.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/nodir/x.bin"
+   ],
+   "case": "T10-out-missing-dir",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [],
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 255, in main\n    with open(tmp, \"wb\") as fh:\n         ~~~~^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/kaidoku-r89/SentinelR89/nodir/x.bin.tmp'",
+   "stdout": ""
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/fix/tampered.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.outdir"
+   ],
+   "case": "T11-out-is-dir",
+   "changed_paths": [],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [
+    "hostile.outdir.tmp"
+   ],
+   "rc": 1,
+   "stderr": "Traceback (most recent call last):\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 270, in <module>\n    sys.exit(main())\n             ~~~~^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 257, in main\n    os.replace(tmp, a.dst)\n    ~~~~~~~~~~^^^^^^^^^^^^\nIsADirectoryError: [Errno 21] Is a directory: '/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.outdir.tmp' -> '/fast/scratch/hyaku/kaidoku-r89/SentinelR89/hostile.outdir'",
+   "stdout": "",
+   "stray_tmp_exists": true
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/fix/tampered.bin",
+    "--out",
+    "/fast/scratch/hyaku/kaidoku-r89/SentinelR89/t12.out"
+   ],
+   "case": "T12-planted-tmp-symlink",
+   "changed_paths": [
+    "victim.bin"
+   ],
+   "cwd": "/fast/scratch/hyaku/kaidoku-r89/SentinelR89",
+   "new_paths_outside_expected_out": [
+    "t12.out"
+   ],
+   "out_is_symlink_after": true,
+   "rc": 0,
+   "stderr": "",
+   "stdout": "field-value: stored 32 -> derived 40 at block0 88",
+   "victim_after": "7f454c460201010000000000000000000000000000000000",
+   "victim_sha_equals_out": true
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "FIXTURE",
+    "--out",
+    "OUT",
+    "--info",
+    "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-89/pre/c2-control-stub-world.json"
+   ],
+   "case": "T13-info-into-pre-dir",
+   "note": "not executed: would overwrite a committed pre-freeze receipt",
+   "target_owner": true,
+   "target_writable": true
+  }
+ ],
+ "max_input": 268435456,
+ "plain_le_elf_exit_1_traceback": [
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "elf-min.bin",
+    "--out",
+    "refuse.out"
+   ],
+   "input": "elf-min.bin",
+   "out_written": false,
+   "rc": 1,
+   "sha256": "243d107b590f25beffb6503da722c387673cac5987beebbcd0e7382824e3b918",
+   "stderr_verbatim": "ep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py\", line 87, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nr87repair.Refused: no validated PackHeader in the tail window"
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "jq",
+    "--out",
+    "refuse.out"
+   ],
+   "input": "jq",
+   "out_written": false,
+   "rc": 1,
+   "sha256": "e815667571d07cb7a7be98eb6e9920a9e7e20d64074c132882e7fc94984f7806",
+   "stderr_verbatim": "ep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py\", line 87, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nr87repair.Refused: no validated PackHeader in the tail window"
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "xxd",
+    "--out",
+    "refuse.out"
+   ],
+   "input": "xxd",
+   "out_written": false,
+   "rc": 1,
+   "sha256": "7b1e5d0c970afe686c8d6b60fcf0298981e16adf08c3f0f128ee007a0403ae65",
+   "stderr_verbatim": "ep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py\", line 87, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nr87repair.Refused: no validated PackHeader in the tail window"
+  },
+  {
+   "argv": [
+    "python3",
+    "-I",
+    "-B",
+    "tools/round-89/upx-field-value-repair.py",
+    "--in",
+    "libz.so.1.3.2",
+    "--out",
+    "refuse.out"
+   ],
+   "input": "libz.so.1.3.2",
+   "out_written": false,
+   "rc": 1,
+   "sha256": "6c78c5e58c3bb49a1cd151a95cdf1a17fe07a91a57a59e0279b984c533075ca9",
+   "stderr_verbatim": "ep, r88)\n                    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py\", line 65, in derive\n    ph_off, ph = rep.find_packheader(d)\n                 ~~~~~~~~~~~~~~~~~~~^^^\n  File \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py\", line 87, in find_packheader\n    raise Refused(\"no validated PackHeader in the tail window\")\nr87repair.Refused: no validated PackHeader in the tail window"
+  }
+ ],
+ "python": "3.14.8",
+ "summary": {
+  "T1-fifo": "no exit within 20s, killed: os.path.getsize(fifo)==0 passes the cap and open() blocks",
+  "T10": "rc 1 FileNotFoundError traceback on --out",
+  "T11": "rc 1 IsADirectoryError traceback, stray <out>.tmp left",
+  "T12": "rc 0, pre-planted <out>.tmp symlink redirected the write onto victim.bin",
+  "T1b-dev-zero": "rc 1 MemoryError traceback: read() is unbounded (cap checks a stat size, not a stream)",
+  "T2-symlink": "rc 1 r87repair.Refused escapes derive() as an uncaught traceback, not rc 2",
+  "T3-sparse-300MiB": "rc 1 traceback: the cap's own Refused is raised inside `except OSError`",
+  "T3b-255MiB": "rc 2 not-a-little-endian-ELF after 280424 kB maxrss (whole file materialised)",
+  "T4a": "rc 0 wrote ../escaped.bin and ../escaped.json outside the cwd",
+  "T4b": "rc 0 wrote an absolute path outside the cwd",
+  "T5": "rc 0 wrote a name with a space and a newline",
+  "T6a-trunc-40": "rc 2 refused: not a little-endian ELF",
+  "T6b-trunc-200": "rc 1 uncaught r87repair.Refused (same class as T2)",
+  "T7-big-endian": "rc 2 refused: not a little-endian ELF",
+  "T8-non-elf": "rc 2 refused: not a little-endian ELF",
+  "T9-dir": "rc 2 refused: [Errno 21] Is a directory"
+ },
+ "tool": "tools/round-89/upx-field-value-repair.py",
+ "tool_sha256": "332917f2b620da7a659b78db5bf498c8af2eba6ae529d872c2518b62ad6b1070"
+}
