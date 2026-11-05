@@ -5031,3 +5031,17 @@ The non-author spot-check of round 90 (`corpus/lessons/round-90-verifier-spotche
 - **Calibration finding (routed).** The SCORECARD coverage head (10.0, 168/168) disagrees with the round-66 self-check at base (175/181, 9.67): the r93–r97 entries lack coverage-map rows.
 - **Capability.** `UPX-packed PE magic / section-name tamper repair` enters the capabilities table (first working round 98).
 - **Host and tools.** No tool installed or upgraded; no sysctl, pacman or namespace change. Scratch under `/fast/scratch/hyaku/kaidoku-r98/` (removed at landing).
+
+## 2026-11-05 — round 99: self-assessment mismatches 17 → 0 (R99-C1, calibration); truncated UPX-packed PE refused by the packer's overlay arithmetic (R99-C2, coverage, frontier → core; capability)
+
+- **Motive.** The round-98 closure routed five defects: a stale coverage head and six unmapped r93–r97 entries, nine unregistered round-97/98 tools, raw selftest outputs, successor counters with the wave's forgeries as red fixtures and a non-992 carrier, and the PE repair's `ok intact` on truncated packs plus three rc-1 CLI paths.
+- **Declaration and landing.** Base `de098f51cd73d3b9b4a895840da8f2bb0a386db8`; freeze `8fb5ac4fa8d7b0cb5123b230e5d319a765011066`; C2 controls `5f08a78fb3b62c567a92b35c70e3ac76fa003100`; C2 candidate `01c4b79cc1cf8e6172b507edebb6a4d3125c5c6f`; C1 landing `64cc3e10c5d615c6454570674a265b7290b8919c`; C2 knowledge `c19d57cd2e65a036478b9e78f6c5397dedfb2bcb`.
+- **Before → after (R99-C1).** `mismatches 17` exit 1 at base → `mismatches 0` exit 0 at `64cc3e10` and `c19d57cd` (`.ufo/waves/round-99/l1/scores/c1-at-*.json`); forgery control `mismatches 15` exit 1.
+- **Before → after (R99-C2).** Round-98 repair `truncated 0 of 40; cli 0 of 3` exit 1, nine red fixtures exit 1 → full label `… truncated 40 of 40 … effective 79 of 79` exit 0 at `01c4b79c` and `c19d57cd` (`.ufo/waves/round-99/l1/scores/c2-at-*.json`).
+- **End-to-end domain task.** Pack ten PE carriers (six exe, four DLL) with UPX 5.2.0, tamper, cut, append random overlays, repair or refuse, and check every exit-0 output with `upx -t`/`upx -d` (79 effective cells plus 30 positive cells); held out on nine further carriers (432 cells, ExecHeldOut).
+- **Sources.** S326 UPX 5.2.0 `src/packer.cpp` admitted (`checkOverlay` lines 431-433); S324 re-read (`unpack0` lines 3046-3049), `used-by` widened. Census start exit 0 (`.ufo/waves/round-99/pre/census-start.txt`), end exit 0 (`.ufo/waves/round-99/l1/census-end.txt`).
+- **Mistakes mined.** M99-a (round-98 exit 0 not backed by the packer; QUALITY 200), M99-b (tools landed unregistered; QUALITY 201), M99-c/d (over-strict A3 draft, a token matching `empty`; both caught before freeze), M99-e (candidate dry-run before the freeze, disclosed), M99-f–k (wave findings, `corpus/lessons/round-99.md`).
+- **Wave.** `r99-w1`: 13 seats, one v1 wave (band 8–16), attack seats 6 of 13, one connector; all 13 settled with reports. Integrated: three false registry rows corrected (M99-i), README frontier supersession and verdict completeness (ConnectorOverlap F1/F2/F5), lesson limits.
+- **Housekeeping.** Raw v7/v8 selftest outputs committed (`.ufo/waves/round-99/l1/selftest-v7.txt`, `selftest-v8.txt`; round-98 closure D2).
+- **Capability.** `UPX-packed PE truncated-payload refusal` enters the capabilities table (first working round 99).
+- **Host and tools.** No tool installed or upgraded by the L1; no sysctl, pacman or namespace change. Scratch under `/fast/scratch/hyaku/kaidoku-r99/` (removed at landing).
