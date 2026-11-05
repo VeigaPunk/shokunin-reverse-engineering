@@ -79,15 +79,28 @@ tamper:
 | `b0.sz_cpr := 0` | rc 1 `CantUnpackException: b_info corrupted` | recoverable (chain geometry) |
 | `b0.sz_cpr := stored - 8` | rc 1 `Exception: compressed data violation` | recoverable; the only class reaching the payload stage |
 | `b0.sz_cpr := 0xFFFFFFF0` | rc 1 `CantUnpackException: b_info corrupted` | recoverable; the gate fires early, the field is still redundant |
-| `b0.sz_cpr := sz_unc + 1` | rc 1 `CantUnpackException: header corrupted` | the arithmetic gate, one stage earlier than `b_info` |
-| `b0.method ^= 0xFF` | rc 1 `CantUnpackException: bad method 0xfd at 0x240` | the offset names the block; no redundancy: refuse |
+| `b0.sz_cpr := sz_unc + 1` | rc 1 `CantUnpackException: header corrupted` (jq, xxd; `corrupt b_info` on libz) | the arithmetic gate, one stage earlier than `b_info` — and carrier-dependent |
+| `b0.method ^= 0xFF` | rc 1 `CantUnpackException: bad method 0xfd at 0x240` | the offset names the block; no redundancy: outside this repair's remit |
 | `l_info.version ^= 0xFF` | rc 0 `Tested 1 file.` | tolerated by `upx -t`, but it breaks this lane's locator: refuse |
 | `l_info.format ^= 0xFF` | rc 0 `Tested 1 file.` | same |
 | PackHeader `u_len := 0` | rc 1 `CantUnpackException: header corrupted 3` | the PackHeader arithmetic gate (S310) |
+| `p_info.p_filesize ^= 0xFF` | rc 1 `CantUnpackException: p_info corrupted` | the locator's own cross-check: refused |
+| `p_info.p_blocksize ^= 0xFF` | rc 1 `CantUnpackException: p_info corrupted` | outside this repair's remit (the repair exits 0 with nothing to change) |
 
 [observation] The message does not name the field: `b_info corrupted` covers `sz_unc` and `sz_cpr`
 alike (QUALITY 156), and `sz_cpr = sz_unc + 1` answers `header corrupted` instead, because that value
-fails a header-level comparison before the block walk starts.
+fails a header-level comparison before the block walk starts — except on the shared object, where the
+same value answers `corrupt b_info` (a field-level gate), so the message is carrier-dependent
+(QUALITY 166).
+[observation] The repair's exit code means "I changed the field I own", not "the file is fixed": on the
+`b0.method` and `p_info.p_blocksize` classes it exits 0 with the stored value already correct (nothing in
+its remit to change) while `upx -t` still fails, so a caller must test the output — the counter's
+`test_ok` and `identity` arms are the guard (QUALITY 167).
+[observation] The four-carrier matrix (`tools/round-89/field-class-matrix.py` as run by the wave's
+ExecMatrix seat, `.ufo/waves/round-89/w1/ExecMatrix/matrix.json`: 48 cells, 0 skipped, exit 0) extends
+the probe: every wrong-value `sz_cpr` class — zero, `true - 8`, `true + 8`, `0xFFFFFFF0`, `sz_unc + 1` —
+is recovered on all four carriers (`repair rc 0`, `repaired_tests_clean true`), while `sz_unc := 0`,
+`p_filesize` and the PackHeader class are refused and `method`/`p_blocksize` are out of remit.
 
 ## Limits
 
