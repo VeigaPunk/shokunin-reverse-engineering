@@ -807,6 +807,17 @@ bullet is bounded by the lines it cites.
 
   Refs: corpus/QUALITY.md rows 193-194 (base e4d1f7de9deae83e6d5f78d2d7f0157196002af0); tools/round-96/kill-rule-v2.py; tools/round-96/stop-boundary-repair-battery-v6.py; tools/round-96/symlink-probe-v2.py; corpus/knowledge/2026-11-05-r96-kill-rule-coverage.md.
 
+- **36. A receipt's pins name the bytes at the revision it claims, and a green verdict exists only through a receipt the rule re-reads.** <!-- receipt-byte-binding v1 --> The receipt-byte-binding class is the one where a receipt names a revision and carries pins, yet the pinned bytes are not the bytes that revision contains, so a dirty tree measured under a clean name passes every check that compares the receipt only to the live files. Round 96 measured the class: `tools/round-96/stop-boundary-repair-battery-v6.py` exited 0 on a dirty tree under the clean HEAD name (`.ufo/waves/round-97/pre/c1-dirty-v6-admits.json`, `v6_dirty_exit 0`), and its verifier accepted a receipt whose `met_target` was absent. The round-97 counter `tools/round-97/stop-boundary-repair-battery-v7.py` binds every pin to `git cat-file blob <revision>:<path>`, refuses a `met_target` that is not a real boolean, refuses extra counts keys, and makes the receipt write durable (file fsync before the atomic replace, directory fsync after it); `tools/round-97/kill-rule-v3.py` re-reads its own receipt before it may exit green. The table routes each failure class to the signature it produces, the guard that answers it and the criterion that names the rule.
+
+| class | signature | guard | criterion |
+|---|---|---|---|
+| pins name bytes the run did not use | `byte-pin-not-bound:<key>` | refuse before scoring; `git cat-file blob` at the named revision decides the pin | QUALITY 195 (`byte-pin-not-bound`) |
+| met is not a real boolean | `met-not-typed` | typed refusal before any label comparison | QUALITY 195 (`met-not-typed`) |
+| a crash is published as a kill | `uncaught exception` in the check | classify the kill by its observed class; a crash-declared mutant is never a semantic kill | QUALITY 196 (`crash`) |
+| green without a re-read receipt | no `--json-out`, or a receipt the rule cannot re-read | refuse before scoring; the rule re-reads its own receipt before exit 0 | QUALITY 196 (`re-read`, `--json-out`) |
+
+  Refs: corpus/QUALITY.md rows 195-196; tools/round-97/stop-boundary-repair-battery-v7.py; tools/round-97/kill-rule-v3.py; corpus/knowledge/2026-11-05-r97-receipt-byte-binding.md:1
+
 ## Config custody for live-probe rounds (SOP)
 
 Binding for every future live-probe round. A zero-drift claim without its own
