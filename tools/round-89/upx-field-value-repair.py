@@ -300,6 +300,42 @@ def read_input(path: str) -> bytes:
         return fh.read()
 
 
+def _checked_target(path: str, what: str) -> str:
+    """An output path with no `..` component and a real, non-symlinked parent."""
+    if not path:
+        raise Refused(f"{what} is empty")
+    if ".." in path.split(os.sep):
+        raise Refused(f"{what} carries a '..' component: {path}")
+    full = os.path.abspath(path)
+    parent = os.path.dirname(full) or "."
+    if os.path.islink(parent):
+        raise Refused(f"{what} parent is a symlink: {parent}")
+    if not os.path.isdir(parent):
+        raise Refused(f"{what} parent is not a directory: {parent}")
+    return full
+
+
+def write_atomic(path: str, data: bytes, what: str) -> None:
+    """Write through a fresh `mkstemp` in the target's directory, then rename.
+
+    A predictable `<out>.tmp` follows a pre-planted symlink (round-89 wave
+    finding F5); `mkstemp` creates a new file with O_EXCL and an unguessable
+    name, and the temp is unlinked on any failure (F6).
+    """
+    full = _checked_target(path, what)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(full), prefix=".r89-write-")
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        os.replace(tmp, full)
+    except OSError as exc:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise Refused(f"{what} write failed: {exc}")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--in", dest="src")
@@ -322,16 +358,17 @@ def main(argv=None) -> int:
     except Refused as exc:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
-    tmp = a.dst + ".tmp"
-    with open(tmp, "wb") as fh:
-        fh.write(out)
-    os.replace(tmp, a.dst)
     rec = {"tool": TOOL, "tool_sha256": sha256_bytes(open(__file__, "rb").read()),
            "input_sha256": sha256_bytes(data), "output_sha256": sha256_bytes(out),
            "info": info}
-    if a.info:
-        with open(a.info, "w", encoding="utf-8") as fh:
-            json.dump(rec, fh, indent=1, sort_keys=True)
+    try:
+        write_atomic(a.dst, out, "--out")
+        if a.info:
+            write_atomic(a.info, json.dumps(rec, indent=1, sort_keys=True).encode(),
+                         "--info")
+    except Refused as exc:
+        print(f"refused: {exc}", file=sys.stderr)
+        return 2
     print(f"{info['class']}: stored {info['stored_sz_cpr']} -> derived "
           f"{info['derived_sz_cpr']} at block0 {info['block0']}")
     return 0
