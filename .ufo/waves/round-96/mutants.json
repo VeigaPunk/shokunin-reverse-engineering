@@ -1,0 +1,101 @@
+{
+ "version": "round-96 mutant table (r95 survivor set adapted to v6 counter and v2 probe)",
+ "forgery_reasons": {
+  "unlabelled": "counts-missing-key:fresh_scored",
+  "met-lying": "met-not-recomputed",
+  "head-mismatch": "head-not-bound",
+  "counter-pin": "counter-pin-not-bound",
+  "verdict-pin": "verdict-pin-not-bound",
+  "repair-pin": "repair-pin-not-bound"
+ },
+ "mutants": [
+  {
+   "name": "M0",
+   "kind": "identity",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "TOOL = \"tools/round-96/stop-boundary-repair-battery-v6.py\"",
+   "replace": "TOOL = \"tools/round-96/stop-boundary-repair-battery-v6.py\"",
+   "kills_via": "control: must NOT be killed"
+  },
+  {
+   "name": "M1",
+   "kind": "counter",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "    fd, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(path) + \".\", suffix=\".tmp\")",
+   "replace": "    tmp = path + \".tmp\"\n    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)",
+   "kills_via": "K-selftest planted-tmp case (r95 M1 carried)"
+  },
+  {
+   "name": "M2",
+   "kind": "counter",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "            os.fsync(fh.fileno())\n",
+   "replace": "",
+   "kills_via": "K-fsync (r95 survivor; named kill D-fsync)"
+  },
+  {
+   "name": "M3",
+   "kind": "counter",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "                                resolve_rev(root, args.rev), args.intact_total, pins)",
+   "replace": "                                resolve_rev(root, args.rev), args.intact_total, pins)\n    selfverify = {\"ok\": True, \"reasons\": []}",
+   "kills_via": "K-dmain negctl (r95 survivor; named kill D-main)"
+  },
+  {
+   "name": "M4",
+   "kind": "counter",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "    if code == 0 and not selfverify[\"ok\"]:\n        code = 1",
+   "replace": "    if code == 0 and not selfverify[\"ok\"]:\n        pass",
+   "kills_via": "K-dmain negctl (r95 survivor; named kill D-main)"
+  },
+  {
+   "name": "M5",
+   "kind": "counter",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "        if rec.get(\"met_target\") is True and expect is not None and label != expect:\n            reasons.append(\"label-not-frozen\")",
+   "replace": "",
+   "kills_via": "K-selftest verify-catches-not-frozen (r95 M5 carried)"
+  },
+  {
+   "name": "M6",
+   "kind": "counter",
+   "file": "tools/round-96/stop-boundary-repair-battery-v6.py",
+   "find": "    elif rec.get(\"revision\") != rev_full:\n        reasons.append(\"revision-not-bound\")",
+   "replace": "",
+   "kills_via": "K-dmain shortrev (r95 survivor; named kill: revision case)"
+  },
+  {
+   "name": "M7",
+   "kind": "agreement",
+   "file": "tools/round-95/c1-agreement-v2.py",
+   "find": "    if (rec.get(\"verdict_sha256\") != exp_verdict\n            or rec.get(\"counter_sha256\") != exp_counter):\n        out[\"reasons\"].append(\"pins-not-bound\")",
+   "replace": "",
+   "kills_via": "K-agreement F3 (r95 M7 carried)"
+  },
+  {
+   "name": "M8",
+   "kind": "agreement",
+   "file": "tools/round-95/c1-agreement-v2.py",
+   "find": "            out[\"reasons\"].append(\"label-not-recomputed\")",
+   "replace": "            pass",
+   "kills_via": "K-agreement F1 (r95 M8 carried)"
+  },
+  {
+   "name": "M9",
+   "kind": "agreement",
+   "file": "tools/round-95/c1-agreement-v2.py",
+   "find": "            out[\"reasons\"].append(\"label-not-frozen\")",
+   "replace": "            pass",
+   "kills_via": "K-agreement pos (r95 M9 carried)"
+  },
+  {
+   "name": "M10",
+   "kind": "probe",
+   "file": "tools/round-96/symlink-probe-v2.py",
+   "find": "        \"verdict\": \"hardened\" if ok else \"followed-symlink\",\n        \"met\": ok,",
+   "replace": "        \"verdict\": \"hardened\",\n        \"met\": True,",
+   "kills_via": "K-probe receipt-content consistency (r95 survivor; named kill)"
+  }
+ ]
+}
