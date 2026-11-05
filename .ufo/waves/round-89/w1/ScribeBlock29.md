@@ -60,6 +60,29 @@ stored value.
   at base** (`git show 0ec2bb40:corpus/SOURCES.md | grep -c "^| S311 "` -> 0), so the quote is recorded
   here, not in the block's Refs line.
 
+### R3 — QUALITY Row 166's `M89-8` pointer is dangling (Row 166 is the row that carries R2)
+
+`corpus/QUALITY.md:274` ends "…(correction routed to the round-90 block revision, **M89-8**)". But
+`corpus/lessons/round-89.md` has exactly **seven** mistake rows, `M89-1`..`M89-7` (ids parsed with
+`^\| (M89-\d+)` over the `## Mistakes` table at lines 16-26) — **there is no `M89-8` row**. Row 166's
+cite is the only bare, path-less `M89-N` cite in rows 160-171; every other cite there is
+path-qualified (`corpus/lessons/round-89.md` for Row 161, `ScribeLesson/report.md` for Rows 169 and 171).
+The lane's only `M89-8` is ScribeLesson's seat-report row
+(`.ufo/waves/round-89/w1/ScribeLesson/report.md:271`), whose subject is a **different** finding (the
+dropped predecessor guards), and Row 169 already cites that id path-qualified. The
+carrier-dependence fact R2 describes *is* in the lesson, but as prose at
+`corpus/lessons/round-89.md:81`, not as a numbered row. **Fix:** add an `M89-8` lesson row for the
+carrier-dependent gate (or re-point Row 166 at `corpus/lessons/round-89.md:81`) and path-qualify the
+bare cite, per the "a record cell is re-derived by command" law
+(`corpus/knowledge/2026-11-04-r86-record-agreement.md:9`).
+
+### R4 — the lesson has a duplicated section heading
+
+`corpus/lessons/round-89.md` carries `## Wave \`r89-w1\` — seat results` twice, at lines **64** and
+**66**, with an empty section between them (the second has the content). `c40a36f21` added one copy
+(`git show c40a36f21 -- corpus/lessons/round-89.md | grep -c "^+## Wave"` -> 1) over the copy already
+at `81cd0d73b`.
+
 ## The exact matrix cell ids relied on (carrier, class, `upx -t` message)
 
 All from `.ufo/waves/round-89/w1/ExecMatrix/matrix.json`, `cells[]`, read with `python3 -I`; messages
@@ -184,6 +207,9 @@ text is byte-identical to what landed at `8bbb40cc`.
 6. **`p_info.p_filesize` is refused although it is redundant** — it duplicates the PackHeader's
    `u_file_size`; the repair keys on it and refuses (rc 2) rather than restoring it.
 7. **The plan's `sz_cpr > sz_unc -> refuse` routing is wrong as a lane move** (R1).
+8. **QUALITY Row 166 — the row that carries R2 — cites a lesson row id that does not exist** (R3):
+   the lesson has `M89-1`..`M89-7` only, and the lane's only `M89-8` is a different finding.
+9. **The lesson has a duplicated `## Wave r89-w1 — seat results` heading** at lines 64 and 66 (R4).
 
 ## Findings provenance
 
@@ -195,6 +221,33 @@ text is byte-identical to what landed at `8bbb40cc`.
 - The derivation thresholds come from the pinned repair source `tools/round-89/upx-field-value-repair.py`.
 - The chain-geometry law, the `sz_unc` no-redundancy limit and the `b_info` layout come from the
   base-present knowledge entries cited in the draft's Refs line.
+
+## Scope note for round 90 (observed, not acted on)
+
+The round-90 plan is already open (`plans/round-90-claims.md`, `tools/round-90/`) and its R90-C2
+targets **block 30** — the guard-and-control set a superseding instrument revision must inherit
+(QUALITY 161/163/167/168/169/170/171) — a different scope from this seat's field-class decision table.
+My draft is therefore not automatically an input to R90-C2; I touched neither the round-90 plan nor
+its tools. What carries forward is R1/R2's substance (and, if still open, R3/R4).
+
+## Integration note: the wave ledger's copy of this seat is stale
+
+`r89-w1-results.json` (the wave evidence ledger, committed at `c40a36f21`) carries this seat's
+**first** yield — R1/R2, the confirmations and the cell-id pointer, but **not R3 or R4**
+(`"R3 —"` -> 0, `"R4 —"` -> 0, `"duplicated section heading"` -> 0). The authoritative copies are the
+two files on disk (seat `report.md` and this file). Both are now tracked (the wave-evidence commit
+swept them in) and my R3/R4 additions are **uncommitted working-tree changes** (85 added lines per
+`git diff --stat`). An integrator that reads the ledger copy, or that commits only the committed
+state, would miss the two new defects. I do not commit (leaf rule).
+
+## Environment note (blocker for the L1, not actionable by this seat)
+
+After my reply was delivered, L1 KaidokuR89's wake turn failed with
+`Devin stream error failed_precondition: Your weekly usage quota has been exhausted`
+(`https://app.devin.ai/settings/usage`). That is an account-level quota on the L1's model stream,
+not a lane or host fault, and it is not fixable by a tool install — this seat has no authority to
+change quota settings. **This seat's deliverables are complete and self-contained on disk**, so the
+L1 can integrate from the three files below without depending on the IRC thread surviving.
 
 ## Artifact paths
 
