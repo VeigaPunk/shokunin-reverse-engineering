@@ -1,0 +1,107 @@
+ScribeC2Block — R94-C2 draft verification
+Seat: .ufo/waves/round-94/w1/ScribeC2Block/
+Scratch S = ${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kaidoku-r94/ScribeC2Block
+Clone = "$S/clone" (git clone --shared from the lane), checked out at dd4524916a0332bb65f83525532da1c1b8d709de
+TMPDIR="$S/tmp" exported for every command below.
+
+WHAT WAS APPLIED TO THE CLONE (worktree only; the lane was never written)
+  SKILL.md         <- seat block33.md, inserted at the end of the `## Queue-drain craft`
+                      section (immediately before `## Config custody for live-probe rounds (SOP)`).
+                      Blocks 1-32 untouched. git status in the clone: " M SKILL.md" only.
+  corpus/QUALITY.md <- seat quality-189-190.md, appended at the end of the file (base ends at Row 188).
+                      git status in the clone: " M corpus/QUALITY.md" only.
+  No other file in the clone was modified: `git -C "$S/clone" status --porcelain` returns exactly
+  " M SKILL.md" and " M corpus/QUALITY.md".
+
+PIN CHECK (sha256sum on the clone bytes at dd4524916; all must equal the pins in
+.ufo/waves/round-94/claims.json)
+  c41d54d72257ad41db7da5c42bea9e8ebc66fea88257660edc6e20c147266272  tools/round-94/stop-boundary-repair-battery-v4.py      MATCH (pin)
+  dc384a4464c2cb045dea491d56855685e8058dc5567a6c3b6d6dc899875836c9  tools/round-94/c1-receipt-agreement.py                    MATCH (pin)
+  60026511e54cdc1df71233c491392fafcc89705808fa5c187d96a85862cbd4e3  tools/round-93/stop-boundary-repair-battery-v3.py          MATCH (pin)
+  63e9df431f5d7aeeca2bd5384efff36b4f2ebedfdc3ee71aaa250287fc9388bc  tools/round-92/stop-boundary-repair-battery.py             MATCH (pin)
+  f6ddb48b4d9cbd460002db68d834f909955e2c7d4e60d7ad85325ef4e66f1874  tools/round-92/stop-boundary-battery-v2.py                MATCH (pin)
+  34cf6579d7d0614336add1710912877492c68517331736fa5e4021ffedf05340  tools/round-93/craft-citation-semantic.py                  MATCH (pin)
+  359f15e1c87f5106aa3fcbef211568ab7a970564ea0d7ed877299ca706dcf18f  tools/round-89/depth-blocks-v2.py                         MATCH (pin)
+  bcf6c4ea31047401d16ce47562e58bf1d76eec7b1c9da0ff5e222793aeeb052f  tools/round-91/depth-blocks-v3.py                         MATCH (pin)
+  9d72f9951d7aadf12a335b2e2177bcb7a7300c5c8c4f481640f9c721751f40ae  .ufo/waves/round-94/manifests/block33-after.json         MATCH (pin)
+
+FROZEN COMMANDS 1-3, RUN IN "$S/clone" (cwd = "$S/clone")
+
+  [1] python3 -I -B tools/round-93/craft-citation-semantic.py --root "$S/clone" \
+        --manifest .ufo/waves/round-94/manifests/block33-after.json --block 33 --rev worktree \
+        --json-out <seat>/c2-draft-block33.json
+      exit code: 0
+      last line: ok exit 0
+      receipt: <seat>/c2-draft-block33.json
+        atoms: block_present true, marker true, shape true
+        checked: row "honest-case receipt crashes"        -> cited 189, missing_keywords []
+               row "truncated receipt read as a pass"      -> cited 189, missing_keywords []
+               row "helper-only selftest misses the public path" -> cited 190, missing_keywords []
+        failing: []   ok: true   revision: worktree
+      (This command reads SKILL.md and corpus/QUALITY.md only. It does not read corpus/knowledge/,
+       so it is unaffected by the absent knowledge file.)
+
+  [2] python3 -I -B tools/round-89/depth-blocks-v2.py --root "$S/clone" --worktree --expect-blocks 33
+      exit code: 1
+      last line: blocks 33 resolved 32 expect 33 unresolved 1 met=False exit=1
+      NOTE: the single unresolved block is block 33, and its only problem is the missing
+      knowledge file: "absent:2026-11-05-r94-receipt-path-json.md:absent in worktree:
+      corpus/knowledge/2026-11-05-r94-receipt-path-json.md". Blocks 1-32 resolve 32 of 32.
+      That file is ScribeKnowledge's deliverable and was absent both in the lane and in this
+      clone at the time of the run (verified: `ls corpus/knowledge/2026-11-05-r94-receipt-path-json.md`
+      -> "No such file or directory"; `find .ufo/waves/round-94 -name "*r94-receipt-path*"` -> no hit).
+      Nothing was copied into the lane to work around this.
+
+  [3] python3 -I -B tools/round-91/depth-blocks-v3.py --root "$S/clone" --worktree --expect-blocks 33 --shape-from 33
+      exit code: 1
+      last line: blocks 33, resolved 32, required-shaped 1/1 expect 33 shaped_required 1/1 unresolved 0 met=False exit=1
+      NOTE: same cause as [2] — block 33's citation of corpus/knowledge/2026-11-05-r94-receipt-path-json.md
+      cannot resolve because that file is absent from the clone. The table shape is already
+      satisfied for block 33 (required-shaped 1/1).
+
+DIAGNOSTIC RUN (scratch only, throwaway clone "$S/clone2" = copy of "$S/clone" plus a
+14-line STAND-IN corpus/knowledge/2026-11-05-r94-receipt-path-json.md). This is a scratch
+fixture, NOT a lane file and NOT a candidate deliverable; it exists only to show that the
+block-33 draft satisfies the depth counters once ScribeKnowledge's real knowledge entry is
+present at the cited path with >= 12 lines.
+      [1'] python3 -I -B tools/round-93/craft-citation-semantic.py --root "$S/clone2" \
+             --manifest .ufo/waves/round-94/manifests/block33-after.json --block 33 --rev worktree \
+             --json-out "$S/work/diag-c2.json"
+           exit code: 0    last line: ok exit 0
+      [2'] python3 -I -B tools/round-89/depth-blocks-v2.py --root "$S/clone2" --worktree --expect-blocks 33
+           exit code: 0    last line: blocks 33 resolved 33 expect 33 unresolved 0 met=True exit=0
+      [3'] python3 -I -B tools/round-91/depth-blocks-v3.py --root "$S/clone2" --worktree --expect-blocks 33 --shape-from 33
+           exit code: 0    last line: blocks 33, resolved 33, required-shaped 1/1 expect 33 shaped_required 1/1 unresolved 0 met=True exit=0
+      Conclusion: the sole blocker on [2] and [3] is the absent knowledge entry. The block-33
+      draft itself is shape- and citation-correct.
+
+BASE CONTROL (scratch clone "$S/clone-base" at base 8a40ceb6516bb38c19c37bcbff2bb3332f31c832)
+      python3 -I -B tools/round-89/depth-blocks-v2.py --root "$S/clone-base" --worktree --expect-blocks 33
+           exit code: 1    last line: blocks 32 resolved 32 expect 33 unresolved 0 met=False exit=1
+      python3 -I -B tools/round-91/depth-blocks-v3.py --root "$S/clone-base" --worktree --expect-blocks 33 --shape-from 33
+           exit code: 1    last line: blocks 32, resolved 32, required-shaped 0/0 expect 33 shaped_required 0/0 unresolved 0 met=False exit=1
+      (craft-citation-semantic at base cannot be run from the base clone because the manifest
+      .ufo/waves/round-94/manifests/block33-after.json does not exist at the base revision:
+      FileNotFoundError, exit 1. The committed base receipt
+      .ufo/waves/round-94/pre/c2-base-block33-after-manifest.json already records that base
+      run: exit 1, "block 33 missing (craft has 32 blocks)". The base clone above reproduces the
+      depth half exactly: blocks 32, expect 33.)
+
+DRAFT SHAPE CHECKS (seat files)
+      grep -c -- "- **" block33.md                       -> 1   (only the block-33 bullet header; no stray bullet inside the table)
+      grep -c "^|" block33.md                            -> 5   (header + separator + 3 body rows)
+      grep -n "|" quality-189-190.md                    -> no match (no cell or sentence contains a pipe)
+      required literal phrases in quality-189-190.md:
+        "bytes become a length and a sha256"  PRESENT (Row 189)
+        "temporary file"                      PRESENT (Row 189)
+        "complete JSON or absent"             PRESENT (Row 189)
+        "through its public command"          PRESENT (Row 190)
+        "re-read by a JSON parser"            PRESENT (Row 190)
+      Block-33 first cells, in order: "honest-case receipt crashes", "truncated receipt read as a pass",
+      "helper-only selftest misses the public path" (exact, per the frozen manifest).
+      Criterion cells: QUALITY 189, QUALITY 189, QUALITY 190 (exactly one QUALITY citation each).
+      Marker "receipt-path-json-safe v1" present in block 33 (counter atom marker=true).
+
+TOOLING: none installed, no pacman transaction, no host mutation, no lane write outside this
+seat directory. Python 3.14 (pre-existing). Scratch "$S" removed after the receipts above were
+copied into the seat directory.

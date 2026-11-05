@@ -1,0 +1,107 @@
+S319 registry row — census verification (ScribeKnowledge, round 94)
+
+Method
+  Clone: git clone --shared -q /home/vgpnk/Projects/shokunin/kaidoku-shokunin "$S/clone"
+          git -C "$S/clone" checkout -q dd4524916a0332bb65f83525532da1c1b8d709de
+          git -C "$S/clone" rev-parse --show-toplevel = $S/clone   (asserted before any edit)
+          git -C "$S/clone" rev-parse HEAD = dd4524916a0332bb65f83525532da1c1b8d709de
+  The S319 row was appended to the clone's corpus/SOURCES.md Registry table, immediately after
+  the S318 row (line 235), before the "## Paths" heading. No lane file was edited.
+
+Census command
+  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root "$S/fleet" kaidoku
+
+  The literal form "--root "$S/clone" kaidoku" exits 2 with
+    "ERROR: config not found: $S/clone/shokunin.conf"
+    "ERROR: unknown lane (not a dir, not in conf or root): kaidoku"
+  because the clone is a lane repository, not a fleet root: it carries no shokunun.conf and no
+  "*-shokunin" child directory. The scratch fleet root $S/fleet supplies exactly what the script
+  needs and points at the clone: $S/fleet/shokunin.conf declares
+    LANES="
+    kaidoku|kaidoku-shokunin|kaidoku lane
+    "
+  and $S/fleet/kaidoku-shokunin is a symlink to $S/clone. The registry the script reads is
+  $S/clone/corpus/SOURCES.md (the "ok" line names the symlinked path).
+
+Run A — S319 row appended, the round's landing files absent
+  exit code 1
+    kaidoku  W04  S319 duplicate url docs.python.org/3/library/json.html across scopes
+    kaidoku  E11  S319 missing used-by corpus/knowledge/2026-11-05-r94-receipt-path-json.md
+    kaidoku  E11  S319 missing used-by corpus/lessons/round-94.md
+  34 output lines (31 pre-existing W04 + W04(S319) + 2 E11(S319), no "ok" line).
+  Both E11 findings are expected at this stage: the two used-by targets are this round's landing
+  candidates and are not yet in the clone.
+
+Run B — S319 row appended, the landing files present (the drafted knowledge entry and the
+         drafted lesson file copied into the clone at their landing paths)
+  exit code 0
+    kaidoku  W04  S319 duplicate url docs.python.org/3/library/json.html across scopes
+    kaidoku  ok  $S/fleet/kaidoku-shokunin/corpus/SOURCES.md
+  33 output lines total (31 pre-existing W04 + the S319 W04 + the ok line).
+
+S319 row verdict
+  PASS on every error code. No E01 (field count), E02 (id shape), E03 (duplicate id), E04
+  (duplicate URL within one scope), E05 (kind), E06 (tier), E07 (status), E08 (opened date),
+  E09 (recheck cadence), E10 (community at tier A), E11 (dangling used-by) or E12 (row-shaped
+  source outside the Registry section) is raised for S319 in run B. The only finding is W04,
+  which the census header defines as a warning that does not affect a clean lane's status.
+
+  Column count verified independently of the census: the row splits into 13 pipe-delimited
+  fields, i.e. exactly 11 cells (NF = 13), and contains exactly 12 pipe characters — no pipe
+  character occurs inside any cell.
+
+  The W04 is EXPECTED and is not a defect of this row. The URL is already used by S050
+  ("Python JSON library documentation — https://docs.python.org/3/library/json.html") under a
+  different scope. S319's scope is the json.dump default-hook contract, a materially distinct
+  proposition from S050's duplicate-name and non-finite-number decoder behaviour, and S319
+  carries its own locator (docs page sha256 + accessed 2026-11-05). The census emits E04 only
+  when two rows share BOTH the URL and the scope; the scopes differ, so E04 correctly does not
+  fire and only the cross-scope W04 is raised. Recorded either way, as instructed.
+
+Row cells (11, in registry column order)
+  1  id       S319
+  2  source   Python json module documentation — https://docs.python.org/3/library/json.html
+  3  kind     docs
+  4  tier     A
+  5  scope    json.dump default-hook behaviour on Python 3.14
+  6  anchor   json.dump section #json.dump, docs page sha256
+              8021264aedd0ae972ac10cc3ba950be85d95b62d4869289b4686bad62b9794c0, accessed 2026-11-05
+  7  teaches  the default hook must return a JSON-encodable value or raise TypeError, so a
+              receipt writer must encode bytes itself
+  8  status   mined
+  9  opened   2026-11-05
+  10 recheck  on-release
+  11 used-by  corpus/knowledge/2026-11-05-r94-receipt-path-json.md, corpus/lessons/round-94.md
+
+  The teaches cell paraphrases the documented sentence instead of quoting it: the verbatim
+  quote ("It should return a JSON encodable version of the object or raise a TypeError.") is
+  carried in the knowledge entry and in the lesson's Gate table, and no cell of the registry
+  row contains a pipe character.
+
+Source fetch (re-verified twice, byte-identical)
+  curl -sSL -w 'HTTP %{http_code} size %{size_download}\n' -o json.html https://docs.python.org/3/library/json.html
+    HTTP 200 size 116296
+  sha256sum json.html
+    8021264aedd0ae972ac10cc3ba950be85d95b62d4869289b4686bad62b9794c0
+  A second fetch produced a byte-identical file (cmp reports identical).
+
+Supporting checks run by this seat (not required by the census, but they back the drafts)
+  - The quoted sentence occurs TWICE on the page: in the #json.dump section (heading
+    "Basic Usage", the "default" parameter bullet) and in the #json.JSONEncoder section
+    (heading "Encoders and Decoders"). It is NOT under #json.dumps, whose section text is
+    only "Serialize obj to a JSON formatted str using this conversion table."
+    Occurrence count on the /3/ page, 3.13, 3.14 and 3.15 pages: 2 each (tag-stripped and
+    whitespace-normalised). The sentence is not a raw contiguous byte substring of the HTML.
+  - The /3/ alias serves "Python 3.15.2 documentation"; the host interpreter is Python 3.14.8.
+    The sentence is byte-identical across the pinned 3.13/3.14/3.15 pages, so the version gap
+    does not affect the proposition.
+  - Calibration of the documented sentence, measured on this host (Python 3.14.8):
+      json.dump({"x": object()}, io.StringIO(), default=lambda o: str(o))  -> exits 0
+        (a str() fallback would succeed, which is why the successor refuses it)
+      json.dump({"x": object()}, io.StringIO(), default=lambda o: b"x")  -> ValueError:
+        Circular reference detected (not TypeError)
+      json.dump({"x": object()}, io.StringIO())                            -> TypeError:
+        Object of type bytes is not JSON serializable (the round-93 crash)
+    The sentence is a requirement on the hook author, not a prohibition the standard library
+    enforces. The knowledge entry states this, and the lesson's Gate section records the
+    rejected example sentence.

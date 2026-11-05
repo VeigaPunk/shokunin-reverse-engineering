@@ -1,0 +1,16 @@
+=== probe d: default returns bytes (non-encodable) for object() ===
+exit=12
+stdout='ValueError: Circular reference detected\n'
+
+=== probe f: default raises TypeError explicitly ===
+exit=1
+stdout='TypeError: Cannot serialize object of object\n'
+
+=== probe g: default returns dict containing an unserializable object ===
+exit=1
+stdout=''
+stderr(last)="when serializing dict item 'x'"
+=== probe h: no default, object() value ===
+exit=1
+stdout='TypeError: Object of type object is not JSON serializable\n'
+
