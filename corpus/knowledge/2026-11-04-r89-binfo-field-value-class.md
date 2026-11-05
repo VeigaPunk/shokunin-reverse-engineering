@@ -5,7 +5,7 @@ source: S312 — UPX v5.2.0 `src/p_unix.h`, https://raw.githubusercontent.com/up
 source: S306 (existing, round 87) — UPX v5.2.0 `src/stub/src/include/linux.h` — the 12-byte `b_info` header the chain walk steps by.
 source: S309 (existing, round 88) — UPX v5.2.0 `src/packhead.h` — the PackHeader fields the accounting bound reads (`u_len`, `c_len`, `u_file_size`).
 source: S310 (existing, round 88) — UPX v5.2.0 `src/packer.cpp` — the arithmetic gate that raises `header corrupted` before any checksum.
-verified-at: 2026-11-04 (round 89; measured revision and receipt in SCORECARD `## 2026-11-04 — round 89`)
+verified-at: 2026-11-04 (round 89; measured revision and receipts in the round-89 `LOG.md` entry and `.ufo/waves/round-89/l1/scores/`; pointer corrected at round 90 — D-89-6 named a `SCORECARD.md` section that did not exist, and the round-90 record now carries the retroactive one)
 recheck: 180d — `python3 -I -B tools/round-89/upx-field-value-repair.py --selftest` (16 cases, failures 0) and the counting command below.
 
 ## The class
@@ -96,8 +96,8 @@ same value answers `corrupt b_info` (a field-level gate), so the message is carr
 `b0.method` and `p_info.p_blocksize` classes it exits 0 with the stored value already correct (nothing in
 its remit to change) while `upx -t` still fails, so a caller must test the output — the counter's
 `test_ok` and `identity` arms are the guard (QUALITY 167).
-[observation] The four-carrier matrix (`tools/round-89/field-class-matrix.py` as run by the wave's
-ExecMatrix seat, `.ufo/waves/round-89/w1/ExecMatrix/matrix.json`: 48 cells, 0 skipped, exit 0) extends
+[observation] The four-carrier matrix (`.ufo/waves/round-89/w1/ExecMatrix/field_matrix_r89.py`, run by the wave's
+ExecMatrix seat; `.ufo/waves/round-89/w1/ExecMatrix/matrix.json`: 48 cells, 0 skipped, exit 0; tool path corrected at round 90 — D-89-6) extends
 the probe: every wrong-value `sz_cpr` class — zero, `true - 8`, `true + 8`, `0xFFFFFFF0`, `sz_unc + 1` —
 is recovered on all four carriers (`repair rc 0`, `repaired_tests_clean true`), while `sz_unc := 0`,
 `p_filesize` and the PackHeader class are refused and `method`/`p_blocksize` are out of remit.

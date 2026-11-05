@@ -628,6 +628,7 @@ Retired: none.
 | REA SquashFS recursion through sasquatch (LE v4) | `extract-firmware` publishes every regular file of a little-endian SquashFS v4 payload (bare image or appended to an AppImage runtime) once the official sasquatch 4.5.1 binary is on `PATH`; without it REA reports a `missing-extractor-dependency` gap naming sasquatch and publishes no member. Big-endian/AVM not demonstrated | `corpus/evidence/round-36/c1/`; `tools/round-36/c1-run.sh`; `corpus/knowledge/2026-10-26-r36-sasquatch-squashfs-recursion.md` | round-36 |
 | standard big-endian SquashFS v4 recursion (`squashfs_v4_be`) | `extract-firmware` on a standard big-endian SquashFS v4 image publishes every regular file of an independent oracle (same relative-path suffix and sha256) once `sasquatch-v4be` 4.5.1 is on the unblob 26.6.4 child `PATH`, records one `unpublished-entry` gap per in-tree symlink, publishes no path for an escaping link (which unblob removes with `MaliciousSymlinkRemoved`), and has no failed chunk; gzip blocks and genuinely compressed xz blocks (`comp_id 4`) both decode. AVM-marked BE bodies, vendor-mangled images and extra published files are not claimed | `PROVINCE.md:378-384` (round-39 Core row naming `squashfs_v4_be` and the round-39 frontier note); entry `corpus/knowledge/2026-10-26-r39-be-squashfs-v4-core.md`; carriers `.ufo/waves/round-39/c1/carriers.json` (sha256 pins); receipts `corpus/evidence/round-39/c1/K{1..6}/{after,run}.json`; frozen counter `tools/round-39/c1-counter.py` (6/6, exit 0 at `6fdaf4f1`); independent post-landing re-runs `.ufo/waves/round-39/w2/R39W2C1AxisFit.md` §0 (all six), `.ufo/waves/round-39/w2/R39W2Repro{K1,K2,K3,K4,K6}.md`, `.ufo/waves/round-39/w2/R39W2K5K6Rebuild.md` | round 39 |
 | executable SquashFS `extract-firmware` outcome triage | a frozen interpreter (`tools/round-39/sqfs-triage.py`) reads one machine-readable SKILL craft table and nothing else, and labels an REA 6.5.0 envelope from six fields — squashfs chunk handler, gap kinds, gap `dependencies`, the recorded `-be` token in the sasquatch argv, `MaliciousSymlinkRemoved`, published file count — into eight labels; scored 20/20 on a held-out set generated after the freeze with seed = the freeze hash, and the labels come from the table, not from the envelope (no class/label token leaks). Bounded to ten generator classes; no AVM-BE body, no `unknown-chunk-handler`/`encrypted-chunk`/`depth-limited` envelope; the smallest table that also reaches 20/20 is 8 rows / 7 non-`*` cells, so the target does not yet mean "triage" in general | `SKILL.md:316-343` (rule block 18; table after `<!-- sqfs-triage-table v1 -->`); interpreter `tools/round-39/sqfs-triage.py` (`--selftest` 35 cases); generator `tools/round-39/heldout-gen.py`; manifest `corpus/evidence/round-39/c2/heldout/manifest.json` (H01–H20, seed `8fcda41c96cbf00b113d2c8e136cc14e7fcaba0b`); envelopes `corpus/evidence/round-39/c2/heldout/H*/{envelope,run,tree}.json`; counter `tools/round-39/c2-counter.py` (20/20, exit 0 at `6fdaf4f1`); floor, leakage and ceiling measurements `.ufo/waves/round-39/w2/R39W2C2Shortcut.md`; envelope provenance `.ufo/waves/round-39/w2/R39W2HeldRepro{A,C,D}.md` | round 39 |
+| UPX packed-ELF interior later-block `b_info.sz_cpr` repair | derives a desynchronised interior block's `sz_cpr` from the successor offset of the stored walk's last step, accepts it only when it accounts for strictly more declared bytes than the stored chain, and composes the round-87/88/89 repairs | `tools/round-90/upx-break-repair.py`; counter `tools/round-90/upx-later-block-battery.py` → `P1 6 of 6; P2 4 of 4; P3 4 of 4`, all controls true (`.ufo/waves/round-90/l1/scores/`) | 90 |
 | executable SquashFS `extract-firmware` outcome triage v2 (label and action) | a frozen interpreter (`tools/round-40/sqfs-triage-v2.py`) reads one machine-readable SKILL table (rule block 19) with an `operation`/`provider` domain guard and a closed action vocabulary, and returns the (label, action) pair for an REA envelope; non-firmware envelopes read `unclassified` | `python3 -I -B tools/round-40/c2-counter.py --root <LANE> --rev 42c10a58cb2cae3a4a0122af35a0cf95ac718043 --freeze 7fce308631a8b457d6b7c5a4b39a923c4e9a49de` → 26/26, exit 0 (`.ufo/waves/round-40/l1/scores/c2-at-42c10a58.json`; reproduced `.ufo/waves/round-40/w2/R40W2C2Rescore.md`) | 40 |
 | genuine AVM-layout big-endian SquashFS v4 recursion (`squashfs_v4_be`, AVM layout) | `extract-firmware --max-depth 1` on a genuine AVM-layout image (big-endian fields, little-endian metadata block lengths, `mkfs_time == bytes_used`) publishes every regular file of an independent oracle at its exact path relative to the chunk extract root and accounts for every symlink as one `unpublished-entry` gap or one `MaliciousSymlinkRemoved` removal, on two vendor members (FRITZ!Box 5490 wrapper, 5491 nested rootfs of 6349 files) and two lane-built images with both-direction path collisions | `tools/round-41/c1-counter.py` 4/4, exit 0, `.ufo/waves/round-41/l1/scores/c1-at-e9a24d07.json`; receipts `corpus/evidence/round-41/c1/` | 41 |
 | SquashFS v1.0/v2.0 `extract-firmware` through REA (standard, gzip, four fixtures) | `extract-firmware` on the four standard fixtures publishes every oracle member (3/3/4/4) with handler `squashfs_v1`/`squashfs_v2`, `gaps []`; the counter's own REA rerun reproduces it | `.ufo/waves/round-49/l1/scores/c1-final.json`; `corpus/evidence/round-49/c1/`; `corpus/knowledge/2026-10-28-r49-squashfs-v1v2-core.md`; same bytes as round 44, so a re-run under a restated predicate | 49 |
@@ -6510,3 +6511,56 @@ Base `0cf8e3243059e0bc510b90c880d13d191e78d732`; declaration `7fbe16d455d52e83d4
 The wave's attacks (recorded as `corpus/lessons/round-88.md` M88-4..M88-10 and QUALITY rows 156-160) qualify that verdict without changing it, and are routed to the next round: the C1 label is not mechanism-unique — a packer-as-oracle repair (M88-4) and a window-restricted copy of the counter's own `packed` sibling (M88-8) both score `4 of 4` with every control true; the C2 counter is target-blind — `met_target = not unresolved`, so base exits 0 at 27 blocks and a one-line citation-only block scores 28/28 (M88-7) — and the landed block cites the C1 knowledge entry, absent at base, so the landed artifact is not causally separable although a base-citing block was measured at 28/28 by the C2 reviewer (M88-9); the scan cost is quadratic in the candidate count and was measured, not asserted (M88-10); craft block 28's `b_info corrupted` row names two fields with one move, and the correction lands with the next block revision (M88-5). Routed: `--expect-blocks N` as a required counter argument with the stub and base arms red; a private input directory per repair invocation with the sibling-copy cheat as a declared red control; selftest cases for the repair's two surviving guard mutants (`R01` derived-bound, `R02` sentinel-reach); a candidate-count cap with a typed refusal (M88-10).
 
 **Wave and round shape.** One v1 wave `r88-w1`, 14 seats (executor 4, scout 2, scribe 2, reviewer 2, critic 1, mutation-tester 1, sentinel 1, connector 1; attack 5/14 = 36 %; the L1 held the planner seat). Seven seats delivered a report; seven settled with a partial transcript only (no report, cause unrecorded by the results file). Round total 14 seats; no residual call, no second wave.
+
+## 2026-11-04 — round 89 (retroactive record, written at round 90)
+
+Round 89's own run filed no SCORECARD record and no post-landing receipts; the non-author spot-check
+`corpus/lessons/round-89-verifier-spotcheck.md` re-measured both claims and routed seven defects. This
+section records what the spot-check established, at the spot-check's revisions; it is not a second
+round and does not change any score. Base `0ec2bb4016655f605657d6e0e700ec2e6893ac27`, after
+`5068ba6417f3cfc6693ca5e4dbe106c08e305174`.
+
+| claim / axis | before → after (spot-check re-measure) | evidence | verdict |
+|---|---|---|---|
+| R89-C1 / coverage (capability; block-0 in-range wrong `sz_cpr`) | `recovered 0 of 4` (unchanged round-88 repair) → `4 of 4`, controls `N1`/`N2`/`N3`/`isolation` true; regression arms 8 of 8 (r87 class) and 4 of 4 (r88 class) | `.ufo/waves/round-89/pre/c1-base-r88-repair.json`, `.ufo/waves/round-89/pre/c1-candidate-at-declaration.json`, `.ufo/waves/round-89/l1/scores/` | met on committed evidence; the after-receipt is the declaration-time run and names no revision (D-89-3, QUALITY 173) |
+| R89-C2 / depth (craft rule block 29) | blocks 28 at base → 29, `resolved 29, unresolved []` | `tools/round-89/depth-blocks-v2.py` re-run by the spot-check at `5068ba64`; `.ufo/waves/round-89/pre/c2-depth-at-base.json` | met; no committed after-receipt at the time |
+| calibration | — | `corpus/knowledge/2026-11-04-r89-binfo-field-value-class.md` `verified-at` pointed at a section that did not exist and at a tool path never created; LOG/SCORECARD records absent | **harmed** (spot-check); repaired at round 90 under D-89-5/D-89-6 |
+
+## 2026-11-04 — round 90: an interior later-block `sz_cpr` enters Core, and the revision-inheritance table becomes craft rule block 30
+
+Base `fc52cc9dc` (tip at declaration); declaration
+`18b21f092429383d498572a422bc7294beb0ce7e` (container, validated dispatch, base receipts, freeze
+precheck `CLEAN` with its red control `FLAGGED`); work `5f8ea07692f15db14b659924ccda6df542b6ad3a`
+(entry, registry rows, PROVINCE, README, block 30) with the landing receipts named in the claim rows
+below. All four owned axes sit at 10.0 on their finite proxies; round 88 entered a capability and round
+90 enters one, so no stagnation waiver is invoked and the lowest-axis obligation is met by any
+tied-lowest axis.
+
+| claim / axis | before → after | counting command and receipt | verdict |
+|---|---|---|---|
+| R90-C1 / coverage (capability; `T5-chain-szcpr-wrong-later` enters Core) | `P1 0 of 6` for the unchanged round-89 repair with its controls true (`.ufo/waves/round-90/pre/c1-candidate-at-declaration.json` `controls.no_work`) → `P1 6 of 6; P2 4 of 4; P3 4 of 4`, all controls true, exit 0 | `python3 -I -B tools/round-90/upx-later-block-battery.py --root . --rev <measured> --repair-cmd tools/round-90/upx-break-repair.py --pkg <rea 6.5.0> --work <scratch> --expect "P1 6 of 6; P2 4 of 4; P3 4 of 4" --json-out <receipt>` — `.ufo/waves/round-90/l1/scores/` | met under the frozen predicate |
+| R90-C2 / depth (craft rule block 30, the revision-inheritance table) | `blocks 29` vs target 30 at base, exit 1 (`.ufo/waves/round-90/pre/c2-depth-at-base.json`) → `blocks 30, resolved 30, unresolved []`, exit 0 | `python3 -I -B tools/round-89/depth-blocks-v2.py --root . --rev 5f8ea07692f15db14b659924ccda6df542b6ad3a --expect-blocks 30 --json-out .ufo/waves/round-90/l1/scores/c2-at-5f8ea076.json` | met |
+
+**Capabilities.** `UPX packed-ELF interior later-block b_info.sz_cpr repair` entered (round 90).
+
+**Name by surface.** C1's surface is the *interior block boundary* of the packed chain — a class the
+round-88/89 repairs leave byte-identical — not a new field. C2's surface is the *revision* of an
+instrument (guards, isolation, blindness, bound semantics), not a new detector.
+
+**Limits kept (declared before data).** Interior blocks only (the last block before a chain stop is
+under-determined); the shared object's chain accounts 98,592 of 108,560 `u_len` bytes so `libz` is a
+`P2`/`P3` carrier only; the repair does not decompress what it repairs; a packer-validated brute force
+over `1..sz_unc` would repair the same cells, so the claim is the capability, not the mechanism
+(QUALITY 152); the derivation's cost is a scan with one sentinel search per candidate and is reported,
+not claimed linear; a suffix that self-resumes after the tampered block is refused.
+
+**Sources and frontier.** Census exit 0 before (217 rows) and after (220 rows): S313, S314 admitted,
+S315 rejected; the `src/p_unix.cpp` rejection is kept for `PackUnix::unpack` and split by scope
+(`unpackExtent`). Entry `corpus/knowledge/2026-11-04-r90-interior-block-szcpr.md`; PROVINCE
+`## Round-90 additions to Core`; README coverage row, index row, frontier note; QUALITY 172-173.
+Assimilation: none.
+
+**Planned (next steered round only).** (a) score the last block before a chain stop, and a suffix that
+self-resumes, as their own refused classes with a receipt; (b) `p_filesize`/`p_blocksize`/adler repairs
+stay Frontier; (c) the 32-bit and `--lzma` carrier classes; (d) the round-90 wave's routed defects; (e)
+carried V86-6, V86-7, R85-4.

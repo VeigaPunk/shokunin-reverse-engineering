@@ -79,7 +79,17 @@ reports the original's own procedure/segment/string counts.
 - The repair does not decompress what it repairs; the counter's `upx -t` and `upx -d` arms are what
   refuse a wrong derivation.
 - The derivation is a scan with one sentinel search per candidate: measured cost is reported, not
-  claimed linear (`corpus/QUALITY.md` row 160's rule applies to a crafted worst case).
+  claimed linear (`corpus/QUALITY.md` row 160's rule applies to a crafted worst case); the wave measured
+  10.3 ms (jq, 13,135 offsets) to 139.5 ms (docker-init, 356,909 offsets) per repair.
+- **A last-block tamper is not refused cleanly (measured this round, routed).** When the stored chain
+  looks intact and no successor survives, the break-point branch falls through to the round-89 law; on a
+  last-block `- 7` tamper of jq (block offset 10,094) and libz (60,124) that law writes the four-byte
+  `UPX!` sentinel word, returns rc 0 and leaves `upx -t` red. The frozen counter scores interior cells
+  only, so it cannot see this. Routed to round 91 with QUALITY 176.
+- **The REA count arm is not perfectly stable on docker-init.** Seven runs of REA 6.5.0 on the identical
+  bytes (sha `0bd49c8d…`) reported 1268 six times and 1267 once, so one seat's `P2` cell read `3 of 4`;
+  the L1's landing run at `499d2183` reports `P2 4 of 4` with the REA arm required, and both runs are
+  disclosed in the round-90 report rather than only the passing one.
 - A packer-validated brute force over `1..sz_unc` would repair the same cells; the counter does not
   force the chain walk, so the claim is the capability, not the mechanism (QUALITY 152's standard).
 
