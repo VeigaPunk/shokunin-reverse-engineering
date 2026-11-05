@@ -6566,3 +6566,27 @@ Assimilation: none.
 self-resumes, as their own refused classes with a receipt; (b) `p_filesize`/`p_blocksize`/adler repairs
 stay Frontier; (c) the 32-bit and `--lzma` carrier classes; (d) the round-90 wave's routed defects; (e)
 carried V86-6, V86-7, R85-4.
+
+## 2026-11-05 — round 91: a stop-boundary tamper is refused, not repaired (R91-C1, coverage/capability); craft block 31 (R91-C2, depth)
+
+Base `2135f6e1d3f69a259b32cc5167c52ccb1a261c24`; declaration `deb2765a55fef0e4e81500a027dfe59951b69e87` (`plans/round-91-claims.md`, `.ufo/waves/round-91/claims.json`); scored receipts at `deb2765a` in `.ufo/waves/round-91/l1/scores/`. Owned axes coverage, depth, calibration, freshness, all 10.0 on their finite proxies; no stagnation waiver; two claims on distinct axes, causally separable (C2 reads only base documents).
+
+| claim / axis | before → after | counting command and receipt | verdict |
+|---|---|---|---|
+| R91-C1 / coverage (capability; last-block stop-boundary class enters Core as a measured refusal) | `refused 0 of 8; unsafe 2; intact 4 of 4` at `2135f6e1d` (round-90 repair, `pre/c1-base-round90-repair.json`, exit 1) → `refused 8 of 8; unsafe 0; intact 4 of 4` at `deb2765a` (`l1/scores/c1-at-declaration.json`, exit 0); regression arm `P1 6 of 6; P2 4 of 4; P3 4 of 4` run by wave seat `ExecRegress` (`.ufo/waves/round-91/w1/ExecRegress/receipt.json`) | `python3 -I -B tools/round-91/stop-boundary-battery.py --root . --repair-cmd tools/round-91/upx-stop-boundary-repair.py --work <scratch> --rev deb2765a55fef0e4e81500a027dfe59951b69e87 --expect "refused 8 of 8; unsafe 0; intact 4 of 4" --json-out <receipt>` | **met** under the frozen predicate; refused, not repaired; the refusal arm does not yet assert rc 2 (QUALITY 177, named limit) |
+| R91-C2 / depth (craft rule block 31, the stop-boundary refusal table) | `blocks 30`, met false at `2135f6e1d` (`pre/c2-depth-at-base.json`, exit 1) → `blocks 31, resolved 31, required-shaped 1/1` at `deb2765a` (`l1/scores/c2-at-declaration.json`, exit 0); prose control killed (`l1/scores/c2-prose-at-declaration.json`) | `python3 -I -B tools/round-91/depth-blocks-v3.py --root . --rev deb2765a55fef0e4e81500a027dfe59951b69e87 --expect-blocks 31 --expect "blocks 31, resolved 31, required-shaped 1/1" --json-out <receipt>`; `--prose-proof` | **met** under the frozen predicate; the counter checks shape and citations, not the table's routing (QUALITY 175) |
+| calibration (not claimed) | `pre/c3-at-base.json`: `mismatches 5` over four claim rows of rounds 89–90 at `2135f6e1d` | `python3 -I -B tools/round-91/record-cells.py --root . --rev 2135f6e1d3f69a259b32cc5167c52ccb1a261c24 --expect-rows 4` | diagnostic: the round-89/90 rows are corrected by the correction row below, not rewritten; the score is not moved |
+
+**Capabilities.** One row enters: `last-block stop-boundary refusal` — a packed-ELF last-block `sz_cpr` tamper on four pinned carriers is refused with rc 2 and no output unless `upx -t` on the input is green, in which case the input is returned byte-identical; evidence `tools/round-91/upx-stop-boundary-repair.py --selftest` (4 cases) and `tools/round-91/stop-boundary-battery.py`; first working round 91. The repair of this class is not a capability.
+
+**Owned axes.** coverage 10.0, depth 10.0, calibration 10.0, freshness 10.0 — unchanged numbers. The coverage surface moved (one edge class, the last block, from Frontier to a measured refusal in Core); the depth surface moved (craft block 31, a decision table, the first shape-floored block). No score row edited.
+
+**Learning trends.** Expansion **improved**: a knowledge entry on ground the coverage map did not hold, citing S313 re-opened this round. Quality **improved**: two counter arms that the round-90 counter lacked (unsafe and silent writes), and a shape clause that kills a prose control; the round-90 repair's rc-0 defects are recorded, not hidden. Discernment **unchanged**: no outside admit/reject check of this round yet; the non-author spot-check is pending.
+
+**Wave.** `r91-w1`, twelve seats, one v1 wave (executor 3, reviewer 2, critic 1, mutation-tester 1, sentinel 1, scout 1, scribe 2, connector 1; attack 4/12 = 33 %; one connector; the L1 held the planner seat). Findings and their dispositions: `corpus/lessons/round-91.md` `## Wave r91-w1 — seat results`.
+
+**Planned (next steered round only).** (a) amend the refusal arm to assert rc 2 and a typed refusal text (QUALITY 177) as a declared instrument revision, not a silent edit; (b) the regression arm's receipt and the intact arm's packer dependence as a named limit under the non-author check; (c) round-89 and round-90 records already corrected by the correction row; (d) carried V86-6, V86-7, R85-4 and the chousa-style packed-ELF 32-bit carrier class.
+
+## 2026-11-05 — round 91 correction of the round-90 record (D-5, the R90-C1 counting command)
+
+The round-90 C1 row above reads `--rev <measured>` and names the directory `.ufo/waves/round-90/l1/scores/`; the measured revision is `499d2183a67058d5648b51a2abf50c10012b1292` and the receipt is `.ufo/waves/round-90/l1/scores/c1-at-499d2183.json` (the non-author spot-check's D-5). The superseded row text stays as written; the measured pin is recorded here.

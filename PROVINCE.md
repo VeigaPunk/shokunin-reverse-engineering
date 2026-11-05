@@ -762,3 +762,8 @@ Round-73 frontier note, 2026-11-04: **the kernel-side witness** moves Frontier �
   that self-resumes after the tampered block, the shared object's 9,968-byte `u_len` gap, block 0 alone
   on `libz`, `p_filesize`/`p_blocksize`/adler repairs, entry-altered stubs, other packers, big-endian
   and PE carriers, 32-bit ELF carriers and `--lzma` output.
+
+## Round-91 additions to Core (verified 2026-11-05)
+
+- **Core (refusal only) — packed-ELF `b_info` last-block `sz_cpr` stop-boundary tamper:** the round-90 Frontier bullet above names "the last block before a chain stop" as still Frontier; for this class the *refusal* is now Core and the *repair* stays Frontier. `tools/round-91/upx-stop-boundary-repair.py` keeps the round-90 repair in every branch except the one that previously fell through to the round-89 block-0 law: when no successor decides the walk it runs `upx -t` on the input, returns the input byte-identical when the input is intact, and otherwise refuses with rc 2 and writes no output. `tools/round-91/stop-boundary-battery.py` scores `refused 8 of 8; unsafe 0; intact 4 of 4` on the four pinned carriers (`jq`, `xxd`, `libz`, `docker-init`; `stored ± 7`), against the round-90 repair's `refused 0 of 8; unsafe 2; intact 4 of 4` on the same counter. The round-90 bullet is history and is not edited.
+- **Still Frontier:** repairing the last block (the chain does not decide its `sz_cpr`), a suffix that self-resumes after the tampered block, the shared object's 9,968-byte `u_len` gap, `p_filesize`/`p_blocksize`/adler repairs, entry-altered stubs, other packers, big-endian and PE carriers, 32-bit ELF carriers and `--lzma` output.
