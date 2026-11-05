@@ -54,6 +54,15 @@ mined 194→196, rejected 23→24).
   commit with `git archive <rev> | tar -x -C $S` (915 MB, 3.7 s), run the census there, delete the
   tree — exit 0; the receipt is `.ufo/waves/round-90/pre/sources-census-before.txt`.
 
+- **M90-5 — a supersession reason claimed a field the receipt never carries.** Class: bookkeeping
+  written from the diff's intent rather than from the produced artifact. Evidence: the round-90
+  battery's `rev_state()` computes the worktree's dirty-path count, but `pins.pop("rev_state")` consumes
+  it to resolve the commit, so no receipt field carries it, while the supersession reason in
+  `claims.json` said it did; `jq '.pins.rev_state' c1-at-499d2183.json` → `null`. Captured-by: reading a
+  produced receipt's keys against the sentence that describes it (the QUALITY 162 rule applied to a
+  receipt instead of a docstring). Fix applied: the reason now says what the receipt carries; the
+  field itself is a round-91 repair.
+
 ## Round-89 closure defects — dispositions
 
 | id | disposition |
