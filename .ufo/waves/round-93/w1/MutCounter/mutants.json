@@ -1,0 +1,281 @@
+{
+ "seat": "MutCounter",
+ "item": "mutation-kill of round-93 counters",
+ "declaration_commit": "92a240521bd1bf2213b75d18d9b176a8dafdc67c",
+ "counters_sha256": {
+  "tools/round-93/stop-boundary-repair-battery-v3.py": "60026511e54cdc1df71233c491392fafcc89705808fa5c187d96a85862cbd4e3",
+  "tools/round-93/craft-citation-semantic.py": "34cf6579d7d0614336add1710912877492c68517331736fa5e4021ffedf05340"
+ },
+ "frozen_label": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2",
+ "forged_expect_M6": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12",
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "skip the fresh arm: fresh_arm() replaced by an empty stub (no cells, intact identity False, no provenance)",
+   "replace": [
+    {
+     "old": "    fresh = fresh_arm(repair, env, work, rep, r88, public_shas, root)\n",
+     "new": "    fresh = {\"carrier\": None, \"cells\": [], \"intact\": {\"identity\": False}, \"provenance\": {}, \"unevaluable\": None}\n"
+    }
+   ],
+   "command": "python3 -I -B mutants/M1.py --root <mut-tree> --repair-cmd tools/round-92/upx-stop-boundary-search-repair.py --work <scratch>/work/plain-M1 --rev 92a24052 --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2'",
+   "expected": "met False exit 1 (label cannot equal frozen expect)",
+   "observed": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 6; far-refused 10 of 10; fresh-roundtrip 0 of 0 met False exit 1",
+   "verdict": "killed",
+   "reason": "Label without fresh counts fails the frozen expect (label mismatch, intact 5 of 6 and the fresh counts absent). Plain full pipeline, honest repair, no injection.",
+   "fast_path": "none; full pipeline ~5 s"
+  },
+  {
+   "id": "M2",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "nonce = secrets.token_hex(8)  ->  nonce = \"0\" * 16 (constant nonce)",
+   "replace": [
+    {
+     "old": "nonce = secrets.token_hex(8)",
+     "new": "nonce = \"0\" * 16"
+    }
+   ],
+   "command": "plain: python3 -I -B mutants/M2.py --root <mut-tree> ... --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' ; forger: python3 -I -B harness/inject.py --mode f4 --counter <mut>/M2.py --root <mut-tree> --clone <clone> --work <scratch>/work/f4-M2 --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2'  (orig: same with orig-v3.py)",
+   "expected": "plain: survives (met True; provenance atoms still true). F4 forger: orig exit 1 (rejected), M2 exit 0 (admitted)",
+   "observed": "plain: met True exit 0 (repaired 12 of 12; intact 6 of 6; fresh-roundtrip 2 of 2). F4 orig: repaired 10 of 12; intact 5 of 6; fresh-roundtrip 0 of 2 met False exit 1. F4 M2: repaired 12 of 12; intact 6 of 6; fresh-roundtrip 2 of 2 met True exit 0",
+   "verdict": "killed",
+   "reason": "NOT killed by the honest-repair label (provenance atoms marker-present/marker-absent/deterministic/no-collision all still hold, and the honest repair still passes). Killed only by F4, a forger that pins the fresh image for the constant nonce. A constant nonce makes the held-out source public, so the held-out arm is forgeable by any reader of the counter: a real weakening, not an accepted survivor. No provenance atom measures nonce entropy/freshness (named gap).",
+   "fast_path": "none"
+  },
+  {
+   "id": "M3",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "prov[\"deterministic\"] = packed1 == packed2  ->  prov[\"deterministic\"] = True",
+   "replace": [
+    {
+     "old": "prov[\"deterministic\"] = packed1 == packed2",
+     "new": "prov[\"deterministic\"] = True"
+    }
+   ],
+   "command": "plain: harness not needed (survives on host). injection: python3 -I -B harness/inject.py --mode m3 --counter <mut>/M3.py --root <mut-tree> --clone <clone> --work <scratch>/work/inj-m3-M3 --expect '<FROZ>' (orig: same)",
+   "expected": "orig: fresh_arm returns unevaluable 'fresh provenance atoms failed'; M3: proceeds to cells",
+   "observed": "orig: unevaluable='fresh provenance atoms failed', deterministic=False, cells=0. M3: unevaluable=None, deterministic=True, cells=4",
+   "verdict": "killed",
+   "reason": "Killed by in-process injection only (second v2.pack call returns a 1-byte-different image). Not craftable through the real packer: /usr/bin/upx is sha256-pinned in v2 (UPX_SHA256) and the honest pack was deterministic on this host. Harness-level kill, labeled as such.",
+   "fast_path": "unit-level fresh_arm() call with v2.pack monkeypatched (fresh arm only; public stage not used)"
+  },
+  {
+   "id": "M4",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "prov[\"collides_public_packed\"] = prov[\"fresh_packed_sha256\"] in set(public_shas)  ->  = False",
+   "replace": [
+    {
+     "old": "prov[\"collides_public_packed\"] = prov[\"fresh_packed_sha256\"] in set(public_shas)",
+     "new": "prov[\"collides_public_packed\"] = False"
+    }
+   ],
+   "command": "injection: python3 -I -B harness/inject.py --mode m4 --counter <mut>/M4.py --root <mut-tree> --clone <clone> --work <scratch>/work/inj-m4-M4 --expect '<FROZ>' (orig: same)",
+   "expected": "orig: unevaluable 'fresh provenance atoms failed' (collision refused); M4: proceeds",
+   "observed": "orig: unevaluable='fresh provenance atoms failed', collides=True, cells=0. M4: unevaluable=None, collides=False, cells=4",
+   "verdict": "killed",
+   "reason": "Killed by injection: the public_shas set is supplied to contain the fresh pack digest for a fixed nonce. A real collision is not craftable because the nonce is random per run and the public carriers are pinned.",
+   "fast_path": "fresh_arm() call with public_shas injected; fixed token_hex"
+  },
+  {
+   "id": "M5a",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "row[\"class\"] = \"roundtrip-fail\"  ->  row[\"class\"] = row[\"class\"]  (failed roundtrip no longer reclassified)",
+   "replace": [
+    {
+     "old": "row[\"class\"] = \"roundtrip-fail\"",
+     "new": "row[\"class\"] = row[\"class\"]"
+    }
+   ],
+   "command": "plain: python3 -I -B mutants/M5a.py ... --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' ; injection: python3 -I -B harness/inject.py --mode m5none --counter <mut>/M5a.py ... (orig: same)",
+   "expected": "plain: survives. injected roundtrip_sha=None: label differs from orig",
+   "observed": "plain: met True exit 0. injected orig: repaired 10 of 12; fresh-roundtrip 0 of 2 met False exit 1. injected M5a: repaired 12 of 12; fresh-roundtrip 0 of 2 met False exit 1",
+   "verdict": "killed",
+   "reason": "Killed by the label itself under injection: M5a counts a cell as repaired that the frozen roundtrip clause rejects (repaired 12 vs 10). Exit code alone is identical, the label is not. Plain run survives because the honest roundtrip is always true (see M5b note).",
+   "fast_path": "full pipeline with v2 roundtrip_sha patched to None"
+  },
+  {
+   "id": "M5b",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "M5a + roundtrip_ok = sum(... c.get(\"roundtrip\") is True)  ->  sum(... c.get(\"class\") == \"repaired\")",
+   "replace": [
+    {
+     "old": "row[\"class\"] = \"roundtrip-fail\"",
+     "new": "row[\"class\"] = row[\"class\"]"
+    },
+    {
+     "old": "roundtrip_ok = sum(1 for c in near if c.get(\"roundtrip\") is True)",
+     "new": "roundtrip_ok = sum(1 for c in near if c.get(\"class\") == \"repaired\")"
+    }
+   ],
+   "command": "plain: python3 -I -B mutants/M5b.py ... --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' ; injection: python3 -I -B harness/inject.py --mode m5none --counter <mut>/M5b.py ... (orig: same)",
+   "expected": "plain: survives. injected roundtrip None: orig exit 1, M5b exit 0",
+   "observed": "plain: met True exit 0. injected orig: met False exit 1. injected M5b: repaired 12 of 12; fresh-roundtrip 2 of 2 met True exit 0",
+   "verdict": "killed",
+   "reason": "Killed only by the injected upx -d failure. Calibration note: in every honest run the fresh roundtrip was 2 of 2 (receipts/v3/plain-orig.out), and by construction repaired means output == packed1 exactly, while the roundtrip is computed on that same packed1. So the fresh-roundtrip clause is redundant with exact equality on this host (it only detects a broken upx -d). Flagged as a near-equivalent mutant; the injected state is unreachable under the pinned packer on this host.",
+   "fast_path": "full pipeline with roundtrip_sha patched to None"
+  },
+  {
+   "id": "M6",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "met = (label == args.expect and ...)  ->  met = (args.expect in label and ...)",
+   "replace": [
+    {
+     "old": "    met = (label == args.expect and",
+     "new": "    met = (args.expect in label and"
+    }
+   ],
+   "command": "python3 -I -B <tree>/M6.py --root <mut-tree> --repair-cmd tools/round-92/upx-stop-boundary-search-repair.py --work <scratch>/work/forged-M6 --rev 92a24052 --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12'   (orig: same with orig-v3.py)",
+   "expected": "orig: met False exit 1 (forged expect is not the label); M6: met True exit 0",
+   "observed": "orig: met False exit 1. M6: met True exit 0 (same counts)",
+   "verdict": "killed",
+   "reason": "A forged expect that is a substring of the frozen label passes M6 with an honest repair. Killed by the forged expect: the frozen counter rejects it, the mutant admits it.",
+   "fast_path": "none"
+  },
+  {
+   "id": "M7",
+   "file": "tools/round-93/stop-boundary-repair-battery-v3.py",
+   "delta": "fresh_intact_ok = 1 if fresh[\"intact\"][\"identity\"] else 0  ->  fresh_intact_ok = 1",
+   "replace": [
+    {
+     "old": "    fresh_intact_ok = 1 if fresh[\"intact\"][\"identity\"] else 0",
+     "new": "    fresh_intact_ok = 1"
+    }
+   ],
+   "command": "plain: python3 -I -B mutants/M7.py ... --expect 'repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' ; injection: python3 -I -B harness/inject.py --mode m7 --counter <mut>/M7.py ... (orig: same)",
+   "expected": "plain: survives (identity true on honest). injected fresh intact answered with altered bytes: orig exit 1 (intact 5 of 6), M7 must not meet",
+   "observed": "plain: met True exit 0. injected orig: intact 5 of 6 met False exit 1. injected M7: intact 6 of 6 met True exit 0",
+   "verdict": "killed",
+   "reason": "Killed by injection: the 6th intact arm must gate met (counts['intact']==6). The mutant turns a failed fresh-intact identity into a pass.",
+   "fast_path": "full pipeline; repair wrapper alters only the fresh intact input (sha-matched), delegates everything else to the honest repair"
+  },
+  {
+   "id": "C1",
+   "file": "tools/round-93/craft-citation-semantic.py",
+   "delta": "missing = [k for k in keywords if k not in qrow]  ->  missing = []  (keyword atom dropped)",
+   "replace": [
+    {
+     "old": "        missing = [k for k in keywords if k not in qrow]",
+     "new": "        missing = []"
+    }
+   ],
+   "command": "python3 -I -B mutants/C1.py --root <tree> --manifest <m> --block N --worktree   (frozen: same with craft-citation-semantic.py)",
+   "expected": "a wrong-citation manifest/fixture must fail under frozen (exit 1) and must NOT be runnable as the frozen counter (mutant selftest must fail)",
+   "observed": "block31-before: frozen exit 1 vs C1 exit 0. fix-wrong (block32 row3 cites 169): frozen exit 1 vs C1 exit 0. kwless manifest: frozen exit 1 vs C1 exit 0. selftest C1: FAIL keyword-miss (want 1 got 0), FAIL cited-row-missing; 2 failures",
+   "verdict": "killed",
+   "reason": "Keyword atom is the only thing that rejects a resolving-but-mis-stating citation. Mutant passes all three real fixtures and fails its own selftest, so it is not runnable as the frozen checker.",
+   "fast_path": "none"
+  },
+  {
+   "id": "C2",
+   "file": "tools/round-93/craft-citation-semantic.py",
+   "delta": "if len(m) != 1: -> if not m: checked.append(...); continue  (zero QUALITY citations accepted)",
+   "replace": [
+    {
+     "old": "        if len(m) != 1:\n",
+     "new": "        if not m:\n            checked.append({\"row_snippet\": snippet, \"citations\": m})\n            continue\n        if len(m) != 1:\n"
+    }
+   ],
+   "command": "python3 -I -B mutants/C2.py --root <scratch>/fix-nocite --manifest block32-after.json --block 32 --worktree ; selftest: python3 -I -B mutants/C2.py --selftest --work <scratch>/work/st-C2",
+   "expected": "criterion with no 'QUALITY N' token must fail; frozen selftest should catch the zero-citation branch",
+   "observed": "fix-nocite (row3 criterion without QUALITY N): frozen exit 1 ('names 0 QUALITY citations, expected 1'), C2 exit 0. Selftest C2: 10 cases 0 failures (same as frozen)",
+   "verdict": "killed",
+   "reason": "Killed only by the real no-citation fixture. The frozen 10-case selftest has no zero-citation case, so the frozen selftest does NOT kill C2. Named gap: add a zero-citation selftest case.",
+   "fast_path": "none"
+  },
+  {
+   "id": "C3",
+   "file": "tools/round-93/craft-citation-semantic.py",
+   "delta": "shape floor lowered: len(rows) >= 4 -> >= 3 and len(body) >= 3 -> >= 2",
+   "replace": [
+    {
+     "old": "    shape = len(rows) >= 4 and len(header) >= 4 and len(body) >= 3 \\",
+     "new": "    shape = len(rows) >= 3 and len(header) >= 4 and len(body) >= 2 \\"
+    }
+   ],
+   "command": "selftest: python3 -I -B mutants/C3.py --selftest --work <scratch>/work/st-C3 ; block32: python3 -I -B mutants/C3.py --root <cand> --manifest block32-after.json --block 32 --worktree",
+   "expected": "selftest 'shape' case (gamma, 2 body rows) must fail the mutant (want 1); candidate block32 (4 body rows) unaffected",
+   "observed": "selftest C3: FAIL shape want 1 got 0; 1 failure. block32 candidate: exit 0 (same as frozen)",
+   "verdict": "killed",
+   "reason": "Killed by the frozen selftest's gamma shape case. Not detectable on the real after-manifest, which is expected for a floor. Also a calibration note: len(body)>=3 is implied by len(rows)>=4, so one of the two shape clauses is redundant.",
+   "fast_path": "none"
+  },
+  {
+   "id": "C4",
+   "file": "tools/round-93/craft-citation-semantic.py",
+   "delta": "if manifest[\"marker\"] not in block:  ->  if False:  (marker atom dropped)",
+   "replace": [
+    {
+     "old": "    if manifest[\"marker\"] not in block:",
+     "new": "    if False:"
+    }
+   ],
+   "command": "selftest: python3 -I -B mutants/C4.py --selftest --work <scratch>/work/st-C4 ; badmarker: python3 -I -B mutants/C4.py --root <cand> --manifest badmarker-block32.json --block 32 --worktree",
+   "expected": "selftest 'marker-missing' must fail the mutant; manifest with absent marker must fail frozen and mutant",
+   "observed": "selftest C4: FAIL marker-missing want 1 got 0; 1 failure. badmarker block32: frozen exit 1 vs C4 exit 0",
+   "verdict": "killed",
+   "reason": "Killed by the frozen selftest case and by the real wrong-marker manifest.",
+   "fast_path": "none"
+  }
+ ],
+ "controls": {
+  "v3_positive_honest_plain": {
+   "label": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2",
+   "met": true,
+   "exit": 0
+  },
+  "v3_F1_table5_window": {
+   "label": "repaired 10 of 12; wrong 0; unsafe 0; intact 5 of 6; far-refused 12 of 12; fresh-roundtrip 0 of 2",
+   "met": false,
+   "exit": 1,
+   "fresh_near": [
+    "refused",
+    "refused"
+   ]
+  },
+  "v3_F2_carrierread5": {
+   "label": "repaired 10 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 0 of 2",
+   "met": false,
+   "exit": 1,
+   "fresh_near": [
+    "refused",
+    "refused"
+   ]
+  },
+  "v3_F3_identity_noop": {
+   "label": "repaired 0 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 0 of 12; fresh-roundtrip 0 of 2",
+   "met": false,
+   "exit": 1
+  },
+  "v3_F4_zero_pin_forger_vs_honest_random_nonce": {
+   "label": "repaired 10 of 12; ... intact 5 of 6; fresh-roundtrip 0 of 2",
+   "met": false,
+   "exit": 1
+  },
+  "c2_block31_before_base": {
+   "exit": 1,
+   "failing": "row 'intact input refused by mistake': QUALITY 169 lacks ['never refuse an intact input', \"packer's verdict\"]"
+  },
+  "c2_block32_after_candidate": {
+   "exit": 0,
+   "result": "ok"
+  },
+  "c2_block32_after_base_clone": {
+   "exit": 1,
+   "failing": "block 32 missing (craft has 31 blocks)"
+  },
+  "c2_selftest_frozen": {
+   "exit": 0,
+   "cases": 10,
+   "failures": 0
+  },
+  "c2_wrong_citation_fixture": {
+   "exit": 1
+  }
+ },
+ "frozen_defect_found": {
+  "id": "json-out-crash",
+  "summary": "tools/round-93/stop-boundary-repair-battery-v3.py --json-out raises TypeError (bytes not JSON serializable at fresh_cells[].output) whenever a fresh cell is repaired, i.e. on the honest positive control. The receipt is left truncated and no label-only receipt is written; the frozen positive command cannot land its receipt.",
+  "evidence": "receipts/crash-json-out/v3-honest-rerun.stderr; receipts/v3/honest-positive.out (stdout label met True exit 0 without --json-out)"
+ }
+}

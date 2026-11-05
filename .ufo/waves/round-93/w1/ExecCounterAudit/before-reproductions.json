@@ -1,0 +1,55 @@
+{
+  "seat": "ExecCounterAudit",
+  "purpose": "R93 before-receipt reproduction: re-run every claims.json R93-C1 before.receipts arm in a scratch clone at the freeze commit and compare against the committed receipts",
+  "clone": "/fast/scratch/hyaku/kaidoku-r93/ExecCounterAudit/clone",
+  "clone_head": "92a240521bd1bf2213b75d18d9b176a8dafdc67c",
+  "expect_string": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10",
+  "rev": "base-0a2a23da5eb50410a8a0df90c031d9f4fdadb024",
+  "run_window_utc_minus3": "2026-11-05 11:00:21 -> 11:00:35 (receipt mtimes; ~2-4 s per battery arm on this host)",
+  "command_template": "cd <clone> && TMPDIR=<scratch>/tmp python3 -I -B tools/round-92/stop-boundary-repair-battery.py --root <clone> --repair-cmd <arm repair> --work <scratch>/work --rev base-0a2a23da5eb50410a8a0df90c031d9f4fdadb024 --expect '<expect>' --json-out <scratch>/out-<arm>.json",
+  "arms": [
+    {
+      "arm": "F1_admitted",
+      "repair_cmd": ".ufo/waves/round-93/controls/table5-window.py",
+      "committed_receipt": ".ufo/waves/round-93/pre/r93-do-nothing-r92label-F1.json",
+      "committed": { "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0 },
+      "reproduced_receipt": "reproduced-F1.json",
+      "reproduced": { "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0, "process_rc": 0 },
+      "field_match_label_met_exit": true,
+      "full_receipt_identical": "diff <(jq -S . committed) <(jq -S . reproduced) empty"
+    },
+    {
+      "arm": "F2_admitted",
+      "repair_cmd": ".ufo/waves/round-93/controls/carrierread5.py",
+      "committed_receipt": ".ufo/waves/round-93/pre/r93-do-nothing-r92label-F2.json",
+      "committed": { "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0 },
+      "reproduced_receipt": "reproduced-F2.json",
+      "reproduced": { "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0, "process_rc": 0 },
+      "field_match_label_met_exit": true,
+      "full_receipt_identical": "diff <(jq -S . committed) <(jq -S . reproduced) empty"
+    },
+    {
+      "arm": "F3_negative",
+      "repair_cmd": ".ufo/waves/round-93/controls/identity_noop.py",
+      "committed_receipt": ".ufo/waves/round-93/pre/r93-negative-control-identity-r92label.json",
+      "committed": { "label": "repaired 0 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 0 of 10", "met": false, "exit": 1 },
+      "reproduced_receipt": "reproduced-F3-negative.json",
+      "reproduced": { "label": "repaired 0 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 0 of 10", "met": false, "exit": 1, "process_rc": 1 },
+      "field_match_label_met_exit": true,
+      "full_receipt_identical": "diff <(jq -S . committed) <(jq -S . reproduced) empty"
+    },
+    {
+      "arm": "positive",
+      "repair_cmd": "tools/round-92/upx-stop-boundary-search-repair.py",
+      "committed_receipt": ".ufo/waves/round-93/pre/r93-positive-r92repair-r92label.json",
+      "committed": { "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0 },
+      "reproduced_receipt": "reproduced-positive.json",
+      "reproduced": { "label": "repaired 10 of 10; wrong 0; unsafe 0; intact 5 of 5; far-refused 10 of 10", "met": true, "exit": 0, "process_rc": 0 },
+      "field_match_label_met_exit": true,
+      "full_receipt_identical": "diff <(jq -S . committed) <(jq -S . reproduced) empty"
+    }
+  ],
+  "expected_vs_observed_summary": "F1 met True, F2 met True, F3 met False, positive met True — all as the claims require; all four reproduced receipts are byte-identical to the committed receipts in canonical form (every field: carriers, 20 cells, counts, shas, revision, tool)",
+  "drift": "none",
+  "kill_rule_inputs_clean": true
+}

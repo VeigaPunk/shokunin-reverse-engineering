@@ -1,0 +1,40 @@
+{
+  "seat": "ExecCounterAudit",
+  "purpose": "R93-C2 checker verification at base: selftest + before-manifest run in a scratch clone at the freeze commit",
+  "clone": "/fast/scratch/hyaku/kaidoku-r93/ExecCounterAudit/clone",
+  "clone_head": "92a240521bd1bf2213b75d18d9b176a8dafdc67c",
+  "selftest": {
+    "command": "cd <clone> && TMPDIR=<scratch>/tmp python3 -I -B tools/round-93/craft-citation-semantic.py --selftest --work <scratch>/work",
+    "expected": "SELFTEST cases=10 failures=0, exit 0",
+    "observed_last_line": "SELFTEST cases=10 failures=0",
+    "per_case": [
+      "green: want 0 got 0 ok",
+      "keyword-miss: want 1 got 1 ok",
+      "cited-row-missing: want 1 got 1 ok",
+      "row-not-found: want 1 got 1 ok",
+      "block-missing: want 1 got 1 ok",
+      "marker-missing: want 1 got 1 ok",
+      "shape: want 1 got 1 ok",
+      "no-citation-form: want 2 got 2 ok",
+      "malformed: want 2 got 2 ok",
+      "unknown-rev: want 2 got 2 ok"
+    ],
+    "exit": 0,
+    "process_rc": 0
+  },
+  "before_manifest_at_base": {
+    "command": "cd <clone> && TMPDIR=<scratch>/tmp python3 -I -B tools/round-93/craft-citation-semantic.py --root <clone> --manifest .ufo/waves/round-93/manifests/block31-before.json --block 31 --rev 0a2a23da5eb50410a8a0df90c031d9f4fdadb024 --work <scratch>/work --json-out <scratch>/out-c2.json",
+    "expected": "exit 1; atom: row 'intact input refused by mistake': QUALITY 169 lacks ['never refuse an intact input', \"packer's verdict\"]",
+    "observed": {
+      "exit": 1,
+      "ok": false,
+      "failing_atom": "row 'intact input refused by mistake': QUALITY 169 lacks ['never refuse an intact input', \"packer's verdict\"]",
+      "stdout": "failing exit 1\n  - row 'intact input refused by mistake': QUALITY 169 lacks ['never refuse an intact input', \"packer's verdict\"]"
+    },
+    "atom_matches_claim_exactly": true,
+    "committed_receipt": ".ufo/waves/round-93/pre/r93-c2-block31-before.json",
+    "reproduced_receipt": "reproduced-c2-block31-before.json",
+    "full_receipt_identical": "diff <(jq -S . committed) <(jq -S . reproduced) empty"
+  },
+  "drift": "none"
+}
