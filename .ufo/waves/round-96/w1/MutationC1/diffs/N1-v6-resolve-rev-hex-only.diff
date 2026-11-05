@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r96/MutationC1/pristine/stop-boundary-repair-battery-v6.py	2026-11-05 15:07:55.041627934 -0300
++++ /fast/scratch/hyaku/kaidoku-r96/MutationC1/clone/tools/round-96/stop-boundary-repair-battery-v6.py	2026-11-05 15:13:53.679059862 -0300
+@@ -112,7 +112,7 @@
+ def resolve_rev(root: str, rev: str):
+     """Full 40-hex resolution of `rev` (hex prefixes and symbolic names like HEAD),
+     or None when it does not resolve."""
+-    if not rev or re.search(r"\s", rev):
++    if not rev or re.search(r"\s", rev) or not re.fullmatch(r"[0-9a-f]{40}", rev):
+         return None
+     try:
+         out = subprocess.run(["git", "-C", root, "rev-parse", "--verify", rev],

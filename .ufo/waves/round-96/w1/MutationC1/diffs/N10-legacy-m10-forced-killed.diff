@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r96/MutationC1/pristine/legacy-kill-rule.py	2026-11-05 15:07:55.045921857 -0300
++++ /fast/scratch/hyaku/kaidoku-r96/MutationC1/clone/tools/round-96/legacy-kill-rule.py	2026-11-05 15:24:14.457848303 -0300
+@@ -126,6 +126,8 @@
+         cks = checks_for(d, root, os.path.join(args.work, name), args.fixtures,
+                          args.prefix, args.expect)
+         killed = any(not c["ok"] for c in cks.values())
++        if name == "M10":
++            killed = True
+         rows.append({"name": name, "killed": killed, "checks": cks})
+     killed_n = sum(1 for r in rows if r["killed"])
+     met = killed_n == TOTAL_MUTANTS

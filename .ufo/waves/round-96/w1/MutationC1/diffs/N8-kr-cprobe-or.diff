@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r96/MutationC1/pristine/kill-rule-v2.py	2026-11-05 15:07:55.043627939 -0300
++++ /fast/scratch/hyaku/kaidoku-r96/MutationC1/clone/tools/round-96/kill-rule-v2.py	2026-11-05 15:21:44.517381895 -0300
+@@ -286,7 +286,7 @@
+                 "stderr_tail": se[-300:]}
+     truth = bool(rec.get("victim_intact")) and bool(rec.get("receipt_valid"))
+     verdict = rec.get("verdict")
+-    consistent = ((verdict == "hardened") == truth) and (rec.get("met") is truth)
++    consistent = ((verdict == "hardened") == truth) or (rec.get("met") is truth)
+     return {"ok": bool(consistent), "probe_rc": rc, "verdict": verdict,
+             "met": rec.get("met"), "victim_intact": rec.get("victim_intact"),
+             "receipt_valid": rec.get("receipt_valid")}

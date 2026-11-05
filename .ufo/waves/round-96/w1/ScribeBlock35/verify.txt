@@ -1,0 +1,134 @@
+ScribeBlock35 — R96-C2 draft verification (seat clone, scratch only)
+==================================================================
+Lane repo:  /home/vgpnk/Projects/shokunin/kaidoku-shokunin   (READ-ONLY for this seat)
+Clone:      /fast/scratch/hyaku/kaidoku-r96/ScribeBlock35/clone
+Clone HEAD: 3baac2ef4b9b2830d299125b8184ca06d9e6584d  (the disclosed round-96 supersession commit)
+Clone made by: git clone --shared <lane>   (no mutating git/jj command was run anywhere)
+Drafts applied in the CLONE ONLY:
+  block35.md        -> SKILL.md, at the end of `## Queue-drain craft`, after block 34,
+                       before `## Config custody for live-probe rounds (SOP)`
+  quality-rows.md   -> corpus/QUALITY.md, appended after row 192
+  registry-rows.md  -> SKILL.md, immediately before the `<!-- /instrument-registry -->` marker
+Stand-in: corpus/knowledge/2026-11-05-r96-kill-rule-coverage.md was copied from the sibling
+seat's draft .ufo/waves/round-96/w1/ScribeKnowledge/knowledge.md into the clone. The real
+knowledge entry must land in the same commit as the block (see dependency D1 below).
+
+--- FROZEN COUNTING COMMANDS (after side, at the clone worktree) -------------------
+
+V1  craft-citation-semantic, after manifest  (expected exit 0)
+    python3 -I -B tools/round-93/craft-citation-semantic.py --root <clone> \
+      --manifest .ufo/waves/round-96/manifests/block35-after.json --block 35 --worktree \
+      --json-out <seat>/receipts/v1-after.json
+    rc=0
+    stdout: "ok exit 0"
+    receipt atoms: block_present true, marker true, shape true
+    checked: writer durability gate -> QUALITY 193 (missing_keywords []); fail-closed exit and
+      forced verdict -> QUALITY 193 (missing_keywords []); probe receipt verdict -> QUALITY 193
+      (missing_keywords []); green without a receipt -> QUALITY 194 (missing_keywords [])
+
+V2  craft-citation-semantic, junk manifest  (expected exit 1, keyword reasons)
+    python3 -I -B tools/round-93/craft-citation-semantic.py --root <clone> \
+      --manifest .ufo/waves/round-96/manifests/block35-junk.json --block 35 --worktree \
+      --json-out <seat>/receipts/v2-junk.json
+    rc=1
+    stdout:
+      failing exit 1
+        - row 'writer durability gate': QUALITY 193 lacks ['strace-verified durability', 'kernel-level fsync audit']
+        - row 'fail-closed exit and forced verdict': QUALITY 193 lacks ['kernel audit hook', 'ptrace-detached verdict']
+        - row 'probe receipt verdict': QUALITY 193 lacks ['cryptographic witness', 'notarized verdict chain']
+        - row 'green without a receipt': QUALITY 194 lacks ['quiet-exit allowance', 'best-effort verification']
+    The control fails on the keyword atoms of all four rows, not on a missing block.
+
+V3  depth-blocks-v2  (expected exit 0, blocks 35 resolved 35)
+    python3 -I -B tools/round-89/depth-blocks-v2.py --root <clone> --worktree --expect-blocks 35 \
+      --json-out <seat>/receipts/v3-depth-v2.json
+    rc=0
+    stdout: "blocks 35 resolved 35 expect 35 unresolved 0 met=True exit=0"
+
+V4  depth-blocks-v3  (expected exit 0)
+    python3 -I -B tools/round-91/depth-blocks-v3.py --root <clone> --worktree --expect-blocks 35 \
+      --shape-from 35 --json-out <seat>/receipts/v4-depth-v3.json
+    rc=0
+    stdout: "blocks 35, resolved 35, required-shaped 1/1 expect 35 shaped_required 1/1 unresolved 0 met=True exit=0"
+
+--- REGRESSION / CONTROL CHECKS ---------------------------------------------------
+
+R1  block-34 after-manifest still green at the modified worktree
+    python3 -I -B tools/round-93/craft-citation-semantic.py --root . \
+      --manifest .ufo/waves/round-95/manifests/block34-after.json --block 34 --worktree
+    rc=0   stdout: "ok exit 0"          (blocks 1-34 are not disturbed)
+
+R2  block-34 junk manifest still red at the modified worktree
+    python3 -I -B tools/round-93/craft-citation-semantic.py --root . \
+      --manifest .ufo/waves/round-95/manifests/block34-junk.json --block 34 --worktree
+    rc=1   stdout names the three expected keyword reasons (str() fallback /
+    complete JSON or absent / helper-only selftest)
+
+R3  craft-citation-semantic --selftest --work <scratch>        rc=0  SELFTEST cases=10 failures=0
+R4  depth-blocks-v2 --selftest                                 rc=0  SELFTEST cases=10 failures=0
+R5  depth-blocks-v3 --selftest                                 rc=0  SELFTEST cases=6 failures=0
+
+R6  base control: block 35 absent at the round-96 supersession revision
+    python3 -I -B tools/round-93/craft-citation-semantic.py --root . \
+      --manifest .ufo/waves/round-96/manifests/block35-after.json --block 35 \
+      --rev 3baac2ef4b9b2830d299125b8184ca06d9e6584d
+    rc=1   stdout: "failing exit 1 / - block 35 missing (craft has 34 blocks)"
+
+R7  dependency: with corpus/knowledge/2026-11-05-r96-kill-rule-coverage.md REMOVED from the clone
+    depth-blocks-v2 --worktree --expect-blocks 35     rc=1
+      "blocks 35 resolved 34 expect 35 unresolved 1 met=False exit=1"
+    depth-blocks-v3 --worktree --expect-blocks 35 --shape-from 35   rc=1
+      "blocks 35, resolved 34, required-shaped 1/1 expect 35 shaped_required 1/1 unresolved 1 met=False exit=1"
+R8  same commands with the knowledge entry restored     rc=0 / rc=0  (blocks 35 resolved 35)
+    => D1: the knowledge entry must land in the SAME commit as craft block 35, or the two depth
+    counters go red at the landing revision. This is the round-95 "citation check working"
+    behaviour, reproduced.
+
+--- STRUCTURE CHECKS ON THE DRAFTS -------------------------------------------------
+
+S1  block-35 marker present: "kill-rule-gate-coverage v1"                     True
+S2  decision table shape: 5 rows (1 header + 4 body), 4 cells each, all body rows >= 4 cells,
+    no cell contains a "|" that would split a cell                              True
+S3  manifest row_snippet -> exactly one body row each; cell 0 EXACTLY equals the snippet:
+      'writer durability gate'         -> 1 hit, cell0_exact True, criterion "QUALITY 193"
+      'fail-closed exit and forced verdict' -> 1 hit, cell0_exact True, criterion "QUALITY 193"
+      'probe receipt verdict'          -> 1 hit, cell0_exact True, criterion "QUALITY 193"
+      'green without a receipt'        -> 1 hit, cell0_exact True, criterion "QUALITY 194"
+S4  manifest keyword sets present verbatim in the cited QUALITY row text:
+      193: "instrumented count" OK, "survives every exit-code diff" OK,
+           "main()-level negative control" OK, "receipt-content consistency check" OK
+      194: "--json-out is mandatory" OK, "skipped self-verification" OK
+S5  junk-manifest keyword sets absent from QUALITY 193/194 (all eight)          True
+S6  applied text is byte-identical to the seat drafts:
+      BLOCK-IDENTICAL True, QUALITY-ROWS-IDENTICAL True, REGISTRY-ROWS-IDENTICAL True
+      REGISTRY-ROWS-BEFORE-MARKER True (the ten rows sit immediately before
+      `<!-- /instrument-registry -->`)
+S7  all ten registry rows have 7 cells; every verdict cell names 0, 1 and 2 under the
+    round-68 VERDICT_RE grammar (so no row is "thin")                            True
+S8  registry census (tools/round-68/registry-conformance.py census() called in-memory,
+    receipts/registry-census.json):
+      base (HEAD:SKILL.md)      mismatches 31, unregistered 19
+      after (worktree SKILL.md) mismatches 21, unregistered 9
+      registered by the ten rows: exactly the ten named instruments
+        (round-95: c1-agreement-v2, c1-forgery-refusal, stop-boundary-repair-battery-v5,
+         symlink-probe; round-96: kill-rule-v2, legacy-kill-rule, probe-writer-legs,
+         r95-unbound-at-base, stop-boundary-repair-battery-v6, symlink-probe-v2)
+      still unregistered under round-96: tools/round-96/fresh-source2-check.py and
+        tools/round-96/gen-forgery-fixtures.py  (both named by plans/round-96-claims.md but
+        OUTSIDE this seat's frozen six; the L1 must decide whether to add rows for them)
+      duplicate_rows 0, row_absent 0, thin unchanged at 12 (none of them mine)
+
+--- LANE MUTATION CHECK ----------------------------------------------------------
+git -C <lane> status --porcelain  -> only `?? .ufo/waves/round-96/w1/...` (this seat's own
+                                       directory) and the wave's own untracked files; the
+                                       eight other `??` entries pre-date this seat
+git -C <lane> diff --stat          -> EMPTY (no tracked lane file was edited)
+git -C <lane> rev-parse HEAD       -> 3baac2ef4b9b2830d299125b8184ca06d9e6584d (unchanged)
+sha256sum -c .ufo/waves/round-96/pins.sha256 -> 60 of 60 OK, 0 mismatches
+No git commit, add, stash, checkout, switch, reset, pull or push was run; no jj command was
+run; no lane file was created, edited, deleted, staged or committed by this seat. The only
+lane paths this seat wrote are its own SEAT directory
+.ufo/waves/round-96/w1/ScribeBlock35/ and its report .ufo/waves/round-96/w1/ScribeBlock35.md.
+
+TOOLING: no package was installed or upgraded by this seat (no tool was needed that the
+host did not already provide: git, python3 3.14, sha256sum).

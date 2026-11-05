@@ -1,0 +1,15 @@
+--- /fast/scratch/hyaku/kaidoku-r96/MutationC1/pristine/kill-rule-v2.py	2026-11-05 15:07:55.043627939 -0300
++++ /fast/scratch/hyaku/kaidoku-r96/MutationC1/clone/tools/round-96/kill-rule-v2.py	2026-11-05 15:18:19.732578995 -0300
+@@ -256,10 +256,8 @@
+         return _o(fd)
+ 
+     os.fsync = counting
+-    try:
+-        mod.write_receipt(os.path.join(work, "fsync-receipt.json"), {"x": 1})
+-    finally:
+-        os.fsync = orig
++    os.fsync = orig
++    mod.write_receipt(os.path.join(work, "fsync-receipt.json"), {"x": 1})
+     return {"ok": count["n"] >= 1, "fsync_calls": count["n"]}
+ 
+ 

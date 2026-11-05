@@ -1,0 +1,26 @@
+--- /fast/scratch/hyaku/kaidoku-r96/MutationC1/pristine/symlink-probe-v2.py	2026-11-05 15:07:55.045299338 -0300
++++ /fast/scratch/hyaku/kaidoku-r96/MutationC1/clone/tools/round-96/symlink-probe-v2.py	2026-11-05 15:23:46.556503100 -0300
+@@ -56,20 +56,9 @@
+     """Complete JSON or absent, and immune to a planted symlink at the receipt path
+     itself or at the predictable `<path>.tmp` name (round-95 M95-i closure)."""
+     d = os.path.dirname(os.path.abspath(path)) or "."
+-    fd, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(path) + ".", suffix=".tmp")
+-    try:
+-        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+-            json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)
+-            fh.write("\n")
+-            fh.flush()
+-            os.fsync(fh.fileno())
+-        os.replace(tmp, path)
+-    except BaseException:
+-        try:
+-            os.remove(tmp)
+-        except OSError:
+-            pass
+-        raise
++    with open(path, "w", encoding="utf-8") as fh:
++        json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)
++        fh.write("\n")
+ 
+ 
+ def main(argv=None) -> int:

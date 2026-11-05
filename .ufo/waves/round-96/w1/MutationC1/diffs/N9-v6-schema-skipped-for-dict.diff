@@ -1,0 +1,11 @@
+--- /fast/scratch/hyaku/kaidoku-r96/MutationC1/pristine/stop-boundary-repair-battery-v6.py	2026-11-05 15:07:55.041627934 -0300
++++ /fast/scratch/hyaku/kaidoku-r96/MutationC1/clone/tools/round-96/stop-boundary-repair-battery-v6.py	2026-11-05 15:18:04.273155461 -0300
+@@ -156,7 +156,7 @@
+         return {"ok": False, "reasons": ["receipt-not-an-object"]}
+     counts = rec.get("counts")
+     label = rec.get("label")
+-    schema = count_problems(counts)
++    schema = [] if isinstance(counts, dict) else count_problems(counts)
+     reasons.extend(schema)
+     if not isinstance(counts, dict) or not isinstance(label, str):
+         if not schema:
