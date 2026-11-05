@@ -1,0 +1,71 @@
+{
+  "seat": "MutationC1",
+  "base_rev": "867ed98d85f45a18265441c1760386ef353b3d43",
+  "note": "Each mutant is one edit applied to a scratch clone of the landing revision; the lane tree was not modified. Command-A leg = frozen kill-rule-v3.py run from the mutant tree root (cwd = root). Cancelled legs are marked not_measured.",
+  "mutants": [
+    {
+      "id": "M-A",
+      "file": "tools/round-97/kill-rule-v3.py",
+      "edit": "write_receipt: CUT the directory fsync block (lines 110-114: dfd = os.open / try / os.fsync(dfd) / finally / os.close)",
+      "find": "        dfd = os.open(d, os.O_RDONLY)\n        try:\n            os.fsync(dfd)\n        finally:\n            os.close(dfd)\n",
+      "replace": "",
+      "expected_detector": "K-durability observes only the v7 writer, not the rule's write_receipt",
+      "observed": "rule --selftest exit 0 (cases=8 failures=0); command A not_measured (cancelled at wrap-up)",
+      "killed": false
+    },
+    {
+      "id": "M-B",
+      "file": "tools/round-97/kill-rule-v3.py",
+      "edit": "blob_sha256: insert `return None` as first statement (pins_at_rev becomes None; git cat-file path unreachable)",
+      "find": "def blob_sha256(root: str, rev: str, rel_path: str):\n",
+      "replace": "def blob_sha256(root: str, rev: str, rel_path: str):\n    return None\n",
+      "expected_detector": "K-bytes blob binding",
+      "observed": "rule --selftest exit 0; command A exit 1: bytes 0 of 5; dirtyrefuse 0 of 1; honest accepted 0 of 1; met False; K-bytes rows: 5 blob rows ok False",
+      "killed": true
+    },
+    {
+      "id": "M-C",
+      "file": "tools/round-97/kill-rule-v3.py",
+      "edit": "main: classes_match = True or all(...) (computation always True)",
+      "find": "    classes_match = all((r[\"observed_class\"] == r[\"declared_class\"]) or not r[\"failed_checks\"]",
+      "replace": "    classes_match = True or all((r[\"observed_class\"] == r[\"declared_class\"]) or not r[\"failed_checks\"]",
+      "expected_detector": "kill_classes.classes_match over real mutants",
+      "observed": "rule --selftest exit 0; command A exit 0 with exact frozen label 21 of 21 (classes_match True also in unmutated run: all 21 real mutants have observed_class == declared_class)",
+      "killed": false
+    },
+    {
+      "id": "M-D",
+      "file": "tools/round-97/kill-rule-v3.py",
+      "edit": "verify_own_receipt: insert `return {\"ok\": True, \"reasons\": []}` as first statement",
+      "find": "def verify_own_receipt(path: str, world_head: str) -> dict:\n",
+      "replace": "def verify_own_receipt(path: str, world_head: str) -> dict:\n    return {\"ok\": True, \"reasons\": []}\n",
+      "expected_detector": "rule --selftest case ownrec-lying-refused (lying receipt must be refused)",
+      "observed": "rule --selftest exit 1: 'selftest ownrec-lying-refused: FAIL'; command A exit 0 with frozen label (ownrec 1 of 1 still green)",
+      "killed": true
+    },
+    {
+      "id": "M-E",
+      "file": "tools/round-97/stop-boundary-repair-battery-v7.py",
+      "edit": "count_problems: CUT the counts-extra-key loop (lines 152-154)",
+      "find": "    for k in sorted(counts.keys()):\n        if k not in COUNT_KEYS:\n            reasons.append(\"counts-extra-key:%s\" % k)\n",
+      "replace": "",
+      "expected_detector": "v7 --selftest case verify-catches-counts-extra; forgery forge-counts-extra (exact reason counts-extra-key:forged)",
+      "observed": "v7 --selftest exit 1: 'selftest verify-catches-counts-extra: FAIL' (cases=23 failures=1); forgery battery with pristine byte pins (isolated): refused 12 of 13, forge-counts-extra accepted with reasons []; command A not_measured (cancelled); unisolated battery (mutant pins) refuses 1 of 13 via byte-pin-not-bound only",
+      "killed": true
+    },
+    {
+      "id": "M-F",
+      "file": "tools/round-97/kill-rule-v3.py",
+      "edit": "c_bytes: rename body to _c_bytes_real and add wrapper before c_cwd that sets r['ok'] = True",
+      "find": "def c_bytes(root: str, head: str, decl: str, pins7: dict, receipt: dict | None,",
+      "replace": "def _c_bytes_real(root: str, head: str, decl: str, pins7: dict, receipt: dict | None,",
+      "expected_detector": "K-bytes dirtyrefuse leg (v7 must refuse the dirty byte lie)",
+      "observed": "probe (c_bytes with v7 main forced to admit the dirty lie): pristine ok false, mutant ok true (bound 5 of 5 both); rule --selftest exit 0; command A not_measured (cancelled). Command A cannot see the dirty leg fail under the mutant",
+      "killed": false
+    }
+  ],
+  "gap_side_observations": [
+    "K-cwd: run() has no cwd argument, so the r95 leg inherits the rule's cwd; the probe dir only receives json-out. The check does not test a non-root cwd. Run from a non-root cwd, command A exits 1 (K-cwd False, r95-battery-regression False).",
+    "M-r1 (rule receipt-required disabled): killed by K-selftest in the root-cwd run; not killed (failed_checks []) in the earlier run from a non-root cwd."
+  ]
+}
