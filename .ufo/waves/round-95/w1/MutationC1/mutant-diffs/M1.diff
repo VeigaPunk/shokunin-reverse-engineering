@@ -1,0 +1,14 @@
+diff --git i/tools/round-95/stop-boundary-repair-battery-v5.py w/tools/round-95/stop-boundary-repair-battery-v5.py
+index 13ebaf08e..e6c19850d 100755
+--- i/tools/round-95/stop-boundary-repair-battery-v5.py
++++ w/tools/round-95/stop-boundary-repair-battery-v5.py
+@@ -73,7 +73,8 @@ def write_receipt(path: str, receipt: dict) -> None:
+     temporary name comes from mkstemp (unique, created fresh in the same directory),
+     never from the predictable `<path>.tmp` a local attacker can pre-plant."""
+     d = os.path.dirname(os.path.abspath(path)) or "."
+-    fd, tmp = tempfile.mkstemp(dir=d, prefix=os.path.basename(path) + ".", suffix=".tmp")
++    tmp = path + ".tmp"
++    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
+     try:
+         with os.fdopen(fd, "w", encoding="utf-8") as fh:
+             json.dump(receipt, fh, indent=1, sort_keys=True, default=_default)

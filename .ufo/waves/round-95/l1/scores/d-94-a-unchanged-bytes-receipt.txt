@@ -1,0 +1,28 @@
+D-94-A answer (round-94 spot-check, cosmetic). The round-94 receipt
+.ufo/waves/round-94/l1/scores/c1-unchanged-bytes-at-8a711726.txt is 0 bytes and does not
+say what it checked. This file is the self-describing replacement; the 0-byte original is
+kept as evidence and not rewritten.
+
+Command 1 (round-94 landing check, the command the 0-byte file was meant to capture):
+  git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --stat dd4524916a0332bb65f83525532da1c1b8d709de 8a711726604688af399b2ed8b66c57178e4b6d8e -- tools/round-93 tools/round-92
+  exit: 0
+  output bytes: 0
+  output sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  (the sha256 of the empty string)
+  meaning: no byte under tools/round-92 or tools/round-93 changed between the round-94 declaration and its landing commit.
+
+Command 2 (round-95 declaration check: the same counter trees, from the round-94 landing to the round-95 declaration):
+  git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --stat 8a711726604688af399b2ed8b66c57178e4b6d8e 4bda1d1dd3788973f10e61212b70df18b3b14ea0 -- tools/round-93 tools/round-92
+  exit: 0
+  output bytes: 0
+  output sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  meaning: the round-93 and round-92 counters the round-94 and round-95 claims import are unchanged across both rounds.
+
+Command 3 (round-94 instruments themselves, landing to round-95 declaration):
+  git -C /home/vgpnk/Projects/shokunin/kaidoku-shokunin diff --stat 8a711726604688af399b2ed8b66c57178e4b6d8e 4bda1d1dd3788973f10e61212b70df18b3b14ea0 -- tools/round-93/stop-boundary-repair-battery-v3.py tools/round-94/stop-boundary-repair-battery-v4.py tools/round-94/c1-receipt-agreement.py
+  exit: 0
+  output bytes: 0
+  output sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  meaning: the frozen round-94 instruments are byte-identical at the round-95 declaration, so the round-95 do-nothing controls measure the instruments as frozen.
+
+Re-run instructions: each command above prints nothing on a clean match; re-run it and compare the
+sha256 of its output with the line above it. The shell command and exit code are the evidence.

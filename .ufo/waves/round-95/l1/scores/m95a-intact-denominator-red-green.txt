@@ -1,0 +1,22 @@
+M95-a: the battery's mini-world legs did not thread --intact-total, so the strengthened instrument used its default 6 against a mini world whose intact arm is 1.
+Fix: c1-forgery-refusal.py _run_leg passes --intact-total; the mini legs pass intact_total=1.
+
+Sandbox clone at 4bda1d1dd3788973f10e61212b70df18b3b14ea0, file tools/round-95/c1-forgery-refusal.py, the two intact_total=1 arguments removed (RED), then restored (GREEN).
+
+RED command: python3 -I -B tools/round-95/c1-forgery-refusal.py --selftest <scratch>/red-intact-work
+RED output:
+selftest mini-before-admits: ok
+selftest mini-forgeries-refused: FAIL
+selftest mini-honest-accepted: FAIL
+SELFTEST cases=3 failures=2
+RED exit: 1
+
+GREEN command: python3 -I -B tools/round-95/c1-forgery-refusal.py --selftest <scratch>/green-intact-work
+GREEN output:
+selftest mini-before-admits: ok
+selftest mini-forgeries-refused: ok
+selftest mini-honest-accepted: ok
+SELFTEST cases=3 failures=0
+GREEN exit: 0
+
+The honest-leg failure in RED is the same denominator defect seen on the honest triple, not a separate bug.

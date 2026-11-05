@@ -1,0 +1,71 @@
+# LE AVM-marker SquashFS v4 (`hsqs`) through REA `extract-firmware`: `squashfs_v4_le` on four chain-pinned vendor members, Frontier → Core under a class-level gap rule (round 67, R67-C1)
+
+status: R67-C1, the round-67 re-freeze of the round-50 measurement — Core for the four carriers named
+below iff `tools/round-67/avm-le-counter.py --score` reports `carriers_matched 4` of `target 4`,
+`met_target true` and exit 0 at the measured revision (SCORECARD `## 2026-11-03 — round 67`); the
+before-arm is `.ufo/waves/round-67/l1/pre/control-dryrun.json` (`gaps_ok_round50 2`,
+`gaps_ok_round67 4`, both red fixtures true, exit 0). A false carrier clause, a drifted engine, rule
+or carrier table, or a post-freeze instrument edit replaces this line and the PROVINCE row with the
+honest stop; the miss is reported, never narrowed.
+
+source: S268 — squashfs-tools-ng SquashFS format documentation, `doc/format.adoc` at commit `e3dcf1770fd77a0babcca422dcbe7b2cc7b8ab90` — https://raw.githubusercontent.com/AgentD/squashfs-tools-ng/e3dcf1770fd77a0babcca422dcbe7b2cc7b8ab90/doc/format.adoc — `=== Device Special Files` (heading, fetched-bytes line 730), line 732: "Basic device special files only store a hard-link counter and a device number." (13 words, one occurrence, byte offset 28 445); the layout is stated identical for character and block devices, the Linux major/minor extraction is lines 742-746, and the type codes `Basic Character Device` 5 / `Extended Character Device` 12 sit at `=== Common Inode Header` lines 549 and 556 — re-read 2026-11-03 (41 981 B, sha256 `08c38b69a9fda3d1a7ce9784132a75cb8c8d65f290e2747af74ab58ae50c82eb`)
+source: S250 — https://raw.githubusercontent.com/plougher/squashfs-tools/4.7.5/squashfs-tools/unsquashfs.c — `:1287` `if(root_process)` guards the char/block `mknod` at `:1296-1297`; the non-root branch reports "could not create … device …, because you're not superuser!" and goes to `failed` (`:1313-1318`); the FIFO `mknod` (`:1328`) and socket `mknod` (`:1349`) sit outside that gate — re-read 2026-11-03 (116 844 B, sha256 `6222d940c45537d597e2b36d1d46abbc90f0863e7106bab8fa7bdd97fd939341`)
+source: S245 — https://raw.githubusercontent.com/onekey-sec/unblob/26.6.4/python/unblob/handlers/filesystem/squashfs.py — `:455` `NAME = "squashfs_v4_le"`, `:463` the LE pattern `68 73 71 73 [24] 04 00`, `:53-54` `case Endian.LITTLE, _:` then `commands_args.append("-le")`; the only `is_avm` test (`:48`) sits inside `case Endian.BIG, 4:` — re-read 2026-11-03 (19 842 B, sha256 `2d7b901b54e2ad28c28df2cbbdaeb4bcedb58670fb4c4478f9578a0dd5599287`)
+source: S244 — https://download.avm.de/fritzbox/ — the publisher's listings for the four carrier model `fritz.os/` directories — re-read 2026-11-03 (root listing HTTP 200, 8 990 B, sha256 `75e886e28f104038649196da4f5509cab8536c5046479184c835e7f06fc40764`)
+source: S249 — https://download.avm.de/fritzbox/fritzbox-6490-cable/deutschland/fritz.os/info_en.txt — line 850 licence sentence ("The licensee may create only one copy of the software, which may be used exclusively for backup use.", 18 words) — re-read 2026-11-03 (67 591 B, sha256 `6c601b342da91f7598dde1e7842ba92a61a1ec7f4b3d00564573fea3d11070a7`)
+verified-at: 2026-11-03 (the landing commit that first adds this entry, the four `corpus/evidence/round-67/c1/<id>/{after.json,run.json}` receipts and the counter receipt `corpus/evidence/round-67/`-adjacent `.ufo/waves/round-67/l1/scores/`)
+recheck: on-refetch — `curl -fsSL https://raw.githubusercontent.com/AgentD/squashfs-tools-ng/e3dcf1770fd77a0babcca422dcbe7b2cc7b8ab90/doc/format.adoc -o format.adoc && sha256sum format.adoc` (expect `08c38b69…`) and `grep -n 'Basic device special files' format.adoc` (line 732). The scoring recheck is `python3 -I -B tools/round-67/avm-le-counter.py --control --root <LANE> --rev <REV> --work <SCRATCH> --out <OUT>` → exit 0 with `gaps_ok_round50 2` and `gaps_ok_round67 4`, then `--score --root <LANE> --rev <REV> --freeze <FREEZE> --carrier-cache <CACHE> --work <SCRATCH> --out <OUT>` → exit 0 with `carriers_matched 4`; the counter re-runs REA on the same bytes and re-derives the oracle with `unsquashfs` 4.7.5. Carriers are never committed (AVM licence, S249): `git show <rev>:tools/round-50/carriers.json` + `tools/round-41/fetch-vendor.py --spec <SPEC> --cache <CACHE>`.
+
+## What moved, and only what moved
+
+[observation] At the base `a7a4ce6902204d5c6cc6c4e3e78b4bffe8312b92`, `PROVINCE.md` and `corpus/README.md` listed "LE AVM members (`hsqs`)" as Frontier in the round-40, -41, -42, -44, -49 and -50 notes (`grep -n 'LE AVM' PROVINCE.md corpus/README.md`).
+
+[observation] The extraction half was measured in round 50 on the same four chain-pinned carriers: rea-agents 6.5.0 `extract-firmware --max-depth 1` published every oracle regular file at its exact path under the chunk extract root — 4 556, 4 564, 4 709 and 3 955 regular files, equal to the frozen oracle counts. Receipts: `corpus/evidence/round-50/c1/<id>/after.json`. The division was made on the gap-accounting half, not on publication.
+
+[observation] The round-50 rule (`tools/round-50/gap-rule.json`) made every `char-device` oracle row a **required** per-row disposition. Each FRITZ!Box carrier holds 13 char-device rows (`136:0`-`136:7` at `dev/pts/`, `230:0` at `dev/tiatm`, `247:0` at `dev/led`, `3:0`-`3:2` at `dev/ttyp*`); `removed.silent.char-device` admitted only `247:0`, so 12 rows per FRITZ!Box carrier had no disposition of any kind. Each Cable carrier holds one char-device row (`247:0`), which the silent admission covered. Source: `tools/round-50/oracle/<id>.nonregular.tsv`, the receipts' `normalized_result.extraction_gaps`, and the before-arm receipt (`gaps_ok` false on `g7581`/`g7582`, true on `c6490`/`c6430`). [inference] That admission is why the Cable carriers passed while the FRITZ!Box carriers failed.
+
+[observation] Round 67 moves exactly one surface: **`squashfs_v4_le` on LE AVM-marker (`hsqs`) members, Frontier → Core**, on the same four chain-pinned carriers, under the round-67 gap rule. The counter is the round-50 engine (`tools/round-50/c1-counter.py`, sha256 `9820811bf29f2de988f8ddb2513cf365f30a89a36f2bb465f96f1926ef9bd813`) loaded by path under `ENGINE_PIN` and patched at the named bindings; it does not re-implement the scoring engine, and the engine's clause set is used unchanged (all 23 clauses, including `carrier_fresh_ok` and `evidence_id_ok`).
+
+## The class rule, and why it is the honest repair
+
+[observation] A SquashFS character- or block-device entry is a device special file inode: it stores a hard-link counter and a device number, and no payload (S268 line 732, layout lines 742-746). [observation] `unsquashfs` creates device nodes only when running as root and reports a refusal otherwise (S250 :1287, :1296, :1313-1318); the FIFO and socket branches are not root-gated (`:1328`, `:1349`). [inference] An extractor that writes regular files therefore cannot reproduce a device node, so no per-row gap record can exist for that class; the round-50 rule demanded one.
+
+[observation] The round-67 rule (`tools/round-67/gap-rule-v2.json`, sha256 `b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0`) keeps the round-50 `allowed`, `removed` (including `removed.silent.char-device = ["247:0"]`) and `structural` blocks, sets `required.char-device` false, and records the reason in a `class_disposition` block. Symlinks stay per-row required; a gap that names a char device is still allowed and counted.
+
+[observation] The rule's specificity is shown red before data (`.ufo/waves/round-67/l1/pre/control-dryrun.json`): removing one symlink's `unpublished-entry` gap still fails `gaps_ok` under the round-67 rule (`round67_rule_still_fails true`), publishing a char-device path as a regular file is named by the publication check (`publication_check_names_it true`, `dev/led`), and a junk rule that also waives symlinks passes that first red fixture (`junk_rule_would_pass true`) — the waiver is scoped to the device class, and the control demonstrates it.
+
+## The four carriers (chain-pinned, never committed)
+
+[observation] AVM's licence permits one personal backup copy only (S249), so no vendor byte is in the lane. Each carrier is pinned by a chain: image URL → image sha256 → tar member sha256 → carve to `bytes_used` → carrier sha256 (`tools/round-50/carriers.json`; fetched into scratch with `tools/round-41/fetch-vendor.py`). [observation] The four carrier pins are `968d997d…` (g7581), `a119b644…` (g7582), `880370e7…` (c6490) and `da1c8049…` (c6430); the round-67 data run wrote one `after.json` and one `run.json` per carrier under `corpus/evidence/round-67/c1/<id>/` after the freeze.
+
+## Limits
+
+[unknown] No new carrier was measured: the claim re-scores the four round-50 carriers under a corrected rule, and says so in its predicate. [unknown] Not covered: LE AVM kernel images, LE AVM rootfs of ~13k files under REA's 120 s limit, nested sub-images below depth 1, vendor-mangled bodies, and any LE AVM image without the `mkfs_time == bytes_used` marker. [observation] The marker is re-stampable (round-50 W1 patch experiment) and is not proof of origin. [observation] The round-42 rea-pkg lock pin is no longer reproducible on this host; the counter re-pins the package by version and `package.json` sha256 (`a5003023…`) plus the lock this host resolves, and records the substitution in every receipt (`patches.rea_pkg`).
+
+## Host and pins
+
+[observation] rea-agents 6.5.0, unblob 26.6.4, `sasquatch` 4.5.1 and `unsquashfs` 4.7.5; scratch `/fast/scratch/hyaku/kaidoku-r67/`; the data-run harness is `tools/round-67/c1-run.sh` (a fork of `tools/round-50/c1-run.sh` whose delta is exactly the round segment and claim name).
+
+## Correction — 2026-11-03, round 68 (appended, never an in-place rewrite; QUALITY #65 and #100)
+
+The round-67 non-author closure (`corpus/lessons/round-67-verifier-spotcheck.md` §5) ruled the quality
+trend **harmed** by this entry, and this block records the correction.
+
+- **Superseded sentence.** The section "The class rule, and why it is the honest repair" states: "The
+  round-67 rule (`tools/round-67/gap-rule-v2.json`, sha256 `b55d5e87165eb1cad7065dcbb7ea7e725a455afec6eac1e25e480b7b6c2e0fb0`)
+  keeps the round-50 `allowed`, `removed` (including `removed.silent.char-device = ["247:0"]`) and
+  `structural` blocks". Both halves are stale.
+- **The rule's identity at every revision named by this entry.** `b55d5e87…` existed only between the
+  wave-1 repair `7cfe83e4` and the revert `3e7b59db`; the rule's bytes at the record `7a3c21d4`, at the
+  tip, and at the round-67 landing are `e66ba022ee3607c9fe74f141902c012b2418ad6d800589b6d2fb888084a4169e`
+  (`git show <rev>:tools/round-67/gap-rule-v2.json | sha256sum`).
+- **The dropped row.** The rule's `removed` block at the pin is
+  `{"diagnostic":"MaliciousSymlinkRemoved","kinds":["symlink"],"disposition":"exclusive"}` — it carries
+  **no** `silent` key, so the sentence's `removed.silent.char-device = ["247:0"]` names a row the rule no
+  longer holds. The row was dropped when `required.char-device` became false: under the class rule no
+  char-device row consults it, so the drop is inert and narrows nothing (the round-67 atom A5 and
+  `M67-4`/`M67-5` record the same fact).
+- **What is unchanged.** Everything else in the entry re-derives: the four carrier pins, the 4-of-4
+  after-arm at `83239917`, the 2-of-4 before-arm under the round-50 rule, and the 13 char-device rows per
+  FRITZ!Box carrier (`136:0`-`136:7`, `230:0`, `247:0`, `3:0`-`3:2`). A re-run of the entry's own digest
+  check (`corpus/lessons/round-68.md` Gate) reports the pin at `e66ba022…` with `silent` absent.

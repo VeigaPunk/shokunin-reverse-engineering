@@ -1,0 +1,12 @@
+M95-b: the v5 selftest planted receipt.json.tmp as a symlink in a case directory that survived the previous run, so a second run died in os.symlink with FileExistsError.
+Fix: the selftest removes its own case directory (shutil.rmtree) before planting.
+
+Sandbox clone at 4bda1d1dd3788973f10e61212b70df18b3b14ea0, file tools/round-95/stop-boundary-repair-battery-v5.py, the rmtree line removed (RED), then restored (GREEN). Same work directory for both runs.
+
+RED run 1 (fresh directory): exit 0
+RED run 2 (rerun on the same work dir): exit 1
+RED run 2 last stderr line:
+FileExistsError: [Errno 17] File exists: '<scratch>/idem-work/symlink-case/victim.txt' -> '<scratch>/idem-work/symlink-case/receipt.json.tmp'
+
+GREEN run 1: SELFTEST cases=6 failures=0, exit 0
+GREEN run 2 (rerun): SELFTEST cases=6 failures=0, exit 0

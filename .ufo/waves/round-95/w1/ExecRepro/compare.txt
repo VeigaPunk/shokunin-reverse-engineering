@@ -1,0 +1,73 @@
+## honest v5 (L1 committed honest-pos.json)
+  class: mine='T7-chain-stop-boundary' committed='T7-chain-stop-boundary' -> match
+  counter_sha256: mine='6fc81208c9b151f35c9768bc1f481a1bdd0bcc0854d9732879e38e6b87194b7f' committed='6fc81208c9b151f35c9768bc1f481a1bdd0bcc0854d9732879e38e6b87194b7f' -> match
+  counts: mine={'far': 12, 'far_refused': 12, 'fresh_far': 2, 'fresh_far_refused': 2, 'fresh_repaired': 2, 'fresh_roundtrip': 2, 'fresh_scored': 2, 'intact': 6, 'refused': 0, 'repaired': 12, 'scored': 12, 'silent': 0, 'unsafe': 0, 'wrong': 0} committed={'far': 12, 'far_refused': 12, 'fresh_far': 2, 'fresh_far_refused': 2, 'fresh_repaired': 2, 'fresh_roundtrip': 2, 'fresh_scored': 2, 'intact': 6, 'refused': 0, 'repaired': 12, 'scored': 12, 'silent': 0, 'unsafe': 0, 'wrong': 0} -> match
+  exit: mine=0 committed=0 -> match
+  expect: mine='repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' committed='repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' -> match
+  counts: mine={'far': 12, 'far_refused': 12, 'fresh_far': 2, 'fresh_far_refused': 2, 'fresh_repaired': 2, 'fresh_roundtrip': 2, 'fresh_scored': 2, 'intact': 6, 'refused': 0, 'repaired': 12, 'scored': 12, 'silent': 0, 'unsafe': 0, 'wrong': 0} committed={'far': 12, 'far_refused': 12, 'fresh_far': 2, 'fresh_far_refused': 2, 'fresh_repaired': 2, 'fresh_roundtrip': 2, 'fresh_scored': 2, 'intact': 6, 'refused': 0, 'repaired': 12, 'scored': 12, 'silent': 0, 'unsafe': 0, 'wrong': 0} -> match
+  stdout equal: True  rc mine=0 committed=0
+  stderr equal: True
+  json keys equal: True  full json equal: False
+  json diff keys: ['fresh_cells', 'fresh_provenance']
+## forgery battery vs l1 committed c1-forgery-at-4bda...json
+  full json equal: True  diff keys: []
+  met: mine=True committed=True -> match
+  expect: mine='repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' committed='repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2' -> match
+  instrument_revision: mine='4bda1d1dd3788973f10e61212b70df18b3b14ea0' committed='4bda1d1dd3788973f10e61212b70df18b3b14ea0' -> match
+  world_revision: mine='b5331db1fb0ce0bf93695ce1730cf831effef6a9' committed='b5331db1fb0ce0bf93695ce1730cf831effef6a9' -> match
+  counter_sha256: mine='8e43d7cff4d8f7eb9f4afe8e2ebdcfb3edfe6a53f019f21d0cd415457de0ff22' committed='8e43d7cff4d8f7eb9f4afe8e2ebdcfb3edfe6a53f019f21d0cd415457de0ff22' -> match
+  before: mine={'admits': True, 'counts': {'agree': 4, 'predicted': 4, 'valid': 4}, 'exit': 0, 'met': True} committed={'admits': True, 'counts': {'agree': 4, 'predicted': 4, 'valid': 4}, 'exit': 0, 'met': True} -> match
+  honest: mine={'exit': 0, 'met': True, 'rows': [{'agree': True, 'predicted': True, 'reasons': [], 'run': 'pos', 'valid': True}]} committed={'exit': 0, 'met': True, 'rows': [{'agree': True, 'predicted': True, 'reasons': [], 'run': 'pos', 'valid': True}]} -> match
+  forgeries mine: [('pos', 1, ['label-not-frozen'], True), ('F1', 1, ['label-not-recomputed'], True), ('F2', 1, ['revision-not-bound'], True), ('F3', 1, ['pins-not-bound'], True)]
+  forgeries committed: [('pos', 1, ['label-not-frozen'], True), ('F1', 1, ['label-not-recomputed'], True), ('F2', 1, ['revision-not-bound'], True), ('F3', 1, ['pins-not-bound'], True)]
+  stdout equal to committed c1-forgery-stdout.txt: True
+  stdout mine: '{\n "before": {\n  "admits": true,\n  "counts": {\n   "agree": 4,\n   "predicted": 4,\n   "valid": 4\n  },\n  "exit": 0,\n  "met": true\n },\n "class": "R95-C1 forgery refusal",\n "counter": "tools/round-95/c1-forgery-refusal.py",\n "counter_sha256": "8e43d7cff4d8f7eb9f4afe8e2ebdcfb3edfe6a53f019f21d0cd415457de0ff22",\n "expect": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2",\n "fixture_sha256": {\n  "F1": {\n   "json": "98e42df14c9ebb41ccf478c47730a8ee059a63b0c99c2c997df078dcf7e8e8db",\n   "rc": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",\n   "stdout": "1bdc856bf7c74bed048f6fb5f2bbaf7e132f17fbf6435e3e054437faf700450c"\n  },\n  "F2": {\n   "json": "8025ec572943f5377838be92c7f0ef051bce2297bd3383dccbe6842742b36a6b",\n   "rc": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",\n   "stdout": "2f6b97d8176ba0e76a1d48f94fc9e4e7de2b8041ed78e8f5b8324d344aaf4c38"\n  },\n  "F3": {\n   "json": "63f1aedac850df0208806c00413bc2272f16ebf14f5b853037caf1388acd91a7",\n   "rc": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",\n   "stdout": "ebd076322d74af56901ec688d782e194a011c16d2db1a119fe3990d5e77e552f"\n  },\n  "pos": {\n   "json": "9d9f81117a667fcc747a0d20291949b78dd57b3aed64def38b1e71bf5e3f6601",\n   "rc": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",\n   "stdout": "e8db076c4f0a8fe0bed1013356dbd04267c499e6240b969dd32913b5f7e47a27"\n  }\n },\n "forgeries": [\n  {\n   "exit": 1,\n   "expected_reason": "label-not-frozen",\n   "name": "pos",\n   "reasons": [\n    "label-not-frozen"\n   ],\n   "refused": true\n  },\n  {\n   "exit": 1,\n   "expected_reason": "label-not-recomputed",\n   "name": "F1",\n   "reasons": [\n    "label-not-recomputed"\n   ],\n   "refused": true\n  },\n  {\n   "exit": 1,\n   "expected_reason": "revision-not-bound",\n   "name": "F2",\n   "reasons": [\n    "revision-not-bound"\n   ],\n   "refused": true\n  },\n  {\n   "exit": 1,\n   "expected_reason": "pins-not-bound",\n   "name": "F3",\n   "reasons": [\n    "pins-not-bound"\n   ],\n   "refused": true\n  }\n ],\n "frozen_before_instrument": "tools/round-94/c1-receipt-agreement.py",\n "honest": {\n  "exit": 0,\n  "met": true,\n  "rows": [\n   {\n    "agree": true,\n    "predicted": true,\n    "reasons": [],\n    "run": "pos",\n    "valid": true\n   }\n  ]\n },\n "instrument_revision": "4bda1d1dd3788973f10e61212b70df18b3b14ea0",\n "met": true,\n "strengthened_instrument": "tools/round-95/c1-agreement-v2.py",\n "world_revision": "b5331db1fb0ce0bf93695ce1730cf831effef6a9"\n}\nforgeries refused 4 of 4; before admits True; honest accepted True\n'
+  committed stdout: '{\n "before": {\n  "admits": true,\n  "counts": {\n   "agree": 4,\n   "predicted": 4,\n   "valid": 4\n  },\n  "exit": 0,\n  "met": true\n },\n "class": "R95-C1 forgery refusal",\n "counter": "tools/round-95/c1-forgery-refusal.py",\n "counter_sha256": "8e43d7cff4d8f7eb9f4afe8e2ebdcfb3edfe6a53f019f21d0cd415457de0ff22",\n "expect": "repaired 12 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 12 of 12; fresh-roundtrip 2 of 2",\n "fixture_sha256": {\n  "F1": {\n   "json": "98e42df14c9ebb41ccf478c47730a8ee059a63b0c99c2c997df078dcf7e8e8db",\n   "rc": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",\n   "stdout": "1bdc856bf7c74bed048f6fb5f2bbaf7e132f17fbf6435e3e054437faf700450c"\n  },\n  "F2": {\n   "json": "8025ec572943f5377838be92c7f0ef051bce2297bd3383dccbe6842742b36a6b",\n   "rc": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",\n   "stdout": "2f6b97d8176ba0e76a1d48f94fc9e4e7de2b8041ed78e8f5b8324d344aaf4c38"\n  },\n  "F3": {\n   "json": "63f1aedac850df0208806c00413bc2272f16ebf14f5b853037caf1388acd91a7",\n   "rc": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",\n   "stdout": "ebd076322d74af56901ec688d782e194a011c16d2db1a119fe3990d5e77e552f"\n  },\n  "pos": {\n   "json": "9d9f81117a667fcc747a0d20291949b78dd57b3aed64def38b1e71bf5e3f6601",\n   "rc": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",\n   "stdout": "e8db076c4f0a8fe0bed1013356dbd04267c499e6240b969dd32913b5f7e47a27"\n  }\n },\n "forgeries": [\n  {\n   "exit": 1,\n   "expected_reason": "label-not-frozen",\n   "name": "pos",\n   "reasons": [\n    "label-not-frozen"\n   ],\n   "refused": true\n  },\n  {\n   "exit": 1,\n   "expected_reason": "label-not-recomputed",\n   "name": "F1",\n   "reasons": [\n    "label-not-recomputed"\n   ],\n   "refused": true\n  },\n  {\n   "exit": 1,\n   "expected_reason": "revision-not-bound",\n   "name": "F2",\n   "reasons": [\n    "revision-not-bound"\n   ],\n   "refused": true\n  },\n  {\n   "exit": 1,\n   "expected_reason": "pins-not-bound",\n   "name": "F3",\n   "reasons": [\n    "pins-not-bound"\n   ],\n   "refused": true\n  }\n ],\n "frozen_before_instrument": "tools/round-94/c1-receipt-agreement.py",\n "honest": {\n  "exit": 0,\n  "met": true,\n  "rows": [\n   {\n    "agree": true,\n    "predicted": true,\n    "reasons": [],\n    "run": "pos",\n    "valid": true\n   }\n  ]\n },\n "instrument_revision": "4bda1d1dd3788973f10e61212b70df18b3b14ea0",\n "met": true,\n "strengthened_instrument": "tools/round-95/c1-agreement-v2.py",\n "world_revision": "b5331db1fb0ce0bf93695ce1730cf831effef6a9"\n}\nforgeries refused 4 of 4; before admits True; honest accepted True\n'
+  rc mine=0
+## forgery fixtures: sha256 of committed vs fixture_sha256 pinned in receipt
+  F1.json: got=98e42df14c9ebb41ccf478c47730a8ee059a63b0c99c2c997df078dcf7e8e8db pinned=98e42df14c9ebb41ccf478c47730a8ee059a63b0c99c2c997df078dcf7e8e8db -> match
+  F1.rc: got=4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865 pinned=4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865 -> match
+  F1.stdout: got=1bdc856bf7c74bed048f6fb5f2bbaf7e132f17fbf6435e3e054437faf700450c pinned=1bdc856bf7c74bed048f6fb5f2bbaf7e132f17fbf6435e3e054437faf700450c -> match
+  F2.json: got=8025ec572943f5377838be92c7f0ef051bce2297bd3383dccbe6842742b36a6b pinned=8025ec572943f5377838be92c7f0ef051bce2297bd3383dccbe6842742b36a6b -> match
+  F2.rc: got=4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865 pinned=4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865 -> match
+  F2.stdout: got=2f6b97d8176ba0e76a1d48f94fc9e4e7de2b8041ed78e8f5b8324d344aaf4c38 pinned=2f6b97d8176ba0e76a1d48f94fc9e4e7de2b8041ed78e8f5b8324d344aaf4c38 -> match
+  F3.json: got=63f1aedac850df0208806c00413bc2272f16ebf14f5b853037caf1388acd91a7 pinned=63f1aedac850df0208806c00413bc2272f16ebf14f5b853037caf1388acd91a7 -> match
+  F3.rc: got=4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865 pinned=4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865 -> match
+  F3.stdout: got=ebd076322d74af56901ec688d782e194a011c16d2db1a119fe3990d5e77e552f pinned=ebd076322d74af56901ec688d782e194a011c16d2db1a119fe3990d5e77e552f -> match
+  pos.json: got=9d9f81117a667fcc747a0d20291949b78dd57b3aed64def38b1e71bf5e3f6601 pinned=9d9f81117a667fcc747a0d20291949b78dd57b3aed64def38b1e71bf5e3f6601 -> match
+  pos.rc: got=9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa pinned=9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa -> match
+  pos.stdout: got=e8db076c4f0a8fe0bed1013356dbd04267c499e6240b969dd32913b5f7e47a27 pinned=e8db076c4f0a8fe0bed1013356dbd04267c499e6240b969dd32913b5f7e47a27 -> match
+  fixture rc contents: {'pos': '0', 'F1': '1', 'F2': '1', 'F3': '1'}
+## probe v5 vs committed c1-symlink-v5-at-4bda...json
+  full json equal: True  diff keys: []
+  met: mine=True committed=True -> match
+  receipt_label: mine='repaired 0 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 0 of 12; fresh-roundtrip 0 of 2' committed='repaired 0 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 0 of 12; fresh-roundtrip 0 of 2' -> match
+  receipt_met: mine=False committed=False -> match
+  receipt_valid: mine=True committed=True -> match
+  revision: mine='4bda1d1dd3788973f10e61212b70df18b3b14ea0' committed='4bda1d1dd3788973f10e61212b70df18b3b14ea0' -> match
+  verdict: mine='hardened' committed='hardened' -> match
+  victim_intact: mine=True committed=True -> match
+  tmp_is_symlink: mine=True committed=True -> match
+  tmp_left: mine=True committed=True -> match
+  writer_rc: mine=1 committed=1 -> match
+  probe rc mine=0
+## probe v4 at base vs pre/c1-symlink-v4-at-base.json
+  full json equal: True  diff keys: []
+  met: mine=False committed=False -> match
+  receipt_label: mine='repaired 0 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 0 of 12; fresh-roundtrip 0 of 2' committed='repaired 0 of 12; wrong 0; unsafe 0; intact 6 of 6; far-refused 0 of 12; fresh-roundtrip 0 of 2' -> match
+  receipt_met: mine=False committed=False -> match
+  receipt_valid: mine=True committed=True -> match
+  revision: mine='b5331db1fb0ce0bf93695ce1730cf831effef6a9' committed='b5331db1fb0ce0bf93695ce1730cf831effef6a9' -> match
+  verdict: mine='followed-symlink' committed='followed-symlink' -> match
+  victim_intact: mine=False committed=False -> match
+  tmp_is_symlink: mine=False committed=False -> match
+  tmp_left: mine=False committed=False -> match
+  writer_rc: mine=1 committed=1 -> match
+  writer: mine='tools/round-94/stop-boundary-repair-battery-v4.py' committed='tools/round-94/stop-boundary-repair-battery-v4.py' -> match
+  probe rc mine=1
+## old counter over committed forge fixtures vs pre/c1-old-counter-admits-at-base.json
+  full json equal: True  diff keys: []
+  met: mine=True committed=True -> match
+  counts_of_4: mine={'agree': 4, 'predicted': 4, 'valid': 4} committed={'agree': 4, 'predicted': 4, 'valid': 4} -> match
+  prefix: mine='forge' committed='forge' -> match
+  rc mine=0
