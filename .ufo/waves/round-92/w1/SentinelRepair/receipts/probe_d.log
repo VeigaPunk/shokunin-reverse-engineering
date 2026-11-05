@@ -1,0 +1,20 @@
+MAX_INPUT literal: 268435456
+== D1 at cap+1 (sparse): expect typed refusal before any read
+size: 268435457
+rc=2
+{"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "input exceeds 268435456 bytes"}
+out1 exists: no
+== D2 at cap exactly (sparse, non-ELF zeros): reads fully, refuses as non-ELF
+rc=2
+{"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "not a little-endian ELF"}
+Command exited with non-zero status 2
+read-wall=0.20s max-rss=282792kB
+== D3 input is a directory: S_ISREG guard
+rc=2
+{"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "input is not a regular file"}
+== D4 input is a symlink to a regular file (lstat sees the link)
+rc=2
+{"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "input is not a regular file"}
+== D5 missing input
+rc=2
+{"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "cannot stat input: No such file or directory"}

@@ -1,0 +1,39 @@
+== A0 baseline: intact packed carrier, plain --out inside work dir
+rc=0
+stdout: {"break_index": null, "class": "intact", "delta": null, "derived_sz_cpr": null, "stored_sz_cpr": null}
+wrote: 19560 /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/a/base-out
+
+== A1 --out is a symlink to a file OUTSIDE the work dir
+before: lrwxrwxrwx 1 vgpnk vgpnk 70 Nov  5 09:34 /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/a/out -> /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/outside/victim.bin
+rc=0
+stdout: {"break_index": null, "class": "intact", "delta": null, "derived_sz_cpr": null, "stored_sz_cpr": null}
+after-link: -rw------- 1 vgpnk vgpnk 19560 Nov  5 09:34 /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/a/out
+victim sha/content: 6fe5062d0cbd83ad VICTIM-ORIGINAL
+out-is-regular-and-identical-to-input=true
+symlink-survives=false
+
+== A2 --out parent is a symlink (final parent component)
+rc=2
+stdout: {"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "--out parent is a symlink: /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/a/a2link"}
+a2real entries after: 0
+
+== A3 intermediate symlink component escapes the work tree
+rc=0
+stdout: {"break_index": null, "class": "intact", "delta": null, "derived_sz_cpr": null, "stored_sz_cpr": null}
+escape-dir now: total 20
+-rw------- 1 vgpnk vgpnk 19560 Nov  5 09:34 out
+file-landed-outside-worktree=true
+
+== A4 --out carries a '..' component (resolves inside work)
+rc=2
+stdout: {"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "--out carries a '..' component: /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/a/sub/../out4"}
+
+== A5 refused input: pre-existing --out must be untouched
+rc=2
+stdout: {"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "not a little-endian ELF"}
+out5 content now: PRE-EXISTING
+
+== A6 --out is a symlink to a DIRECTORY
+rc=2
+stdout: {"tool": "tools/round-91/upx-stop-boundary-repair.py", "class": "T7-chain-stop-boundary", "refused": "--out is a directory: /fast/scratch/hyaku/kaidoku-r92/SentinelRepair/work/a/outdir"}
+dir-target entries after: 0
