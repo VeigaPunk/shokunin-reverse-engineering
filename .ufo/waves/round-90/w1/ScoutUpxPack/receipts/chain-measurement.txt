@@ -1,0 +1,62 @@
+# Measured chain geometry — ScoutUpxPack, round 90
+
+Packer: /usr/bin/upx sha256 cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969 (matches the round-90 pin).
+Command: upx --best -o <out> <carrier>
+Walker: scratch chain.py / walk.py (two-segment walk: b0 = l_magic+20, step 12+sz_cpr).
+
+## jq (ET_DYN PIE)
+l_magic 0x22c p_info_off 0x234 progid 0 filesize 30800 blocksize 9561
+[0] off=0x240 sz_unc=904 sz_cpr=252 meth=2 ftid=0 cto8=0 extra=0 next=0x348
+[1] off=0x348 sz_unc=5408 sz_cpr=1651 meth=2 ftid=0 cto8=0 extra=0 next=0x9c7
+[2] off=0x9c7 sz_unc=9561 sz_cpr=4758 meth=2 ftid=73 cto8=3 extra=0 next=0x1c69
+[3] off=0x1c69 sz_unc=5528 sz_cpr=2626 meth=2 ftid=0 cto8=0 extra=0 next=0x26b7
+[4] off=0x26b7 sz_unc=1184 sz_cpr=174 meth=2 ftid=0 cto8=0 extra=0 next=0x2771
+[5] END marker off=0x2771 sz_cpr=0x40000000 magic_ok=False
+total u_len 22585 filesize 30800 end at 0x2771
+other UPX! offsets ['0x2adb', '0x36a8', '0x36b0']
+
+## xxd (ET_DYN PIE)
+l_magic 0x22c p_info_off 0x234 progid 0 filesize 38928 blocksize 21717
+[0] off=0x240 sz_unc=904 sz_cpr=249 meth=2 ftid=0 cto8=0 extra=0 next=0x345
+[1] off=0x345 sz_unc=2856 sz_cpr=950 meth=2 ftid=0 cto8=0 extra=0 next=0x707
+[2] off=0x707 sz_unc=21717 sz_cpr=11492 meth=2 ftid=73 cto8=3 extra=0 next=0x33f7
+[3] off=0x33f7 sz_unc=4528 sz_cpr=2140 meth=2 ftid=0 cto8=0 extra=0 next=0x3c5f
+[4] off=0x3c5f sz_unc=784 sz_cpr=163 meth=2 ftid=0 cto8=0 extra=0 next=0x3d0e
+[5] off=0x3d0e sz_unc=37748736 sz_cpr=1024720896 meth=0 ftid=0 cto8=243 extra=15 next=0x3d143d1a
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/kaidoku-r90/ScoutUpxPack/walk.py", line 16, in <module>
+
+## docker-init (ET_EXEC)
+l_magic 0x22c p_info_off 0x234 progid 0 filesize 851288 blocksize 575549
+[0] off=0x240 sz_unc=736 sz_cpr=226 meth=8 ftid=0 cto8=0 extra=0 next=0x32e
+[1] off=0x32e sz_unc=592 sz_cpr=202 meth=8 ftid=0 cto8=0 extra=0 next=0x404
+[2] off=0x404 sz_unc=575549 sz_cpr=265172 meth=8 ftid=73 cto8=25 extra=0 next=0x40fe4
+[3] off=0x40fe4 sz_unc=230752 sz_cpr=82125 meth=8 ftid=0 cto8=0 extra=0 next=0x550bd
+[4] off=0x550bd sz_unc=27304 sz_cpr=4313 meth=8 ftid=0 cto8=0 extra=0 next=0x561a2
+[5] END marker off=0x561a2 sz_cpr=0x2400000 magic_ok=False
+total u_len 834933 filesize 851288 end at 0x561a2
+other UPX! offsets ['0x5756a', '0x57574']
+
+## libz (ET_DYN shared object)
+l_magic 0x2444 p_info_off 0x244c progid 0 filesize 108560 blocksize 63157
+[0] off=0x2458 sz_unc=680 sz_cpr=201 meth=2 ftid=0 cto8=0 extra=0 next=0x252d
+[1] off=0x252d sz_unc=63157 sz_cpr=33574 meth=2 ftid=73 cto8=6 extra=0 next=0xa85f
+[2] off=0xa85f sz_unc=23584 sz_cpr=17012 meth=2 ftid=0 cto8=0 extra=0 next=0xeadf
+[3] END marker off=0xeadf sz_cpr=0x2c000 magic_ok=False
+total u_len 87421 filesize 108560 end at 0xeadf
+other UPX! offsets ['0xf8e9', '0x10008']
+
+## jq: the interior-block derivation, measured
+block2 off=0x9c7 sz_cpr=4758 ; true successor off=0x1c69 ; successor-(block+12) = 4758 == stored 4758 : True
+tampered walk (stored+7) lands at 0x1c70, true successor is 0x1c69 -> desynchronised by 7 bytes
+
+## upx -t on the tampered jq (both directions)
+$ upx -t carriers/jq.tampered7   # stored+7
+upx: carriers/jq.tampered7: Exception: compressed data violation
+Tested 1 file: 0 ok, 1 error.
+rc=0
+$ upx -t carriers/jq.tamperedm7  # stored-7
+upx: carriers/jq.tamperedm7: Exception: compressed data violation
+Tested 1 file: 0 ok, 1 error.
+$ upx -t carriers/jq.packed
+testing carriers/jq.packed [OK]

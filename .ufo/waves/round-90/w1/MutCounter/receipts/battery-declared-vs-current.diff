@@ -1,0 +1,98 @@
+--- /fast/scratch/hyaku/kaidoku-r90/MutCounter/pristine/upx-later-block-battery.py	2026-11-04 23:59:46.941855124 -0300
++++ /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-90/upx-later-block-battery.py	2026-11-05 00:10:15.386830422 -0300
+@@ -21,7 +21,9 @@
+   N2-corrupt-payload   a flipped payload byte is never reported recovered
+   N3-intact-idempotent an intact packed carrier comes back byte-identical
+   isolation            each invocation's directory is listed *after* the child
+-                       exits and holds exactly ["in"] (QUALITY 170)
++                       exits and holds only the input and the repair's own
++                       output -- ["in"] or ["in", "out"] -- never a sibling
++                       (QUALITY 170)
+   carrier_blind        the six P1 cells are re-scored inside a bwrap sandbox in
+                        which every pinned carrier path holds decoy bytes and the
+                        counter's run root is a tmpfs, and the probe proves the
+@@ -30,8 +32,11 @@
+   cheat-repack         the provenance cheat: live unblinded (must reproduce the
+                        intact packed bytes) and killed blinded
+ 
+-`met` = P1 6 of 6, P2 4 of 4, P3 4 of 4, every control true, and `--expect`
+-matching the label.  The PackHeader `u_len` is enforced as a *filter* inside the
++`met` = P1 6 of 6, P2 4 of 4, P3 4 of 4, every control true, REA enabled and the
++REA arm true in every cell, and `--expect` matching the label.  A `--no-rea` run is
++a development run: it reports `met_target false` and exits 1, so the plan's REA
++clause cannot be dropped without a signal.  `--rev` must name a commit in `--root`;
++a receipt never carries an unverified revision.  The PackHeader `u_len` is enforced as a *filter* inside the
+ repair for this class, not as a rank key (QUALITY 171).
+ """
+ 
+@@ -227,6 +232,19 @@
+     return row
+ 
+ 
++def rev_state(root: str, rev: str | None) -> dict:
++    """A receipt names only a revision the repo actually contains (QUALITY 146)."""
++    if not rev:
++        raise Unevaluable("rev_required: pass --rev <commit>")
++    rec = run(["git", "-C", root, "cat-file", "-e", f"{rev}^{{commit}}"], dict(os.environ))
++    if rec["rc"] != 0:
++        raise Unevaluable(f"rev_not_committed: {rev}")
++    head = run(["git", "-C", root, "rev-parse", f"{rev}^{{commit}}"], dict(os.environ))
++    dirty = run(["git", "-C", root, "status", "--porcelain"], dict(os.environ))
++    return {"rev": rev, "commit": (head.get("stdout") or "").strip(),
++            "worktree_dirty_paths": len([ln for ln in (dirty.get("stdout") or "").splitlines() if ln])}
++
++
+ def preflight(args, root: str, env: dict) -> dict:
+     if not os.path.isfile(args.upx) or sha256_file(args.upx) != UPX_SHA256_PIN:
+         raise Unevaluable("packer_mismatch: upx pin")
+@@ -253,7 +271,10 @@
+             "upx_version": ver[0], "rea_pkg": None if args.no_rea else args.pkg,
+             "modules": {rel: sha256_file(os.path.join(root, rel))
+                         for rel in (R87_REPAIR, R88_REPAIR, R89_REPAIR, CHEAT)},
+-            "bwrap": shutil.which("bwrap")}
++            "own_sha256": sha256_file(os.path.join(root, TOOL)),
++            "bwrap": shutil.which("bwrap"),
++            "rev_state": rev_state(root, args.rev),
++            "rea_required": True}
+ 
+ 
+ def score(args) -> tuple[int, dict]:
+@@ -428,17 +449,23 @@
+     p3 = cases["P3-zeroed"]
+     controls["no_work"]["recovered"] = sum(1 for x in controls["no_work"]["cases"]
+                                            if x["recovered"])
++    rea_ok = rea_on and all(
++        x["arms"].get("rea_recover") is True for pop in cases.values() for x in pop
++    ) and all(cases.values())
++    # The keys are the control names the frozen container lists, so the predicate
++    # sentence, the code and the receipt spell one vocabulary.
+     arms_ok = {
+-        "N1": all(x["refused"] for x in controls["N1-refuse-plain"]),
+-        "N2": all(x["not_recovered"] for x in controls["N2-corrupt-payload"]),
+-        "N3": all(x["identical"] for x in controls["N3-intact-idempotent"]),
++        "rea": bool(rea_ok),
++        "N1-refuse-plain": all(x["refused"] for x in controls["N1-refuse-plain"]),
++        "N2-corrupt-payload": all(x["not_recovered"] for x in controls["N2-corrupt-payload"]),
++        "N3-intact-idempotent": all(x["identical"] for x in controls["N3-intact-idempotent"]),
+         "isolation": all(x["ok"] for x in controls["isolation"]),
+         "carrier_blind": bool(controls["carrier_blind"]["blind_ok"]) and
+         all(x["recovered"] for x in controls["carrier_blind"]["cases"]) and
+         len(controls["carrier_blind"]["cases"]) == len(p1),
+         "no_work": controls["no_work"]["recovered"] == 0,
+-        "cheat_live": controls["cheat_repack"]["unblinded"] is True,
+-        "cheat_killed": controls["cheat_repack"]["blinded"] is False,
++        "cheat_repack": (controls["cheat_repack"]["unblinded"] is True
++                         and controls["cheat_repack"]["blinded"] is False),
+     }
+     recovered = {"P1": sum(1 for x in p1 if x["recovered"]), "P2": sum(1 for x in p2 if x["recovered"]),
+                  "P3": sum(1 for x in p3 if x["recovered"])}
+@@ -448,7 +475,8 @@
+            and recovered["P3"] == len(p3) == 4 and all(arms_ok.values()))
+     if args.expect:
+         met = met and label == args.expect
+-    receipt = {"tool": TOOL, "class": CLASS, "revision": args.rev, "label": label,
++    receipt = {"tool": TOOL, "class": CLASS, "revision": pins.pop("rev_state")["commit"],
++               "revision_requested": args.rev, "label": label,
+                "met_target": met, "exit": 0 if met else 1,
+                "recovered": recovered, "controls_ok": arms_ok,
+                "cases": cases, "controls": controls, "pins": pins,

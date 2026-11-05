@@ -4,6 +4,7 @@ source: S313 — UPX v5.2.0 `src/p_unix.cpp`, https://raw.githubusercontent.com/
 source: S312 (existing, round 89) — UPX v5.2.0 `src/p_unix.h` — the NE32 `packed_struct(b_info)` twelve-byte layout the walk steps by.
 source: S311 (existing, round 89) — UPX v5.2.0 `src/p_lx_elf.cpp` — the `un_shlib_1` peek that reports a desynchronised shared object as `corrupt b_info` and the executables' range-checked `unpackExtent` calls.
 source: S309 (existing, round 88) — UPX v5.2.0 `src/packhead.h` — the PackHeader `u_len` the accounting preference reads.
+source: S316 — UPX v5.2.0 `src/p_unix.cpp` (pack side), https://raw.githubusercontent.com/upx/upx/v5.2.0/src/p_unix.cpp — opened 2026-11-04, HTTP 200, 24181 bytes, sha256 `bf83c4133c27d39433db63bf604daf577d429d734c542d29c0b9cc8ed229642e`; line 439 `set_te32(&tmp.sz_unc, ph.u_len);` and line 449-458 show the producer writing the header and exactly `sz_cpr` payload bytes — the chain the repairs model is written by `PackUnix::packExtent`, and no ELF class overrides it.
 source: S314 — UPX v5.2.0 `src/p_lx_elf.h`, https://raw.githubusercontent.com/upx/upx/v5.2.0/src/p_lx_elf.h — opened 2026-11-04, HTTP 200, 31147 bytes, sha256 `895da5cd72da32bf17846ef4b8088b1ed75dc35ac2506f694098bb30c90c7d89`; line 107 `unsigned o_binfo;  // offset to first b_info` — the packer names the first block's start (`o_binfo = sz_elf_hdrs + sizeof(l_info) + sizeof(p_info)`, `src/p_lx_elf.cpp` line 4000), so the walk starts at a layout boundary rather than at an arbitrary offset.
 verified-at: 2026-11-04 (round 90; the landing measurements ran 2026-11-05 03:00-05:00 UTC — receipts in `.ufo/waves/round-90/l1/scores/` and the record in SCORECARD `## 2026-11-04 — round 90`)
 recheck: 180d — the counting command below and `python3 -I -B tools/round-90/upx-break-repair.py --selftest`.
@@ -89,6 +90,10 @@ reports the original's own procedure/segment/string counts.
   last-block `- 7` tamper of jq (block offset 10,094) and libz (60,124) that law writes the four-byte
   `UPX!` sentinel word, returns rc 0 and leaves `upx -t` red. The frozen counter scores interior cells
   only, so it cannot see this. Routed to round 91 with QUALITY 176.
+- **Hostile output paths are not all typed refusals (measured after the landing run).** Six of the
+  sentinel's twenty-seven hostile inputs exit 1 with a traceback because `write_atomic`/`mkstemp` sit
+  outside `main`'s `except Refused` (QUALITY 177); the counter's cells never exercise those paths, and
+  `N1-refuse-plain`'s "not 0" assertion would accept the crash. Routed to round 91.
 - **The REA count arm is not perfectly stable on docker-init.** Seven runs of REA 6.5.0 on the identical
   bytes (sha `0bd49c8d…`) reported 1268 six times and 1267 once, so one seat's `P2` cell read `3 of 4`;
   the L1's landing run at `499d2183` reports `P2 4 of 4` with the REA arm required, and both runs are

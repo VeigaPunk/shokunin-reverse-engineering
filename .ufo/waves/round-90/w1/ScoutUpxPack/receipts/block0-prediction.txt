@@ -1,0 +1,21 @@
+# Round-90 pack-side prediction test — block 0's sz_unc
+
+Source formula (pack side):
+  src/p_lx_elf.cpp:6008  unsigned hdr_u_len = sizeof(Elf64_Ehdr) + sz_phdrs;
+  src/p_lx_elf.cpp:5855  unsigned u_len = sz_elf_hdrs;   (shared-object path)
+  src/p_lx_elf.cpp:4316  sz_elf_hdrs = sizeof(Elf64_Ehdr) + phnum_o * sizeof(Elf64_Phdr) + sz_phdrx;
+  src/p_unix.cpp:426-427  set_te32(&tmp.sz_unc, hdr_u_len); set_te32(&tmp.sz_cpr, hdr_c_len);
+
+Prediction: block0.sz_unc == 64 + phnum*56
+Measured (walk.py on the locally packed carrier):
+  jq     phnum= 15 predicted sz_unc=  904  measured block0.sz_unc=  904  match=True
+  xxd    phnum= 15 predicted sz_unc=  904  measured block0.sz_unc=  904  match=True
+  dinit  phnum= 12 predicted sz_unc=  736  measured block0.sz_unc=  736  match=True
+  libz   phnum= 11 predicted sz_unc=  680  measured block0.sz_unc=  680  match=True
+
+Also: the whole chain is contiguous with no inter-block padding
+  block at 0x240: sz_unc=904 sz_cpr=252 -> next header at 0x348 (== off+12+sz_cpr: True)
+  block at 0x348: sz_unc=5408 sz_cpr=1651 -> next header at 0x9c7 (== off+12+sz_cpr: True)
+  block at 0x9c7: sz_unc=9561 sz_cpr=4758 -> next header at 0x1c69 (== off+12+sz_cpr: True)
+  block at 0x1c69: sz_unc=5528 sz_cpr=2626 -> next header at 0x26b7 (== off+12+sz_cpr: True)
+  block at 0x26b7: sz_unc=1184 sz_cpr=174 -> next header at 0x2771 (== off+12+sz_cpr: True)

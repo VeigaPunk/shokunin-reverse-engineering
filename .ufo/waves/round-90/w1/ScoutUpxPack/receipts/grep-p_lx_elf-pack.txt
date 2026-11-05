@@ -1,0 +1,75 @@
+# grep -n receipts — p_lx_elf.cpp (ELF pack scope)
+
+## PackLinuxElf64::pack2 main-program branch -> packExtent
+$ grep -n "" src/p_lx_elf.cpp | sed -n "6025,6031p;6055,6063p"
+6025:    if (is_shlib) {
+6026:        pack2_shlib(fo, ft, pre_xct_top);
+6027:    }
+6028:    else { // main program
+6029:        int n_ptload = 0;
+6030:        for (k = 0; k < e_phnum; ++k)
+6031:        if (is_LOAD(&phdri[k])) {
+6055:                        x.offset += delta;
+6056:                        x.size   -= delta;
+6057:                    }
+6058:                }
+6059:                // compressWithFilters() always assumes a "loader", so would
+6060:                // throw NotCompressible for small .data Extents, which PowerPC
+6061:                // sometimes marks as PF_X anyway.  So filter only first segment.
+6062:                packExtent(x,
+6063:                    (k==nk_f ? &ft : nullptr ), fo, hdr_u_len, 0, true);
+
+## PackLinuxElf64::pack3 -> super::pack3 (loader), gap blocks, end marker
+$ grep -n "" src/p_lx_elf.cpp | sed -n "783,790p;806,820p"
+783:off_t PackLinuxElf64::pack3(OutputFile *fo, Filter &ft)
+784:{
+785:    if (!overlay_offset) {
+786:        overlay_offset = sizeof(linfo) + (xct_off ? xct_off : sz_elf_hdrs);
+787:    }
+788:
+789:    total_out = super::pack3(fo, ft);  // loader follows compressed PT_LOADs
+790:    if (fo && xct_off && Elf64_Dyn::DT_INIT != upx_dt_init) { // patch user_init_rp
+806:    // Then compressed gaps (including debuginfo.)
+807:    for (unsigned k = 0; k < e_phnum; ++k) {
+808:        Extent x;
+809:        x.size = find_LOAD_gap(phdri, k, e_phnum);
+810:        if (x.size) {
+811:            x.offset = get_te64(&phdri[k].p_offset) +
+812:                       get_te64(&phdri[k].p_filesz);
+813:            packExtent(x, nullptr, fo);
+814:        }
+815:    }
+816:    // write block end marker (uncompressed size 0)
+817:    b_info hdr; memset(&hdr, 0, sizeof(hdr));
+818:    set_le32(&hdr.sz_cpr, UPX_MAGIC_LE32);
+819:    fo->write(&hdr, sizeof(hdr));
+820:    total_out = fpad4(fo, total_out);
+
+## PackLinuxElf::pack2_shlib_overlay_write — shlib first b_info
+$ grep -n "" src/p_lx_elf.cpp | sed -n "5488,5503p"
+5488:unsigned PackLinuxElf::pack2_shlib_overlay_write(OutputFile *fo, MemBuffer &mb,
+5489:        unsigned u_len, unsigned c_len)
+5490:{
+5491:    // Write mb with b_info header.
+5492:    b_info tmp;
+5493:    memset(&tmp, 0, sizeof(tmp));
+5494:    set_te32(&tmp.sz_unc, u_len);
+5495:    set_te32(&tmp.sz_cpr, c_len);
+5496:    tmp.b_method = (EM_ARM == e_machine) ? M_NRV2B_8 : M_NRV2B_LE32;
+5497:    tmp.b_extra = 0;
+5498:    fo->write(&tmp, sizeof(tmp));   total_out += sizeof(tmp);
+5499:    b_len += sizeof(b_info);
+5500:    fo->write(mb, c_len); total_out += c_len;
+5501:    return total_out;
+5502:}
+5503:
+
+## o_binfo / first b_info offset (generateElfHdr)
+$ grep -n "" src/p_lx_elf.cpp | sed -n "4316,4322p"
+4316:    sz_elf_hdrs = sizeof(Elf64_Ehdr) + phnum_o * sizeof(Elf64_Phdr) + sz_phdrx;
+4317:    overlay_offset = sz_elf_hdrs + sizeof(l_info);
+4318:    o_binfo        = sz_elf_hdrs + sizeof(l_info) + sizeof(p_info);
+4319:
+4320:    l_info linfo2; memset(&linfo2, 0, sizeof(linfo2));
+4321:    fo->write(&linfo2, sizeof(linfo2));
+4322:}

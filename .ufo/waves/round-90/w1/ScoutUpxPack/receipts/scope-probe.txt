@@ -1,0 +1,59 @@
+# Round-90 pack-side scope probe — which writer is in force for each carrier
+
+## override census in the whole v5.2.0 src tree
+$ grep -rn "::packExtent" tree/upx-5.2.0/src/
+tree/upx-5.2.0/src/p_lx_elf.cpp:4375:// For now we must choose only one, and force PackUnix::packExtent
+tree/upx-5.2.0/src/p_lx_elf.cpp:5227:// For now we must choose only one, and force PackUnix::packExtent
+tree/upx-5.2.0/src/p_lx_elf.cpp:5600:                // Compare PackUnix::packExtent, especially "if (u_len)" .
+tree/upx-5.2.0/src/p_lx_elf.cpp:5873:                // Compare PackUnix::packExtent, especially "if (u_len)" .
+tree/upx-5.2.0/src/p_unix.cpp:335:void PackUnix::packExtent(
+-> PackUnix::packExtent has NO subclass override: the base-class writer at p_unix.cpp:335 is in force.
+
+$ grep -n "int pack2(OutputFile" tree/upx-5.2.0/src/p_unix.h tree/upx-5.2.0/src/p_unix.cpp tree/upx-5.2.0/src/p_lx_elf.cpp
+$ grep -n "int PackLinuxElf64::pack2\|int PackLinuxElf32::pack2" tree/upx-5.2.0/src/p_lx_elf.cpp
+5571:int PackLinuxElf32::pack2_shlib(OutputFile *fo, Filter &ft, unsigned pre_xct_top)
+5684:int PackLinuxElf32::pack2(OutputFile *fo, Filter &ft)
+5845:int PackLinuxElf64::pack2_shlib(OutputFile *fo, Filter &ft, unsigned pre_xct_top)
+5955:int PackLinuxElf64::pack2(OutputFile *fo, Filter &ft)
+-> PackUnix::pack2 (p_unix.cpp:150) IS overridden: its b_info writer (211-229) is DEAD for the carriers.
+
+## PackUnix::pack is the ELF driver (no PackLinuxElf*::pack override)
+$ grep -rn "::pack(OutputFile" tree/upx-5.2.0/src/p_unix.cpp tree/upx-5.2.0/src/p_lx_elf.cpp
+tree/upx-5.2.0/src/p_unix.cpp:287:void PackUnix::pack(OutputFile *fo)
+
+## PackLinuxElf64::pack2 returns 0 -> the generic end marker is skipped
+$ grep -n "" src/p_lx_elf.cpp | sed -n "6080p"
+6080:    return 0;  // omit end-of-compression bhdr for now
+$ grep -n "" src/p_unix.cpp | sed -n "318,323p"
+318:    if (pack2(fo, ft)) {
+319:        // write block end marker (uncompressed size 0)
+320:        b_info hdr; memset(&hdr, 0, sizeof(hdr));
+321:        set_le32(&hdr.sz_cpr, UPX_MAGIC_LE32);
+322:        fo->write(&hdr, sizeof(hdr));
+323:    }
+-> p_unix.cpp:320-322 is NOT written for ELF64; the in-force end marker is p_lx_elf.cpp:817-819.
+
+## measured: jq's segment-1 chain stops at the loader, with no end marker
+  bytes at 0x2770..0x2780: ff 00 00 00 00 00 00 00 40 02 00 00 7c 27 00 00
+  at 0x2771: sz_unc=0 sz_cpr=0x40000000  (sz_cpr is NOT UPX_MAGIC_LE32=0x21585055) -> loader, not an end marker
+  end-of-compression b_info at 0x36a4: 00 00 00 00 55 50 58 21 00 00 00 00 -> sz_unc=0 sz_cpr=magic
+  PackHeader magic word at 0x36b0: b'UPX!'
+
+## the shlib path writes the first b_info in p_lx_elf.cpp, not p_unix.cpp
+$ grep -n "" src/p_lx_elf.cpp | sed -n "5491,5500p"
+5491:    // Write mb with b_info header.
+5492:    b_info tmp;
+5493:    memset(&tmp, 0, sizeof(tmp));
+5494:    set_te32(&tmp.sz_unc, u_len);
+5495:    set_te32(&tmp.sz_cpr, c_len);
+5496:    tmp.b_method = (EM_ARM == e_machine) ? M_NRV2B_8 : M_NRV2B_LE32;
+5497:    tmp.b_extra = 0;
+5498:    fo->write(&tmp, sizeof(tmp));   total_out += sizeof(tmp);
+5499:    b_len += sizeof(b_info);
+5500:    fo->write(mb, c_len); total_out += c_len;
+
+## ELF class chain (p_lx_elf.h)
+40:class PackLinuxElf : public PackUnix
+315:class PackLinuxElf64 : public PackLinuxElf
+489:class PackLinuxElf64Le : public PackLinuxElf64
+518:class PackLinuxElf64amd : public PackLinuxElf64Le

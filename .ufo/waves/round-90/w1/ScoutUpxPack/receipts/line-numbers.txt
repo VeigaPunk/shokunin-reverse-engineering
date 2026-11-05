@@ -1,0 +1,96 @@
+# Consolidated verification with exit codes — ScoutUpxPack, round 90
+
+## 1. fetch + hash (each command's exit code)
+http=200 bytes=24181
+  curl p_unix.cpp exit=0
+http=200 bytes=6651
+  curl p_unix.h exit=0
+http=200 bytes=373743
+  curl p_lx_elf.cpp exit=0
+http=200 bytes=31147
+  curl p_lx_elf.h exit=0
+bf83c4133c27d39433db63bf604daf577d429d734c542d29c0b9cc8ed229642e  src/p_unix.cpp
+73bd992ec0fb46022e299ec4b2cd696545412453a654573e6246034cf4881a88  src/p_unix.h
+551fc8675a59493793f59b64eb8bb9cc208a34f701ccd2bda8c9aaafb228d2dc  src/p_lx_elf.cpp
+895da5cd72da32bf17846ef4b8088b1ed75dc35ac2506f694098bb30c90c7d89  src/p_lx_elf.h
+  sha256sum exit=0
+
+## 2. key greps (exit code + hit count)
+  '::packExtent' hits=5 (grep exit=0)
+  'int pack2(OutputFile' hits=0 (grep exit=0)
+  '::pack(OutputFile' hits=19 (grep exit=0)
+  'get_te32(&hdr.p.p_filesize)' hits=2 (grep exit=0)
+  'sz_block1 = unpackExtent' hits=2 (grep exit=0)
+
+## 3. grep -n line numbers cited in the report
+### p_unix.cpp
+55:    COMPILE_TIME_ASSERT(sizeof(b_info) == 12)
+225:            fo->write(obuf, ph.c_len);
+229:            fo->write(ibuf, ph.u_len);
+284:    fo->write(&tmp, sizeof(tmp));
+287:void PackUnix::pack(OutputFile *fo)
+312:        set_te32(&hbuf.p_filesize, file_size);
+335:void PackUnix::packExtent(
+426:            set_te32(&tmp.sz_unc, hdr_u_len);
+427:            set_te32(&tmp.sz_cpr, hdr_c_len);
+430:            fo->write(&tmp, sizeof(tmp));
+439:        set_te32(&tmp.sz_unc, ph.u_len);
+440:        set_te32(&tmp.sz_cpr, ph.c_len);
+449:        fo->write(&tmp, sizeof(tmp));
+458:            fo->write(obuf, ph.c_len);
+464:            fo->write(ibuf, ph.u_len);
+### p_lx_elf.cpp
+621:    set_le32(&hdr.sz_cpr, UPX_MAGIC_LE32);
+622:    fo->write(&hdr, sizeof(hdr));
+818:    set_le32(&hdr.sz_cpr, UPX_MAGIC_LE32);
+819:    fo->write(&hdr, sizeof(hdr));
+4000:    o_binfo        = sz_elf_hdrs + sizeof(l_info) + sizeof(p_info);
+4318:    o_binfo        = sz_elf_hdrs + sizeof(l_info) + sizeof(p_info);
+5494:    set_te32(&tmp.sz_unc, u_len);
+5495:    set_te32(&tmp.sz_cpr, c_len);
+5498:    fo->write(&tmp, sizeof(tmp));   total_out += sizeof(tmp);
+5500:    fo->write(mb, c_len); total_out += c_len;
+5802:    return 0;  // omit end-of-compression bhdr for now
+6008:    unsigned hdr_u_len = sizeof(Elf64_Ehdr) + sz_phdrs;
+6080:    return 0;  // omit end-of-compression bhdr for now
+7069:    ||  get_te32(&hdr.p.p_filesize) != ph.u_file_size
+7102:    unsigned const sz_block1 = unpackExtent(sz_elf_hdrs, nullptr,
+7272:    ||  get_te32(&hdr.p.p_filesize) != ph.u_file_size
+7305:    unsigned const sz_block1 = unpackExtent(sz_elf_hdrs, nullptr,
+### p_unix.h
+109:    packed_struct(b_info) { // 12-byte header before each compressed block
+110:        NE32 sz_unc;  // uncompressed_size
+111:        NE32 sz_cpr;  //   compressed_size
+118:    packed_struct(l_info) { // 12-byte trailer in header for loader
+126:    packed_struct(p_info) { // 12-byte packed program header
+127:        NE32 p_progid;
+128:        NE32 p_filesize;
+129:        NE32 p_blocksize;
+151:    packed_struct(b_info) { // 12-byte header before each compressed block
+160:    packed_struct(l_info) { // 12-byte trailer in header for loader
+168:    packed_struct(p_info)  {// 12-byte packed program header
+183:    packed_struct(b_info) { // 12-byte header before each compressed block
+192:    packed_struct(l_info) { // 12-byte trailer in header for loader
+200:    packed_struct(p_info) { // 12-byte packed program header
+### p_lx_elf.h
+40:class PackLinuxElf : public PackUnix
+107:    unsigned o_binfo;  // offset to first b_info
+315:class PackLinuxElf64 : public PackLinuxElf
+489:class PackLinuxElf64Le : public PackLinuxElf64
+518:class PackLinuxElf64amd : public PackLinuxElf64Le
+  'int  pack2(OutputFile' (declaration, two spaces) hits:
+tree/upx-5.2.0/src/p_lx_elf.h:58:    virtual int  pack2(OutputFile *, Filter &) override = 0;  // append compressed data
+tree/upx-5.2.0/src/p_lx_elf.h:162:    virtual int  pack2(OutputFile *, Filter &) override;  // append compressed data
+tree/upx-5.2.0/src/p_lx_elf.h:334:    virtual int  pack2(OutputFile *, Filter &) override;  // append compressed data
+tree/upx-5.2.0/src/p_lx_interp.h:58:    virtual int  pack2(OutputFile *, Filter &) override;  // append compressed data
+tree/upx-5.2.0/src/p_mach.h:747:    virtual int  pack2(OutputFile *, Filter &) override;  // append compressed data
+tree/upx-5.2.0/src/p_unix.h:65:    virtual int  pack2(OutputFile *, Filter &);  // append compressed data
+  grep exit=0
+  'PackUnix::pack2' definition:
+150:int PackUnix::pack2(OutputFile *fo, Filter &ft)
+  'PackLinuxElf64::pack2' override:
+5845:int PackLinuxElf64::pack2_shlib(OutputFile *fo, Filter &ft, unsigned pre_xct_top)
+5955:int PackLinuxElf64::pack2(OutputFile *fo, Filter &ft)
+  'PackLinuxElf32::pack2' override:
+5571:int PackLinuxElf32::pack2_shlib(OutputFile *fo, Filter &ft, unsigned pre_xct_top)
+5684:int PackLinuxElf32::pack2(OutputFile *fo, Filter &ft)

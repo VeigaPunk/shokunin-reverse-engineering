@@ -1,0 +1,98 @@
+# grep -n receipts (scout seat, round 90)
+
+## p_unix.cpp — pack-side b_info writer
+$ grep -n "" src/p_unix.cpp | sed -n "406,451p"
+406:        // write block sizes
+407:        b_info tmp;
+408:        if (hdr_u_len) {
+409:            unsigned hdr_c_len = 0;
+410:            MemBuffer hdr_obuf;
+411:            hdr_obuf.allocForCompression(hdr_u_len);
+412:            int r = upx_compress(hdr_ibuf, hdr_u_len, hdr_obuf, &hdr_c_len,
+413:                /* &progress callback */ nullptr,
+414:                ph_forced_method(ph.method), 10,
+415:                /* &config_t */ nullptr, /* &result_t */ nullptr);
+416:            if (r != UPX_E_OK)
+417:                throwInternalError("header compression failed");
+418:            if (hdr_c_len >= hdr_u_len)
+419:                throwInternalError("header compression size increase");
+420:            ph.saved_u_adler = upx_adler32(hdr_ibuf, hdr_u_len, init_u_adler);
+421:            ph.saved_c_adler = upx_adler32(hdr_obuf, hdr_c_len, init_c_adler);
+422:            ph.u_adler = upx_adler32(ibuf, ph.u_len, ph.saved_u_adler);
+423:            ph.c_adler = upx_adler32(obuf, ph.c_len, ph.saved_c_adler);
+424:            end_u_adler = ph.u_adler;
+425:            memset(&tmp, 0, sizeof(tmp));
+426:            set_te32(&tmp.sz_unc, hdr_u_len);
+427:            set_te32(&tmp.sz_cpr, hdr_c_len);
+428:            tmp.b_method = (unsigned char) ph_forced_method(ph.method);
+429:            tmp.b_extra = b_extra;
+430:            fo->write(&tmp, sizeof(tmp));
+431:            total_out += sizeof(tmp);
+432:            b_len += sizeof(b_info);
+433:            fo->write(hdr_obuf, hdr_c_len);
+434:            total_out += hdr_c_len;
+435:            total_in  += hdr_u_len;
+436:            hdr_u_len = 0;  // compress hdr one time only
+437:        }
+438:        memset(&tmp, 0, sizeof(tmp));
+439:        set_te32(&tmp.sz_unc, ph.u_len);
+440:        set_te32(&tmp.sz_cpr, ph.c_len);
+441:        if (ph.c_len < ph.u_len) {
+442:            tmp.b_method = (unsigned char) ph.method;
+443:            if (ft) {
+444:                tmp.b_ftid = (unsigned char) ft->id;
+445:                tmp.b_cto8 = ft->cto;
+446:            }
+447:        }
+448:        tmp.b_extra = b_extra;
+449:        fo->write(&tmp, sizeof(tmp));
+450:        total_out += sizeof(tmp);
+451:        b_len += sizeof(b_info);
+
+## p_unix.cpp — packExtent header + payload writes
+$ grep -n "" src/p_unix.cpp | sed -n "438,464p"
+438:        memset(&tmp, 0, sizeof(tmp));
+439:        set_te32(&tmp.sz_unc, ph.u_len);
+440:        set_te32(&tmp.sz_cpr, ph.c_len);
+441:        if (ph.c_len < ph.u_len) {
+442:            tmp.b_method = (unsigned char) ph.method;
+443:            if (ft) {
+444:                tmp.b_ftid = (unsigned char) ft->id;
+445:                tmp.b_cto8 = ft->cto;
+446:            }
+447:        }
+448:        tmp.b_extra = b_extra;
+449:        fo->write(&tmp, sizeof(tmp));
+450:        total_out += sizeof(tmp);
+451:        b_len += sizeof(b_info);
+452:
+453:        if (ft) {
+454:            ph.u_adler = end_u_adler;
+455:        }
+456:        // write compressed data
+457:        if (ph.c_len < ph.u_len) {
+458:            fo->write(obuf, ph.c_len);
+459:            total_out += ph.c_len;
+460:            // Checks ph.u_adler after decompression, after unfiltering
+461:            verifyOverlappingDecompression(ft);
+462:        }
+463:        else {
+464:            fo->write(ibuf, ph.u_len);
+
+## p_unix.cpp — pack() p_info write + end-of-chain marker
+$ grep -n "" src/p_unix.cpp | sed -n "309,323p"
+309:    if (fo->st_size()) { // Only append if pack1 actually wrote something.
+310:        p_info hbuf;
+311:        set_te32(&hbuf.p_progid, progid);
+312:        set_te32(&hbuf.p_filesize, file_size);
+313:        set_te32(&hbuf.p_blocksize, blocksize);
+314:        fo->write(&hbuf, sizeof(hbuf));
+315:    }
+316:
+317:    // append the compressed body
+318:    if (pack2(fo, ft)) {
+319:        // write block end marker (uncompressed size 0)
+320:        b_info hdr; memset(&hdr, 0, sizeof(hdr));
+321:        set_le32(&hdr.sz_cpr, UPX_MAGIC_LE32);
+322:        fo->write(&hdr, sizeof(hdr));
+323:    }

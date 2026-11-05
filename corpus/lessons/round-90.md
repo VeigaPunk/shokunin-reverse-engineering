@@ -17,6 +17,7 @@ the row).
 | S313 | https://raw.githubusercontent.com/upx/upx/v5.2.0/src/p_unix.cpp — opened 2026-11-04, HTTP 200, 24181 bytes, sha256 `bf83c4133c27d394…` | line 472 `// Consumes b_info header block and sz_cpr data block from input file 'fi'.` (12 words); line 485 `fi->readx(&hdr, szb_info);`; line 504 `fi->readx(ibuf+j, sz_cpr);` | **admits** (tier A, code): the consumer's loop is the chain law — a twelve-byte header, then exactly `sz_cpr` payload bytes, so an in-range wrong value desynchronises the suffix |
 | S314 | https://raw.githubusercontent.com/upx/upx/v5.2.0/src/p_lx_elf.h — opened 2026-11-04, HTTP 200, 31147 bytes, sha256 `895da5cd72da32bf…` | line 107 `unsigned o_binfo;  // offset to first b_info` (7 words) | **admits** (tier A, code): the packer names the first block's start, which is why a derivation searches forward from a boundary instead of anywhere |
 | S315 | https://raw.githubusercontent.com/upx/upx/v5.2.0/NEWS — opened 2026-11-04, HTTP 200, 26202 bytes, sha256 `7eafd96adc1674a3…` | searched for `b_info`, `sz_cpr` and block-size statements: none | **rejects** (tier C, docs): user-visible change prose makes no statement about the block format or the walk; flip: a release entry that changes the block format or its bounds |
+| S316 | https://raw.githubusercontent.com/upx/upx/v5.2.0/src/p_unix.cpp (pack side) — opened 2026-11-04, HTTP 200, 24181 bytes, sha256 `bf83c4133c27d394…` | line 439 `set_te32(&tmp.sz_unc, ph.u_len);`; line 449 `fo->write(&tmp, sizeof(tmp));`; line 458 `fo->write(obuf, ph.c_len);` | **admits** (tier A, code): the `${PackUnix::packExtent}` producer writes the header and exactly `sz_cpr` payload bytes, and no ELF class overrides it — the chain is written, not inferred; a third scope on the same URL (with S313 and the kept round-87/89 rejection), precedent S307+S311 |
 
 Status changes, old → new: `src/p_unix.cpp` as a whole (`PackUnix::unpack`) stays **rejected** from
 rounds 87 and 89 — its flip condition ("a carrier class unpacked through the base class") is still
@@ -24,8 +25,15 @@ unmet, since the executables call `PackLinuxElf64::unpack`; this round's S313 is
 the same URL (`PackUnix::unpackExtent`, the block consumer every executable path calls at
 `src/p_lx_elf.cpp:7902,7907,8051`), absent → mined. `src/p_lx_elf.h` absent → mined (S314). `NEWS`
 absent → rejected (S315). Census `validate --root … kaidoku`: exit 0 before (217 rows, receipt
-`.ufo/waves/round-90/pre/sources-census-before.txt`) and exit 0 after (220 rows; A 190→192, C 8→9;
-mined 194→196, rejected 23→24).
+`.ufo/waves/round-90/pre/sources-census-before.txt`) and exit 0 after (221 rows; A 198→201, B 11→11,
+C 8→9; mined 194→197, rejected 23→24 — the before-side numbers are the after-side minus this round's
+four additions, since the after census is the measured file).
+
+- **Anchor correction (S311, recorded here, not edited in place).** Round-89's S311 row cites line 7067 for the
+  `p_filesize` cross-check and 7098 for the `unpackExtent` peek; the scout re-opened the same bytes this round
+  (HTTP 200, sha256 `551fc867…d2dc`) and measures 7069 and 7102 (7067 is the `l_magic` test, 7098-7099 are
+  comments). The row is untouched — a supersedes row is a round-91 item (CORPUS rule 2); the corrected
+  anchors are recorded here as the old→new change so the next reader does not rely on the wrong lines.
 
 ## Mistakes
 
@@ -54,6 +62,14 @@ mined 194→196, rejected 23→24).
   commit with `git archive <rev> | tar -x -C $S` (915 MB, 3.7 s), run the census there, delete the
   tree — exit 0; the receipt is `.ufo/waves/round-90/pre/sources-census-before.txt`.
 
+- **M90-4 — a seat wrote into the L1's receipt directory and to the lane root.** Class: seat-path
+  discipline. Evidence: five `receipt-*.txt` files appeared at the lane root at 00:03:27 (a seat's C2
+  fixture receipts) and a duplicate `c1-at-5f8ea0769.json` appeared in the L1's `l1/scores/` with an
+  eleven-character `revision` the old counter never validated. Captured-by: `git status --porcelain`
+  before the land, which showed both. Fix: the five root receipts were relocated byte-identically into
+  `w1/ReviewerC2/receipts/misrooted/`; the duplicate receipt is retained as history because it is
+  itself the evidence for the supersession's `--rev` clause (it names a rev that does not resolve).
+
 - **M90-5 — a supersession reason claimed a field the receipt never carries.** Class: bookkeeping
   written from the diff's intent rather than from the produced artifact. Evidence: the round-90
   battery's `rev_state()` computes the worktree's dirty-path count, but `pins.pop("rev_state")` consumes
@@ -62,7 +78,6 @@ mined 194→196, rejected 23→24).
   produced receipt's keys against the sentence that describes it (the QUALITY 162 rule applied to a
   receipt instead of a docstring). Fix applied: the reason now says what the receipt carries; the
   field itself is a round-91 repair.
-
 ## Round-89 closure defects — dispositions
 
 | id | disposition |
@@ -97,5 +112,8 @@ scratch, and two seat receipts that landed at the lane root were relocated to
 | ReviewerC2 | report + receipts | block 30 green at the landed revision and red at both base revisions, plus three negative probes the counter passes and the base-presence gate refuses (QUALITY 175 evidence); record-keeping nit on two base receipts differing only in the revision echoed. |
 | ConnectorOverlap | report + receipts | sibling-scope sweep: 0 exact matches for the packed-ELF/instrument-revision ground across the fleet's PROVINCE/README files; no `considerthese/` in this lane (`Path not found`); `merge/kaidoku/` carries no UPX entry. |
 | SentinelScope | notes + receipts | hostile-input and cost probing of the repair; its findings are carried in the entry's limits and QUALITY rows. |
-| ReviewerC1, MutCounter, ScoutUpxPack | PENDING_WAVE |
+| ReviewerC1 | report + receipts | no falsification of R90-C1: re-derived label, arms, controls and pins from raw bytes with zero cell mismatches; six cheat/no-op/sibling-plant attack families fail to green P1; brute (16,524 candidate validations on jq/xxd completions) and first-successor arms find nothing. |
+| MutCounter | report + 60 receipts | 8 single-anchor and 2 double mutants cut from the declared battery: all 10 pass `--selftest` 8/8, i.e. the selftest has zero coverage of `met` composition; 7 of 8 control mutants killed by the battery runs, survivor = `carrier_blind` not required, and the *pristine* counter returns `met_target true` for a source-free provenance cheat that ships its own copies of the four packed images (QUALITY 174's gap, quantified). |
+| ScoutUpxPack | report + 10 receipts | the pack-side grounding (S316): `PackUnix::packExtent` writes the header and exactly `sz_cpr` payload bytes and no ELF class overrides it; block 0's `sz_unc == 64 + phnum*56` on all four carriers; the ±7 tamper message and the libz accounting reproduced. Also measured two anchor drifts in S311 (7067→7069, 7098→7102), recorded in the Gate above without an in-place edit. |
+| SentinelScope | report + receipts | 27 hostile inputs: 6 crash with a traceback because `write_atomic`/`mkstemp` sit outside `main`'s `except Refused` (QUALITY 177, routed), and F1 independently reproduces the sibling-`boxes` oracle (`carrier_blind` 6/6 with `blind_ok` true). |
 

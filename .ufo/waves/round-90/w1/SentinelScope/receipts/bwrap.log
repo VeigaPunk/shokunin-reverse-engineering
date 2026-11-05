@@ -1,0 +1,47 @@
+bwrap: bubblewrap 0.13.1
+{"probe": "B0-baseline-decoys", "rc": 0}
+    /usr/bin/jq 367675832d0a33ea
+    /usr/bin/tinyxxd 367675832d0a33ea
+    /usr/lib/libz.so.1.3.2 367675832d0a33ea
+    /usr/bin/docker-init 367675832d0a33ea
+{"probe": "B1-hidden-run-root", "rc": 0}
+    pid 3434259 ppid 3434257
+    direct-secret True
+    runroot-listing []
+{"probe": "B1b-proc-peers", "rc": 0}
+    pid-ns-view [1, 2, 3, 4, 5, 6, 7, 8, 14, 15, 16, 17]
+    host-pids-visible True
+    ppid-present True
+{"probe": "B2-mountinfo", "rc": 0}
+    578 263 0:30 /@ / rw,nosuid,noatime master:1 - btrfs /dev/mapper/root rw,compress=zstd:3,ssd,discard=async,space_cache=v2,subvolid=256,subvol=/@
+    778 777 0:94 / /fast/scratch/hyaku/kaidoku-r90/SentinelScope/bwrap/runroot rw,nosuid,nodev,relatime - tmpfs tmpfs rw,mode=755,uid=1000,gid=1000,inode64,huge=advise
+    779 578 259:2 /scratch/hyaku/kaidoku-r90/SentinelScope/bwrap/decoy /usr/bin/jq rw,nosuid,nodev,noatime master:213 - xfs /dev/nvme1n1p2 rw,inode64,logbufs=8,logbsize=256k,noquota
+    780 578 259:2 /scratch/hyaku/kaidoku-r90/SentinelScope/bwrap/decoy /usr/bin/tinyxxd rw,nosuid,nodev,noatime master:213 - xfs /dev/nvme1n1p2 rw,inode64,logbufs=8,logbsize=256k,noquota
+    781 578 259:2 /scratch/hyaku/kaidoku-r90/SentinelScope/bwrap/decoy /usr/lib/libz.so.1.3.2 rw,nosuid,nodev,noatime master:213 - xfs /dev/nvme1n1p2 rw,inode64,logbufs=8,logbsize=256k,noquota
+    782 578 259:2 /scratch/hyaku/kaidoku-r90/SentinelScope/bwrap/decoy /usr/bin/docker-init rw,nosuid,nodev,noatime master:213 - xfs /dev/nvme1n1p2 rw,inode64,logbufs=8,logbsize=256k,noquota
+{"probe": "B3-umount-tmpfs", "rc": 0}
+    before True
+    umount2 rc -1 errno 1
+    after True
+    secret []
+{"probe": "B4-namespaces", "rc": 0}
+    mnt self mnt:[4026533568] ppid absent
+    pid self pid:[4026531836] ppid absent
+    user self user:[4026533566] ppid absent
+    ipc self ipc:[4026531839] ppid absent
+    net self net:[4026531833] ppid absent
+    uts self uts:[4026531838] ppid absent
+    CapEff 0000000000000000
+    uid 1000 euid 1000
+    no_new_privs 1
+{"probe": "B5-decoy-readback", "rc": 0}
+    decoy-bytes b'decoy-not-a-carrier\ndecoy-not-a-'
+    is-decoy True
+{"probe": "B6-write-into-hidden-root", "rc": 0}
+    listdir []
+    wrote True
+{"probe": "B7-no-tmpfs-control", "rc": 0}
+    runroot-visible True
+    secret-visible False
+{"probe": "B8-second-copy-outside", "rc": 1}
+   err: Traceback (most recent call last): |   File "<string>", line 3, in <module> |     print('readable', os.path.isfile(p)) |                       ^^ | NameError: name 'os' is not defined. Did you forget to import 'os'?
