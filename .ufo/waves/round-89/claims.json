@@ -75,6 +75,14 @@
    "supersedes": "tools/round-88/depth-blocks.py (458eeabdfd6209031e12b9081cbbe48d94d18763686db51f0d48f721507c7d5b)",
    "reason": "the round-88 counter set met_target = not unresolved, so it exited 0 at the base state (27 blocks) and on a one-line citation-only stub (28 blocks) - QUALITY 157 / M88-7. v2 requires --expect-blocks N, sets met_target = blocks == N and resolved == blocks and not unresolved, and adds a declared shape floor (25 words, 2 backticked spans) that the stub fails. R89-C2 is a new claim on a new block, not a rewrite of R88-C2, whose record and receipt stay as filed.",
    "retaken_before": ".ufo/waves/round-89/pre/c2-depth-at-base.json (blocks 28, expect 29, met false, exit 1) and .ufo/waves/round-89/pre/c2-control-stub-world.json (blocks 29, resolved 28, exit 1)"
+  },
+  {
+   "path": "tools/round-89/upx-field-value-repair.py",
+   "commit": "pending",
+   "supersedes": "tools/round-89/upx-field-value-repair.py (332917f2b620da7a659b78db5bf498c8af2eba6ae529d872c2518b62ad6b1070, the declared bytes)",
+   "reason": "the wave found three defects in the declared bytes and the repair was revised in-round, before any measured run: (a) the round-87 module's `Refused` escaped as an uncaught traceback (rc 1) because `derive()` called `find_packheader` outside the converting `except`, so the counter's `N1-refuse-plain` (which asserts `rc != 0`) accepted a crash as a refusal; (b) a FIFO `--in` blocked (exit 124 at 5 s) and `/dev/zero` raised `MemoryError` from an unbounded read, because the round-88 input guards were not inherited. The revision adds `read_input()` (`lstat`, regular file, size cap) and a `repair()` wrapper that converts every upstream `Refused` to this module's (rc 2); selftest 16 -> 22 cases, failures 0. The claim's predicate, counter, label, kill rule and target are unchanged; the kill rule's `repair_sha256` pin now resolves to the superseding bytes, whose receipts are `pre/c1-candidate-at-declaration.json` (4 of 4, met), `l1/scores/c1-r88class-regression.json` and `l1/scores/c1-r87class-regression.json`, all re-taken after the revision.",
+   "retaken_before": ".ufo/waves/round-89/pre/c1-candidate-at-declaration.json at repair_sha256 664b973a (recovered 4 of 4, controls all true, regression arm met, exit 0) and the declared-bytes receipt kept as history (.ufo/waves/round-89/w1/ReviewerC1/receipts/c1-repro.json, repair_sha256 332917f2, same label)",
+   "superseding_sha256": "664b973a3fb129f5920a4f583fee3810183f54a082841c77ba67039332285c37"
   }
  ]
 }

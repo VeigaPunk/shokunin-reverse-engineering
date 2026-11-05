@@ -13,7 +13,10 @@ The derivation is the round-88 chain-geometry law, stored-value blind: the first
 block's `sz_cpr` is the distance from block 0's payload start to the next
 `b_info` candidate, bounded by `sz_unc0`, and among the survivors the candidate
 that accounts for the most declared `u_len` wins (`(fits_u_len, total,
--derived)`, S309).  A stored value equal to the derived one is `intact` and the
+-derived)`, S309).  `fits_u_len` is a *rank key, not a filter*: when no
+candidate fits, the best non-fitting one is taken and the corrected bytes are
+re-validated through the round-87 anchor path, which refuses a correction that
+does not restore a plausible chain.  A stored value equal to the derived one is `intact` and the
 input is returned byte-identical; any other stored value is corrected.
 
 Refusals: not a little-endian ELF; no validated PackHeader; no l_info candidate
@@ -32,8 +35,10 @@ import hashlib
 import importlib.util
 import json
 import os
+import stat
 import struct
 import sys
+import tempfile
 
 TOOL = "tools/round-89/upx-field-value-repair.py"
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -107,10 +112,23 @@ def derive(d: bytes, rep, r88) -> tuple[int, dict]:
 
 
 def repair(d: bytes) -> tuple[bytes, dict]:
+    """Public entry: every refusal leaves as this module's `Refused` (rc 2).
+
+    The round-87 module raises its own `Refused` from `find_packheader`,
+    `find_linfo` and `repair`; an unconverted one escapes as a traceback and
+    exit 1, which a `rc != 0` refusal control would read as a typed refusal.
+    """
     if d[:4] != b"\x7fELF" or len(d) < 64 or d[5] != 1:
         raise Refused("not a little-endian ELF")
     rep, digest87 = load_module(R87, "r87repair")
     r88, digest88 = load_module(R88, "r88repair")
+    try:
+        return _repair(d, rep, r88, digest87, digest88)
+    except rep.Refused as exc:
+        raise Refused(f"upstream refusal: {exc}") from None
+
+
+def _repair(d: bytes, rep, r88, digest87: str, digest88: str) -> tuple[bytes, dict]:
     # The round-87 anchor path first (magic restore / intact passthrough), so the
     # round-87 class keeps its repair.  A broken first block makes that walk
     # refuse; the field derivation then runs on the original bytes.
@@ -202,6 +220,44 @@ def selftest() -> int:
 
     refuses("refuse-not-elf", b"not an elf at all" * 8)
     refuses("refuse-empty", b"")
+    # A plain original must leave as this module's typed refusal, never as an
+    # unconverted upstream traceback (round-89 wave finding M89-8).
+    try:
+        repair(open("/usr/bin/true", "rb").read())
+        fails.append("refuse-plain-original")
+    except Refused:
+        pass
+    except Exception as exc:  # noqa: BLE001 - the point of the case
+        fails.append(f"refuse-plain-original-untyped:{exc.__class__.__name__}")
+    ncases += 1
+    with tempfile.TemporaryDirectory() as td:
+        fifo = os.path.join(td, "fifo")
+        os.mkfifo(fifo)
+        for name, path in (("fifo", fifo), ("device", "/dev/zero"),
+                           ("missing", os.path.join(td, "absent"))):
+            ncases += 1
+            try:
+                read_input(path)
+                fails.append(f"read-input-accepts-{name}")
+            except Refused:
+                pass
+        big = os.path.join(td, "big")
+        with open(big, "wb") as fh:
+            fh.truncate(MAX_INPUT + 1)
+        ncases += 1
+        try:
+            read_input(big)
+            fails.append("read-input-accepts-oversized")
+        except Refused:
+            pass
+        link = os.path.join(td, "link")
+        os.symlink("/usr/bin/true", link)
+        ncases += 1
+        try:
+            read_input(link)
+            fails.append("read-input-accepts-symlink")
+        except Refused:
+            pass
     # The round-87 class still repairs through this tool (composition, no-harm).
     magic_tampered = rep._fixture(tamper=b"UPX?")
     out, info = repair(magic_tampered)
@@ -226,6 +282,24 @@ def selftest() -> int:
     return 0 if not fails else 1
 
 
+def read_input(path: str) -> bytes:
+    """A regular file under the size cap, or a typed refusal.
+
+    `lstat` (not `stat`): a symlink, a FIFO or a device is refused, so an
+    invocation can neither block on a pipe nor be pointed at a carrier.
+    """
+    try:
+        st = os.lstat(path)
+    except OSError as exc:
+        raise Refused(f"unreadable input: {exc}")
+    if not stat.S_ISREG(st.st_mode):
+        raise Refused(f"not a regular file: {path}")
+    if st.st_size > MAX_INPUT:
+        raise Refused(f"input larger than {MAX_INPUT} bytes")
+    with open(path, "rb") as fh:
+        return fh.read()
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--in", dest="src")
@@ -239,11 +313,8 @@ def main(argv=None) -> int:
         print("usage: --in FILE --out FILE [--info FILE] | --selftest", file=sys.stderr)
         return 2
     try:
-        if os.path.getsize(a.src) > MAX_INPUT:
-            raise Refused(f"input larger than {MAX_INPUT} bytes")
-        with open(a.src, "rb") as fh:
-            data = fh.read()
-    except OSError as exc:
+        data = read_input(a.src)
+    except Refused as exc:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
     try:
