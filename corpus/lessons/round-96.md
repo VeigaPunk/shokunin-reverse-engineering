@@ -107,8 +107,16 @@ Each row: class · evidence pointer · captured-by · fix.
 
 ## Measured
 
-(Filled at the bookkeeping commit after the landing commit, from receipts measured at a clean committed
-tree. See `## Wave r96-w1 — seat results` for the seat re-measurements.)
+Measured revisions: R96-C1 and R96-C2 after-side at the landing `f63ce41506a26d57275f1088235bcf672978a34b` (clean committed tree; `git status --porcelain --untracked-files=no` empty before the measurement). Receipts in `.ufo/waves/round-96/l1/scores/`:
+
+- Frozen kill rule (R96-C1): `python3 -I -B tools/round-96/kill-rule-v2.py --root . --work <scratch> --mutants .ufo/waves/round-96/mutants.json --fixtures .ufo/waves/round-96/forgery --prefix forge --decl f63ce41506a26d57275f1088235bcf672978a34b --json-out .ufo/waves/round-96/l1/scores/c1-kill-rule-at-landing.json` → exit 0; `mutants killed 10 of 10; forgeries refused 10 of 10; negctl refused 3 of 3; probe consistent 1 of 1; honest accepted 1 of 1`; world `f63ce41506a26d57275f1088235bcf672978a34b`.
+- Honest public run: `python3 -I -B tools/round-96/stop-boundary-repair-battery-v6.py --root . --repair-cmd tools/round-92/upx-stop-boundary-search-repair.py --rev f63ce41506a26d57275f1088235bcf672978a34b --expect '<FROZEN>' --json-out .ufo/waves/round-96/l1/scores/honest-pos-at-landing.json` → exit 0, `selfverify ok=True reasons=0`; `revision` and `head` equal `f63ce41506a26d57275f1088235bcf672978a34b`; `counter_sha256` equals `git show f63ce41506a26d57275f1088235bcf672978a34b:tools/round-96/stop-boundary-repair-battery-v6.py` sha256.
+- Probe: `python3 -I -B tools/round-96/symlink-probe-v2.py … --json-out .ufo/waves/round-96/l1/scores/c1-symlink-v6-at-landing.json` → exit 0, `hardened`, `victim_intact true`, `receipt_valid true`.
+- Craft (R96-C2): `craft-citation-semantic.py --manifest block35-after.json --block 35 --rev f63ce41506a26d57275f1088235bcf672978a34b` exit 0 `ok`; `block35-junk.json` exit 1 (four keyword reasons); `depth-blocks-v2.py --rev f63ce41506a26d57275f1088235bcf672978a34b --expect-blocks 35` exit 0 `blocks 35 resolved 35`; `depth-blocks-v3.py --rev f63ce41506a26d57275f1088235bcf672978a34b --expect-blocks 35 --shape-from 35` exit 0 `required-shaped 1/1`.
+- Census: `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kaidoku` exit 0 (`.ufo/waves/round-96/census-after.txt`; 226 rows, W04 warnings unchanged).
+- Before-side (base `0ea695e8`): `pre/c1-legacy-rule-at-base.json` (5 of 10), `pre/c1-v5-admits-unbound-at-base.json` (5 of 6 accepted, 1 crash, nojson exit 0), `pre/c1-probe-writer-unbound-at-base.json` (victim consumed), `pre/c2-base-*` (exit 1 each).
+
+Verdicts (frozen predicate): R96-C1 met; R96-C2 met. The S321 registry row (`used-by` the knowledge entry) and the knowledge entry landed at the same commit; census E11 does not fire.
 
 ## Mutation (MutationC1: fresh mutants N1–N10, `w1/MutationC1/mutants.md`)
 
