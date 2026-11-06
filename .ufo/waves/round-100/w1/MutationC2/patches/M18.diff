@@ -1,0 +1,11 @@
+--- orig.py	2026-11-05 19:58:22.419607262 -0300
++++ mut/M18.py	2026-11-05 20:00:01.504767913 -0300
+@@ -138,7 +138,7 @@
+         except OSError:
+             got[f] = None
+     rec["sha256_at_rev"] = got
+-    rec["pin_ok"] = got == pins
++    rec["pin_ok"] = all(v is not None for v in got.values())
+     rec["claimed"] = parse_claim(claim_cell(cells)) if rec["row"] else None
+     seat = os.path.join(work, "rows", path.replace("/", "_"))
+     os.makedirs(seat, exist_ok=True)

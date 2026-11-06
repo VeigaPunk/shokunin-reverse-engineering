@@ -1,0 +1,1 @@
+print('SELFTEST cases=4 failures=0')

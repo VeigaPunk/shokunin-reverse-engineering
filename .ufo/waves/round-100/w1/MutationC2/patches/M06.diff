@@ -1,0 +1,12 @@
+--- orig.py	2026-11-05 19:58:22.419607262 -0300
++++ mut/M06.py	2026-11-05 20:00:01.504405773 -0300
+@@ -99,7 +99,8 @@
+ 
+ 
+ def parse_claim(cell):
+-    m = CLAIM_RE.search(cell)
++    ms = list(CLAIM_RE.finditer(cell))
++    m = ms[-1] if ms else None
+     if not m:
+         return None
+     return int(m.group(1) or m.group(2))

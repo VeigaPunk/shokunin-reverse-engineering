@@ -1,0 +1,11 @@
+--- orig.py	2026-11-05 19:58:22.419607262 -0300
++++ mut/M26.py	2026-11-05 20:00:01.504960233 -0300
+@@ -152,7 +152,7 @@
+     except subprocess.TimeoutExpired:
+         rc, out, err = -9, "", "timeout"
+     rec["rc"] = rc
+-    rec["green"] = rc == 0
++    rec["green"] = rc in (0, 1)
+     rec["counted"] = parse_observed(out, err)
+     rec["tail"] = (out + err)[-300:]
+     rec["agree"] = rec["claimed"] is not None and rec["claimed"] == rec["counted"]

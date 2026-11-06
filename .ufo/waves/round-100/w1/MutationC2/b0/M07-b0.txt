@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/kaidoku-r100/MutationC2/mut/M07.py", line 411, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/fast/scratch/hyaku/kaidoku-r100/MutationC2/mut/M07.py", line 277, in main
+    recs = [f.result() for f in futs]
+            ~~~~~~~~^^
+  File "/usr/lib/python3.14/concurrent/futures/_base.py", line 447, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/concurrent/futures/_base.py", line 396, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "/usr/lib/python3.14/concurrent/futures/thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "/fast/scratch/hyaku/kaidoku-r100/MutationC2/mut/M07.py", line 142, in run_row
+    rec["claimed"] = parse_claim(claim_cell(cells)) if rec["row"] else None
+                     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/kaidoku-r100/MutationC2/mut/M07.py", line 105, in parse_claim
+    return int(m.group(1))
+TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
+rc=1

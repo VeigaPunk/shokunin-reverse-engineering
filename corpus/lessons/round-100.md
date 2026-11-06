@@ -50,6 +50,32 @@ Each row: class · evidence pointer · captured-by · fix.
 
 Harm check: round-66 self-check at base `6371c886`: head 10.0 at 183/183 true, `citation_resolved_rules 36`; at `b0a7bb8c`: head 10.0 at 184/184 true, `citation_resolved_rules 36`, recipe A 142 of 184 (`coverage_score` 7.72, now stated in the head) (`.ufo/waves/round-100/l1/scores/coverage-selfcheck-at-*.json`). Depth unchanged (36). Freshness not re-measured (no receipt-corpus change). No claim row of an earlier round was edited; the seven registry rows keep their old counts as "this cell said …".
 
+## Wave `r100-w1` — seat results
+
+Dispatch `.ufo/waves/round-100/r100-w1-dispatch.json` (validated under `ufo-wave-policy.json`, `counts {spawn 14, resume 0, total 14}`), ready `.ufo/waves/round-100/r100-w1.ready`. Roles: executor 3, scout 1, connector 1, scribe 2, reviewer 2, critic 2, mutation-tester 2, sentinel 1; attack seats 6 of 14. Reports in `.ufo/waves/round-100/w1/`.
+
+- **ExecReproC1** — C1 label reproduced at A1 and at the tip; round-99 repair, h4, h6 byte-equal to the freeze transcript; own probe 50 of 50 flips (first, last, middle byte, two random) refused where `upx -t` fails, Adler identity 10 of 10.
+- **ExecReproC2** — C2 label at A2/tip and base control reproduced; the seven tools print the corrected counts at both B0 and A2 (the defect was prose only). Outside the population: F1 row `tools/round-90/control-cheat-repack.py` documents a self-test that argparse refuses (rc 2); F2 `tools/round-72/capsule_audit.py` pin vs self-test target split; F3 `tools/round-83/source-bind.py` "six cases" vs ten printed; F4 round-82 `printed-command.py` and `cli-fixtures.py` self-tests exit 1 at A2 and at B0 (`SCRIPT_PIN_MISMATCH`), unstated in their rows; F5 `tools/round-42/sqfs3-oracle.py` not idempotent in one `--work`. Routed.
+- **ExecHeldOut** — nine PE files outside the pinned set (`--best`, `--lzma`, `-1`), 99 cells: sound 45/45, complete 54/54, over-refusal 0.
+- **ScoutSources** — S327 anchors byte-exact; `upx_adler32` = standard Adler-32 seed 1 (draft row → S328); `u_adler` at 352-358 as an S327 anchor; no `--force` guard at any `throwChecksumError`; 10 rejection notes and a search log.
+- **ConnectorOverlap** — no sibling overlap for either claim; F4–F8 frontier sites (pointers appended to the r98/r99 entries, PROVINCE PE section added); F11 the repair's exit 1 path (registry row amended); F12 QUALITY 201 has no round-100 counter (rows checked by reading).
+- **ScribeEntry** — entry draft adopted (carrier identity table, not-examined section, 20/20 message split, S324 3053-3054); F1/F2 → M100-f/g.
+- **ScribeLesson** — M100-a…d drafted with provenance and mutation evidence (adopted above).
+- **ReviewerRepair** — APPROVE; packer-faithful offsets, seed and order; round-99 battery label unchanged with the round-100 repair; F1 forged-`c_adler` blind spot (documented), F2 the new compressed-data `truncated` refusal reachable on a doctored file where round 99 said `ok intact`, F3 second-window anchor (limit).
+- **ReviewerCounter** — both counters faithful to their definitions; F6 filename-keyed forgery meets the C1 label (M100-e); low: C2 argv differs from documented commands on 4 rows (`python -X utf8`, dropped `--work`) with no scoring effect, exec leg accepts a log with no exec line, candidates run with the battery's cwd/env, receipt-write failures exit 1 not 2.
+- **CriticC1** — pristine-cache forgery meets the C1 label (M100-e); UPX 5.2.0 packing is byte-deterministic on all ten carriers.
+- **CriticC2** — seven admitted edit classes (L1–L7) meet the C2 label; a words-only count is caught.
+- **MutationC1** — 28 mutants: 16 killed on the true candidate, 7 more killed by paired probes, 1 exec-cell-only; survivors R10/R12/R14 sit on the repair's compressed-data bound branch, which the battery never reaches (its truncated arm is refused earlier by the aligned-end check), R13 and B11 equivalent under the predicate; B12 crashes the counter with no receipt.
+- **MutationC2** — 32 one-point mutants of the C2 counter: 22 of 29 non-equivalent killed by the frozen predicate (selftest, B0, A2, forgery worlds), the other 7 by direct probes, 3 equivalent; F1 the `claim-first-wins` selftest case is vacuous (one match), F2 `run_row` has no selftest arm, F4 the green/exit gate is never exercised by the population (M26/M31).
+- **SentinelInputs** — 17 crafted cases and 5000 fuzzed mutations: exit 0/2 only except `--in /dev/zero` (MemoryError rc 1) and a writer-less FIFO (blocks); write path is mkstemp + replace only.
+
+## Named limits (routed)
+
+1. C1 battery: cache and filename forgeries (M100-e); the compressed-data bound branch unreached (MutationC1 F1); weak refusal oracle detectors (MutationC1 F3); exec leg vacuous-log and `execveat` filter sensitivity (ReviewerCounter F7, MutationC1 F4); counter crash path (MutationC1 F7); candidate cwd/env inheritance (ReviewerCounter F11).
+2. C2 counter: CriticC2 L1–L7; read-dependency pins (ReviewerCounter F2); argv drift on four rows (ReviewerCounter F1); seven probe-only mutants and a vacuous `claim-first-wins` case (MutationC2 F1–F5).
+3. Registry rows outside the population: ExecReproC2 F1–F5.
+4. Repair: forged `c_adler`; second-window anchor; FIFO/MemoryError input envelope.
+
 ## Assimilation
 
 `Assimilation: none` — `test -e /home/vgpnk/Projects/shokuknow/merge/kaidoku; echo $?` → `0` (2026-11-05), but the claim cap is spent on the two claims; no entry adopted, no staged row appended. `test -e /home/vgpnk/Projects/shokunin/kaidoku-shokunin/considerthese; echo $?` → `1` (no directory). No `corpus/lessons/operator-*.md` exists.

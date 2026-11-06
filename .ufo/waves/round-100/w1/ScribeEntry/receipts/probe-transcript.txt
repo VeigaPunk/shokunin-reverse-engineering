@@ -1,0 +1,65 @@
+# Probe transcript — seat ScribeEntry, round 100 (probes under scratch; deleted on exit)
+# candidate bytes: cand-r100-at-A1.py sha256 15ada0b0e2b3732b67051ed7c49108d92889fe0d756e0b1dfd5df17334a99a37 (= A1 tools/round-100/upx-pe-repair.py)
+# round-99 bytes: cand-r99-at-A1.py sha256 ac97598a94c041199cdf2cc3f700257989e8d70545bddb56e154e51b85d518d8
+# upx: upx 5.2.0 sha256 cf2f6e7c6846a7c9a2224bc2bcc2dd79db6847d2cc73092d7356ce5c9aa8c969
+# strace sha256 28ed5493ecf611b83ac0d0398cc1c4f09a228afaa7fce4737d14c8599cc796e2
+# carrier: distlib t32.exe sha256 6b4195e640a85ac32eb6f9628822a622057df1e459df7c17a12f97aeabc9415b
+
+== P1: packed --best; one payload byte XOR 0x5a at ph+32+1234 (ph=992)
+$ python3 -I -B cand-r100-at-A1.py --in probe/t32.corrupt.exe --out probe/t32.corrupt.out
+refused: checksum: adler32 of compressed data 5819af6c != c_adler 8091af36
+rc=2
+$ /usr/bin/upx -t probe/t32.corrupt.exe
+
+Tested 1 file: 0 ok, 1 error.
+
+== P2: same corrupted input through the round-99 repair
+$ python3 -I -B cand-r99-at-A1.py --in probe/t32.corrupt.exe --out probe/t32.corrupt.r99.out
+ok intact
+rc=0
+1a4af930d77ac9be7435a53c0b84c6f6f1bd509b819fd41c22788bac16e4ed54  probe/t32.corrupt.exe
+1a4af930d77ac9be7435a53c0b84c6f6f1bd509b819fd41c22788bac16e4ed54  probe/t32.corrupt.r99.out
+$ /usr/bin/upx -t probe/t32.corrupt.r99.out
+
+Tested 1 file: 0 ok, 1 error.
+
+== P3: forged c_adler (payload flipped AND c_adler rewritten to match AND header checksum byte 31 fixed)
+$ python3 -I -B cand-r100-at-A1.py --in probe/t32.forged.exe --out probe/t32.forged.out
+ok intact
+rc=0
+$ /usr/bin/upx -t probe/t32.forged.exe
+
+Tested 1 file: 0 ok, 1 error.
+
+== P4: tampered magic+names AND one flipped payload byte (rule order)
+$ python3 -I -B cand-r100-at-A1.py --in probe/t32.both.corrupt.exe --out probe/t32.both.corrupt.out
+refused: checksum: adler32 of compressed data fc96af09 != c_adler 8091af36
+rc=2
+ls: cannot access 'probe/t32.both.corrupt.out': No such file or directory
+
+== P5: compressed data cut so it runs one byte past EOF (last-section SizeOfRawData/PointerToRawData zeroed)
+$ python3 -I -B cand-r100-at-A1.py --in probe/t32.cutpayload2.exe --out probe/t32.cutpayload2.out
+refused: truncated: compressed data ends at 36040 > file 36039 bytes
+rc=2
+$ python3 -I -B cand-r99-at-A1.py --in probe/t32.cutpayload2.exe --out probe/t32.cutpayload2.r99.out
+ok intact
+rc=0
+$ /usr/bin/upx -t probe/t32.corrupt.exe
+upx: probe/t32.corrupt.exe: Exception: checksum error
+Tested 1 file: 0 ok, 1 error.
+rc=1
+
+$ /usr/bin/upx -t probe/t32.forged.exe
+upx: probe/t32.forged.exe: Exception: checksum error
+Tested 1 file: 0 ok, 1 error.
+rc=1
+
+$ /usr/bin/upx -t probe/t32.both.corrupt.exe
+upx: probe/t32.both.corrupt.exe: CantUnpackException: file is modified/hacked/protected; take care!!!
+rc=1
+
+$ /usr/bin/upx -t probe/t32.cutpayload2.exe
+upx: probe/t32.cutpayload2.exe: EOFException: premature end of file
+Tested 1 file: 0 ok, 1 error.
+rc=1
+
