@@ -1,0 +1,92 @@
+{
+ "lane": "kaidoku",
+ "round": 100,
+ "wave": "r100-w1",
+ "seats": 14,
+ "results": [
+  {
+   "name": "ExecReproC1",
+   "agent": "executor",
+   "output": "{\n  \"seat\": \"ExecReproC1\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/ExecReproC1.md\",\n  \"findings\": 3,\n  \"verdict_line\": \"R100-C1 reproduced independently: frozen battery hits exact TARGET exit 0 at A1 (a610671d) and lane tip (cbd224ef), controls r99 (corrupt 0 of 40), h4 (corrupt 20 of 40; exec 0 of 1), h6 (exec 0 of 1) at F match the freeze transcript byte-for-byte with rc 1, and my own non-battery probe on the ten pinned carriers shows adler32(c_len bytes after the 32-byte PackHeader)==c_adler 10/10 with 50/50 upx -t vs candidate agreement on first/last/middle/random byte flips \u2014 no deviation, no attack found.\"\n}",
+   "note": null
+  },
+  {
+   "name": "ExecReproC2",
+   "agent": "executor",
+   "output": "{\n  \"seat\": \"ExecReproC2\",\n  \"report\": \".ufo/waves/round-100/w1/ExecReproC2.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"R100-C2 reproduces: frozen counter at A2 and tip gives 'rows 93; claimed 93 of 93; green 93 of 93; counted 93 of 93; agree 93 of 93; mismatches 0' exit 0; B0 control gives 'agree 86 of 93; mismatches 7' exit 1; 7 corrected rows print corrected counts at B0 and A2; 5 non-scored findings (F1 row155 argparse requires --in/--out; F2 row104 pin/target mismatch; F3 row146 prose six vs 10 printed; F4 rows143/144 red at A2 and B0; F5 row27 non-idempotent).\"\n}",
+   "note": null
+  },
+  {
+   "name": "ExecHeldOut",
+   "agent": "executor",
+   "output": "{\n  \"seat\": \"ExecHeldOut\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/ExecHeldOut.md\",\n  \"findings\": 3,\n  \"verdict_line\": \"Held-out generalization of C1 candidate at A1: 9 PE files (8 content-new, none in CARRIERS) x 11 cases = 99/99 agree with the upx 5.2.0 -t oracle; 0 SOUND violations (45/45 rc0 outputs oracle rc0), 0 COMPLETE violations (54/54 payload flips -> rc2 refuse checksum), 0 OVER-REFUSAL, 0 crashes; repairs byte-exact and deterministic; exec guard holds under strace (only the launcher execve).\"\n}",
+   "note": null
+  },
+  {
+   "name": "ScoutSources",
+   "agent": "scout",
+   "output": "{\n  \"seat\": \"ScoutSources\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/ScoutSources.md\",\n  \"findings\": 6,\n  \"verdict_line\": \"S327 confirmed byte-identical upstream with exact anchors (packhead.cpp 334-338 c_adler throw, p+12 format<128); upx_adler32 proven standard Adler-32 seed 1 (conf.h:871, compress.cpp:40, ucl_util.c:135-163 mod 65521, dt_check constants reproduced by zlib) \u2014 draft row S328 in wave dir; u_adler check at packhead.cpp:352-358 recommended as S327 anchor extension, not a new row; no opt->force guard at any throwChecksumError site, so --force never bypasses unpack checksum refusal in v5.2.0\"\n}",
+   "note": null
+  },
+  {
+   "name": "ConnectorOverlap",
+   "agent": "connector",
+   "output": "{\n  \"seat\": \"ConnectorOverlap\",\n  \"report\": \".ufo/waves/round-100/w1/ConnectorOverlap.md\",\n  \"findings\": 13,\n  \"verdict_line\": \"No sibling overlap for R100-C1 (UPX PE checksum refusal) or R100-C2 (registry count truth); frontier sites README:407, r99 knowledge Limits and r98 Limits need pointers and PROVINCE is stale for PE; A2 has zero round-100 registry rows while lane main b0a7bb8ca has four with matching sha pins, and the upx-pe-repair row omits exit 1 (not observed in probes).\"\n}",
+   "note": null
+  },
+  {
+   "name": "ScribeLesson",
+   "agent": "scribe",
+   "output": "{\n  \"seat\": \"ScribeLesson\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/ScribeLesson.md\",\n  \"findings\": 4,\n  \"verdict_line\": \"Drafted corpus/lessons/round-100.md ## Mistakes rows M100-a\u2026M100-d (regex lookbehind defects shown able to fail by four single-guard mutations; seven stale registry counts traced to rounds 46/47/71/76/89 as three defects; round-99 closure defects 1 and 2, with the W04 misreport recurring this round at a census figure of 34); both frozen predicates reproduced (C1 met at A1, C2 met at A2, red at B0).\"\n}",
+   "note": null
+  },
+  {
+   "name": "ScribeEntry",
+   "agent": "scribe",
+   "output": "{\n  \"findings\": \"7\",\n  \"report\": \".ufo/waves/round-100/w1/ScribeEntry.md\",\n  \"seat\": \"ScribeEntry\",\n  \"verdict_line\": \"Entry + README row drafts written to the wave dir; C1 at A1 and C2 at A2 reproduced green, h4/h5 controls re-scored red at F, and the lane's class paragraph is corrected (corrupt arm splits 20 checksum-error / 20 CantUnpackException, not 40 of 40 checksum-error).\"\n}",
+   "note": null
+  },
+  {
+   "name": "ReviewerRepair",
+   "agent": "reviewer",
+   "output": "{\n  \"seat\": \"ReviewerRepair\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/ReviewerRepair.md\",\n  \"findings\": 4,\n  \"verdict_line\": \"APPROVE \u2014 A1 insertion is packer-faithful (c_adler@12/c_len@20 LE, 32-byte header gated by version 10..14, seed-1 Adler-32, read-then-verify order), round-99 decisions byte-identical (115 cells, only 20 per-run-random overlay fields differ), frozen C1 predicate met 119/119 at A1 (exit 0), one documented blind spot (forged c_adler) and one pre-existing second-window divergence flagged, no blocking finding.\"\n}",
+   "note": null
+  },
+  {
+   "name": "ReviewerCounter",
+   "agent": "reviewer",
+   "output": "{\n  \"seat\": \"ReviewerCounter\",\n  \"report\": \".ufo/waves/round-100/w1/ReviewerCounter.md\",\n  \"findings\": 12,\n  \"verdict_line\": \"Counters faithful and reproducible at A2 (C2 population/pins exact 93==93, 95/95 pins hold B\u2192A2; C1 corrupt range and effective=30+9+40+40 verified against UPX 5.2.0's own adler rule on all 10 carriers); 1 Medium named limit \u2014 the corrupt/truncated refusal is output-shaped and my filename-keyed forgery (never reads those inputs) passes the full battery met/exit-0 \u2014 plus 5 Low and 6 Info; nothing blocks L1 at A1/A2.\",\n  \"supporting\": [\n    \".ufo/waves/round-100/w1/ReviewerCounter/probes.md\",\n    \".ufo/waves/round-100/w1/ReviewerCounter/c1-forgery-filename.json\",\n    \".ufo/waves/round-100/w1/ReviewerCounter/c2-at-a2-review.json\",\n    \".ufo/waves/round-100/w1/ReviewerCounter/w1-review-forgery.py\"\n  ]\n}",
+   "note": null
+  },
+  {
+   "name": "CriticC1",
+   "agent": "critic",
+   "output": "{\n  \"seat\": \"CriticC1\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/CriticC1.md\",\n  \"findings\": 3,\n  \"verdict_line\": \"ATTACK ADMITTED: pristine-cache forgery (clone commit 28f3a604, scratch-only) scores the full frozen C1 label met=True exit=0 without the packer's rule (no Adler-32, no c_adler) \u2014 counter witnesses refusal behavior, not rule implementation, on a closed deterministic population; smallest safe correction is run-time packing variance (level/method) in the battery; C1 landing at A1 itself reproduced honestly (met=True exit=0) and h3/h4 controls reproduced exit=1.\"\n}",
+   "note": null
+  },
+  {
+   "name": "CriticC2",
+   "agent": "critic",
+   "output": "{\n  \"seat\": \"CriticC2\",\n  \"report\": \".ufo/waves/round-100/w1/CriticC2.md\",\n  \"findings\": 7,\n  \"verdict_line\": \"R100-C2 reaches the full frozen label (rows 93; ... mismatches 0; exit 0) on 7 of 7 admitted self-assessment-false classes (later wrong count in same cell, words count with later digits, wrong command/exit text, verdict/write-scope cells, purpose-column count, prose outside markers, mangled-key row) and combined; words-only control exits 1 (mismatches 1).\"\n}",
+   "note": null
+  },
+  {
+   "name": "MutationC1",
+   "agent": "mutation-tester",
+   "output": "{\n  \"seat\": \"MutationC1\",\n  \"report\": \"/home/vgpnk/Projects/shokunin/kaidoku-shokunin/.ufo/waves/round-100/w1/MutationC1.md\",\n  \"findings\": 7,\n  \"verdict_line\": \"28 mutants on A1 (15 repair, 13 battery): 16 killed on the true candidate, 12 survived; cross-check probes kill 6 battery survivors on full verdict and 1 at the exec cell; R10/R12/R14 are non-equivalent on crafted layouts the battery never generates (F1); B11 is sampling-equivalent (kill probability 0.000899/run).\"\n}",
+   "note": null
+  },
+  {
+   "name": "MutationC2",
+   "agent": "mutation-tester",
+   "output": "{\n  \"seat\": \"MutationC2\",\n  \"report\": \".ufo/waves/round-100/w1/MutationC2.md\",\n  \"findings\": 5,\n  \"verdict_line\": \"MutationC2: 32 one-point mutants (3 equivalent); frozen predicate kills 22 of 29 non-equivalent, direct probes kill the other 7 (0 unkilled); findings 5 (F1 vacuous first-wins selftest, F2 no run_row arms, F3 boundary negatives missing, F4 exit-gate untested, F5 4-cell column-2 untested).\"\n}",
+   "note": null
+  },
+  {
+   "name": "SentinelInputs",
+   "agent": "sentinel",
+   "output": "{\n  \"seat\": \"SentinelInputs\",\n  \"report\": \".ufo/waves/round-100/w1/SentinelInputs.md\",\n  \"findings\": 2,\n  \"verdict_line\": \"upx-pe-repair.py @A1: 15/17 crafted adversarial cases and 5000/5000 fuzz cases clean (exit 0/2 only, no traceback, no stray files, writes confined to --out via single O_EXCL mkstemp+replace); 2 violations \u2014 F1 (medium) --in /dev/zero unbounded read escapes the OSError-only catch with an uncaught MemoryError exit 1+traceback (memory DoS, repro saved), F2 (low) --in FIFO with no writer blocks in open() forever (liveness only); symlink --out is replaced not followed with target untouched, in-bounds huge c_len refused in ~1s at ~4x input RSS.\"\n}",
+   "note": null
+  }
+ ]
+}
